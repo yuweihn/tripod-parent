@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+			http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-autowire="byName">
+	<!-- redis集群 -->
+
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<!--一个pool可分配多少个jedis实例 -->
+		<property name="maxTotal" value="${redis.pool.maxTotal:1024}"/>
+		
+		<!--一个pool最多有多少个状态为idle(空闲)的jedis实例 -->
+		<property name="maxIdle" value="${redis.pool.maxIdle:200}" />
+		
+		<!--获取jredis实例时最大的等待时间，超时则抛出JedisConnectionException-->
+		<property name="maxWaitMillis" value="${redis.pool.maxWaitMillis:10000}" />
+		
+		<!-- 在获取一个jedis实例时，是否提前进行validate操作；如果为true，则得到的jedis实例均是可用的 -->
+		<property name="testOnBorrow" value="${redis.pool.testOnBorrow:false}" />
+	</bean>
+
+	<bean id="jedisCluster" class="org.assist4j.data.cache.redis.JedisClusterFactory" init-method="init">
+		<property name="jedisPoolConfig" ref="jedisPoolConfig" />
+		<property name="redisNodeList" ref="redisNodeList" />
+		<property name="timeout" value="${redis.cluster.timeout:300000}" />
+		<property name="maxRedirections" value="${redis.cluster.maxRedirections:6}" />
+	</bean>
+
+	<bean id="redisCache" class="org.assist4j.data.cache.redis.RedisClusterCache">
+		<property name="jedisCluster" ref="jedisCluster"/>
+	</bean>
+</beans>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="
+			http://www.springframework.org/schema/data/mongo
+			http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+			http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd"
+	default-autowire="byName">
+
+	<bean id="mongoSeeds" class="java.util.ArrayList">
+		<constructor-arg index="0">
+			<list>
+				<bean class="com.mongodb.ServerAddress">
+					<constructor-arg name="host" value="${mongo.host}" />
+					<constructor-arg name="port" value="${mongo.port}" />
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="mongoCredential" class="org.assist4j.data.mongo.MongoCredentialFactory">
+		<constructor-arg name="userName" value="${mongo.user.name}" />
+		<constructor-arg name="password" value="${mongo.password}" />
+		<constructor-arg name="authDbName" value="${mongo.auth.dbname}" />
+	</bean>
+
+	<bean id="mongo" class="org.assist4j.data.mongo.MongoClientFactory">
+		<constructor-arg name="needAuth" value="${mongo.need.auth}"/>
+		<constructor-arg name="seeds" ref="mongoSeeds"/>
+		<constructor-arg name="credentialsList" ref="mongoCredentials"/>
+	</bean>
+
+	<mongo:db-factory dbname="${mongo.db}" mongo-ref="mongo" />
+
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+	</bean>
+</beans>
