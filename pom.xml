@@ -15,9 +15,14 @@
     </properties>
 
     <modules>
+        <module>assist4j-core</module>
+        <module>assist4j-dao</module>
+        <module>assist4j-data</module>
         <module>assist4j-http</module>
         <module>assist4j-sequence</module>
         <module>assist4j-session</module>
+        <module>assist4j-web</module>
+        <module>assist4j</module>
     </modules>
 
     <build>
