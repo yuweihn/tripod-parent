@@ -1,7 +1,7 @@
 # assist4j-sequence
 
 For example:
------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
 	create table sequence (
 		segment            int(11)                      not null      default 0  comment '分片，从0开始计数',
 		name               varchar(255)                 not null,
@@ -11,7 +11,7 @@ For example:
 	
 		primary      key(segment, name)
 	) engine=innodb default charset=utf8;
------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
 	spring:
 	  beanSeqNameMap:
 	    seqAppKeySecret: seq_app_key_secret
@@ -23,7 +23,7 @@ For example:
 	    seqMomentImg: seq_moment_img
 	    seqMomentLike: seq_moment_like
 	    seqPay: seq_pay
------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
 	@Bean(name = "sequenceDao", initMethod = "init", destroyMethod = "destroy")
 	public SequenceDao sequenceDao(@Qualifier("dataSource") DataSource dataSource
 			, @Value("${global.sequence.innerStep:100}") int innerStep
@@ -60,11 +60,11 @@ For example:
 	public SequenceBeanFactory sequenceBeanFactory() {
 		return new SequenceBeanFactory(DefaultSequence.class, "fppSequenceBeanHolder");
 	}
------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
 	@Resource
 	private Sequence seqFeedback;
 	@Resource
 	private Sequence seqFeedbackPic;
------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
 
 

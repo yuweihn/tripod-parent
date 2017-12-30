@@ -20,14 +20,14 @@
 		<property name="testOnBorrow" value="${redis.pool.testOnBorrow:false}" />
 	</bean>
 
-	<bean id="jedisCluster" class="org.assist4j.data.cache.redis.JedisClusterFactory" init-method="init">
+	<bean id="jedisCluster" class="com.assist4j.data.cache.redis.JedisClusterFactory" init-method="init">
 		<property name="jedisPoolConfig" ref="jedisPoolConfig" />
 		<property name="redisNodeList" ref="redisNodeList" />
 		<property name="timeout" value="${redis.cluster.timeout:300000}" />
 		<property name="maxRedirections" value="${redis.cluster.maxRedirections:6}" />
 	</bean>
 
-	<bean id="redisCache" class="org.assist4j.data.cache.redis.RedisClusterCache">
+	<bean id="redisCache" class="com.assist4j.data.cache.redis.RedisClusterCache">
 		<property name="jedisCluster" ref="jedisCluster"/>
 	</bean>
 </beans>

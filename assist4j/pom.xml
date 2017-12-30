@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.assist4j</groupId>
+	<groupId>com.assist4j</groupId>
 	<artifactId>assist4j</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0.0</version>
@@ -17,37 +17,37 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.assist4j</groupId>
+			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.assist4j</groupId>
+			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-dao</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.assist4j</groupId>
+			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-data</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.assist4j</groupId>
+			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-http</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.assist4j</groupId>
+			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-sequence</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.assist4j</groupId>
+			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-session</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.assist4j</groupId>
+			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -118,7 +118,7 @@
 							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
 							<artifactSet>
 								<includes>
-									<include>org.assist4j:*</include>
+									<include>com.assist4j:*</include>
 								</includes>
 							</artifactSet>
 						</configuration>

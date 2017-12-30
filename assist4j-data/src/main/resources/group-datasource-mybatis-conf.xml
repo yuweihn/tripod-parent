@@ -10,7 +10,7 @@
 			http://www.springframework.org/schema/tx/spring-tx.xsd"
 	default-autowire="byName">
 
-	<bean id="dataSource" class="org.assist4j.data.ds.DynamicDataSource">
+	<bean id="dataSource" class="com.assist4j.data.ds.DynamicDataSource">
 		<constructor-arg name="dsClusterList" ref="dsClusterList"/>
 	</bean>
 
@@ -33,7 +33,7 @@
 	</bean>
 
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
-	<bean id="dataSourceAspect" class="org.assist4j.data.ds.DataSourceAspect">
+	<bean id="dataSourceAspect" class="com.assist4j.data.ds.DataSourceAspect">
 		<constructor-arg name="dsClusterList" ref="dsClusterList"/>
 	</bean>
 

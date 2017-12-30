@@ -5,7 +5,7 @@
 			http://www.springframework.org/schema/beans/spring-beans.xsd"
 	default-autowire="byName">
 	
-	<bean id="defaultSender" class="org.assist4j.core.mail.sender.DefaultEmailSender">
+	<bean id="defaultSender" class="com.assist4j.core.mail.sender.DefaultEmailSender">
 		<property name="server" value="${smtp.server}"/>
 		<property name="sslPort" value="${smtp.ssl.port}"/>
 		<property name="auth" value="${smtp.auth}"/>

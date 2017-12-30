@@ -20,13 +20,13 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="mongoCredential" class="org.assist4j.data.mongo.MongoCredentialFactory">
+	<bean id="mongoCredential" class="com.assist4j.data.mongo.MongoCredentialFactory">
 		<constructor-arg name="userName" value="${mongo.user.name}" />
 		<constructor-arg name="password" value="${mongo.password}" />
 		<constructor-arg name="authDbName" value="${mongo.auth.dbname}" />
 	</bean>
 
-	<bean id="mongo" class="org.assist4j.data.mongo.MongoClientFactory">
+	<bean id="mongo" class="com.assist4j.data.mongo.MongoClientFactory">
 		<constructor-arg name="needAuth" value="${mongo.need.auth}"/>
 		<constructor-arg name="seeds" ref="mongoSeeds"/>
 		<constructor-arg name="credentialsList" ref="mongoCredentials"/>
