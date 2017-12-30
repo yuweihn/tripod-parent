@@ -12,3 +12,4 @@ target/
 *.iml
 *.iws
 
+/assist4j/dependency-reduced-pom.xml
