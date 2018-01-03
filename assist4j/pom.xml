@@ -90,6 +90,65 @@
 		</developer>
 	</developers>
 
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<configuration>
+							<attach>true</attach>
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<configuration>
+							<aggregate>true</aggregate>
+							<show>public</show>
+							<charset>utf-8</charset>
+							<encoding>utf-8</encoding>
+							<docencoding>utf-8</docencoding>
+						</configuration>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<phase>package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<additionalparam>-Xdoclint:none</additionalparam>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 	<distributionManagement>
 		<snapshotRepository>
 			<id>oss_sonatype</id>
@@ -101,13 +160,13 @@
 		</repository>
 	</distributionManagement>
 	<!--
-	<distributionManagement>
-		<repository>
-			<id>wei-maven-thirdparty</id>
-			<url>http://maven.yuweix.com/nexus/content/repositories/thirdparty</url>
-		</repository>
-	</distributionManagement>
-	-->
+    <distributionManagement>
+        <repository>
+            <id>wei-maven-thirdparty</id>
+            <url>http://maven.yuweix.com/nexus/content/repositories/thirdparty</url>
+        </repository>
+    </distributionManagement>
+    -->
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -120,56 +179,6 @@
 					<target>${jdk.version}</target>
 					<encoding>utf-8</encoding>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<aggregate>true</aggregate>
-					<show>public</show>
-					<charset>utf-8</charset>
-					<encoding>utf-8</encoding>
-					<docencoding>utf-8</docencoding>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<additionalparam>-Xdoclint:none</additionalparam>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<configuration>
-					<attach>true</attach>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
