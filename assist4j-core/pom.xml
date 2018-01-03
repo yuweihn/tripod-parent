@@ -156,13 +156,43 @@
 		</pluginRepository>
 	</pluginRepositories>
 
+
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<scm>
+		<url>https://github.com/yuweihn/assist4j</url>
+		<connection>https://github.com/yuweihn/assist4j.git</connection>
+	</scm>
+	<developers>
+		<developer>
+			<name>yuwei</name>
+			<email>yuwei@yuweix.com</email>
+			<url>http://assist4j.com</url>
+		</developer>
+	</developers>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>oss_sonatype</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>oss_sonatype</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
+	</distributionManagement>
+	<!--
 	<distributionManagement>
 		<repository>
 			<id>wei-maven-thirdparty</id>
 			<url>http://maven.yuweix.com/nexus/content/repositories/thirdparty</url>
 		</repository>
 	</distributionManagement>
-
+	-->
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
