@@ -8,10 +8,10 @@ For example:
 		headerList.add(new BasicHeader("jira-user", "api_archives"));
 		headerList.add(new BasicHeader("token", "aXgNiEaaok2639q7MR"));
 		HttpResponse<byte[]> response = HttpFormRequest.create().initUrl(url)
-                                            .initHeaderList(headerList)
-                                            .initResponseBodyClass(byte[].class)
-                                            .initRequestConfig(RequestConfig.custom().setConnectTimeout(1000).setConnectionRequestTimeout(1000).setSocketTimeout(1000).build())
-                                            .execute();
+															.initHeaderList(headerList)
+															.initResponseBodyClass(byte[].class)
+															.initRequestConfig(RequestConfig.custom().setConnectTimeout(1000).setConnectionRequestTimeout(1000).setSocketTimeout(1000).build())
+															.execute();
 		if(!response.isSuccess()) {
 			System.out.println(response.getErrorMessage());
 		} else {
