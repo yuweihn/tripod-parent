@@ -245,4 +245,17 @@ public abstract class CommonUtil {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public static<T> String join(T[] arr, String separator) {
+		if(arr == null || arr.length <= 0) {
+			return null;
+		}
+		
+		StringBuilder builder = new StringBuilder();
+		for(T t: arr) {
+			builder.append(separator).append(t.toString());
+		}
+		builder.delete(0, separator.length());
+		return builder.toString();
+	}
 }
