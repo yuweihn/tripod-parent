@@ -36,8 +36,9 @@
         </license>
     </licenses>
     <scm>
+        <connection>scm:git:https://github.com/yuweihn/assist4j.git</connection>
+        <developerConnection>scm:git:https://github.com/yuweihn/assist4j.git</developerConnection>
         <url>https://github.com/yuweihn/assist4j</url>
-        <connection>https://github.com/yuweihn/assist4j.git</connection>
     </scm>
     <developers>
         <developer>
