@@ -73,11 +73,20 @@
 			<url>http://repo.spring.io/milestone</url>
 			<snapshots><enabled>true</enabled></snapshots>
 		</repository>
+		<repository>
+			<id>central</id>
+			<url>https://oss.sonatype.org/content/groups/public</url>
+			<snapshots><enabled>true</enabled></snapshots>
+		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
 			<id>spring-milestones</id>
 			<url>http://repo.spring.io/milestone</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>central</id>
+			<url>https://oss.sonatype.org/content/groups/public</url>
 		</pluginRepository>
 	</pluginRepositories>
 
