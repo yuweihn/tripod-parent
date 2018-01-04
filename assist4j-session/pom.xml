@@ -71,6 +71,10 @@
 
 	<repositories>
 		<repository>
+			<id>wei_maven</id>
+			<url>http://maven.yuweix.com/content/groups/public</url>
+		</repository>
+		<repository>
 			<id>spring-milestones</id>
 			<url>http://repo.spring.io/milestone</url>
 			<snapshots><enabled>true</enabled></snapshots>
@@ -82,6 +86,10 @@
 		</repository>
 	</repositories>
 	<pluginRepositories>
+		<pluginRepository>
+			<id>wei_maven</id>
+			<url>http://maven.yuweix.com/content/groups/public</url>
+		</pluginRepository>
 		<pluginRepository>
 			<id>spring-milestones</id>
 			<url>http://repo.spring.io/milestone</url>
