@@ -199,7 +199,7 @@
 		</repository>
 		<!--
 		<repository>
-			<id>wei_nexus</id>
+			<id>wei_maven</id>
 			<url>http://maven.yuweix.com/nexus/content/repositories/thirdparty</url>
 		</repository>
 		-->
