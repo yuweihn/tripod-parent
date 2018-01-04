@@ -188,15 +188,13 @@
 			<id>oss_sonatype</id>
 			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
 		</repository>
-	</distributionManagement>
-	<!--
-	<distributionManagement>
+		<!--
 		<repository>
-			<id>wei-maven-thirdparty</id>
+			<id>wei_nexus</id>
 			<url>http://maven.yuweix.com/nexus/content/repositories/thirdparty</url>
 		</repository>
+		-->
 	</distributionManagement>
-	-->
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
