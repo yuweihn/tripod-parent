@@ -11,5 +11,5 @@ public interface SessionCache {
 	 */
 	boolean put(String key, String value, long expiredTime);
 	String get(String key);
-	void remove(String key);	
+	void remove(String key);
 }
