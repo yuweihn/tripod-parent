@@ -167,10 +167,6 @@
 			<url>http://maven.yuweix.com/content/groups/public</url>
 		</pluginRepository>
 		<pluginRepository>
-			<id>wei_maven</id>
-			<url>http://maven.yuweix.com/content/groups/public</url>
-		</pluginRepository>
-		<pluginRepository>
 			<id>spring-milestones</id>
 			<url>http://repo.spring.io/milestone</url>
 		</pluginRepository>
