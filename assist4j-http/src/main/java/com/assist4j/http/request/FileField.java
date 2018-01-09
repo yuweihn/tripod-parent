@@ -2,6 +2,7 @@ package com.assist4j.http.request;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -14,8 +15,13 @@ public class FileField {
 	 */
 	private String fieldName;
 	private List<FileWrapper> fileList;
-
-
+	
+	
+	public FileField() {
+		fileList = new ArrayList<FileWrapper>();
+	}
+	
+	
 	public String getFieldName() {
 		return fieldName;
 	}
@@ -23,13 +29,10 @@ public class FileField {
 		this.fieldName = fieldName;
 	}
 	public List<FileWrapper> getFileList() {
-		return fileList;
+		return Collections.unmodifiableList(fileList);
 	}
 
 	public FileField addFile(FileWrapper fw) {
-		if(fileList == null) {
-			fileList = new ArrayList<FileWrapper>();
-		}
 		fileList.add(fw);
 		return this;
 	}
