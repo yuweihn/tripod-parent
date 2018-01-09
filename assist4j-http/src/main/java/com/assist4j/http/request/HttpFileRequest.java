@@ -27,6 +27,8 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 
 	protected HttpFileRequest() {
 		super();
+		fileFieldList = new ArrayList<FileField>();
+		formFieldList = new ArrayList<FormField>();
 	}
 	public static HttpFileRequest create() {
 		return new HttpFileRequest();
@@ -34,10 +36,6 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 
 
 	public HttpFileRequest addFile(String fieldName, byte[] content, String fileName) {
-		if(fileFieldList == null) {
-			fileFieldList = new ArrayList<FileField>();
-		}
-
 		FileWrapper fw = new FileWrapper();
 		fw.setContent(content);
 		fw.setFileName(fileName);
@@ -59,9 +57,6 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 	public HttpFileRequest addFormField(String key, String value) {
 		if(StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
 			return this;
-		}
-		if(formFieldList == null) {
-			formFieldList = new ArrayList<FormField>();
 		}
 
 		FormField ff = new FormField();
