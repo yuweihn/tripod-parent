@@ -2,10 +2,11 @@ package com.assist4j.data.cache.redis;
 
 
 import com.assist4j.data.cache.CacheUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
-
-import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.util.SafeEncoder;
 
@@ -13,8 +14,8 @@ import redis.clients.util.SafeEncoder;
 /**
  * @author yuwei
  */
-@Slf4j
 public abstract class JedisListener<T> extends JedisPubSub implements MessageListener {
+	private static final Logger log = LoggerFactory.getLogger(JedisListener.class);
 	@Override
 	public void onMessage(Message message, byte[] pattern) {
 		String channel = null;

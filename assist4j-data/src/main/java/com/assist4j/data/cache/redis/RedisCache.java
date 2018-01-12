@@ -6,20 +6,22 @@ import java.util.concurrent.TimeUnit;
 
 import com.assist4j.data.cache.Cache;
 import com.assist4j.data.cache.CacheUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import lombok.extern.slf4j.Slf4j;
 import redis.clients.util.SafeEncoder;
 
 
 /**
  * @author yuwei
  */
-@Slf4j
 public class RedisCache implements Cache {
+	private static final Logger log = LoggerFactory.getLogger(RedisCache.class);
 	private RedisTemplate<String, Object> redisTemplate;
 
 

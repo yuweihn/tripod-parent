@@ -6,11 +6,11 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.Assert;
-
-import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -19,14 +19,14 @@ import java.util.List;
 /**
  * @author wei
  */
-@Slf4j
 @Aspect
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class DataSourceAspect {
+	private static final Logger log = LoggerFactory.getLogger(DataSourceAspect.class);
 	private List<DataSourceCluster> dsClusterList;
-
-
-
+	
+	
+	
 	public DataSourceAspect(List<DataSourceCluster> dsClusterList) {
 		Assert.notEmpty(dsClusterList, "[dsClusterList] is required.");
 		this.dsClusterList = dsClusterList;

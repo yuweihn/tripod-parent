@@ -2,19 +2,20 @@ package com.assist4j.data.cache;
 
 
 import java.lang.reflect.Constructor;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
-import lombok.extern.slf4j.Slf4j;
-
 
 /**
  * @author yuwei
  */
-@Slf4j
 public abstract class CacheUtil {
+	private static final Logger log = LoggerFactory.getLogger(CacheUtil.class);
 	/**
 	 * 检查数据类型：
 	 * 1、只允许指定的几个类型存入缓存；
