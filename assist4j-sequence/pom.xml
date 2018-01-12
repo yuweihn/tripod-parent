@@ -13,7 +13,6 @@
 	<url>https://assist4j.com</url>
 
 	<properties>
-		<lombok.version>1.16.18</lombok.version>
 		<jdk.version>1.8</jdk.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<spring.version>4.3.13.RELEASE</spring.version>
@@ -21,12 +20,6 @@
 
 
 	<dependencies>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>${lombok.version}</version>
-			<scope>provided</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>

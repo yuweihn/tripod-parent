@@ -13,6 +13,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.assist4j.sequence.dao.SequenceDao;
 import com.assist4j.sequence.exception.SequenceException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -23,14 +26,12 @@ import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import lombok.extern.slf4j.Slf4j;
-
 
 /**
  * @author yuwei
  */
-@Slf4j
 public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostProcessor {
+	private static final Logger log = LoggerFactory.getLogger(SequenceBeanFactory.class);
 	private static final String DEFAULT_FIELD_SEQUENCE_DAO = "sequenceDao";
 	private static final String DEFAULT_FIELD_SEQ_NAME = "name";
 	private static final String DEFAULT_METHOD_INIT = "init";

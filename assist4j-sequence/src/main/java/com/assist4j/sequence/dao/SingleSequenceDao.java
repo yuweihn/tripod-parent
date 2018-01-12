@@ -2,17 +2,19 @@ package com.assist4j.sequence.dao;
 
 
 import javax.sql.DataSource;
-import lombok.extern.slf4j.Slf4j;
 import com.assist4j.sequence.bean.SequenceHolder;
 import com.assist4j.sequence.exception.SequenceException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 
 /**
  * @author yuwei
  */
-@Slf4j
 public class SingleSequenceDao extends AbstractSequenceDao {
+	private static final Logger log = LoggerFactory.getLogger(SingleSequenceDao.class);
 	private DataSource dataSource;
 
 	public SingleSequenceDao() {}

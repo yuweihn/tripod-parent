@@ -4,17 +4,18 @@ package com.assist4j.sequence.base;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.assist4j.sequence.bean.SequenceHolder;
 import com.assist4j.sequence.dao.SequenceDao;
-
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * @author yuwei
  */
-@Slf4j
 public class DefaultSequence implements Sequence {
+	private static final Logger log = LoggerFactory.getLogger(DefaultSequence.class);
 	private final Lock lock = new ReentrantLock();
 	private SequenceDao sequenceDao;
 	private String name;

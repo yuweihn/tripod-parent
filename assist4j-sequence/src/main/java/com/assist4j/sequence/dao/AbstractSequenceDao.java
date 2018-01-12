@@ -8,17 +8,19 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 
 import javax.sql.DataSource;
-import com.assist4j.sequence.exception.SequenceException;
-import org.springframework.util.Assert;
 
-import lombok.extern.slf4j.Slf4j;
+import com.assist4j.sequence.exception.SequenceException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 
 /**
  * @author yuwei
  */
-@Slf4j
 public abstract class AbstractSequenceDao implements SequenceDao {
+	private static final Logger log = LoggerFactory.getLogger(AbstractSequenceDao.class);
 	private int retryTimes = 2;
 	private int innerStep = 100;
 	private String tableName;

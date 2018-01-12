@@ -13,17 +13,18 @@ import com.assist4j.sequence.bean.SequenceHolder;
 import com.assist4j.sequence.dao.loadbalancer.IRule;
 import com.assist4j.sequence.dao.loadbalancer.RoundRobinRule;
 import com.assist4j.sequence.exception.SequenceException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * @author yuwei
  */
-@Slf4j
 public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
+	private static final Logger log = LoggerFactory.getLogger(AbstractGroupSequenceDao.class);
 	private Map<Integer, AtomicInteger> excludedSegment;
 	/**
 	 * 一旦被剔除，最多被忽略的次数
