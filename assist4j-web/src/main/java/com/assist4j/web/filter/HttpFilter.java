@@ -12,18 +12,19 @@ import com.assist4j.core.CommonUtil;
 import com.assist4j.web.HttpMethodRequestWrapper;
 import com.assist4j.core.Constant;
 import com.assist4j.core.ActionUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * @author yuwei
  */
-@Slf4j
 public class HttpFilter extends AbstractFilter {
+	private static final Logger log = LoggerFactory.getLogger(HttpFilter.class);
 	public static final String DEFAULT_METHOD_PARAM = "_method";
 	public static final String DEFAULT_ENCODING = Constant.ENCODING_UTF_8;
 	public static final String DEFAULT_STATIC_PATH = "/static/";

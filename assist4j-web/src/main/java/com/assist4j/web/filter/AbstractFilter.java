@@ -1,9 +1,9 @@
 package com.assist4j.web.filter;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,8 +15,8 @@ import java.io.IOException;
 /**
  * @author yuwei
  */
-@Slf4j
 public abstract class AbstractFilter extends OncePerRequestFilter {
+	private static final Logger log = LoggerFactory.getLogger(AbstractFilter.class);
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
