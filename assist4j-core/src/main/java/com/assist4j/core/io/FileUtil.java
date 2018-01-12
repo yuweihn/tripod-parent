@@ -3,8 +3,6 @@ package com.assist4j.core.io;
 
 import com.assist4j.core.DateUtil;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,13 +13,16 @@ import java.io.FileOutputStream;
 import java.io.BufferedOutputStream;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * 文件处理工具
  * @author wei
  */
-@Slf4j
 public abstract class FileUtil extends StreamUtil {
+	private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
 	/**
 	 * 读取文件内容
 	 * @param filePath

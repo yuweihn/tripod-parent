@@ -8,9 +8,7 @@ import com.aliyun.oss.model.OSSObject;
 import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
 import com.aliyun.oss.model.ObjectMetadata;
-
 import com.assist4j.core.io.StreamUtil;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -20,13 +18,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * OSS文件工具类
  * @author yuwei
  */
-@Slf4j
 public class OssUtil {
+	private static final Logger log = LoggerFactory.getLogger(OssUtil.class);
 	private String endpoint;
 	private String accessKey;
 	private String accessSecret;

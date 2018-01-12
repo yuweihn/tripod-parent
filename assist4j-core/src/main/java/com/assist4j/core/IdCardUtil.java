@@ -8,15 +8,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * 身份证工具类
  * @author wei
  */
-@Slf4j
 public abstract class IdCardUtil {
+	private static final Logger log = LoggerFactory.getLogger(IdCardUtil.class);
 	/** 中国公民一代身份证号码长度。 */
 	private static final int CHINA_ID_NO_1_LENGTH = 15;
 	/** 中国公民二代身份证号码长度。 */

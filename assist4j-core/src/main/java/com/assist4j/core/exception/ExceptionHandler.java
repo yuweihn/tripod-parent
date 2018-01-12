@@ -8,20 +8,21 @@ import javax.servlet.http.HttpServletResponse;
 import com.assist4j.core.InterceptorUtil;
 import com.assist4j.core.JsonUtil;
 import com.assist4j.core.Response;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
-
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * 通用异常处理方式
  * @author yuwei
  */
-@Slf4j
 public class ExceptionHandler implements HandlerExceptionResolver {
+	private static final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
 	private String errorPage;
 	private Map<Class<?>, String> errorMsgMap;
 

@@ -17,16 +17,17 @@ import java.util.List;
 import java.util.Map;
 
 import com.assist4j.core.Constant;
-import org.springframework.util.Assert;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 
 /**
  * @author yuwei
  */
-@Slf4j
 public abstract class CsvUtil {
+	private static final Logger log = LoggerFactory.getLogger(CsvUtil.class);
 	/**
 	 * 导出数据
 	 * @param dataList 数据

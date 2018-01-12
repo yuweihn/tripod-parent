@@ -4,6 +4,8 @@ package com.assist4j.core;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -13,14 +15,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import lombok.extern.slf4j.Slf4j;
-
 
 /**
  * @author yuwei
  */
-@Slf4j
 public class SpringContext implements ApplicationContextAware {
+	private static final Logger log = LoggerFactory.getLogger(SpringContext.class);
 	private static final String DEFAULT_INIT_METHOD = "init";
 	private static final String DEFAULT_DESTROY_METHOD = "destroy";
 	

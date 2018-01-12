@@ -9,9 +9,9 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,8 +25,8 @@ import java.util.Map;
 /**
  * @author yuwei
  */
-@Slf4j
 public abstract class WordUtil {
+	private static final Logger log = LoggerFactory.getLogger(WordUtil.class);
 	private static final String TYPE_DOC = "doc";
 	private static final String TYPE_DOCX = "docx";
 

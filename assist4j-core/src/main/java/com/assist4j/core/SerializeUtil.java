@@ -7,15 +7,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * 序列化工具
  * @author wei
  */
-@Slf4j
 public abstract class SerializeUtil {
+	private static final Logger log = LoggerFactory.getLogger(SerializeUtil.class);
 	/**
 	 * 序列化
 	 * @param object

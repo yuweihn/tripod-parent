@@ -2,10 +2,11 @@ package com.assist4j.core.mq.activemq.listener;
 
 
 import org.apache.activemq.command.ActiveMQTextMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.assist4j.core.mq.activemq.message.IReceiver;
 import org.springframework.jms.listener.SessionAwareMessageListener;
-
-import lombok.extern.slf4j.Slf4j;
 
 import javax.jms.Message;
 import javax.jms.Session;
@@ -15,8 +16,8 @@ import javax.jms.Session;
  * 文本类消息队列监听器
  * @author yuwei
  */
-@Slf4j
 public class TextMessageListener implements SessionAwareMessageListener<Message> {
+	private static final Logger log = LoggerFactory.getLogger(TextMessageListener.class);
 	private IReceiver receiver;
 
 	public void setReceiver(IReceiver receiver) {

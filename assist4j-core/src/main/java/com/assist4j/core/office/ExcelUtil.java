@@ -32,22 +32,23 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.assist4j.core.JsonUtil;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-
-import lombok.extern.slf4j.Slf4j;
 
 
 /**
  * @author yuwei
  */
-@Slf4j
 public abstract class ExcelUtil {
+	private static final Logger log = LoggerFactory.getLogger(ExcelUtil.class);
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
-
-
+	
+	
+	
 	/**
 	 * 读入excel工作簿文件，只读取第一个sheet
 	 */

@@ -18,15 +18,16 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import javax.swing.ImageIcon;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
  * 图片处理工具
  * @author wei
  */
-@Slf4j
 public abstract class ImageFileUtil extends FileUtil {
+	private static final Logger log = LoggerFactory.getLogger(ImageFileUtil.class);
 	/**
 	 * 图片等比例压缩
 	 * @param imgData

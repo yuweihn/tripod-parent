@@ -15,10 +15,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.assist4j.core.Response;
 import com.assist4j.core.mail.Mail;
-
-import lombok.extern.slf4j.Slf4j;
 
 import com.assist4j.core.Constant;
 
@@ -27,8 +28,8 @@ import com.assist4j.core.Constant;
  * 默认的邮件发送器
  * @author yuwei
  */
-@Slf4j
 public class DefaultEmailSender implements EmailSender {
+	private static final Logger log = LoggerFactory.getLogger(DefaultEmailSender.class);
 	public String server;
 	public int sslPort;
 	public boolean auth;
