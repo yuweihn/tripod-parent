@@ -12,5 +12,4 @@ public interface IRule {
 	int chooseSegment();
 	
 	void setSegmentCount(int segmentCount);
-	int getSegmentCount();
 }

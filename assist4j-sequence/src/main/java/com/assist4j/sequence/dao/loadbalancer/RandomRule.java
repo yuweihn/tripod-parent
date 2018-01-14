@@ -32,9 +32,4 @@ public class RandomRule implements IRule {
 		Assert.isTrue(segmentCount > 0, "Parameter segmentCount cannot be less than 1, segmentCount = " + segmentCount);
 		this.segmentCount = segmentCount;
 	}
-	
-	@Override
-	public int getSegmentCount() {
-		return segmentCount;
-	}
 }
