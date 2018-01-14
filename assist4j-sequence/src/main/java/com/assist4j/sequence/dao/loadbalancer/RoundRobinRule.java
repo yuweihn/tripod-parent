@@ -21,20 +21,6 @@ public class RoundRobinRule implements IRule {
 	}
 	
 	
-	public static void main(String... args) {
-		IRule rule = new RoundRobinRule();
-		rule.setSegmentCount(10);
-		
-		for(int i = 0; i < 10; i++) {
-			final int index = i;
-			new Thread(() -> {
-				int segment = rule.chooseSegment();
-				System.out.println(index + ": " + segment);
-			}).start();
-		}
-	}
-	
-	
 	@Override
 	public int chooseSegment() {
 		Assert.isTrue(segmentCount > 0, "Field segmentCount cannot be less than 1, segmentCount = " + segmentCount);
