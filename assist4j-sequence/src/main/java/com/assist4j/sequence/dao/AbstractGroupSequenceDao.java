@@ -119,8 +119,8 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 			return new SequenceHolder(adjustOldValue + 1L, adjustOldValue + (long)getInnerStep());
 		}
 		
-		log.error("所有数据源都不可用！且重试{}次后，仍然失败!", retryTimes);
-		throw new SequenceException("All dataSource failed to get value!");
+		log.error("无法获取Sequence，已重试{}次！", retryTimes);
+		throw new SequenceException("Can not obtain sequence.");
 	}
 	
 	protected void cleanExcludedSegment() {
