@@ -43,22 +43,22 @@ For example:
 		return sequenceDao;
 	}
 
-	@Bean(name = "fppSequenceBeanHolder")
-	@ConfigurationProperties(prefix = "spring", ignoreUnknownFields = true)
-	public SequenceBeanHolder fppSequenceBeanHolder() {
-		return new SequenceBeanHolder() {
-			private Map<String, String> beanSeqNameMap = new HashMap<String, String>();
-			
-			@Override
-			public Map<String, String> getBeanSeqNameMap() {
-				return beanSeqNameMap;
-			}
-		};
-	}
+	@Bean(name = "sequenceBeanHolder")
+    @ConfigurationProperties(prefix = "spring", ignoreUnknownFields = true)
+    public SequenceBeanHolder sequenceBeanHolder() {
+        return new SequenceBeanHolder() {
+            private Map<String, String> beanSeqNameMap = new HashMap<String, String>();
+            
+            @Override
+            public Map<String, String> getBeanSeqNameMap() {
+                return beanSeqNameMap;
+            }
+        };
+    }
 
 	@Bean(name = "sequenceBeanFactory")
 	public SequenceBeanFactory sequenceBeanFactory() {
-		return new SequenceBeanFactory(DefaultSequence.class, "fppSequenceBeanHolder");
+		return new SequenceBeanFactory(DefaultSequence.class, "sequenceBeanHolder");
 	}
 ------------------------------------------------------------------------------------------------------------------
 	@Resource
