@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 身份证工具类
- * @author wei
+ * @author yuwei
  */
 public abstract class IdCardUtil {
 	private static final Logger log = LoggerFactory.getLogger(IdCardUtil.class);
@@ -22,8 +22,8 @@ public abstract class IdCardUtil {
 	private static final int CHINA_ID_NO_1_LENGTH = 15;
 	/** 中国公民二代身份证号码长度。 */
 	private static final int CHINA_ID_NO_2_LENGTH = 18;
-	/** 每位加权因子 */
-	private static final int power[] = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
+	/** 加权因子 */
+	private static final int WEIGHT_FACTORS[] = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
 	private static Map<String, String> cityCodes = new HashMap<String, String>();
 	/** 台湾身份首字母对应数字 */
 	private static Map<String, Integer> twFirstCode = new HashMap<String, Integer>();
@@ -317,15 +317,15 @@ public abstract class IdCardUtil {
 	 * @return 身份证编码。
 	 */
 	private static int getPowerSum(int[] iArr) {
-		if (iArr == null || power.length != iArr.length) {
+		if (iArr == null || WEIGHT_FACTORS.length != iArr.length) {
 			return 0;
 		}
 
 		int iSum = 0;
 		for (int i = 0; i < iArr.length; i++) {
-			for (int j = 0; j < power.length; j++) {
+			for (int j = 0; j < WEIGHT_FACTORS.length; j++) {
 				if (i == j) {
-					iSum = iSum + iArr[i] * power[j];
+					iSum = iSum + iArr[i] * WEIGHT_FACTORS[j];
 				}
 			}
 		}
