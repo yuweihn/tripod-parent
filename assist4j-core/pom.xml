@@ -17,7 +17,7 @@
 		<activemq.pool.version>5.15.0</activemq.pool.version>
 		<aliyun.oss.version>2.8.3</aliyun.oss.version>
 		<commons.beanutils.version>1.9.3</commons.beanutils.version>
-		<fastjson.version>1.2.42</fastjson.version>
+		<fastjson.version>1.2.45</fastjson.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
 		<jdk.version>1.8</jdk.version>
 		<jms.spec.version>1.1.1</jms.spec.version>
