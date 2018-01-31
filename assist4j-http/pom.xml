@@ -18,7 +18,7 @@
 		<httpcore.version>4.4.8</httpcore.version>
 		<jdk.version>1.8</jdk.version>
 		<servlet.version>4.0.0</servlet.version>
-		<spring.version>4.3.13.RELEASE</spring.version>
+		<spring.version>4.3.14.RELEASE</spring.version>
 	</properties>
 
 

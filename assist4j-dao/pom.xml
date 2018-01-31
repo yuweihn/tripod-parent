@@ -16,7 +16,7 @@
 		<hibernate.version>5.0.12.Final</hibernate.version>
 		<jdk.version>1.8</jdk.version>
 		<spring.mongodb.version>1.10.9.RELEASE</spring.mongodb.version>
-		<spring.version>4.3.13.RELEASE</spring.version>
+		<spring.version>4.3.14.RELEASE</spring.version>
 	</properties>
 
 
