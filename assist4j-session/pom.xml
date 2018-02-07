@@ -6,7 +6,7 @@
 	<groupId>com.assist4j</groupId>
 	<artifactId>assist4j-session</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>a project about assist4j</description>
@@ -72,11 +72,6 @@
 			<url>http://repo.spring.io/milestone</url>
 			<snapshots><enabled>true</enabled></snapshots>
 		</repository>
-		<repository>
-			<id>central</id>
-			<url>https://oss.sonatype.org/content/groups/public</url>
-			<snapshots><enabled>true</enabled></snapshots>
-		</repository>
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
@@ -86,10 +81,6 @@
 		<pluginRepository>
 			<id>spring-milestones</id>
 			<url>http://repo.spring.io/milestone</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>central</id>
-			<url>https://oss.sonatype.org/content/groups/public</url>
 		</pluginRepository>
 	</pluginRepositories>
 
