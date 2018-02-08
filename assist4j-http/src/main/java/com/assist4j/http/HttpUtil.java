@@ -7,6 +7,7 @@ import org.springframework.util.Assert;
 
 
 /**
+ * @deprecated Use {@link HttpRequest} instead.
  * @author yuwei
  */
 @Deprecated
