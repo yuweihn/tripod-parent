@@ -14,14 +14,18 @@ public interface Cache {
 	 * @param channel
 	 * @param value
 	 */
-	<T>void publish(String channel, T value);
+	default <T>void publish(String channel, T value) {
+		throw new RuntimeException("Not Supported.");
+	}
 
 	/**
 	 * 订阅消息
 	 * @param channel
 	 * @param handler
 	 */
-	<T>void subscribe(String channel, MessageHandler<T> handler);
+	default <T>void subscribe(String channel, MessageHandler<T> handler) {
+		throw new RuntimeException("Not Supported.");
+	}
 
 	/**
 	 * 缓存中是否包含key
