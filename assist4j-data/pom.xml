@@ -6,7 +6,7 @@
 	<groupId>com.assist4j</groupId>
 	<artifactId>assist4j-data</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>a project about assist4j</description>
@@ -16,7 +16,7 @@
 		<activemq.core.version>5.7.0</activemq.core.version>
 		<activemq.pool.version>5.15.0</activemq.pool.version>
 		<aspectj.version>1.8.13</aspectj.version>
-		<fastjson.version>1.2.45</fastjson.version>
+		<fastjson.version>1.2.46</fastjson.version>
 		<hibernate.version>5.0.12.Final</hibernate.version>
 		<jdk.version>1.8</jdk.version>
 		<jedis.version>2.9.0</jedis.version>

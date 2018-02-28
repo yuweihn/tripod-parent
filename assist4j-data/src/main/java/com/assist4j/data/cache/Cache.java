@@ -1,7 +1,6 @@
 package com.assist4j.data.cache;
 
 
-import com.assist4j.data.cache.redis.JedisListener;
 import java.util.Date;
 
 
@@ -20,9 +19,9 @@ public interface Cache {
 	/**
 	 * 订阅消息
 	 * @param channel
-	 * @param jedisListener
+	 * @param handler
 	 */
-	<T>void subscribe(String channel, JedisListener<T> jedisListener);
+	<T>void subscribe(String channel, MessageHandler<T> handler);
 
 	/**
 	 * 缓存中是否包含key

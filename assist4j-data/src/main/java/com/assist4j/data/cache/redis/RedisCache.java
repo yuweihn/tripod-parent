@@ -7,9 +7,12 @@ import java.util.concurrent.TimeUnit;
 import com.assist4j.data.cache.Cache;
 import com.assist4j.data.cache.CacheUtil;
 
+import com.assist4j.data.cache.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.Message;
+import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -43,11 +46,28 @@ public class RedisCache implements Cache {
 	}
 
 	@Override
-	public <T>void subscribe(final String channel, final JedisListener<T> jedisListener) {
-		redisTemplate.execute(new RedisCallback<Object>(){
+	public <T>void subscribe(String channel, MessageHandler<T> handler) {
+		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.subscribe(jedisListener, SafeEncoder.encode(channel));
+				connection.subscribe(new MessageListener() {
+					@Override
+					public void onMessage(Message message, byte[] bytes) {
+						String channel = null;
+						String msg = null;
+
+						if(message.getChannel() != null) {
+							channel = SafeEncoder.encode(message.getChannel());
+						}
+
+						if(message.getBody() != null) {
+							msg = SafeEncoder.encode(message.getBody());
+						}
+
+						T t = CacheUtil.stringToObject(msg);
+						handler.handle(channel, t);
+					}
+				}, SafeEncoder.encode(channel));
 				return null;
 			}
 		});

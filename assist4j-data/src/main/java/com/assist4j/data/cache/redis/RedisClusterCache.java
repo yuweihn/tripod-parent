@@ -5,11 +5,13 @@ import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.assist4j.data.cache.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.assist4j.data.cache.Cache;
 import com.assist4j.data.cache.CacheUtil;
+import redis.clients.jedis.JedisPubSub;
 
 
 /**
@@ -21,12 +23,9 @@ public class RedisClusterCache implements Cache {
 	private BinaryJedisCluster jedisCluster;
 
 
-
 	public void setJedisCluster(BinaryJedisCluster jedisCluster) {
 		this.jedisCluster = jedisCluster;
 	}
-
-
 
 
 	@Override
@@ -37,8 +36,14 @@ public class RedisClusterCache implements Cache {
 	}
 
 	@Override
-	public <T>void subscribe(String channel, JedisListener<T> jedisListener) {
-		jedisCluster.subscribe(jedisListener, channel);
+	public <T>void subscribe(String channel, MessageHandler<T> handler) {
+		jedisCluster.subscribe(new JedisPubSub() {
+			@Override
+			public void onMessage(String channel, String message) {
+				T t = CacheUtil.stringToObject(message);
+				handler.handle(channel, t);
+			}
+		}, channel);
 	}
 
 	@Override
