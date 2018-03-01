@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Cookie操作工具
- * @author wei
+ * @author yuwei
  */
 public abstract class CookieUtil {
 	public static final int COOKIE_MAXAGE_1W = 7 * 24 * 60 * 60;// 1 week

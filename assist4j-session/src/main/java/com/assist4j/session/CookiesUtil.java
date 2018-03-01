@@ -8,10 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Cookie操作工具
- * @author wei
+ * @author yuwei
  */
-public abstract class CookieUtil {
-	public static final int COOKIE_MAXAGE_1W = 7 * 24 * 60 * 60;// 1 week
+public abstract class CookiesUtil {
 	public static final int COOKIE_MAXAGE_DEFAULT = -1;//默认Cookie的生存期为关闭浏览器
 
 

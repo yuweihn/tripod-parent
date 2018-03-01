@@ -97,7 +97,7 @@ public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 	 */
 	private HttpSession doGetSession(boolean create) {
 		if (cacheSession == null) {
-			String sessionId = CookieUtil.findValueByKey(request, sessionCookieName);
+			String sessionId = CookiesUtil.findValueByKey(request, sessionCookieName);
 			if (sessionId != null) {
 				cacheSession = buildCacheHttpSession(sessionId, false);
 			} else {
@@ -132,7 +132,7 @@ public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 		CacheHttpSession session = new CacheHttpSession(sessionId, maxInactiveInterval, sessionKeyPrefix, cache);
 
 		if (cookie) {
-			CookieUtil.addCookie(request, response, sessionCookieName, sessionId, CookieUtil.COOKIE_MAXAGE_DEFAULT);
+			CookiesUtil.addCookie(request, response, sessionCookieName, sessionId, CookiesUtil.COOKIE_MAXAGE_DEFAULT);
 		}
 
 		return session;
