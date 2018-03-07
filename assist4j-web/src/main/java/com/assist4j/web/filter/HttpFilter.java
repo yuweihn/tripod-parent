@@ -74,7 +74,6 @@ public class HttpFilter extends AbstractFilter {
 
 	@Override
 	protected void afterFilter(HttpServletRequest request, HttpServletResponse response) {
-		log.info("Status: {}", response.getStatus());
 		allowOrigin(request, response);
 	}
 

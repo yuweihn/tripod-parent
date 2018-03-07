@@ -27,6 +27,7 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 		filterChain.doFilter(requestWrapper, response);
 		afterFilter(requestWrapper, response);
 		long endTimeMillis = System.currentTimeMillis();
+		log.info("Status: {}", response.getStatus());
 		log.info("This call takes {} milliseconds.", endTimeMillis - startTimeMillis);
 	}
 
