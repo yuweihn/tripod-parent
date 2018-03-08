@@ -6,10 +6,10 @@
 	<groupId>com.assist4j</groupId>
 	<artifactId>assist4j-sequence</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
-	<description>a project about assist4j</description>
+	<description>A project about assist4j</description>
 	<url>https://assist4j.com</url>
 
 	<properties>

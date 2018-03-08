@@ -1,8 +1,8 @@
 package com.assist4j.core.springboot;
 
 
-import com.assist4j.core.mail.sender.DefaultEmailSender;
-import com.assist4j.core.mail.sender.EmailSender;
+import com.assist4j.core.mail.DefaultEmailSender;
+import com.assist4j.core.mail.EmailSender;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
