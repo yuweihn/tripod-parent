@@ -14,18 +14,14 @@ public interface Cache {
 	 * @param channel
 	 * @param value
 	 */
-	default <T>void publish(String channel, T value) {
-
-	}
+	default <T>void publish(String channel, T value) {}
 
 	/**
 	 * 订阅消息
 	 * @param channel
 	 * @param handler
 	 */
-	default <T>void subscribe(String channel, MessageHandler<T> handler) {
-
-	}
+	default <T>void subscribe(String channel, MessageHandler<T> handler) {}
 
 	/**
 	 * 缓存中是否包含key
