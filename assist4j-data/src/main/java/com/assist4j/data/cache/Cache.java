@@ -15,7 +15,7 @@ public interface Cache {
 	 * @param value
 	 */
 	default <T>void publish(String channel, T value) {
-		throw new RuntimeException("Not Supported.");
+
 	}
 
 	/**
@@ -24,7 +24,7 @@ public interface Cache {
 	 * @param handler
 	 */
 	default <T>void subscribe(String channel, MessageHandler<T> handler) {
-		throw new RuntimeException("Not Supported.");
+
 	}
 
 	/**
