@@ -56,6 +56,7 @@ public class HttpFilter extends AbstractFilter {
 		printParams(request);
 		setCharacterEncoding(request, response);
 		setContextPath(request);
+		allowOrigin(request, response);
 	}
 
 	/**
@@ -74,7 +75,6 @@ public class HttpFilter extends AbstractFilter {
 
 	@Override
 	protected void afterFilter(HttpServletRequest request, HttpServletResponse response) {
-		allowOrigin(request, response);
 	}
 
 	/**
