@@ -36,7 +36,7 @@ public class DefaultEmailSender implements EmailSender<Mail> {
 
 
 	@Override
-	public Response<Void> send(Mail mail){
+	public Response<Void> send(Mail mail) {
 		Properties props = System.getProperties();
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
