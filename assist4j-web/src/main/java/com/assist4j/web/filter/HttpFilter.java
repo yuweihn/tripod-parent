@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.assist4j.core.CommonUtil;
+import com.assist4j.core.BeanUtil;
 import com.assist4j.web.HttpMethodRequestWrapper;
 import com.assist4j.core.Constant;
 import com.assist4j.core.ActionUtil;
@@ -122,7 +122,7 @@ public class HttpFilter extends AbstractFilter {
 			referrer = "*";
 		} else {
 			log.info("Referrer: {}", referrer);
-			String domainUrl = CommonUtil.getDomainUrl(referrer);
+			String domainUrl = BeanUtil.getDomainUrl(referrer);
 			referrer = domainUrl == null ? "*" : domainUrl;
 		}
 

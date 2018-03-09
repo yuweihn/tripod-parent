@@ -21,7 +21,7 @@ import org.springframework.util.Assert;
 /**
  * @author yuwei
  */
-public abstract class CommonUtil {
+public abstract class BeanUtil {
 
 	private static final String[] strs = {"A", "B", "C", "D", "E", "F", "G"
 											, "H", "I", "J", "K", "L", "M", "N"
