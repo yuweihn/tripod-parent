@@ -9,7 +9,7 @@ public interface SessionCache {
 	/**
 	 * expiredTime 有效期(单位：秒)。
 	 */
-	<T>boolean put(String key, T value, long expiredTime);
-	<T>T get(String key);
+	boolean put(String key, String value, long expiredTime);
+	String get(String key);
 	void remove(String key);
 }
