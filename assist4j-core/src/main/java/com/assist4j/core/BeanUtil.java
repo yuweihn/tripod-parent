@@ -33,7 +33,7 @@ public abstract class BeanUtil {
 
 	/**
 	 * 阿尔法排序后的键值对。
-	 * appkey=miutest&force=true&order_id=YC1603290001101T&tp_customer_phone=17717601007
+	 * appkey=miutest[conn]force=true[conn]order_id=YC1603290001101T[conn]tp_customer_phone=17717601007
 	 */
 	public static String getAlphaString(Map<String, ? extends Object> map, String conn) {
 		return getAlphaString(map, conn, null);

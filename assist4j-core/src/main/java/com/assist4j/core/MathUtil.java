@@ -21,7 +21,7 @@ public abstract class MathUtil {
 
 	/**
 	 * 将浮点数强转为整数，小数部分往上加。
-	 * 如4.2 ----> 5
+	 * 如4.2 ----\> 5
 	 * @return
 	 */
 	public static int ceil(double d) {
@@ -111,7 +111,7 @@ public abstract class MathUtil {
 	}
 
 	/**
-	 * 计算弧度(180° ----> π)
+	 * 计算弧度(180° ----\> π)
 	 */
 	public static double rad(double degree) {
 		return mul(Math.PI, degree, 1 / 180.0);
