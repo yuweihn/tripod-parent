@@ -4,7 +4,7 @@ package com.assist4j.data.cache.redis;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import com.assist4j.data.cache.MqCache;
+import com.assist4j.data.cache.MessageCache;
 import com.assist4j.data.cache.CacheUtil;
 
 import com.assist4j.data.cache.MessageHandler;
@@ -23,7 +23,7 @@ import redis.clients.util.SafeEncoder;
 /**
  * @author yuwei
  */
-public class RedisCache implements MqCache {
+public class RedisCache implements MessageCache {
 	private static final Logger log = LoggerFactory.getLogger(RedisCache.class);
 	private RedisTemplate<String, Object> redisTemplate;
 

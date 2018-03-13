@@ -5,7 +5,7 @@ package com.assist4j.data.cache;
 /**
  * @author yuwei
  */
-public interface MqCache extends Cache {
+public interface MessageCache extends Cache {
 	/**
 	 * 发布消息
 	 * @param channel

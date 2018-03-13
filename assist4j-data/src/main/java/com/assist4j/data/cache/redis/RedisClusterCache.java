@@ -9,7 +9,7 @@ import com.assist4j.data.cache.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.assist4j.data.cache.MqCache;
+import com.assist4j.data.cache.MessageCache;
 import com.assist4j.data.cache.CacheUtil;
 import redis.clients.jedis.JedisPubSub;
 
@@ -17,7 +17,7 @@ import redis.clients.jedis.JedisPubSub;
 /**
  * @author yuwei
  */
-public class RedisClusterCache implements MqCache {
+public class RedisClusterCache implements MessageCache {
 	private static final Logger log = LoggerFactory.getLogger(RedisClusterCache.class);
 	private static final String UTF_8 = "utf-8";
 	private BinaryJedisCluster jedisCluster;
