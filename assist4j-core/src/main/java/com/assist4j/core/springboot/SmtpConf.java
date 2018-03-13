@@ -3,6 +3,8 @@ package com.assist4j.core.springboot;
 
 import com.assist4j.core.mail.DefaultEmailSender;
 import com.assist4j.core.mail.EmailSender;
+import com.assist4j.core.mail.Mail;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
@@ -13,7 +15,7 @@ import org.springframework.context.annotation.Bean;
 public class SmtpConf {
 
 	@Bean(name = "defaultEmailSender")
-	public EmailSender defaultSender(@Value("${smtp.server}") String server
+	public EmailSender<Mail> defaultSender(@Value("${smtp.server}") String server
 			, @Value("${smtp.ssl.port}") int sslPort
 			, @Value("${smtp.auth}") boolean auth
 			, @Value("${smtp.user}") String user
