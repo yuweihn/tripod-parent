@@ -16,6 +16,10 @@
 		<commons.collections.version>3.2.2</commons.collections.version>
 		<fastjson.version>1.2.46</fastjson.version>
 		<jdk.version>1.7</jdk.version>
+		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
+		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
+		<maven.source.plugin.version>3.0.1</maven.source.plugin.version>
 		<servlet.version>4.0.0</servlet.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<spring.version>4.3.14.RELEASE</spring.version>
@@ -127,6 +131,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
@@ -136,6 +141,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven.javadoc.plugin.version}</version>
 				<configuration>
 					<aggregate>true</aggregate>
 					<show>public</show>
@@ -159,6 +165,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven.source.plugin.version}</version>
 				<configuration>
 					<attach>true</attach>
 				</configuration>
@@ -174,6 +181,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
+				<version>${maven.gpg.plugin.version}</version>
 				<executions>
 					<execution>
 						<phase>verify</phase>

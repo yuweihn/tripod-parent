@@ -20,6 +20,10 @@
 		<hibernate.version>5.0.12.Final</hibernate.version>
 		<jdk.version>1.7</jdk.version>
 		<jedis.version>2.9.0</jedis.version>
+		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
+		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
+		<maven.source.plugin.version>3.0.1</maven.source.plugin.version>
 		<mongodb.driver.version>3.6.0</mongodb.driver.version>
 		<mybatis.spring.version>1.3.1</mybatis.spring.version>
 		<mybatis.version>3.4.5</mybatis.version>
@@ -213,6 +217,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
@@ -222,6 +227,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven.javadoc.plugin.version}</version>
 				<configuration>
 					<aggregate>true</aggregate>
 					<show>public</show>
@@ -245,6 +251,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+				<version>${maven.source.plugin.version}</version>
 				<configuration>
 					<attach>true</attach>
 				</configuration>
@@ -260,6 +267,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
+				<version>${maven.gpg.plugin.version}</version>
 				<executions>
 					<execution>
 						<phase>verify</phase>
