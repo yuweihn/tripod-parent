@@ -7,14 +7,14 @@
     <groupId>com.assist4j</groupId>
     <artifactId>assist4j-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A project about assist4j</description>
     <url>https://assist4j.com</url>
 
     <properties>
-        <jdk.version>1.8</jdk.version>
+        <jdk.version>1.7</jdk.version>
     </properties>
 
     <modules>

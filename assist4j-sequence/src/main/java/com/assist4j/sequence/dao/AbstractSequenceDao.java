@@ -60,6 +60,14 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 		this.innerStep = innerStep;
 	}
 
+	@Override
+	public void init() {
+
+	}
+	@Override
+	public void destroy() {
+
+	}
 
 
 	private String getSeqInsertSql() {

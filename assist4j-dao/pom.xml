@@ -6,7 +6,7 @@
 	<groupId>com.assist4j</groupId>
 	<artifactId>assist4j-dao</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>A project about assist4j</description>
@@ -14,7 +14,7 @@
 
 	<properties>
 		<hibernate.version>5.0.12.Final</hibernate.version>
-		<jdk.version>1.8</jdk.version>
+		<jdk.version>1.7</jdk.version>
 		<spring.mongodb.version>1.10.9.RELEASE</spring.mongodb.version>
 		<spring.version>4.3.14.RELEASE</spring.version>
 	</properties>

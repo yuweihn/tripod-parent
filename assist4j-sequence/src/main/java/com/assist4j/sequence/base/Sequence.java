@@ -5,8 +5,8 @@ package com.assist4j.sequence.base;
  * @author yuwei
  */
 public interface Sequence {
-	default void init() {}
-	default void destroy() {}
+	void init();
+	void destroy();
 	
 	long nextValue();
 }

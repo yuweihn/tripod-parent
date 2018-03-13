@@ -94,14 +94,14 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			}
 		}
 		if(!CollectionUtils.isEmpty(cookies)) {
-			cookies.forEach(c -> {
+			for(org.apache.http.cookie.Cookie c: cookies) {
 				Date now = new Date();
 				Date expiryDate = c.getExpiryDate();
 
 				Cookie cookie = new Cookie(c.getName(), c.getValue());
 				cookie.setComment(c.getComment());
 				cookie.setDomain(c.getDomain());
-				if(expiryDate == null) {
+				if (expiryDate == null) {
 					cookie.setMaxAge(-1);
 				} else {
 					cookie.setMaxAge((int) (expiryDate.getTime() / 1000 - now.getTime() / 1000));
@@ -110,7 +110,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 				cookie.setSecure(c.isSecure());
 				cookie.setVersion(c.getVersion());
 				cookieList.add(cookie);
-			});
+			}
 		}
 
 		/**
@@ -193,6 +193,10 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		}
 
 
+		@Override
+		public boolean isSuccess() {
+			return HttpStatus.SC_OK == getStatus();
+		}
 		@Override
 		public int getStatus() {
 			return status;

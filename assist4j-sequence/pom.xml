@@ -6,14 +6,14 @@
 	<groupId>com.assist4j</groupId>
 	<artifactId>assist4j-sequence</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>A project about assist4j</description>
 	<url>https://assist4j.com</url>
 
 	<properties>
-		<jdk.version>1.8</jdk.version>
+		<jdk.version>1.7</jdk.version>
 		<slf4j.version>1.7.25</slf4j.version>
 		<spring.version>4.3.14.RELEASE</spring.version>
 	</properties>

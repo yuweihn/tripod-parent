@@ -9,15 +9,15 @@ import com.assist4j.data.cache.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.assist4j.data.cache.Cache;
+import com.assist4j.data.cache.MqCache;
 import com.assist4j.data.cache.CacheUtil;
 import redis.clients.jedis.JedisPubSub;
 
 
 /**
- * @author wei
+ * @author yuwei
  */
-public class RedisClusterCache implements Cache {
+public class RedisClusterCache implements MqCache {
 	private static final Logger log = LoggerFactory.getLogger(RedisClusterCache.class);
 	private static final String UTF_8 = "utf-8";
 	private BinaryJedisCluster jedisCluster;
@@ -36,7 +36,7 @@ public class RedisClusterCache implements Cache {
 	}
 
 	@Override
-	public <T>void subscribe(String channel, MessageHandler<T> handler) {
+	public <T>void subscribe(String channel, final MessageHandler<T> handler) {
 		jedisCluster.subscribe(new JedisPubSub() {
 			@Override
 			public void onMessage(String channel, String message) {

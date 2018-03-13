@@ -10,20 +10,6 @@ import java.util.Date;
  */
 public interface Cache {
 	/**
-	 * 发布消息
-	 * @param channel
-	 * @param value
-	 */
-	default <T>void publish(String channel, T value) {}
-
-	/**
-	 * 订阅消息
-	 * @param channel
-	 * @param handler
-	 */
-	default <T>void subscribe(String channel, MessageHandler<T> handler) {}
-
-	/**
 	 * 缓存中是否包含key
 	 * 找到返回为true，找不到返回为false
 	 * @param key 查找的值

@@ -6,7 +6,7 @@
 	<groupId>com.assist4j</groupId>
 	<artifactId>assist4j-core</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>A project about assist4j</description>
@@ -19,7 +19,7 @@
 		<commons.beanutils.version>1.9.3</commons.beanutils.version>
 		<fastjson.version>1.2.46</fastjson.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
-		<jdk.version>1.8</jdk.version>
+		<jdk.version>1.7</jdk.version>
 		<jms.spec.version>1.1.1</jms.spec.version>
 		<poi.version>3.14</poi.version>
 		<servlet.version>4.0.0</servlet.version>

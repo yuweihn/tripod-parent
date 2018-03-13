@@ -2,11 +2,7 @@ package com.assist4j.sequence.dao;
 
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.assist4j.sequence.bean.SequenceHolder;
@@ -47,7 +43,6 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	@Override
 	public void init() {
 		initDataSourceRouteRule();
-		super.init();
 	}
 	
 	private void initDataSourceRouteRule() {
@@ -127,7 +122,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 		}
 	}
 	
-	private Long selectSeqValueFromASegment(int segment, String seqName) {
+	private Long selectSeqValueFromASegment(final int segment, final String seqName) {
 		int segCount = getSegmentCount();
 		
 		if (excludedSegment.get(segment) != null) {
@@ -143,7 +138,12 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 			return selectSeqValue(segment, seqName);
 		} else {
 			try {
-				Future<Long> future = threadPool.submit(() -> selectSeqValue(segment, seqName));
+				Future<Long> future = threadPool.submit(new Callable<Long>() {
+					@Override
+					public Long call() {
+						return selectSeqValue(segment, seqName);
+					}
+				});
 				return future.get(maxWaitMillis, TimeUnit.MILLISECONDS);
 			} catch (Exception e) {
 				log.error("", e);

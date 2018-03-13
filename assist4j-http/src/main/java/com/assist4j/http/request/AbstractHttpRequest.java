@@ -165,14 +165,18 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 			httpUriRequest.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, hct.toString()));
 		}
 		if(!CollectionUtils.isEmpty(headerList)) {
-			headerList.forEach(header -> httpUriRequest.setHeader(header)); 
+			for(Header header: headerList) {
+				httpUriRequest.setHeader(header);
+			}
 		}
 		/**
 		 * cookie
 		 */
 		if(!CollectionUtils.isEmpty(cookieList)) {
 			StringBuilder builder = new StringBuilder("");
-			cookieList.forEach(cookie -> builder.append(cookie.getName()).append("=").append(cookie.getValue()).append(";"));
+			for(Cookie cookie: cookieList) {
+				builder.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
+			}
 			builder.deleteCharAt(builder.length() - 1);
 			httpUriRequest.setHeader("Cookie", builder.toString());
 		}
@@ -193,28 +197,36 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 		 * add first http request interceptor list
 		 */
 		if(!CollectionUtils.isEmpty(firstRequestInterceptorList)) {
-			firstRequestInterceptorList.forEach(interceptor -> builder.addInterceptorFirst(interceptor));
+			for(HttpRequestInterceptor interceptor: firstRequestInterceptorList) {
+				builder.addInterceptorFirst(interceptor);
+			}
 		}
 
 		/**
 		 * add last http request interceptor list
 		 */
 		if(!CollectionUtils.isEmpty(lastRequestInterceptorList)) {
-			lastRequestInterceptorList.forEach(interceptor -> builder.addInterceptorLast(interceptor));
+			for(HttpRequestInterceptor interceptor: lastRequestInterceptorList) {
+				builder.addInterceptorLast(interceptor);
+			}
 		}
 
 		/**
 		 * add first http response interceptor list
 		 */
 		if(!CollectionUtils.isEmpty(firstResponseInterceptorList)) {
-			firstResponseInterceptorList.forEach(interceptor -> builder.addInterceptorFirst(interceptor));
+			for(HttpResponseInterceptor interceptor: firstResponseInterceptorList) {
+				builder.addInterceptorFirst(interceptor);
+			}
 		}
 
 		/**
 		 * add last http response interceptor list
 		 */
 		if(!CollectionUtils.isEmpty(lastResponseInterceptorList)) {
-			lastResponseInterceptorList.forEach(interceptor -> builder.addInterceptorLast(interceptor));
+			for(HttpResponseInterceptor interceptor: lastResponseInterceptorList) {
+				builder.addInterceptorLast(interceptor);
+			}
 		}
 
 		CloseableHttpClient client = builder.build();

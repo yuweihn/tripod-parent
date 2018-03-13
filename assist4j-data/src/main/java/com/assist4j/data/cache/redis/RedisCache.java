@@ -4,7 +4,7 @@ package com.assist4j.data.cache.redis;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import com.assist4j.data.cache.Cache;
+import com.assist4j.data.cache.MqCache;
 import com.assist4j.data.cache.CacheUtil;
 
 import com.assist4j.data.cache.MessageHandler;
@@ -23,7 +23,7 @@ import redis.clients.util.SafeEncoder;
 /**
  * @author yuwei
  */
-public class RedisCache implements Cache {
+public class RedisCache implements MqCache {
 	private static final Logger log = LoggerFactory.getLogger(RedisCache.class);
 	private RedisTemplate<String, Object> redisTemplate;
 
@@ -35,8 +35,8 @@ public class RedisCache implements Cache {
 
 	@Override
 	public <T>void publish(final String channel, final T value) {
-		String v = CacheUtil.objectToString(value);
-		redisTemplate.execute(new RedisCallback<Object>(){
+		final String v = CacheUtil.objectToString(value);
+		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
 				connection.publish(SafeEncoder.encode(channel), SafeEncoder.encode(v));
@@ -46,7 +46,7 @@ public class RedisCache implements Cache {
 	}
 
 	@Override
-	public <T>void subscribe(String channel, MessageHandler<T> handler) {
+	public <T>void subscribe(final String channel, final MessageHandler<T> handler) {
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
@@ -126,5 +126,4 @@ public class RedisCache implements Cache {
 	public void remove(String key) {
 		redisTemplate.delete(key);
 	}
-
 }

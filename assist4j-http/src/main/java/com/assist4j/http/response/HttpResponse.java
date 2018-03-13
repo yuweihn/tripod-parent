@@ -2,8 +2,6 @@ package com.assist4j.http.response;
 
 
 import org.apache.http.Header;
-import org.apache.http.HttpStatus;
-
 import javax.servlet.http.Cookie;
 import java.util.List;
 
@@ -12,10 +10,7 @@ import java.util.List;
  * @author yuwei
  */
 public interface HttpResponse<B> {
-	default boolean isSuccess() {
-		return HttpStatus.SC_OK == getStatus();
-	}
-	
+	boolean isSuccess();
 	int getStatus();
 	String getErrorMessage();
 	B getBody();
