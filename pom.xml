@@ -9,7 +9,7 @@
     <version>1.0.5</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>A project about assist4j</description>
+    <description>The project of Assist4j.</description>
     <url>http://assist4j.com</url>
 
     <properties>
