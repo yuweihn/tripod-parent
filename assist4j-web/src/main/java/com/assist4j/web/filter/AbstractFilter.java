@@ -19,8 +19,7 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	private static final Logger log = LoggerFactory.getLogger(AbstractFilter.class);
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		long startTimeMillis = System.currentTimeMillis();
 		beforeFilter(request, response);
 		HttpServletRequest requestWrapper = wrapper(request);
