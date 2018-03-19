@@ -92,7 +92,7 @@ public abstract class MathUtil {
 	 * @return
 	 */
 	public static double div(double v1, double v2, int scale) {
-		if(scale < 0){
+		if(scale < 0) {
 			throw new IllegalArgumentException("The scale must be a positive integer or zero.");
 		}
 		BigDecimal b1 = new BigDecimal(Double.toString(v1));
