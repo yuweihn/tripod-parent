@@ -27,7 +27,9 @@ public class SpringContext implements ApplicationContextAware {
 	private static ConfigurableApplicationContext applicationContext;
 	
 	
-	private SpringContext(){}
+	private SpringContext() {
+
+	}
 	
 	
 	public static<T> void registerBean(String beanName, Class<T> clz) {
