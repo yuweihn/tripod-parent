@@ -11,7 +11,7 @@ public class Response<T> implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2124472245885834223L;
+	private static final long serialVersionUID = 1L;
 	private String code;
 	private String msg;
 	private T data;
