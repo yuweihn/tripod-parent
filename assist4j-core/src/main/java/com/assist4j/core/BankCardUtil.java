@@ -24,26 +24,26 @@ public abstract class BankCardUtil {
 	 * @param bankNo
 	 * @return
 	 */
-	public static boolean check(String bankNo){
+	public static boolean check(String bankNo) {
 		// 第一步： 首先通过正则判断，是不是全由数字组成
-		if(!Pattern.matches("^[0-9]{6,}$", bankNo)){
+		if(!Pattern.matches("^[0-9]{6,}$", bankNo)) {
 			return false;
 		}
 		// 第二步： 将银行卡字符串,倒序转换为int数组：如 "478531",转换为[1,3,5,8,7,4]
 		int length = bankNo.length();  // 字符串长度
 		int[] accountDigits = new int[length];
-		for(int i = 0; i < length; i++){
+		for(int i = 0; i < length; i++) {
 			accountDigits[i] = Integer.parseInt(bankNo.substring(length - i - 1, length - i));
 		}
 
 		// 第三步：将第二步得到的数组，偶数位*2处理后，计算和
 		int sum = 0;
-		for(int i = 0; i < length; i++){
+		for(int i = 0; i < length; i++) {
 			int digit = accountDigits[i];
 			// 偶数位，做乘2处理
-			if((i + 1) % 2 == 0){
+			if((i + 1) % 2 == 0) {
 				digit =  accountDigits[i] * 2;
-				if(digit > 9){
+				if(digit > 9) {
 					digit = digit - 9;
 				}
 			}
