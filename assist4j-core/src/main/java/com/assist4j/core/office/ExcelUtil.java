@@ -138,7 +138,7 @@ public abstract class ExcelUtil {
 	 * @param dataList 数据
 	 */
 	public static<T> void export(OutputStream out, List<T> dataList) {
-		Assert.notEmpty(dataList, "[dataList] must not be empty.");
+		Assert.notEmpty(dataList, "[dataList] is required.");
 		log.info("list size: {}", dataList.size());
 		SXSSFWorkbook workbook = null;
 		try {
