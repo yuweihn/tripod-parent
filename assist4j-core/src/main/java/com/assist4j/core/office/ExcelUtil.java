@@ -271,7 +271,11 @@ public abstract class ExcelUtil {
 	private static List<String> getInputHeadList(Row row) {
 		List<String> list = new ArrayList<String>();
 		for(Cell cell: row) {
-			list.add(cell.toString().trim());
+			String head = cell.toString();
+			if(head == null || "".equals(head.trim())) {
+				continue;
+			}
+			list.add(head.trim());
 		}
 		return list;
 	}
