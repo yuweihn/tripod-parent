@@ -271,7 +271,7 @@ public abstract class ExcelUtil {
 	private static List<String> getInputHeadList(Row row) {
 		List<String> list = new ArrayList<String>();
 		for(Cell cell: row) {
-			list.add(cell.toString());
+			list.add(cell.toString().trim());
 		}
 		return list;
 	}
