@@ -67,8 +67,7 @@ public abstract class ExcelUtil {
 			 **/
 			return getInputDataList(sheet, headList);
 		} catch (Exception e) {
-			log.error("", e);
-			return new ArrayList<Map<String, Object>>();
+			throw new RuntimeException(e);
 		} finally {
 			if(is != null) {
 				try {
