@@ -2,7 +2,6 @@ package com.assist4j.sequence.bean;
 
 
 import java.util.concurrent.atomic.AtomicLong;
-
 import com.assist4j.sequence.exception.SequenceException;
 
 
