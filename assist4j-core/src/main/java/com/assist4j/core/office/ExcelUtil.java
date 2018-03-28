@@ -99,7 +99,7 @@ public abstract class ExcelUtil {
 					continue;
 				}
 
-				String key = excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title();
+				String key = excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim();
 				Object v = map.get(key);
 				if(v == null) {
 					continue;
@@ -211,7 +211,7 @@ public abstract class ExcelUtil {
 				for(Field field: fields) {
 					ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
 					if(excelKeyAno != null) {
-						list.add(excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title());
+						list.add(excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim());
 					}
 				}
 			}
