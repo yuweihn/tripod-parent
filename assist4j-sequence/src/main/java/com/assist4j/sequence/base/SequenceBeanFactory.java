@@ -223,6 +223,8 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 				registerBean(beanName, this.constructorArgList, propList);
 			}
 			done = true;
+		} catch (Exception e) {
+			throw e;
 		} finally {
 			lock.unlock();
 		}
