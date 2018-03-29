@@ -103,7 +103,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 
 		checkSequenceClass();
 		checkInitMethod();
-		checkDestoryMethod();
+		checkDestroyMethod();
 	}
 	
 	/**
@@ -147,7 +147,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	/**
 	 * 如果未设置destroyMethod，将sequenceClass类中的destroy作为默认的destroyMethod
 	 */
-	private void checkDestoryMethod() {
+	private void checkDestroyMethod() {
 		if(this.destroyMethod != null && !"".equals(this.destroyMethod)) {
 			return;
 		}
