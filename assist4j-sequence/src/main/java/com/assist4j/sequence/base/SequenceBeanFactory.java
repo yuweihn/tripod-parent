@@ -8,8 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.assist4j.sequence.dao.SequenceDao;
 import com.assist4j.sequence.exception.SequenceException;
@@ -44,14 +43,13 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	private String sequenceBeanHolderBeanName;
 	private String initMethod;
 	private String destroyMethod;
-	
-	
+
+
 	private DefaultListableBeanFactory beanFactory;
-	private static volatile boolean done = false;
-	private static final Lock lock = new ReentrantLock();
-	
-	
-	
+	private static volatile AtomicBoolean done = new AtomicBoolean(false);
+
+
+
 	public SequenceBeanFactory(Class<? extends Sequence> sequenceClass, String sequenceBeanHolderBeanName) {
 		this(sequenceClass.getName(), sequenceBeanHolderBeanName);
 	}
@@ -105,7 +103,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		checkInitMethod();
 		checkDestoryMethod();
 	}
-	
+
 	/**
 	 * 检查sequenceClass，必须含有fieldSeqName指定的属性名和propertyList中的所有属性名。
 	 */
@@ -127,7 +125,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 			throw new SequenceException(e);
 		}
 	}
-	
+
 	/**
 	 * 如果未设置initMethod，将sequenceClass类中的init作为默认的initMethod
 	 */
@@ -160,73 +158,65 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 			log.warn(e.toString());
 		}
 	}
-	
+
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 		this.beanFactory = (DefaultListableBeanFactory)beanFactory;
 	}
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		if(sequenceBeanHolderBeanName != null && !sequenceBeanHolderBeanName.equals(beanName)
-				&& !SequenceDao.class.isAssignableFrom(bean.getClass())) {
-			registerBeans();
-		}
 		return bean;
 	}
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+		if(done.get()) {
+			return bean;
+		}
+
+		if(done.compareAndSet(false, true) == false) {
+			return bean;
+		}
+
+		if(beanName.equals(sequenceBeanHolderBeanName)) {
+			return bean;
+		}
+
+		registerBeans();
 		return bean;
 	}
-	
+
 	private void registerBeans() {
-		if(done) {
+		SequenceBeanHolder sequenceBeanHolder = beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
+		Map<String, String> beanSeqMap = sequenceBeanHolder.getBeanSeqNameMap();
+		if(CollectionUtils.isEmpty(beanSeqMap)) {
 			return;
 		}
-		
-		lock.lock();
-		try {
-			if(done) {
-				return;
+
+		checkPropertyList();
+
+		Iterator<Entry<String, String>> entryItr = beanSeqMap.entrySet().iterator();
+		while(entryItr.hasNext()) {
+			Entry<String, String> entry = entryItr.next();
+			String beanName = entry.getKey();
+			String seqName = entry.getValue();
+
+			if(beanName == null || "".equals(beanName.trim())) {
+				continue;
 			}
-			
-			SequenceBeanHolder sequenceBeanHolder = (SequenceBeanHolder)beanFactory.getBean(sequenceBeanHolderBeanName);
-			Map<String, String> beanSeqMap = sequenceBeanHolder.getBeanSeqNameMap();
-			if(CollectionUtils.isEmpty(beanSeqMap)) {
-				done = true;
-				return;
+			beanName = beanName.trim();
+
+			if(seqName == null || "".equals(seqName.trim())) {
+				seqName = beanName.trim();
+			} else {
+				seqName = seqName.trim();
 			}
-			
-			checkPropertyList();
-			
-			Iterator<Entry<String, String>> entryItr = beanSeqMap.entrySet().iterator();
-			while(entryItr.hasNext()) {
-				Entry<String, String> entry = entryItr.next();
-				String beanName = entry.getKey();
-				String seqName = entry.getValue();
-				
-				if(beanName == null || "".equals(beanName.trim())) {
-					continue;
-				}
-				beanName = beanName.trim();
-				
-				if(seqName == null || "".equals(seqName.trim())) {
-					seqName = beanName.trim();
-				} else {
-					seqName = seqName.trim();
-				}
-				
-				List<Property> propList = new ArrayList<Property>();
-				if(!CollectionUtils.isEmpty(this.propertyList)) {
-					propList.addAll(this.propertyList);
-				}
-				propList.add(new Property(fieldSeqName, seqName, Property.TYPE_VALUE));
-				registerBean(beanName, this.constructorArgList, propList);
+
+			List<Property> propList = new ArrayList<Property>();
+			if(!CollectionUtils.isEmpty(this.propertyList)) {
+				propList.addAll(this.propertyList);
 			}
-			done = true;
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			lock.unlock();
+			propList.add(new Property(fieldSeqName, seqName, Property.TYPE_VALUE));
+			registerBean(beanName, this.constructorArgList, propList);
 		}
 	}
 	private void registerBean(String beanName, List<Property> constArgList, List<Property> propList) {
@@ -242,7 +232,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 				}
 			}
 		}
-		
+
 		if(!CollectionUtils.isEmpty(propList)) {
 			for(Property prop: propList) {
 				if(Property.TYPE_VALUE == prop.getType()) {
@@ -262,7 +252,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		}
 		beanFactory.registerBeanDefinition(beanName, builder.getBeanDefinition());
 	}
-	
+
 	/**
 	 * this.propertyList中必须有一个SequenceDao类型的属性
 	 */
@@ -270,7 +260,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		if(this.propertyList == null) {
 			this.propertyList = new ArrayList<Property>();
 		}
-		
+
 		for(Property property: this.propertyList) {
 			try {
 				Field field = this.sequenceClass.getDeclaredField(property.getPropertyName());
@@ -280,7 +270,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 			} catch (Exception e) {
 			}
 		}
-		
+
 		try {
 			Field defaultSequenceDaoField = this.sequenceClass.getDeclaredField(DEFAULT_FIELD_SEQUENCE_DAO);
 			if(defaultSequenceDaoField == null) {
@@ -289,23 +279,23 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		} catch (Exception e) {
 			throw new SequenceException(e);
 		}
-		
+
 		String[] beanNamesForSequenceDao = beanFactory.getBeanNamesForType(SequenceDao.class);
 		if(beanNamesForSequenceDao == null || beanNamesForSequenceDao.length != 1) {
 			throw new SequenceException("Error happens while inject field SequenceDao.");
 		}
-		
+
 		this.propertyList.add(new Property(DEFAULT_FIELD_SEQUENCE_DAO, beanNamesForSequenceDao[0], Property.TYPE_REFERENCE));
 	}
-	
+
 	public static class Property {
 		private String propertyName;
 		private Object value;
 		private byte type;
-		
+
 		public static final byte TYPE_VALUE = 0;
 		public static final byte TYPE_REFERENCE = 1;
-		
+
 		public Property(String propertyName, Object value, byte type) {
 			this.propertyName = propertyName;
 			this.value = value;
