@@ -173,15 +173,14 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 			return bean;
 		}
 
-		if(done.compareAndSet(false, true) == false) {
-			return bean;
-		}
-
 		if(beanName.equals(sequenceBeanHolderBeanName)) {
 			return bean;
 		}
 
-		registerBeans();
+		if(done.compareAndSet(false, true)) {
+			registerBeans();
+		}
+
 		return bean;
 	}
 
