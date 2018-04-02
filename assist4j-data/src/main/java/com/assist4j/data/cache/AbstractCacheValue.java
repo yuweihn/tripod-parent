@@ -14,6 +14,7 @@ public abstract class AbstractCacheValue<T extends AbstractCacheValue<T>> implem
 		return JSONObject.toJSONString(this);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T decode(String value) {
 		Object bean = JSONObject.parseObject(value, this.getClass());
