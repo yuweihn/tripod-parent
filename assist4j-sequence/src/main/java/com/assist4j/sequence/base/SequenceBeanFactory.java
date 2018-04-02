@@ -169,15 +169,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	}
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if(done.get()) {
-			return bean;
-		}
-
-		if(beanName.equals(sequenceBeanHolderBeanName)) {
-			return bean;
-		}
-
-		if(done.compareAndSet(false, true)) {
+		if(!done.get() && !beanName.equals(sequenceBeanHolderBeanName) && done.compareAndSet(false, true)) {
 			registerBeans();
 		}
 
