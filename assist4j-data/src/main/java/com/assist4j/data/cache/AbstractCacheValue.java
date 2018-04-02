@@ -9,12 +9,11 @@ import org.springframework.beans.BeanUtils;
  * @author yuwei
  */
 public abstract class AbstractCacheValue<T extends AbstractCacheValue<T>> implements CacheValue<T> {
-	@Override
 	public String encode() {
 		return JSONObject.toJSONString(this);
 	}
 
-	@Override
+
 	public T decode(String value) {
 		Object bean = JSONObject.parseObject(value, this.getClass());
 		try {
