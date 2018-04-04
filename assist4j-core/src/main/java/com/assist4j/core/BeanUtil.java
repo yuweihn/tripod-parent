@@ -209,7 +209,7 @@ public abstract class BeanUtil {
 			URL _url = new URL(url);
 			builder.append(_url.getProtocol()).append("://").append(_url.getHost());
 			int port = _url.getPort();
-			if(port != Constant.DEFAULT_HTTP_PORT && port != Constant.DEFAULT_HTTPS_PORT) {
+			if(port != Constant.DEFAULT_HTTP_PORT && port != Constant.DEFAULT_HTTPS_PORT && port > 0) {
 				builder.append(":").append(port);
 			}
 			return builder.toString();
