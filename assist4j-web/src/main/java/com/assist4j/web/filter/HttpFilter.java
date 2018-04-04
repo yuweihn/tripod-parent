@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.assist4j.core.BeanUtil;
 import com.assist4j.web.HttpMethodRequestWrapper;
 import com.assist4j.core.Constant;
 import com.assist4j.core.ActionUtil;
@@ -118,15 +117,11 @@ public class HttpFilter extends AbstractFilter {
 	 */
 	private void allowOrigin(HttpServletRequest request, HttpServletResponse response) {
 		String referrer = request.getHeader("Referer");
-		if(referrer == null) {
-			referrer = "*";
-		} else {
+		if(referrer != null) {
 			log.info("Referrer: {}", referrer);
-			String domainUrl = BeanUtil.getDomainUrl(referrer);
-			referrer = domainUrl == null ? "*" : domainUrl;
 		}
 
-		response.setHeader("Access-Control-Allow-Origin", referrer);
+		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
 		response.setHeader("Access-Control-Max-Age", "3600");
 		response.setHeader("Access-Control-Allow-Credentials", "true");

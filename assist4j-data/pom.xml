@@ -6,7 +6,7 @@
 	<groupId>com.assist4j</groupId>
 	<artifactId>assist4j-data</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.5.3</version>
+	<version>1.0.5.4</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>The project of Assist4j.</description>
