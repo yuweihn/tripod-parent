@@ -67,6 +67,7 @@ For example:
 	private Sequence seqFeedbackPic;
 	
 	
+	......
 	Feedback feedback = new Feedback();
     feedback.setId(seqFeedback.nextValue());       //fetch next value
     feedback.setUserId(dto.getUserId());
@@ -74,6 +75,7 @@ For example:
     feedback.setContact(dto.getContact());
     feedback.setCreateTime(new Date());
     feedbackDao.save(feedback);
+    ......
 ------------------------------------------------------------------------------------------------------------------
 
 
