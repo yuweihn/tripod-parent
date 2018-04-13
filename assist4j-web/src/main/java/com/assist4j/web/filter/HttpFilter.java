@@ -55,7 +55,7 @@ public class HttpFilter extends AbstractFilter {
 		printParams(request);
 		setCharacterEncoding(request, response);
 		setContextPath(request);
-		allowOrigin(request, response);
+		setAccessControl(request, response);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class HttpFilter extends AbstractFilter {
 	/**
 	 * 跨域请求设置
 	 */
-	private void allowOrigin(HttpServletRequest request, HttpServletResponse response) {
+	private void setAccessControl(HttpServletRequest request, HttpServletResponse response) {
 		String referrer = request.getHeader("Referer");
 		if(referrer != null) {
 			log.info("Referrer: {}", referrer);
