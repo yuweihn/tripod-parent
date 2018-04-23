@@ -1,6 +1,8 @@
 package com.assist4j.sequence.dao.loadbalancer;
 
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.util.Assert;
 
@@ -10,7 +12,7 @@ import org.springframework.util.Assert;
  */
 public class RoundRobinRule implements IRule {
 	private int segmentCount;
-	private AtomicInteger curSegment = new AtomicInteger(0);
+	private Map<String, AtomicInteger> curSegment = new ConcurrentHashMap<String, AtomicInteger>();
 	
 	
 	public RoundRobinRule() {
@@ -22,18 +24,23 @@ public class RoundRobinRule implements IRule {
 	
 	
 	@Override
-	public int chooseSegment() {
+	public int chooseSegment(String seqName) {
 		Assert.isTrue(segmentCount > 0, "Field segmentCount cannot be less than 1, segmentCount = " + segmentCount);
 		
 		/**
 		 * 查询下一个segment值，并保证范围在[0 ~ segmentCount-1]之间
 		 */
+		AtomicInteger seg = curSegment.get(seqName);
+		if(seg == null) {
+			seg = new AtomicInteger(0);
+			curSegment.put(seqName, seg);
+		}
 		while(true) {
-			int curVal = curSegment.getAndIncrement();
+			int curVal = seg.getAndIncrement();
 			if(curVal >= 0 && curVal <= segmentCount - 1) {
 				return curVal;
 			}
-			curSegment.set(0);
+			seg.set(0);
 		}
 	}
 	

@@ -22,7 +22,7 @@ public class RandomRule implements IRule {
 	
 	
 	@Override
-	public int chooseSegment() {
+	public int chooseSegment(String seqName) {
 		Assert.isTrue(segmentCount > 0, "Field segmentCount cannot be less than 1, segmentCount = " + segmentCount);
 		return rand.nextInt(segmentCount);
 	}

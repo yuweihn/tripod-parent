@@ -90,7 +90,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 		
 		int retryTimes = getRetryTimes();
 		for(int i = 0; i < retryTimes + 1; ++i) {
-			int segment = rule.chooseSegment();
+			int segment = rule.chooseSegment(seqName);
 			Long oldValue = selectSeqValueFromASegment(segment, seqName);
 			
 			if (oldValue == null || oldValue < 0L || oldValue > Long.MAX_VALUE - 100000000L) {

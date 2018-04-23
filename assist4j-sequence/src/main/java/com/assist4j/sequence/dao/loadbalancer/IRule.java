@@ -9,7 +9,7 @@ public interface IRule {
 	/**
 	 * 选择合适的数据库分片
 	 */
-	int chooseSegment();
+	int chooseSegment(String seqName);
 	
 	void setSegmentCount(int segmentCount);
 }
