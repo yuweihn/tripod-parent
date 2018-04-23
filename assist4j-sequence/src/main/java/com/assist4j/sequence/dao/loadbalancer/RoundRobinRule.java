@@ -26,16 +26,16 @@ public class RoundRobinRule implements IRule {
 	@Override
 	public int chooseSegment(String seqName) {
 		Assert.isTrue(segmentCount > 0, "Field segmentCount cannot be less than 1, segmentCount = " + segmentCount);
-		
-		/**
-		 * 查询下一个segment值，并保证范围在[0 ~ segmentCount-1]之间
-		 */
+
 		AtomicInteger seg = curSegment.get(seqName);
 		if(seg == null) {
 			seg = new AtomicInteger(0);
 			curSegment.put(seqName, seg);
 		}
 
+		/**
+		 * 查询下一个segment值，并保证范围在[0 ~ segmentCount-1]之间
+		 */
 		while(true) {
 			int curVal = seg.getAndIncrement();
 			if(curVal >= 0 && curVal <= segmentCount - 1) {
