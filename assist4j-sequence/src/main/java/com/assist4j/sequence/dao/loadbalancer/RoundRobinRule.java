@@ -34,7 +34,6 @@ public class RoundRobinRule implements IRule {
 		if(seg == null) {
 			seg = new AtomicInteger(0);
 			curSegment.put(seqName, seg);
-			seg = curSegment.get(seqName);
 		}
 
 		while(true) {
