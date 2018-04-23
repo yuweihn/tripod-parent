@@ -35,6 +35,8 @@ public class RoundRobinRule implements IRule {
 			seg = new AtomicInteger(0);
 			curSegment.put(seqName, seg);
 		}
+
+		seg = curSegment.get(seqName);
 		while(true) {
 			int curVal = seg.getAndIncrement();
 			if(curVal >= 0 && curVal <= segmentCount - 1) {
