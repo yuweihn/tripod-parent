@@ -206,9 +206,9 @@ public abstract class BeanUtil {
 	public static String getDomainUrl(String url) {
 		try {
 			StringBuilder builder = new StringBuilder("");
-			URL _url = new URL(url);
-			builder.append(_url.getProtocol()).append("://").append(_url.getHost());
-			int port = _url.getPort();
+			URL url0 = new URL(url);
+			builder.append(url0.getProtocol()).append("://").append(url0.getHost());
+			int port = url0.getPort();
 			if(port != Constant.DEFAULT_HTTP_PORT && port != Constant.DEFAULT_HTTPS_PORT && port > 0) {
 				builder.append(":").append(port);
 			}
