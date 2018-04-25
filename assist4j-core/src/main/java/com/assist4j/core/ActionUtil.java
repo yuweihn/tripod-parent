@@ -127,7 +127,7 @@ public abstract class ActionUtil {
 		builder.append(request.getScheme()).append("://").append(request.getServerName());
 
 		int port = request.getServerPort();
-		if(port != Constant.DEFAULT_HTTP_PORT && port != Constant.DEFAULT_HTTPS_PORT) {
+		if(port != Constant.DEFAULT_HTTP_PORT && port != Constant.DEFAULT_HTTPS_PORT && port > 0) {
 			builder.append(":").append(port);
 		}
 		builder.append(request.getContextPath());
