@@ -115,16 +115,19 @@ public abstract class ActionUtil {
 	/**
 	 * 将站点URL存入ServletContext中
 	 */
-	public static void addContextPath() {
-		addContextPath(getRequest());
+	public static void addContextPath(String scheme) {
+		addContextPath(getRequest(), scheme);
 	}
 
 	/**
 	 * 将站点URL存入ServletContext中
 	 */
-	public static void addContextPath(HttpServletRequest request) {
+	public static void addContextPath(HttpServletRequest request, String scheme) {
+		if(scheme == null || "".equals(scheme.trim())) {
+			scheme = request.getScheme();
+		}
 		StringBuilder builder = new StringBuilder("");
-		builder.append(request.getScheme()).append("://").append(request.getServerName());
+		builder.append(scheme).append("://").append(request.getServerName());
 
 		int port = request.getServerPort();
 		if(port != Constant.DEFAULT_HTTP_PORT && port != Constant.DEFAULT_HTTPS_PORT && port > 0) {

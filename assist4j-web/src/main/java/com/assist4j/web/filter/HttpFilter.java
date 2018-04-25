@@ -31,6 +31,7 @@ public class HttpFilter extends AbstractFilter {
 	private String methodParam = DEFAULT_METHOD_PARAM;
 	private String encoding = DEFAULT_ENCODING;
 	private String staticPath = DEFAULT_STATIC_PATH;
+	private String protocol = null;
 
 
 	public void setMethodParam(String methodParam) {
@@ -46,6 +47,11 @@ public class HttpFilter extends AbstractFilter {
 	public void setStaticPath(String staticPath) {
 		Assert.hasText(staticPath, "'staticPath' is required.");
 		this.staticPath = staticPath;
+	}
+
+	public void setProtocol(String protocol) {
+		Assert.hasText(protocol, "'protocol' is required.");
+		this.protocol = protocol;
 	}
 
 
@@ -108,7 +114,7 @@ public class HttpFilter extends AbstractFilter {
 	 * 将站点域名和static资源地址存入context
 	 **/
 	private void setContextPath(HttpServletRequest request) {
-		ActionUtil.addContextPath(request);
+		ActionUtil.addContextPath(request, protocol);
 		ActionUtil.addStaticPath(request, staticPath);
 	}
 
