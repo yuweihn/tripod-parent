@@ -22,7 +22,7 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		long startTimeMillis = System.currentTimeMillis();
 		HttpServletRequest requestWrapper = wrapper(request);
-		beforeFilter(request, response);
+		beforeFilter(requestWrapper, response);
 		filterChain.doFilter(requestWrapper, response);
 		afterFilter(requestWrapper, response);
 		long endTimeMillis = System.currentTimeMillis();
