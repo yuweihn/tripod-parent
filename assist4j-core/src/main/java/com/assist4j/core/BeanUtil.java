@@ -115,7 +115,7 @@ public abstract class BeanUtil {
 		if (mobile == null || "".equals(mobile.trim())) {
 			return false;
 		}
-		Pattern p = Pattern.compile("^[1][3-8]\\d{9}$");
+		Pattern p = Pattern.compile("^[1][3-9]\\d{9}$");
 		Matcher m = p.matcher(mobile.trim());
 		return m.find();
 	}
