@@ -15,8 +15,6 @@ import com.assist4j.core.ActionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -70,8 +68,8 @@ public class HttpFilter extends AbstractFilter {
 	@Override
 	protected HttpServletRequest wrapper(HttpServletRequest request) {
 		String paramValue = request.getParameter(methodParam);
-		if ("POST".equalsIgnoreCase(request.getMethod()) && StringUtils.hasLength(paramValue)) {
-			String method = paramValue.toUpperCase(Locale.ENGLISH);
+		if ("POST".equalsIgnoreCase(request.getMethod()) && paramValue != null && !"".equals(paramValue.trim())) {
+			String method = paramValue.trim().toUpperCase(Locale.ENGLISH);
 			return new HttpMethodRequestWrapper(request, method);
 		} else {
 			return request;
@@ -91,7 +89,7 @@ public class HttpFilter extends AbstractFilter {
 		String method = request.getMethod().toLowerCase();
 		Map<String, String[]> params = request.getParameterMap();
 
-		if(CollectionUtils.isEmpty(params)) {
+		if(params == null || params.isEmpty()) {
 			log.info("ip: {}, method: {}, url: {}", ip, method, url);
 		} else {
 			log.info("ip: {}, method: {}, url: {}, params: {}", ip, method, url, params);
