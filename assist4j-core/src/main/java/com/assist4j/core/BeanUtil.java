@@ -22,8 +22,7 @@ import org.springframework.util.Assert;
  * @author yuwei
  */
 public abstract class BeanUtil {
-
-	private static final String[] strs = {"A", "B", "C", "D", "E", "F", "G"
+	private static final String[] CHAR_ARRAY = {"A", "B", "C", "D", "E", "F", "G"
 											, "H", "I", "J", "K", "L", "M", "N"
 											, "O", "P", "Q", "R", "S", "T"
 											, "U", "V", "W", "X", "Y", "Z"
@@ -47,7 +46,7 @@ public abstract class BeanUtil {
 
 		Set<String> keys = map.keySet();
 		List<String> list = new ArrayList<String>();
-		for (String k : keys) {
+		for (String k: keys) {
 			Object v = map.get(k);
 			if(v == null) {
 				v = "";
@@ -65,7 +64,7 @@ public abstract class BeanUtil {
 
 		Collections.sort(list);
 		StringBuilder builder = new StringBuilder("");
-		for (String kv : list) {
+		for (String kv: list) {
 			builder.append(kv).append(conn);
 		}
 
@@ -84,8 +83,8 @@ public abstract class BeanUtil {
 	public static String getRandCode(int length) {
 		Random random = new Random();
 		StringBuilder builder = new StringBuilder("");
-		for (int i = 0; i < length; i++){  
-			builder.append(strs[random.nextInt(strs.length)]);
+		for (int i = 0; i < length; i++) {
+			builder.append(CHAR_ARRAY[random.nextInt(CHAR_ARRAY.length)]);
 		}
 		return builder.toString();
 	}
@@ -147,11 +146,11 @@ public abstract class BeanUtil {
 
 		StringBuilder builder = new StringBuilder("");
 		int count = 0;
-		for(int i=0; i<str.length(); i++){
+		for(int i=0; i<str.length(); i++) {
 			char c = str.charAt(i);
 			count += isChineseChar(c) ? 2 : 1;
 
-			if(count > len){
+			if(count > len) {
 				builder.append("......");
 				break;
 			}
@@ -220,7 +219,7 @@ public abstract class BeanUtil {
 
 	public static<T> T copyProperties(Object source, Class<T> targetClass) {
 		if(source == null) {
-			throw new RuntimeException("参数不可为空");
+			return null;
 		}
 
 		try {
@@ -236,7 +235,7 @@ public abstract class BeanUtil {
 	
 	public static<T> void copyProperties(Object source, T target) {
 		if(source == null || target == null) {
-			throw new RuntimeException("参数不可为空");
+			return;
 		}
 
 		try {
