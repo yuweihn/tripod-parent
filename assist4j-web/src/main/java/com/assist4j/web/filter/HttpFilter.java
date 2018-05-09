@@ -8,9 +8,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.assist4j.web.HttpMethodRequestWrapper;
 import com.assist4j.core.Constant;
 import com.assist4j.core.ActionUtil;
+import com.assist4j.web.HttpMethodRequestWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,14 +54,6 @@ public class HttpFilter extends AbstractFilter {
 
 
 
-	@Override
-	protected void beforeFilter(HttpServletRequest request, HttpServletResponse response) {
-		printRequest(request);
-		setCharacterEncoding(request, response);
-		setContextPath(request);
-		setAccessControl(request, response);
-	}
-
 	/**
 	 * 浏览器不支持put,delete等method,由该filter将/service?_method=delete转换为标准的http delete方法
 	 **/
@@ -74,6 +66,14 @@ public class HttpFilter extends AbstractFilter {
 		} else {
 			return request;
 		}
+	}
+
+	@Override
+	protected void beforeFilter(HttpServletRequest request, HttpServletResponse response) {
+		printRequest(request);
+		setCharacterEncoding(request, response);
+		setContextPath(request);
+		setAccessControl(request, response);
 	}
 
 	@Override
