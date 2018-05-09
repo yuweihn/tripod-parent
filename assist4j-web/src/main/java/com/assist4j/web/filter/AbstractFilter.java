@@ -21,7 +21,7 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		long startTimeMillis = System.currentTimeMillis();
-		HttpServletRequest requestWrapper = wrapper(request);
+		HttpServletRequest requestWrapper = wrap(request);
 		beforeFilter(requestWrapper, response);
 		filterChain.doFilter(requestWrapper, response);
 		afterFilter(requestWrapper, response);
@@ -31,7 +31,7 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 
 	protected abstract void beforeFilter(HttpServletRequest request, HttpServletResponse response);
 
-	protected HttpServletRequest wrapper(HttpServletRequest request) {
+	protected HttpServletRequest wrap(HttpServletRequest request) {
 		return request;
 	}
 

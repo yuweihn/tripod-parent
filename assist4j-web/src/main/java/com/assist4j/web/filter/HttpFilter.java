@@ -66,7 +66,7 @@ public class HttpFilter extends AbstractFilter {
 	 * 浏览器不支持put,delete等method,由该filter将/service?_method=delete转换为标准的http delete方法
 	 **/
 	@Override
-	protected HttpServletRequest wrapper(HttpServletRequest request) {
+	protected HttpServletRequest wrap(HttpServletRequest request) {
 		String paramValue = request.getParameter(methodParam);
 		if ("POST".equalsIgnoreCase(request.getMethod()) && paramValue != null && !"".equals(paramValue.trim())) {
 			String method = paramValue.trim().toUpperCase(Locale.ENGLISH);
@@ -78,6 +78,7 @@ public class HttpFilter extends AbstractFilter {
 
 	@Override
 	protected void afterFilter(HttpServletRequest request, HttpServletResponse response) {
+
 	}
 
 	/**
