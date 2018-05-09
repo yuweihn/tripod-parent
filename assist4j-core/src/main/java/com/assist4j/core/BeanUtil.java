@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 
 
@@ -226,7 +226,7 @@ public abstract class BeanUtil {
 			Constructor<T> constructor = targetClass.getDeclaredConstructor();
 			constructor.setAccessible(true);
 			T targetObj = constructor.newInstance();
-			BeanUtils.copyProperties(targetObj, source);
+			copyProperties(source, targetObj);
 			return targetObj;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -239,7 +239,7 @@ public abstract class BeanUtil {
 		}
 
 		try {
-			BeanUtils.copyProperties(target, source);
+			BeanUtils.copyProperties(source, target);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
