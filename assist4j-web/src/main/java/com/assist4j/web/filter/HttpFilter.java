@@ -56,7 +56,7 @@ public class HttpFilter extends AbstractFilter {
 
 	@Override
 	protected void beforeFilter(HttpServletRequest request, HttpServletResponse response) {
-		printParams(request);
+		printRequest(request);
 		setCharacterEncoding(request, response);
 		setContextPath(request);
 		setAccessControl(request, response);
@@ -84,7 +84,7 @@ public class HttpFilter extends AbstractFilter {
 	/**
 	 * 打印请求参数
 	 */
-	private void printParams(HttpServletRequest request) {
+	private void printRequest(HttpServletRequest request) {
 		String ip = ActionUtil.getRequestIP();
 		String url = request.getRequestURL().toString();
 		String method = request.getMethod().toLowerCase();
