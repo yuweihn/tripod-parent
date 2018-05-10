@@ -25,7 +25,7 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 	private List<FormField> formFieldList;
 
 
-	protected HttpFileRequest() {
+	private HttpFileRequest() {
 		super();
 		fileFieldList = new ArrayList<FileField>();
 		formFieldList = new ArrayList<FormField>();

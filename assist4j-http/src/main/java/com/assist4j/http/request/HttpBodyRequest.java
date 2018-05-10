@@ -17,7 +17,7 @@ public class HttpBodyRequest extends AbstractHttpRequest<HttpBodyRequest> {
 	private ContentType contentType;
 
 
-	protected HttpBodyRequest() {
+	private HttpBodyRequest() {
 		super();
 		this.contentType = ContentType.APPLICATION_JSON;
 	}

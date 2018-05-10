@@ -34,7 +34,7 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 	private List<FormField> fieldList;
 
 
-	protected HttpFormRequest() {
+	private HttpFormRequest() {
 		super();
 		fieldList = new ArrayList<FormField>();
 		initMethod(HttpMethod.GET);
