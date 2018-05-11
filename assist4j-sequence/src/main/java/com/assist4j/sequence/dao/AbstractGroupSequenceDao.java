@@ -56,7 +56,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 			rule = new RoundRobinRule(segCount);
 		} else {
 			try {
-				Class<?> ruleClass = Class.forName(ruleClassName);
+				Class<?> ruleClass = Class.forName(ruleClassName.trim());
 				if(!IRule.class.isAssignableFrom(ruleClass)) {
 					throw new SequenceException("[ruleClassName] must be a subclass of [" + IRule.class.getName() + "], but now it is [" + ruleClassName + "].");
 				}
