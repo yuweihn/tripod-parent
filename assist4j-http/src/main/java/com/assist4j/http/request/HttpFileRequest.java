@@ -4,6 +4,7 @@ package com.assist4j.http.request;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -54,15 +55,33 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 		return this;
 	}
 
+	public HttpFileRequest initFormFieldList(Map<String, Object> map) {
+		if(map == null || map.isEmpty()) {
+			return this;
+		}
+
+		List<FormField> formFieldList = new ArrayList<FormField>();
+		for(Map.Entry<String, Object> entry: map.entrySet()) {
+			String key = entry.getKey();
+			Object value = entry.getValue();
+			if(key == null || value == null) {
+				continue;
+			}
+			formFieldList.add(new FormField(key, value));
+		}
+		return initFormFieldList(formFieldList);
+	}
+	public HttpFileRequest initFormFieldList(List<FormField> formFieldList) {
+		this.formFieldList.clear();
+		this.formFieldList.addAll(formFieldList);
+		return this;
+	}
 	public HttpFileRequest addFormField(String key, String value) {
 		if(StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
 			return this;
 		}
 
-		FormField ff = new FormField();
-		ff.setKey(key);
-		ff.setValue(value);
-		formFieldList.add(ff);
+		formFieldList.add(new FormField(key, value));
 		return this;
 	}
 

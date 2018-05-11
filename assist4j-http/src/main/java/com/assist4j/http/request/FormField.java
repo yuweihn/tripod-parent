@@ -14,9 +14,9 @@ public class FormField {
 		
 	}
 
-	public FormField(String key, String value) {
+	public FormField(String key, Object value) {
 		this.key = key;
-		this.value = value;
+		this.value = value.toString();
 	}
 
 

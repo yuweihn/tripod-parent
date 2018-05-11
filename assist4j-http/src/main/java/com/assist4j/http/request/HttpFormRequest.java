@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.assist4j.http.DefaultHttpDelete;
 import com.assist4j.http.HttpConstant;
@@ -49,6 +50,22 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 		return this;
 	}
 
+	public HttpFormRequest initFieldList(Map<String, Object> map) {
+		if(map == null || map.isEmpty()) {
+			return this;
+		}
+
+		List<FormField> fieldList = new ArrayList<FormField>();
+		for(Map.Entry<String, Object> entry: map.entrySet()) {
+			String key = entry.getKey();
+			Object value = entry.getValue();
+			if(key == null || value == null) {
+				continue;
+			}
+			fieldList.add(new FormField(key, value));
+		}
+		return initFieldList(fieldList);
+	}
 	public HttpFormRequest initFieldList(List<FormField> fieldList) {
 		this.fieldList.clear();
 		this.fieldList.addAll(fieldList);
