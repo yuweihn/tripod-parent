@@ -50,13 +50,13 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 		return this;
 	}
 
-	public HttpFormRequest initFieldList(Map<String, Object> map) {
+	public HttpFormRequest initFieldList(Map<String, ? extends Object> map) {
 		if(map == null || map.isEmpty()) {
 			return this;
 		}
 
 		List<FormField> fieldList = new ArrayList<FormField>();
-		for(Map.Entry<String, Object> entry: map.entrySet()) {
+		for(Map.Entry<String, ? extends Object> entry: map.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
 			if(key == null || value == null) {

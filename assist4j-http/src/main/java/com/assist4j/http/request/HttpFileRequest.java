@@ -55,13 +55,13 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 		return this;
 	}
 
-	public HttpFileRequest initFormFieldList(Map<String, Object> map) {
+	public HttpFileRequest initFormFieldList(Map<String, ? extends Object> map) {
 		if(map == null || map.isEmpty()) {
 			return this;
 		}
 
 		List<FormField> formFieldList = new ArrayList<FormField>();
-		for(Map.Entry<String, Object> entry: map.entrySet()) {
+		for(Map.Entry<String, ? extends Object> entry: map.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
 			if(key == null || value == null) {
