@@ -2,6 +2,8 @@ package com.assist4j.core.encrypt;
 
 
 import com.assist4j.core.Constant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -15,6 +17,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @author yuwei
  */
 public abstract class SecurityUtil {
+	private static final Logger log = LoggerFactory.getLogger(SecurityUtil.class);
 	private static final String SECURITY_KEY = "sfdfyu8**((^$$$SDSDhHJlSDDsdsvcx234ex,,,cjv.xckv...";
 	private static final char HEX_DIGIT[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
@@ -49,7 +52,9 @@ public abstract class SecurityUtil {
 				arr[k++] = HEX_DIGIT[byte0 >>> 4 & 0xf];
 				arr[k++] = HEX_DIGIT[byte0 & 0xf];
 			}
-			return new String(arr).toLowerCase();
+			String val = new String(arr).toLowerCase();
+			log.debug(val);
+			return val;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
