@@ -117,15 +117,10 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		 * contentType
 		 */
 		Header contentType = entity.getContentType();
-		
-		/**
-		 * body or errorMessage
-		 */
+
+		String errorMessage = statusLine.toString();
 		Object body = null;
-		String errorMessage = null;
-		if (status != HttpStatus.SC_OK) {
-			errorMessage = statusLine.toString();
-		} else if(bodyClass == null || String.class.isAssignableFrom(bodyClass)) {
+		if (bodyClass == null || String.class.isAssignableFrom(bodyClass)) {
 			/**
 			 * 返回字符串类型
 			 **/
@@ -139,7 +134,12 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			/**
 			 * 返回指定的其它类型
 			 **/
-			body = JSONObject.parseObject(EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8), bodyClass);
+			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+			try {
+				body = JSONObject.parseObject(txt, bodyClass);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return assembleHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
 	}
