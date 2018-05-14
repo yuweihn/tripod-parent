@@ -191,14 +191,10 @@ public abstract class ActionUtil {
 
 		str = "<html><body>" + str + "</body></html>";
 		try {
-			output(str.getBytes(Constant.ENCODING_UTF_8));
+			output(str.getBytes(Constant.ENCODING_UTF_8), "text/html");
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public static void output(byte[] content) {
-		output(content, "text/html");
 	}
 
 	/**
