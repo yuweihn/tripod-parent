@@ -19,7 +19,7 @@ public class HttpBodyRequest extends AbstractHttpRequest<HttpBodyRequest> {
 
 	private HttpBodyRequest() {
 		super();
-		this.contentType = ContentType.APPLICATION_JSON;
+		this.contentType = ContentType.APPLICATION_FORM_URLENCODED;
 	}
 	public static HttpBodyRequest create() {
 		return new HttpBodyRequest();
