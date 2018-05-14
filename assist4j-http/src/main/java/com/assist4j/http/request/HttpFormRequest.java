@@ -146,7 +146,7 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 		return execute0();
 	}
 
-	private <B>HttpResponse<B> doDelete() {/****/
+	private <B>HttpResponse<B> doDelete() {
 		List<NameValuePair> list = toNameValuePairList(fieldList);
 		
 		String charset = getCharset();
