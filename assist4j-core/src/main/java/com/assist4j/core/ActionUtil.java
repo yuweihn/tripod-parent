@@ -185,11 +185,6 @@ public abstract class ActionUtil {
 	}
 
 	public static void output(String str) {
-		if(str == null) {
-			return;
-		}
-
-		str = "<html><body>" + str + "</body></html>";
 		try {
 			output(str.getBytes(Constant.ENCODING_UTF_8), "text/html");
 		} catch (UnsupportedEncodingException e) {
