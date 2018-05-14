@@ -138,7 +138,6 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			try {
 				body = JSONObject.parseObject(txt, bodyClass);
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 		return assembleHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
