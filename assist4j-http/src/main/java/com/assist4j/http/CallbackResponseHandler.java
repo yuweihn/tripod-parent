@@ -189,7 +189,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 
 
 		public BasicHttpResponse() {
-			this.errorMessage = "success";
+
 		}
 
 
