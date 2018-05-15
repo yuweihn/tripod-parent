@@ -90,7 +90,7 @@ public class HttpFilter extends AbstractFilter {
 		String method = request.getMethod().toLowerCase();
 		Map<String, String[]> params = request.getParameterMap();
 
-		if(params == null || params.isEmpty()) {
+		if (params == null || params.isEmpty()) {
 			log.info("ip: {}, method: {}, url: {}", ip, method, url);
 		} else {
 			log.info("ip: {}, method: {}, url: {}, params: {}", ip, method, url, params);
@@ -122,7 +122,7 @@ public class HttpFilter extends AbstractFilter {
 	 */
 	private void setAccessControl(HttpServletRequest request, HttpServletResponse response) {
 		String referrer = request.getHeader("Referer");
-		if(referrer != null) {
+		if (referrer != null) {
 			log.info("Referrer: {}", referrer);
 		}
 
