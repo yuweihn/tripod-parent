@@ -22,9 +22,9 @@ import org.springframework.util.Assert;
  */
 public class HttpFilter extends AbstractFilter {
 	private static final Logger log = LoggerFactory.getLogger(HttpFilter.class);
-	public static final String DEFAULT_METHOD_PARAM = "_method";
-	public static final String DEFAULT_ENCODING = Constant.ENCODING_UTF_8;
-	public static final String DEFAULT_STATIC_PATH = "/static/";
+	private static final String DEFAULT_METHOD_PARAM = "_method";
+	private static final String DEFAULT_ENCODING = Constant.ENCODING_UTF_8;
+	private static final String DEFAULT_STATIC_PATH = "/static/";
 
 	private String methodParam = DEFAULT_METHOD_PARAM;
 	private String encoding = DEFAULT_ENCODING;
@@ -84,7 +84,7 @@ public class HttpFilter extends AbstractFilter {
 	/**
 	 * 打印请求参数
 	 */
-	private void printRequest(HttpServletRequest request) {
+	protected void printRequest(HttpServletRequest request) {
 		String ip = ActionUtil.getRequestIP();
 		String url = request.getRequestURL().toString();
 		String method = request.getMethod().toLowerCase();
@@ -100,7 +100,7 @@ public class HttpFilter extends AbstractFilter {
 	/**
 	 * 设置字符集
 	 **/
-	private void setCharacterEncoding(HttpServletRequest request, HttpServletResponse response) {
+	protected void setCharacterEncoding(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			request.setCharacterEncoding(encoding);
 		} catch (UnsupportedEncodingException e) {
@@ -112,7 +112,7 @@ public class HttpFilter extends AbstractFilter {
 	/**
 	 * 将站点域名和static资源地址存入context
 	 **/
-	private void setContextPath(HttpServletRequest request) {
+	protected void setContextPath(HttpServletRequest request) {
 		ActionUtil.addContextPath(request, protocol);
 		ActionUtil.addStaticPath(request, staticPath);
 	}
@@ -120,7 +120,7 @@ public class HttpFilter extends AbstractFilter {
 	/**
 	 * 跨域请求设置
 	 */
-	private void setAccessControl(HttpServletRequest request, HttpServletResponse response) {
+	protected void setAccessControl(HttpServletRequest request, HttpServletResponse response) {
 		String referrer = request.getHeader("Referer");
 		if (referrer != null) {
 			log.info("Referrer: {}", referrer);
