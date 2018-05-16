@@ -250,7 +250,7 @@ public abstract class BeanUtil {
 			return null;
 		}
 		
-		StringBuilder builder = new StringBuilder();
+		StringBuilder builder = new StringBuilder("");
 		for(T t: arr) {
 			builder.append(separator).append(t.toString());
 		}
