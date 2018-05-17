@@ -24,6 +24,9 @@ public abstract class JsonUtil {
 
 	@SuppressWarnings("unchecked")
 	public static<T> List<T> toBeanList(String text, Class<?> clz) {
+		if (text == null || "".equals(text)) {
+			return null;
+		}
 		return (List<T>) JSONObject.parseArray(text, clz);
 	}
 
