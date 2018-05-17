@@ -16,6 +16,9 @@ import org.springframework.util.CollectionUtils;
 public abstract class JsonUtil {
 	@SuppressWarnings("unchecked")
 	public static<T> T toBean(String text, Class<?> clz) {
+		if (text == null || "".equals(text)) {
+			return null;
+		}
 		return (T) JSONObject.parseObject(text, clz);
 	}
 
@@ -25,6 +28,9 @@ public abstract class JsonUtil {
 	}
 
 	public static String toJson(Object obj) {
+		if (obj == null) {
+			return null;
+		}
 		return JSONObject.toJSONString(obj);
 	}
 
