@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.assist4j.http.HttpMethod;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.ContentType;
@@ -30,6 +31,7 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 		super();
 		fileFieldList = new ArrayList<FileField>();
 		formFieldList = new ArrayList<FormField>();
+		initMethod(HttpMethod.POST);
 	}
 	public static HttpFileRequest create() {
 		return new HttpFileRequest();
