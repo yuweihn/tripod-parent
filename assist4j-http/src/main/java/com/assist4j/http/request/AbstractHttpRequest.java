@@ -171,17 +171,15 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 	}
 
 	protected HttpEntityEnclosingRequestBase getRequestBase() {
-		HttpEntityEnclosingRequestBase requestBase;
 		if (HttpMethod.POST.equals(method)) {
-			requestBase = new HttpPost(url);
+			return new HttpPost(url);
 		} else if (HttpMethod.PUT.equals(method)) {
-			requestBase = new HttpPut(url);
+			return new HttpPut(url);
 		} else if (HttpMethod.DELETE.equals(method)) {
-			requestBase = new DefaultHttpDelete(url);
+			return new DefaultHttpDelete(url);
 		} else {
-			requestBase = new HttpPost(url);
+			return new HttpPost(url);
 		}
-		return requestBase;
 	}
 
 	@SuppressWarnings("unchecked")
