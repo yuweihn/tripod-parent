@@ -1,12 +1,9 @@
 package com.assist4j.http.request;
 
 
-import com.assist4j.http.DefaultHttpDelete;
 import com.assist4j.http.HttpConstant;
 import com.assist4j.http.HttpMethod;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import com.assist4j.http.response.HttpResponse;
@@ -19,7 +16,6 @@ import com.assist4j.http.response.HttpResponse;
 public class HttpBodyRequest extends AbstractHttpRequest<HttpBodyRequest> {
 	private String content;
 	private ContentType contentType;
-	private HttpMethod method;
 
 
 	private HttpBodyRequest() {
@@ -40,10 +36,6 @@ public class HttpBodyRequest extends AbstractHttpRequest<HttpBodyRequest> {
 		this.contentType = contentType;
 		return this;
 	}
-	public HttpBodyRequest initMethod(HttpMethod method) {
-		this.method = method;
-		return this;
-	}
 
 
 	@Override
@@ -51,19 +43,11 @@ public class HttpBodyRequest extends AbstractHttpRequest<HttpBodyRequest> {
 		String charset = getCharset();
 		charset = charset != null ? charset : HttpConstant.ENCODING_UTF_8;
 
-		HttpEntityEnclosingRequestBase requestBase;
-		if (HttpMethod.POST.equals(method)) {
-			requestBase = new HttpPost(this.getUrl());
-		} else if (HttpMethod.PUT.equals(method)) {
-			requestBase = new HttpPut(this.getUrl());
-		} else if (HttpMethod.DELETE.equals(method)) {
-			requestBase = new DefaultHttpDelete(this.getUrl());
-		} else {
-			requestBase = new HttpPost(this.getUrl());
-		}
 		StringEntity entity = new StringEntity(content, charset);
 		entity.setContentType(contentType.getMimeType());
 		entity.setContentEncoding(charset);
+
+		HttpEntityEnclosingRequestBase requestBase = getRequestBase();
 		requestBase.setEntity(entity);
 		this.setHttpUriRequest(requestBase);
 		return execute0();

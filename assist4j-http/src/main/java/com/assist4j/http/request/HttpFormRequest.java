@@ -8,16 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.assist4j.http.DefaultHttpDelete;
 import com.assist4j.http.HttpConstant;
 import com.assist4j.http.HttpMethod;
 import com.assist4j.http.response.ErrorHttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicNameValuePair;
@@ -31,7 +29,6 @@ import org.springframework.util.StringUtils;
  * @author yuwei
  */
 public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
-	private HttpMethod method;
 	private List<FormField> fieldList;
 
 
@@ -44,11 +41,6 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 		return new HttpFormRequest();
 	}
 
-
-	public HttpFormRequest initMethod(HttpMethod method) {
-		this.method = method;
-		return this;
-	}
 
 	public HttpFormRequest initFieldList(Map<String, ? extends Object> map) {
 		if(map == null || map.isEmpty()) {
@@ -120,61 +112,23 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 		return list;
 	}
 
-	private <B>HttpResponse<B> doPost() {
-		List<NameValuePair> list = toNameValuePairList(fieldList);
-		
-		String charset = getCharset();
-		charset = charset != null ? charset : HttpConstant.ENCODING_UTF_8;
-
-		HttpPost post = new HttpPost(this.getUrl());
-		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, Charset.forName(charset));
-		post.setEntity(entity);
-		this.setHttpUriRequest(post);
-		return execute0();
-	}
-
-	private <B>HttpResponse<B> doPut() {
-		List<NameValuePair> list = toNameValuePairList(fieldList);
-		
-		String charset = getCharset();
-		charset = charset != null ? charset : HttpConstant.ENCODING_UTF_8;
-
-		HttpPut put = new HttpPut(this.getUrl());
-		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, Charset.forName(charset));
-		put.setEntity(entity);
-		this.setHttpUriRequest(put);
-		return execute0();
-	}
-
-	private <B>HttpResponse<B> doDelete() {
-		List<NameValuePair> list = toNameValuePairList(fieldList);
-		
-		String charset = getCharset();
-		charset = charset != null ? charset : HttpConstant.ENCODING_UTF_8;
-
-		DefaultHttpDelete del = new DefaultHttpDelete(this.getUrl());
-		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, Charset.forName(charset));
-		del.setEntity(entity);
-		this.setHttpUriRequest(del);
-		return execute0();
-	}
-
-
 	@Override
 	public <B>HttpResponse<B> execute() {
-		if(method == null || HttpMethod.GET.equals(method)) {
+		HttpMethod method = getMethod();
+		if (method == null || HttpMethod.GET.equals(method)) {
 			return doGet();
+		} else {
+			String charset = getCharset();
+			charset = charset != null ? charset : HttpConstant.ENCODING_UTF_8;
+
+			List<NameValuePair> list = toNameValuePairList(fieldList);
+			UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, Charset.forName(charset));
+
+			HttpEntityEnclosingRequestBase requestBase = getRequestBase();
+			requestBase.setEntity(entity);
+			this.setHttpUriRequest(requestBase);
+			return execute0();
 		}
-		if(HttpMethod.POST.equals(method)) {
-			return doPost();
-		}
-		if(HttpMethod.PUT.equals(method)) {
-			return doPut();
-		}
-		if(HttpMethod.DELETE.equals(method)) {
-			return doDelete();
-		}
-		return doPost();
 	}
 
 	@Override

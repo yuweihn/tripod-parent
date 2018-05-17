@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -117,12 +117,12 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 				builder.addTextBody(k, v, textContentType);
 			}
 		}
-
 		HttpEntity entity = builder.build();
-		HttpPost post = new HttpPost(this.getUrl());
-		post.addHeader("Content-Disposition", "attachment");
-		post.setEntity(entity);
-		this.setHttpUriRequest(post);
+
+		HttpEntityEnclosingRequestBase requestBase = getRequestBase();
+		requestBase.addHeader("Content-Disposition", "attachment");
+		requestBase.setEntity(entity);
+		this.setHttpUriRequest(requestBase);
 		return execute0();
 	}
 }

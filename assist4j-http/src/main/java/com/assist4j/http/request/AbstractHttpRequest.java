@@ -5,7 +5,9 @@ import java.util.List;
 import javax.servlet.http.Cookie;
 
 import com.assist4j.http.CallbackResponseHandler;
+import com.assist4j.http.DefaultHttpDelete;
 import com.assist4j.http.HttpContextAdaptor;
+import com.assist4j.http.HttpMethod;
 import com.assist4j.http.response.ErrorHttpResponse;
 import com.assist4j.http.strategy.connect.KeepAliveStrategy;
 import com.assist4j.http.strategy.redirect.NeedRedirectStrategy;
@@ -17,6 +19,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
@@ -37,6 +42,7 @@ import org.springframework.util.CollectionUtils;
 public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> implements HttpRequest {
 	private HttpUriRequest httpUriRequest;
 	private String url;
+	private HttpMethod method;
 	private Class<?> responseBodyClass;
 	private List<Cookie> cookieList;
 	private List<Header> headerList;
@@ -68,6 +74,15 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 	}
 	public String getUrl() {
 		return url;
+	}
+
+	@SuppressWarnings("unchecked")
+	public T initMethod(HttpMethod method) {
+		this.method = method;
+		return (T) this;
+	}
+	public HttpMethod getMethod() {
+		return method;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -153,6 +168,20 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 
 	protected ContentType getHeaderContentType() {
 		return null;
+	}
+
+	protected HttpEntityEnclosingRequestBase getRequestBase() {
+		HttpEntityEnclosingRequestBase requestBase;
+		if (HttpMethod.POST.equals(method)) {
+			requestBase = new HttpPost(url);
+		} else if (HttpMethod.PUT.equals(method)) {
+			requestBase = new HttpPut(url);
+		} else if (HttpMethod.DELETE.equals(method)) {
+			requestBase = new DefaultHttpDelete(url);
+		} else {
+			requestBase = new HttpPost(url);
+		}
+		return requestBase;
 	}
 
 	@SuppressWarnings("unchecked")
