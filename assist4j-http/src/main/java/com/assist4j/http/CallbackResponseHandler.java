@@ -87,14 +87,14 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		 */
 		List<Cookie> cookieList = new ArrayList<Cookie>();
 		List<org.apache.http.cookie.Cookie> cookies = null;
-		if(context != null) {
+		if (context != null) {
 			CookieStore cookieStore = context.getCookieStore();
-			if(cookieStore != null) {
+			if (cookieStore != null) {
 				cookies = cookieStore.getCookies();
 			}
 		}
-		if(!CollectionUtils.isEmpty(cookies)) {
-			for(org.apache.http.cookie.Cookie c: cookies) {
+		if (!CollectionUtils.isEmpty(cookies)) {
+			for (org.apache.http.cookie.Cookie c: cookies) {
 				Date now = new Date();
 				Date expiryDate = c.getExpiryDate();
 
@@ -125,7 +125,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			 * 返回字符串类型
 			 **/
 			body = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-		} else if(byte[].class.isAssignableFrom(bodyClass)) {
+		} else if (byte[].class.isAssignableFrom(bodyClass)) {
 			/**
 			 * 返回字节数组类型
 			 **/

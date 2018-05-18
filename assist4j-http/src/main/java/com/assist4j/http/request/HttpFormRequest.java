@@ -43,15 +43,15 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 
 
 	public HttpFormRequest initFieldList(Map<String, ? extends Object> map) {
-		if(map == null || map.isEmpty()) {
+		if (map == null || map.isEmpty()) {
 			return this;
 		}
 
 		List<FormField> fieldList = new ArrayList<FormField>();
-		for(Map.Entry<String, ? extends Object> entry: map.entrySet()) {
+		for (Map.Entry<String, ? extends Object> entry: map.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
-			if(key == null || value == null) {
+			if (key == null || value == null) {
 				continue;
 			}
 			fieldList.add(new FormField(key, value));
@@ -64,7 +64,7 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 		return this;
 	}
 	public HttpFormRequest addField(String key, String value) {
-		if(StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
+		if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
 			return this;
 		}
 
@@ -76,11 +76,11 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 	private <B>HttpResponse<B> doGet() {
 		try {
 			URIBuilder uriBuilder = new URIBuilder(this.getUrl());
-			if(!CollectionUtils.isEmpty(fieldList)) {
+			if (!CollectionUtils.isEmpty(fieldList)) {
 				for (FormField ff: fieldList) {
 					String k = ff.getKey();
 					String v = ff.getValue();
-					if(StringUtils.isEmpty(k) || StringUtils.isEmpty(v)) {
+					if (StringUtils.isEmpty(k) || StringUtils.isEmpty(v)) {
 						continue;
 					}
 					uriBuilder.setParameter(k, v);
@@ -97,14 +97,14 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 
 	private static List<NameValuePair> toNameValuePairList(List<FormField> fieldList) {
 		List<NameValuePair> list = new ArrayList<NameValuePair>();
-		if(CollectionUtils.isEmpty(fieldList)) {
+		if (CollectionUtils.isEmpty(fieldList)) {
 			return list;
 		}
 
 		for (FormField ff: fieldList) {
 			String k = ff.getKey();
 			String v = ff.getValue();
-			if(StringUtils.isEmpty(k) || StringUtils.isEmpty(v)) {
+			if (StringUtils.isEmpty(k) || StringUtils.isEmpty(v)) {
 				continue;
 			}
 			list.add(new BasicNameValuePair(k, v));

@@ -43,8 +43,8 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 		fw.setContent(content);
 		fw.setFileName(fileName);
 
-		for(FileField ff: fileFieldList) {
-			if(fieldName.equals(ff.getFieldName())) {
+		for (FileField ff: fileFieldList) {
+			if (fieldName.equals(ff.getFieldName())) {
 				ff.addFile(fw);
 				return this;
 			}
@@ -58,15 +58,15 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 	}
 
 	public HttpFileRequest initFormFieldList(Map<String, ? extends Object> map) {
-		if(map == null || map.isEmpty()) {
+		if (map == null || map.isEmpty()) {
 			return this;
 		}
 
 		List<FormField> formFieldList = new ArrayList<FormField>();
-		for(Map.Entry<String, ? extends Object> entry: map.entrySet()) {
+		for (Map.Entry<String, ? extends Object> entry: map.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
-			if(key == null || value == null) {
+			if (key == null || value == null) {
 				continue;
 			}
 			formFieldList.add(new FormField(key, value));
@@ -79,7 +79,7 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 		return this;
 	}
 	public HttpFileRequest addFormField(String key, String value) {
-		if(StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
+		if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
 			return this;
 		}
 
@@ -98,22 +98,22 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
 															.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
 															.setCharset(Charset.forName(charset));
-		if(!CollectionUtils.isEmpty(fileFieldList)) {
-			for(FileField fileField: fileFieldList) {
+		if (!CollectionUtils.isEmpty(fileFieldList)) {
+			for (FileField fileField: fileFieldList) {
 				List<FileWrapper> fileList = fileField.getFileList();
-				if(!CollectionUtils.isEmpty(fileList)) {
-					for(FileWrapper fw: fileList) {
+				if (!CollectionUtils.isEmpty(fileList)) {
+					for (FileWrapper fw: fileList) {
 						builder.addBinaryBody(fileField.getFieldName(), fw.getContent(), multipartContentType, fw.getFileName());
 					}
 				}
 			}
 		}
 
-		if(!CollectionUtils.isEmpty(formFieldList)) {
+		if (!CollectionUtils.isEmpty(formFieldList)) {
 			for (FormField ff: formFieldList) {
 				String k = ff.getKey();
 				String v = ff.getValue();
-				if(StringUtils.isEmpty(k) || StringUtils.isEmpty(v)) {
+				if (StringUtils.isEmpty(k) || StringUtils.isEmpty(v)) {
 					continue;
 				}
 				builder.addTextBody(k, v, textContentType);
