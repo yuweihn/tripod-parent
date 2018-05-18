@@ -75,8 +75,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	 */
 	@SuppressWarnings("unchecked")
 	public SequenceBeanFactory(String sequenceClassName, List<Property> constructorArgList, List<Property> propertyList
-			, String fieldSeqName, String sequenceBeanHolderBeanName
-			, String initMethod, String destroyMethod) {
+			, String fieldSeqName, String sequenceBeanHolderBeanName, String initMethod, String destroyMethod) {
 		Assert.notNull(sequenceBeanHolderBeanName, "[sequenceBeanHolderBeanName] is required.");
 		try {
 			Class<?> clz = Class.forName(sequenceClassName);
