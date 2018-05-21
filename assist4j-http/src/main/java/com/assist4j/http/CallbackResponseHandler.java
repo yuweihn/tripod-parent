@@ -140,7 +140,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			} catch (Exception e) {
 			}
 		}
-		return assembleHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
+		return createBasicHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
 	}
 	
 	private static byte[] read(InputStream is) {
@@ -166,7 +166,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		}
 	}
 	
-	private <T>BasicHttpResponse<T> assembleHttpResponse(int status, String errorMessage, T body
+	private <T>BasicHttpResponse<T> createBasicHttpResponse(int status, String errorMessage, T body
 								, List<Header> headerList, List<Cookie> cookieList, Header contentType) {
 		BasicHttpResponse<T> res = new BasicHttpResponse<T>();
 		res.setStatus(status);
