@@ -89,7 +89,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 
 		this.constructorArgList = constructorArgList;
 		this.propertyList = propertyList;
-		if(StringUtils.isEmpty(fieldSeqName)) {
+		if (StringUtils.isEmpty(fieldSeqName)) {
 			this.fieldSeqName = DEFAULT_FIELD_SEQ_NAME;
 		} else {
 			this.fieldSeqName = fieldSeqName;
@@ -109,13 +109,13 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	private void checkSequenceClass() {
 		try {
 			Field seqNameField = this.sequenceClass.getDeclaredField(this.fieldSeqName);
-			if(seqNameField == null) {
+			if (seqNameField == null) {
 				throw new NoSuchFieldException(this.fieldSeqName);
 			}
-			if(!CollectionUtils.isEmpty(this.propertyList)) {
-				for(Property prop: this.propertyList) {
+			if (!CollectionUtils.isEmpty(this.propertyList)) {
+				for (Property prop: this.propertyList) {
 					Field field = this.sequenceClass.getDeclaredField(prop.getPropertyName());
-					if(field == null) {
+					if (field == null) {
 						throw new NoSuchFieldException(prop.getPropertyName());
 					}
 				}
@@ -129,12 +129,12 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	 * 如果未设置initMethod，将sequenceClass类中的init作为默认的initMethod
 	 */
 	private void checkInitMethod() {
-		if(this.initMethod != null && !"".equals(this.initMethod)) {
+		if (this.initMethod != null && !"".equals(this.initMethod)) {
 			return;
 		}
 		try {
 			Method defaultInitMethod = this.sequenceClass.getMethod(DEFAULT_METHOD_INIT);
-			if(defaultInitMethod != null) {
+			if (defaultInitMethod != null) {
 				this.initMethod = defaultInitMethod.getName();
 			}
 		} catch (NoSuchMethodException | SecurityException e) {
@@ -145,12 +145,12 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	 * 如果未设置destroyMethod，将sequenceClass类中的destroy作为默认的destroyMethod
 	 */
 	private void checkDestroyMethod() {
-		if(this.destroyMethod != null && !"".equals(this.destroyMethod)) {
+		if (this.destroyMethod != null && !"".equals(this.destroyMethod)) {
 			return;
 		}
 		try {
 			Method defaultDestroyMethod = this.sequenceClass.getMethod(DEFAULT_METHOD_DESTROY);
-			if(defaultDestroyMethod != null) {
+			if (defaultDestroyMethod != null) {
 				this.destroyMethod = defaultDestroyMethod.getName();
 			}
 		} catch (NoSuchMethodException | SecurityException e) {
@@ -168,7 +168,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	}
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if(!done.get() && !beanName.equals(sequenceBeanHolderBeanName) && done.compareAndSet(false, true)) {
+		if (!done.get() && !beanName.equals(sequenceBeanHolderBeanName) && done.compareAndSet(false, true)) {
 			registerBeans();
 		}
 
@@ -178,31 +178,31 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	private void registerBeans() {
 		SequenceBeanHolder sequenceBeanHolder = beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
 		Map<String, String> beanSeqMap = sequenceBeanHolder.getBeanSeqNameMap();
-		if(CollectionUtils.isEmpty(beanSeqMap)) {
+		if (CollectionUtils.isEmpty(beanSeqMap)) {
 			return;
 		}
 
 		checkPropertyList();
 
 		Iterator<Entry<String, String>> entryItr = beanSeqMap.entrySet().iterator();
-		while(entryItr.hasNext()) {
+		while (entryItr.hasNext()) {
 			Entry<String, String> entry = entryItr.next();
 			String beanName = entry.getKey();
 			String seqName = entry.getValue();
 
-			if(beanName == null || "".equals(beanName.trim())) {
+			if (beanName == null || "".equals(beanName.trim())) {
 				continue;
 			}
 			beanName = beanName.trim();
 
-			if(seqName == null || "".equals(seqName.trim())) {
+			if (seqName == null || "".equals(seqName.trim())) {
 				seqName = beanName.trim();
 			} else {
 				seqName = seqName.trim();
 			}
 
 			List<Property> propList = new ArrayList<Property>();
-			if(!CollectionUtils.isEmpty(this.propertyList)) {
+			if (!CollectionUtils.isEmpty(this.propertyList)) {
 				propList.addAll(this.propertyList);
 			}
 			propList.add(new Property(fieldSeqName, seqName, Property.TYPE_VALUE));
@@ -211,11 +211,11 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	}
 	private void registerBean(String beanName, List<Property> constArgList, List<Property> propList) {
 		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(sequenceClass);
-		if(!CollectionUtils.isEmpty(constArgList)) {
-			for(Property constructorArg: constArgList) {
-				if(Property.TYPE_VALUE == constructorArg.getType()) {
+		if (!CollectionUtils.isEmpty(constArgList)) {
+			for (Property constructorArg: constArgList) {
+				if (Property.TYPE_VALUE == constructorArg.getType()) {
 					builder.addConstructorArgValue(constructorArg.getValue());
-				} else if(Property.TYPE_REFERENCE == constructorArg.getType()) {
+				} else if (Property.TYPE_REFERENCE == constructorArg.getType()) {
 					builder.addConstructorArgReference(constructorArg.getValue().toString());
 				} else {
 					throw new RuntimeException("Error parameter [type] in constructorArgList!");
@@ -223,21 +223,21 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 			}
 		}
 
-		if(!CollectionUtils.isEmpty(propList)) {
-			for(Property prop: propList) {
-				if(Property.TYPE_VALUE == prop.getType()) {
+		if (!CollectionUtils.isEmpty(propList)) {
+			for (Property prop: propList) {
+				if (Property.TYPE_VALUE == prop.getType()) {
 					builder.addPropertyValue(prop.getPropertyName(), prop.getValue());
-				} else if(Property.TYPE_REFERENCE == prop.getType()) {
+				} else if (Property.TYPE_REFERENCE == prop.getType()) {
 					builder.addPropertyReference(prop.getPropertyName(), prop.getValue().toString());
 				} else {
 					throw new RuntimeException("Error parameter [type] in propertyList!");
 				}
 			}
 		}
-		if(!StringUtils.isEmpty(initMethod)) {
+		if (!StringUtils.isEmpty(initMethod)) {
 			builder.setInitMethodName(initMethod);
 		}
-		if(!StringUtils.isEmpty(destroyMethod)) {
+		if (!StringUtils.isEmpty(destroyMethod)) {
 			builder.setDestroyMethodName(destroyMethod);
 		}
 		beanFactory.registerBeanDefinition(beanName, builder.getBeanDefinition());
@@ -247,14 +247,14 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	 * this.propertyList中必须有一个SequenceDao类型的属性
 	 */
 	private void checkPropertyList() {
-		if(this.propertyList == null) {
+		if (this.propertyList == null) {
 			this.propertyList = new ArrayList<Property>();
 		}
 
-		for(Property property: this.propertyList) {
+		for (Property property: this.propertyList) {
 			try {
 				Field field = this.sequenceClass.getDeclaredField(property.getPropertyName());
-				if(SequenceDao.class.isAssignableFrom(field.getType())) {
+				if (SequenceDao.class.isAssignableFrom(field.getType())) {
 					return;
 				}
 			} catch (Exception e) {
@@ -263,7 +263,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 
 		try {
 			Field defaultSequenceDaoField = this.sequenceClass.getDeclaredField(DEFAULT_FIELD_SEQUENCE_DAO);
-			if(defaultSequenceDaoField == null) {
+			if (defaultSequenceDaoField == null) {
 				throw new NoSuchFieldException(DEFAULT_FIELD_SEQUENCE_DAO);
 			}
 		} catch (Exception e) {
@@ -271,7 +271,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		}
 
 		String[] beanNamesForSequenceDao = beanFactory.getBeanNamesForType(SequenceDao.class);
-		if(beanNamesForSequenceDao == null || beanNamesForSequenceDao.length != 1) {
+		if (beanNamesForSequenceDao == null || beanNamesForSequenceDao.length != 1) {
 			throw new SequenceException("Error happens while inject field SequenceDao.");
 		}
 
