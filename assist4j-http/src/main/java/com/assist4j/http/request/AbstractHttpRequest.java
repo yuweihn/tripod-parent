@@ -192,7 +192,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 			httpUriRequest.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, hct.toString()));
 		}
 		if (!CollectionUtils.isEmpty(headerList)) {
-			for(Header header: headerList) {
+			for (Header header: headerList) {
 				httpUriRequest.setHeader(header);
 			}
 		}
