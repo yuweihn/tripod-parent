@@ -48,9 +48,9 @@ public abstract class BeanUtil {
 		List<String> list = new ArrayList<String>();
 		for (String k: keys) {
 			Object v = map.get(k);
-			if(v == null) {
+			if (v == null) {
 				v = "";
-			} else if(charset != null) {
+			} else if (charset != null) {
 				try {
 					k = URLEncoder.encode(k, charset);
 					v = URLEncoder.encode(v.toString(), charset);
@@ -146,7 +146,7 @@ public abstract class BeanUtil {
 
 		StringBuilder builder = new StringBuilder("");
 		int count = 0;
-		for (int i = 0; i < str.length(); i++) {
+		for (int i=0; i<str.length(); i++) {
 			char c = str.charAt(i);
 			count += isChineseChar(c) ? 2 : 1;
 
@@ -217,7 +217,7 @@ public abstract class BeanUtil {
 		}
 	}
 
-	public static<T> T copyProperties(Object source, Class<T> targetClass, String... ignoreProperties) {
+	public static<T> T copyProperties(Object source, Class<T> targetClass) {
 		if (source == null) {
 			return null;
 		}
@@ -226,20 +226,20 @@ public abstract class BeanUtil {
 			Constructor<T> constructor = targetClass.getDeclaredConstructor();
 			constructor.setAccessible(true);
 			T targetObj = constructor.newInstance();
-			copyProperties(source, targetObj, ignoreProperties);
+			copyProperties(source, targetObj);
 			return targetObj;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
-	public static<T> void copyProperties(Object source, T target, String... ignoreProperties) {
+	public static<T> void copyProperties(Object source, T target) {
 		if (source == null || target == null) {
 			return;
 		}
 
 		try {
-			BeanUtils.copyProperties(source, target, ignoreProperties);
+			BeanUtils.copyProperties(source, target);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
