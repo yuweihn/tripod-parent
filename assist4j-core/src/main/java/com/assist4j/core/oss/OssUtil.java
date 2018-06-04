@@ -126,7 +126,7 @@ public class OssUtil {
 	/**
 	 * 上传文件至OSS
 	 * @param content
-	 * @param key
+	 * @param key                 如：prd/readme.txt
 	 */
 	public String uploadFile(byte[] content, String key) {
 		log.info("OSS upload file: key[{}]", key);
