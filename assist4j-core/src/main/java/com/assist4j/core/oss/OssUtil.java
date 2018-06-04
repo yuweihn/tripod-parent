@@ -47,10 +47,10 @@ public class OssUtil {
 	}
 
 	private OSSClient getOSSClient() {
-		if(ossClient == null) {
+		if (ossClient == null) {
 			ossClientLock.lock();
 			try {
-				if(ossClient == null) {
+				if (ossClient == null) {
 					ossClient = new OSSClient(this.endpoint, this.accessKey, this.accessSecret);
 				}
 			} finally {
@@ -63,10 +63,10 @@ public class OssUtil {
 
 	private OSSClient getOSSClientWithBucket() {
 		OSSClient ossClient = getOSSClient();
-		if(ossClientWithBucketLockInit == false) {
+		if (ossClientWithBucketLockInit == false) {
 			ossClientWithBucketLock.lock();
 			try {
-				if(ossClientWithBucketLockInit == false) {
+				if (ossClientWithBucketLockInit == false) {
 					if (!ossClient.doesBucketExist(bucketName)) {
 						ossClient.createBucket(bucketName);
 					}
@@ -113,7 +113,7 @@ public class OssUtil {
 
 		ObjectListing objectListing = getOSSClient().listObjects(bucketName);
 		List<OSSObjectSummary> summaryList = objectListing.getObjectSummaries();
-		if(summaryList == null || summaryList.size() <= 0) {
+		if (summaryList == null || summaryList.size() <= 0) {
 			return list;
 		}
 
@@ -152,7 +152,7 @@ public class OssUtil {
 	 */
 	public byte[] downloadFile(String key) {
 		OSSObject ossObject = getOSSClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
-		if(ossObject == null || ossObject.getObjectContent() == null){
+		if (ossObject == null || ossObject.getObjectContent() == null) {
 			return null;
 		}
 

@@ -40,7 +40,7 @@ public abstract class BeanUtil {
 
 	public static String getAlphaString(Map<String, ? extends Object> map, String conn, String charset) {
 		Assert.notNull(conn, "[conn] is required.");
-		if(map == null || map.isEmpty()) {
+		if (map == null || map.isEmpty()) {
 			return "";
 		}
 
@@ -140,17 +140,17 @@ public abstract class BeanUtil {
 	 * @return
 	 */
 	public static String cutString(String str, int len) {
-		if(str == null || str.length() <= 0 || len <= 0) {
+		if (str == null || str.length() <= 0 || len <= 0) {
 			return "";
 		}
 
 		StringBuilder builder = new StringBuilder("");
 		int count = 0;
-		for(int i=0; i<str.length(); i++) {
+		for (int i = 0; i < str.length(); i++) {
 			char c = str.charAt(i);
 			count += isChineseChar(c) ? 2 : 1;
 
-			if(count > len) {
+			if (count > len) {
 				builder.append("......");
 				break;
 			}
@@ -166,7 +166,7 @@ public abstract class BeanUtil {
 	 * @return
 	 */
 	public static String escape(String str) {
-		if(str == null || str.length() <= 0) {
+		if (str == null || str.length() <= 0) {
 			return "";
 		}
 
@@ -179,7 +179,7 @@ public abstract class BeanUtil {
 	 * @return
 	 */
 	public static String escape2(String str) {
-		if(str == null || str.length() <= 0) {
+		if (str == null || str.length() <= 0) {
 			return "";
 		}
 
@@ -208,7 +208,7 @@ public abstract class BeanUtil {
 			URL url0 = new URL(url);
 			builder.append(url0.getProtocol()).append("://").append(url0.getHost());
 			int port = url0.getPort();
-			if(port != Constant.DEFAULT_HTTP_PORT && port != Constant.DEFAULT_HTTPS_PORT && port > 0) {
+			if (port != Constant.DEFAULT_HTTP_PORT && port != Constant.DEFAULT_HTTPS_PORT && port > 0) {
 				builder.append(":").append(port);
 			}
 			return builder.toString();
@@ -217,8 +217,8 @@ public abstract class BeanUtil {
 		}
 	}
 
-	public static<T> T copyProperties(Object source, Class<T> targetClass) {
-		if(source == null) {
+	public static<T> T copyProperties(Object source, Class<T> targetClass, String... ignoreProperties) {
+		if (source == null) {
 			return null;
 		}
 
@@ -226,32 +226,32 @@ public abstract class BeanUtil {
 			Constructor<T> constructor = targetClass.getDeclaredConstructor();
 			constructor.setAccessible(true);
 			T targetObj = constructor.newInstance();
-			copyProperties(source, targetObj);
+			copyProperties(source, targetObj, ignoreProperties);
 			return targetObj;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
-	public static<T> void copyProperties(Object source, T target) {
-		if(source == null || target == null) {
+	public static<T> void copyProperties(Object source, T target, String... ignoreProperties) {
+		if (source == null || target == null) {
 			return;
 		}
 
 		try {
-			BeanUtils.copyProperties(source, target);
+			BeanUtils.copyProperties(source, target, ignoreProperties);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
 	public static<T> String join(T[] arr, String separator) {
-		if(arr == null || arr.length <= 0) {
+		if (arr == null || arr.length <= 0) {
 			return null;
 		}
 		
 		StringBuilder builder = new StringBuilder("");
-		for(T t: arr) {
+		for (T t: arr) {
 			builder.append(separator).append(t.toString());
 		}
 		builder.delete(0, separator.length());
