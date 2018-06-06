@@ -48,7 +48,7 @@ public final class CacheSessionUtil {
 	}
 
 	public static <T>String getSessionIdByUserId(T userId) {
-		String sessionIdKey = sessionIdKeyPre + "." + userId;
+		String sessionIdKey = sessionIdKeyPre + "." + userId.toString();
 		return cache.get(sessionIdKey);
 	}
 }
