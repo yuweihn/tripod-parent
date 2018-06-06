@@ -76,7 +76,7 @@ public class CacheSessionFilter implements Filter {
 	}
 
 	/**
-	 * 初始化{@link CacheSessionUtil.instance}
+	 * 初始化{@link CacheSessionUtil}
 	 * @param cache
 	 */
 	private void initCacheSessionUtil(SessionCache cache) {
