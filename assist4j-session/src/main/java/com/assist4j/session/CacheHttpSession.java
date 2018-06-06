@@ -65,7 +65,7 @@ public class CacheHttpSession implements HttpSession {
 	public CacheHttpSession(String id, int maxInactiveInterval, String sessionKeyPrefix, SessionCache cache) {
 		this.id = id;
 		this.maxInactiveInterval = maxInactiveInterval;
-		this.cache = cache;
+		this.cache = new ProxySessionCache(cache);
 		this.sessionIdKeyPre = sessionKeyPrefix.trim() + "." + CacheSessionConstants.SESSION_ID_KEY_CURRENT;
 		this.fullSessionId = sessionKeyPrefix.trim() + "." + this.id;
 		init();
@@ -144,7 +144,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	public void setAttribute(String attributeName, Object attributeValue) {
 		checkSessionInvalid();
-		if(attributeValue instanceof RepeatKey) {
+		if (attributeValue instanceof RepeatKey) {
 			RepeatKey rlk = (RepeatKey) attributeValue;
 			sessionAttribute.putAttribute(attributeName, rlk.getValue());
 			this.sessionIdKey = sessionIdKeyPre + "." + rlk.getValue();
@@ -219,7 +219,7 @@ public class CacheHttpSession implements HttpSession {
 		CacheHttpSession other = (CacheHttpSession) obj;
 		if (id == null && other.id == null) {
 			return true;
-		}if (id != null && other.id != null) {
+		} if (id != null && other.id != null) {
 			return id.equals(other.id);
 		}
 		return false;
@@ -227,7 +227,7 @@ public class CacheHttpSession implements HttpSession {
 
 	public void removeSessionFromCache(){
 		cache.remove(fullSessionId);
-		if(sessionIdKey != null) {
+		if (sessionIdKey != null) {
 			cache.remove(sessionIdKey);
 		}
 	}
@@ -246,12 +246,12 @@ public class CacheHttpSession implements HttpSession {
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
-		if(sessionIdKey != null) {
+		if (sessionIdKey != null) {
 			/**
 			 * 把当前账号之前登录的session清除掉，防止重复登录
 			 */
 			String sessionId = cache.get(sessionIdKey);
-			if(sessionId != null && !sessionId.equals(fullSessionId)) {
+			if (sessionId != null && !sessionId.equals(fullSessionId)) {
 				cache.remove(sessionId);
 			}
 			cache.put(sessionIdKey, fullSessionId, maxInactiveInterval * 60);
@@ -266,7 +266,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	private void init() {
 		findSessionAttribute();
-		if(!StringUtils.isEmpty(sessionAttribute.getRepeatValue())) {
+		if (!StringUtils.isEmpty(sessionAttribute.getRepeatValue())) {
 			this.sessionIdKey = sessionIdKeyPre + "." + sessionAttribute.getRepeatValue();
 		}
 	}
@@ -276,12 +276,12 @@ public class CacheHttpSession implements HttpSession {
 	 * @return 用户Session属性键键值对储存bean.
 	 */
 	private void findSessionAttribute() {
-		if(sessionAttribute != null) {
+		if (sessionAttribute != null) {
 			return;
 		}
 		
 		sessionAttribute = CacheSessionAttribute.decode(cache.get(fullSessionId));
-		if(sessionAttribute == null) {
+		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new CacheSessionAttribute();
 			Calendar now = Calendar.getInstance();
@@ -313,7 +313,7 @@ public class CacheHttpSession implements HttpSession {
 		private Iterator<String> iterator;
 		public SessionEnumeration (Set<String> _attributeNames) {
 			Set<String> attributeNames = new HashSet<String>();
-			if(!CollectionUtils.isEmpty(_attributeNames)) {
+			if (!CollectionUtils.isEmpty(_attributeNames)) {
 				attributeNames.addAll(_attributeNames);
 			}
 			iterator = attributeNames.iterator();
@@ -359,5 +359,27 @@ public class CacheHttpSession implements HttpSession {
 	@Override
 	public void removeValue(String name) {
 		
+	}
+
+	private class ProxySessionCache implements SessionCache {
+		private SessionCache proxy;
+		public ProxySessionCache(SessionCache cache) {
+			proxy = cache;
+		}
+
+		@Override
+		public boolean put(String key, String value, long expiredTime) {
+			return proxy.put(key, value, expiredTime);
+		}
+
+		@Override
+		public String get(String key) {
+			return proxy.get(key);
+		}
+
+		@Override
+		public void remove(String key) {
+			proxy.remove(key);
+		}
 	}
 }
