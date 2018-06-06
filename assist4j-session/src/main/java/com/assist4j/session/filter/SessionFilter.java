@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.assist4j.session.CacheSessionHttpServletRequest;
-import com.assist4j.session.CacheSessionUtil;
+import com.assist4j.session.SessionUtil;
 import com.assist4j.session.cache.SessionCache;
 import com.assist4j.session.CacheSessionConstants;
 
@@ -22,7 +22,7 @@ import com.assist4j.session.CacheSessionConstants;
 /**
  * @author yuwei
  */
-public class CacheSessionFilter implements Filter {
+public class SessionFilter implements Filter {
 	/**
 	 * session有效期(分钟)
 	 */
@@ -44,12 +44,12 @@ public class CacheSessionFilter implements Filter {
 	 * @param maxInactiveInterval             session有效期(分钟)
 	 * @param cookieSessionName               Cookie中保存sessionId的属性名称
 	 */
-	public CacheSessionFilter(SessionCache cache, String cacheSessionKey, int maxInactiveInterval, String cookieSessionName) {
+	public SessionFilter(SessionCache cache, String cacheSessionKey, int maxInactiveInterval, String cookieSessionName) {
 		this.cache = cache;
 		this.cacheSessionKey = cacheSessionKey;
 		this.maxInactiveInterval = maxInactiveInterval;
 		this.cookieSessionName = cookieSessionName;
-		initCacheSessionUtil(cache);
+		initSessionUtil(cache);
 	}
 
 	@Override
@@ -76,12 +76,12 @@ public class CacheSessionFilter implements Filter {
 	}
 
 	/**
-	 * 初始化{@link CacheSessionUtil}
+	 * 初始化{@link SessionUtil}
 	 * @param cache
 	 */
-	private void initCacheSessionUtil(SessionCache cache) {
+	private void initSessionUtil(SessionCache cache) {
 		try {
-			Class<?> clz = Class.forName(CacheSessionUtil.class.getName());
+			Class<?> clz = Class.forName(SessionUtil.class.getName());
 			Constructor<?> constructor = clz.getDeclaredConstructor(SessionCache.class, String.class);
 			constructor.setAccessible(true);
 			constructor.newInstance(cache, cacheSessionKey + "." + CacheSessionConstants.SESSION_ID_KEY_CURRENT);

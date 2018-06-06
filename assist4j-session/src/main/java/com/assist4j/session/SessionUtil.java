@@ -8,14 +8,14 @@ import com.assist4j.session.cache.SessionCache;
 /**
  * @author yuwei
  */
-public final class CacheSessionUtil {
+public final class SessionUtil {
 	private static SessionCache cache;
 	private static String sessionIdKeyPre;
 
 
-	private CacheSessionUtil(SessionCache cache, String sessionIdKeyPre) {
-		CacheSessionUtil.cache = cache;
-		CacheSessionUtil.sessionIdKeyPre = sessionIdKeyPre;
+	private SessionUtil(SessionCache cache, String sessionIdKeyPre) {
+		SessionUtil.cache = cache;
+		SessionUtil.sessionIdKeyPre = sessionIdKeyPre;
 	}
 
 

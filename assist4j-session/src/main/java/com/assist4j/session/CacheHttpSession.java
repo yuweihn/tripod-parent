@@ -31,7 +31,7 @@ public class CacheHttpSession implements HttpSession {
 	/**
 	 * 缓存引擎
 	 */
-	private SessionCache cache;
+	private ProxySessionCache cache;
 	/**
 	 * session失效时间(分钟)
 	 */
@@ -226,9 +226,9 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	public void removeSessionFromCache(){
-		cache.remove(fullSessionId);
+		cache.removeSession(fullSessionId);
 		if (sessionIdKey != null) {
-			cache.remove(sessionIdKey);
+			cache.remove0(sessionIdKey);
 		}
 	}
 
@@ -242,7 +242,7 @@ public class CacheHttpSession implements HttpSession {
 			return false;
 		}
 		
-		cache.put(fullSessionId, CacheSessionAttribute.encode(sessionAttribute), maxInactiveInterval * 60);
+		cache.putSession(fullSessionId, CacheSessionAttribute.encode(sessionAttribute), maxInactiveInterval * 60);
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -252,9 +252,9 @@ public class CacheHttpSession implements HttpSession {
 			 */
 			String sessionId = cache.get(sessionIdKey);
 			if (sessionId != null && !sessionId.equals(fullSessionId)) {
-				cache.remove(sessionId);
+				cache.removeSession(sessionId);
 			}
-			cache.put(sessionIdKey, fullSessionId, maxInactiveInterval * 60);
+			cache.put0(sessionIdKey, fullSessionId, maxInactiveInterval * 60);
 		}
 		return true;
 	}
@@ -361,24 +361,29 @@ public class CacheHttpSession implements HttpSession {
 		
 	}
 
-	private class ProxySessionCache implements SessionCache {
+	private class ProxySessionCache {
 		private SessionCache proxy;
 		public ProxySessionCache(SessionCache cache) {
 			proxy = cache;
 		}
 
-		@Override
-		public boolean put(String key, String value, long expiredTime) {
+		public boolean putSession(String key, String value, long expiredTime) {
 			return proxy.put(key, value, expiredTime);
 		}
 
-		@Override
+		public boolean put0(String key, String value, long expiredTime) {
+			return proxy.put(key, value, expiredTime);
+		}
+
 		public String get(String key) {
 			return proxy.get(key);
 		}
 
-		@Override
-		public void remove(String key) {
+		public void removeSession(String key) {
+			proxy.remove(key);
+		}
+
+		public void remove0(String key) {
 			proxy.remove(key);
 		}
 	}
