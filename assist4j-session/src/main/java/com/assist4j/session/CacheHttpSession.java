@@ -22,20 +22,15 @@ import org.springframework.util.StringUtils;
  */
 @SuppressWarnings("deprecation")
 public class CacheHttpSession implements HttpSession {
-
-	/**
-	 * 默认session失效时间(分钟)
-	 */
-	private int DEFAULT_MAX_INACTIVE_INTERVAL = 30;
 	private String id;
 	/**
 	 * 缓存引擎
 	 */
-	private ProxySessionCache cache;
+	private ProxySessionCache proxyCache;
 	/**
 	 * session失效时间(分钟)
 	 */
-	private int maxInactiveInterval = DEFAULT_MAX_INACTIVE_INTERVAL;
+	private int maxInactiveInterval;
 	/**
 	 * session是否已失效
 	 */
@@ -65,8 +60,8 @@ public class CacheHttpSession implements HttpSession {
 	public CacheHttpSession(String id, int maxInactiveInterval, String sessionKeyPrefix, SessionCache cache) {
 		this.id = id;
 		this.maxInactiveInterval = maxInactiveInterval;
-		this.cache = new ProxySessionCache(cache);
-		this.sessionIdKeyPre = sessionKeyPrefix.trim() + "." + CacheSessionConstants.SESSION_ID_KEY_CURRENT;
+		this.proxyCache = new ProxySessionCache(cache);
+		this.sessionIdKeyPre = sessionKeyPrefix.trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
 		this.fullSessionId = sessionKeyPrefix.trim() + "." + this.id;
 		init();
 	}
@@ -226,9 +221,9 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	public void removeSessionFromCache(){
-		cache.removeSession(fullSessionId);
+		proxyCache.removeSession(fullSessionId);
 		if (sessionIdKey != null) {
-			cache.remove0(sessionIdKey);
+			proxyCache.remove0(sessionIdKey);
 		}
 	}
 
@@ -241,8 +236,8 @@ public class CacheHttpSession implements HttpSession {
 			removeSessionFromCache();
 			return false;
 		}
-		
-		cache.putSession(fullSessionId, CacheSessionAttribute.encode(sessionAttribute), maxInactiveInterval * 60);
+
+		proxyCache.putSession(fullSessionId, CacheSessionAttribute.encode(sessionAttribute), maxInactiveInterval * 60);
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -250,11 +245,11 @@ public class CacheHttpSession implements HttpSession {
 			/**
 			 * 把当前账号之前登录的session清除掉，防止重复登录
 			 */
-			String sessionId = cache.get(sessionIdKey);
+			String sessionId = proxyCache.get(sessionIdKey);
 			if (sessionId != null && !sessionId.equals(fullSessionId)) {
-				cache.removeSession(sessionId);
+				proxyCache.removeSession(sessionId);
 			}
-			cache.put0(sessionIdKey, fullSessionId, maxInactiveInterval * 60);
+			proxyCache.put0(sessionIdKey, fullSessionId, maxInactiveInterval * 60);
 		}
 		return true;
 	}
@@ -280,7 +275,7 @@ public class CacheHttpSession implements HttpSession {
 			return;
 		}
 		
-		sessionAttribute = CacheSessionAttribute.decode(cache.get(fullSessionId));
+		sessionAttribute = CacheSessionAttribute.decode(proxyCache.get(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new CacheSessionAttribute();
@@ -362,29 +357,34 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	private class ProxySessionCache {
-		private SessionCache proxy;
-		public ProxySessionCache(SessionCache cache) {
-			proxy = cache;
+		private SessionCache target;
+		public ProxySessionCache(SessionCache target) {
+			this.target = target;
 		}
 
 		public boolean putSession(String key, String value, long expiredTime) {
-			return proxy.put(key, value, expiredTime);
+			boolean b = target.put(key, value, expiredTime);
+			if (b) {
+//				SessionHolder.get().add(key);
+			}
+			return b;
 		}
 
 		public boolean put0(String key, String value, long expiredTime) {
-			return proxy.put(key, value, expiredTime);
+			return target.put(key, value, expiredTime);
 		}
 
 		public String get(String key) {
-			return proxy.get(key);
+			return target.get(key);
 		}
 
 		public void removeSession(String key) {
-			proxy.remove(key);
+			target.remove(key);
+//			SessionHolder.get().remove(key);
 		}
 
 		public void remove0(String key) {
-			proxy.remove(key);
+			target.remove(key);
 		}
 	}
 }

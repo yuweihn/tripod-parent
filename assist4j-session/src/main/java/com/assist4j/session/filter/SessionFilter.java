@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.assist4j.session.CacheSessionHttpServletRequest;
 import com.assist4j.session.SessionUtil;
 import com.assist4j.session.cache.SessionCache;
-import com.assist4j.session.CacheSessionConstants;
+import com.assist4j.session.SessionConstant;
 
 
 /**
@@ -38,6 +38,9 @@ public class SessionFilter implements Filter {
 	private String cookieSessionName;
 
 
+	public SessionFilter(SessionCache cache, String cacheSessionKey, String cookieSessionName) {
+		this(cache, cacheSessionKey, SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL, cookieSessionName);
+	}
 	/**
 	 * @param cache                           缓存引擎
 	 * @param cacheSessionKey                 缓存中session对象的key的前缀
@@ -84,7 +87,7 @@ public class SessionFilter implements Filter {
 			Class<?> clz = Class.forName(SessionUtil.class.getName());
 			Constructor<?> constructor = clz.getDeclaredConstructor(SessionCache.class, String.class);
 			constructor.setAccessible(true);
-			constructor.newInstance(cache, cacheSessionKey + "." + CacheSessionConstants.SESSION_ID_KEY_CURRENT);
+			constructor.newInstance(cache, cacheSessionKey + "." + SessionConstant.SESSION_ID_KEY_CURRENT);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
