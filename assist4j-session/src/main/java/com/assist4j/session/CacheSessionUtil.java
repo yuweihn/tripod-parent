@@ -15,12 +15,13 @@ public class CacheSessionUtil {
 	private static volatile CacheSessionUtil instance;
 
 	private CacheSessionUtil() {
+
 	}
 
 	public static void init(SessionCache cache, String sessionIdKeyPre) {
-		if(instance == null) {
+		if (instance == null) {
 			synchronized (CacheSessionUtil.class) {
-				if(instance == null) {
+				if (instance == null) {
 					instance = new CacheSessionUtil();
 				}
 			}
@@ -30,7 +31,7 @@ public class CacheSessionUtil {
 	}
 
 	public static CacheSessionUtil getInstance() {
-		if(instance == null || instance.cache == null) {
+		if (instance == null || instance.cache == null) {
 			throw new RuntimeException("对象未初始化");
 		}
 		return instance;
@@ -42,7 +43,7 @@ public class CacheSessionUtil {
 	 * @return
 	 */
 	public Date getCreateTimeBySessionId(String sessionId) {
-		if(sessionId == null) {
+		if (sessionId == null) {
 			return null;
 		}
 		CacheSessionAttribute attribute = CacheSessionAttribute.decode(cache.get(sessionId));
@@ -54,14 +55,14 @@ public class CacheSessionUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T>T getAttributeBySessionId(String sessionId, String key) {
-		if(sessionId == null) {
+		if (sessionId == null) {
 			return null;
 		}
 		CacheSessionAttribute attribute = CacheSessionAttribute.decode(cache.get(sessionId));
-		if(attribute == null) {
+		if (attribute == null) {
 			return null;
 		}
-		return (T)attribute.getAttribute(key);
+		return (T) attribute.getAttribute(key);
 	}
 
 	public String getSessionIdByUserId(Object userId) {
