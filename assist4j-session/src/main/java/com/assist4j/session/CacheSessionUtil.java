@@ -11,22 +11,16 @@ import com.assist4j.session.cache.SessionCache;
 public class CacheSessionUtil {
 	private String sessionIdKeyPre;
 	private SessionCache cache;
+
 	private static volatile CacheSessionUtil instance;
+
 
 
 	private CacheSessionUtil() {
 
 	}
-
-
-	public static void init(SessionCache cache, String sessionIdKeyPre) {
-		if (instance == null) {
-			synchronized (CacheSessionUtil.class) {
-				if (instance == null) {
-					instance = new CacheSessionUtil();
-				}
-			}
-		}
+	private CacheSessionUtil(SessionCache cache, String sessionIdKeyPre) {
+		instance = new CacheSessionUtil();
 		instance.cache = cache;
 		instance.sessionIdKeyPre = sessionIdKeyPre;
 	}

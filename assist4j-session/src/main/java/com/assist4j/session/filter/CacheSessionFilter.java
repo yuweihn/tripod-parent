@@ -2,6 +2,7 @@ package com.assist4j.session.filter;
 
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -48,7 +49,7 @@ public class CacheSessionFilter implements Filter {
 		this.cacheSessionKey = cacheSessionKey;
 		this.maxInactiveInterval = maxInactiveInterval;
 		this.cookieSessionName = cookieSessionName;
-		CacheSessionUtil.init(cache, cacheSessionKey + "." + CacheSessionConstants.SESSION_ID_KEY_CURRENT);
+		initCacheSessionUtil(cache);
 	}
 
 	@Override
@@ -72,5 +73,20 @@ public class CacheSessionFilter implements Filter {
 	@Override
 	public void destroy() {
 		
+	}
+
+	/**
+	 * 初始化{@link CacheSessionUtil.instance}
+	 * @param cache
+	 */
+	private void initCacheSessionUtil(SessionCache cache) {
+		try {
+			Class<?> clz = Class.forName(CacheSessionUtil.class.getName());
+			Constructor<?> constructor = clz.getDeclaredConstructor(SessionCache.class, String.class);
+			constructor.setAccessible(true);
+			constructor.newInstance(cache, cacheSessionKey + "." + CacheSessionConstants.SESSION_ID_KEY_CURRENT);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
