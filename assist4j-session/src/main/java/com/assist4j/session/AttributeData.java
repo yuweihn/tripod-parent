@@ -3,10 +3,8 @@ package com.assist4j.session;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.springframework.util.StringUtils;
-
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.util.StringUtils;
 
 
 /**
@@ -46,15 +44,15 @@ public class AttributeData {
 
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof AttributeData)) {
+		if (!(obj instanceof AttributeData)) {
 			return false;
 		}
 
 		AttributeData ad = (AttributeData) obj;
-		if(StringUtils.isEmpty(ad.getKey()) && StringUtils.isEmpty(this.getKey())) {
+		if (StringUtils.isEmpty(ad.getKey()) && StringUtils.isEmpty(this.getKey())) {
 			return true;
 		}
-		if(!StringUtils.isEmpty(ad.getKey()) && !StringUtils.isEmpty(this.getKey())) {
+		if (!StringUtils.isEmpty(ad.getKey()) && !StringUtils.isEmpty(this.getKey())) {
 			return ad.getKey().equals(this.getKey());
 		}
 		return false;
