@@ -65,7 +65,7 @@ public class CacheSessionUtil {
 		return (T) attribute.getAttribute(key);
 	}
 
-	public String getSessionIdByUserId(Object userId) {
+	public <T>String getSessionIdByUserId(T userId) {
 		String sessionIdKey = sessionIdKeyPre + "." + userId;
 		return cache.get(sessionIdKey);
 	}
