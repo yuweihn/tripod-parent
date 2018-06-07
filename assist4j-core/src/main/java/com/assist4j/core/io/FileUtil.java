@@ -51,21 +51,21 @@ public abstract class FileUtil extends StreamUtil {
 			log.error("", e);
 			throw new RuntimeException(e);
 		} finally {
-			if(bf != null) {
+			if (bf != null) {
 				try {
 					bf.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(isr != null) {
+			if (isr != null) {
 				try {
 					isr.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(fis != null) {
+			if (fis != null) {
 				try {
 					fis.close();
 				} catch (IOException e) {

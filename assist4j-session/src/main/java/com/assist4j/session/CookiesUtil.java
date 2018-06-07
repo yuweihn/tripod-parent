@@ -11,10 +11,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author yuwei
  */
 public abstract class CookiesUtil {
-	public static final int COOKIE_MAXAGE_DEFAULT = -1;//默认Cookie的生存期为关闭浏览器
-
-
-	
 	/**
 	 * 从Cookie中根据key取值
 	 * @param key
@@ -45,7 +41,7 @@ public abstract class CookiesUtil {
 	 * @param value Cookie的值。
 	 */
 	public static void addCookie(HttpServletRequest request, HttpServletResponse response, String name, String value) {
-		addCookie(request, response, name, value, null, COOKIE_MAXAGE_DEFAULT);
+		addCookie(request, response, name, value, null, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 	}
 
 

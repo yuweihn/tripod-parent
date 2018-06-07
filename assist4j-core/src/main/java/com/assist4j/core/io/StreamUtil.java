@@ -24,7 +24,7 @@ public abstract class StreamUtil {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
-			if(out != null) {
+			if (out != null) {
 				try {
 					out.close();
 				} catch (IOException e) {

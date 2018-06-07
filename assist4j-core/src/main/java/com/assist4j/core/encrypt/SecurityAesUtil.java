@@ -69,15 +69,15 @@ public abstract class SecurityAesUtil {
 	 * @return
 	 */
 	private static String parseByte2HexStr(byte[] value) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder builder = new StringBuilder("");
 		for (int i = 0; i < value.length; i++) {
 			String hex = Integer.toHexString(value[i] & 0xFF);
 			if (hex.length() == 1) {
-			hex = '0' + hex;
+				hex = '0' + hex;
+			}
+			builder.append(hex.toLowerCase());
 		}
-			buf.append(hex.toLowerCase());
-		}
-		return buf.toString();
+		return builder.toString();
 	}
 	
 	/**将16进制转换为二进制

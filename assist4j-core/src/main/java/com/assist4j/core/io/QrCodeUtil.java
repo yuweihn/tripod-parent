@@ -134,7 +134,7 @@ public abstract class QrCodeUtil {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if(logoBais != null) {
+			if (logoBais != null) {
 				try {
 					logoBais.close();
 				} catch (IOException e) {
@@ -201,7 +201,7 @@ public abstract class QrCodeUtil {
 		} finally {
 			if(baos != null) {
 				try {
-			baos.close();
+					baos.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

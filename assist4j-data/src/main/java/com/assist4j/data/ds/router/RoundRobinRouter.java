@@ -38,7 +38,7 @@ public class RoundRobinRouter implements Router {
 		Assert.notNull(dsc, "[dsc] is required.");
 
 		List<KvPair> slaveList = dsc.getSlaveList();
-		if(CollectionUtils.isEmpty(slaveList)) {
+		if (CollectionUtils.isEmpty(slaveList)) {
 			return dsc.getMaster();
 		}
 

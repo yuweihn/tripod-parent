@@ -15,9 +15,13 @@ import org.springframework.util.Assert;
  */
 public class SingleSequenceDao extends AbstractSequenceDao {
 	private static final Logger log = LoggerFactory.getLogger(SingleSequenceDao.class);
+
+
 	private DataSource dataSource;
 
-	public SingleSequenceDao() {}
+	public SingleSequenceDao() {
+
+	}
 
 	@Override
 	public void init() {
@@ -28,7 +32,7 @@ public class SingleSequenceDao extends AbstractSequenceDao {
 	@Override
 	public void ensure(String seqName) {
 		Long value = selectSeqValue(0, seqName);
-		if(value == null) {
+		if (value == null) {
 			insertSeq(0, seqName, 0);
 		}
 	}
@@ -38,7 +42,7 @@ public class SingleSequenceDao extends AbstractSequenceDao {
 		Assert.notNull(seqName, "序列名称不能为空");
 
 		int retryTimes = getRetryTimes();
-		for(int i = 0; i < retryTimes + 1; ++i) {
+		for (int i = 0; i < retryTimes + 1; ++i) {
 			Long oldValue = selectSeqValue(0, seqName);
 
 			if (oldValue == null || oldValue < 0L || oldValue > Long.MAX_VALUE - 100000000L) {

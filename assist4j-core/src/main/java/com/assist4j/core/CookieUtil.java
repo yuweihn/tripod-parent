@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author yuwei
  */
 public abstract class CookieUtil {
-	public static final int COOKIE_MAXAGE_1W = 7 * 24 * 60 * 60;// 1 week
-	public static final int COOKIE_MAXAGE_DEFAULT = -1;//默认Cookie的生存期为关闭浏览器
+	public static final int COOKIE_MAX_AGE_1W = 7 * 24 * 60 * 60;// 1 week
+	public static final int COOKIE_MAX_AGE_DEFAULT = -1;//默认Cookie的生存期为关闭浏览器
 
 
 	
@@ -47,7 +47,7 @@ public abstract class CookieUtil {
 	 * @param value Cookie的值。
 	 */
 	public static void addCookie(String name, String value) {
-		addCookie(name, value, null, COOKIE_MAXAGE_DEFAULT);
+		addCookie(name, value, null, COOKIE_MAX_AGE_DEFAULT);
 	}
 
 
@@ -89,7 +89,7 @@ public abstract class CookieUtil {
 		HttpServletRequest request = ActionUtil.getRequest();
 		HttpServletResponse response = ActionUtil.getResponse();
 		if (request == null || response == null) {
-			throw new RuntimeException("Request and response can not be null.");
+			throw new RuntimeException("Request and response are required.");
 		}
 
 		Cookie cookie = new Cookie(name, value);

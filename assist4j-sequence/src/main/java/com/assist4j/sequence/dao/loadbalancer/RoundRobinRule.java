@@ -28,7 +28,7 @@ public class RoundRobinRule implements IRule {
 		Assert.isTrue(segmentCount > 0, "Field segmentCount cannot be less than 1, segmentCount = " + segmentCount);
 
 		AtomicInteger seg = curSegment.get(seqName);
-		if(seg == null) {
+		if (seg == null) {
 			seg = new AtomicInteger(0);
 			curSegment.put(seqName, seg);
 		}
@@ -36,9 +36,9 @@ public class RoundRobinRule implements IRule {
 		/**
 		 * 查询下一个segment值，并保证范围在[0 ~ segmentCount-1]之间
 		 */
-		while(true) {
+		while (true) {
 			int curVal = seg.getAndIncrement();
-			if(curVal >= 0 && curVal <= segmentCount - 1) {
+			if (curVal >= 0 && curVal <= segmentCount - 1) {
 				return curVal;
 			}
 			seg.set(0);

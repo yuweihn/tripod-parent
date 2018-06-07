@@ -169,7 +169,6 @@ public abstract class IdCardUtil {
 		if (check15(cardNo0)) {
 			return true;
 		}
-
 		return false;
 	}
 
@@ -241,7 +240,7 @@ public abstract class IdCardUtil {
 		int sum = iStart / 10 + (iStart % 10) * 9;
 		char[] chars = mid.toCharArray();
 		int iflag = 8;
-		for (char c : chars) {
+		for (char c: chars) {
 			sum = sum + Integer.valueOf(c + "") * iflag;
 			iflag--;
 		}
@@ -277,7 +276,7 @@ public abstract class IdCardUtil {
 		String end = card.substring(7, 8);
 		char[] chars = mid.toCharArray();
 		Integer iflag = 7;
-		for (char c : chars) {
+		for (char c: chars) {
 			sum = sum + Integer.valueOf(c + "") * iflag;
 			iflag--;
 		}

@@ -13,16 +13,16 @@ import org.hibernate.Query;
  */
 public abstract class MapParamCallback extends AbstractParamCallback {
 	protected void assembleParams(Query query, Map<String, Object> params) {
-		if(params == null || params.size() <= 0) {
+		if (params == null || params.size() <= 0) {
 			return;
 		}
 
 		Iterator<String> itr = params.keySet().iterator();
-		while(itr.hasNext()) {
+		while (itr.hasNext()) {
 			String key = itr.next();
 			Object value = params.get(key);
 			
-			if(value instanceof Collection<?>) {
+			if (value instanceof Collection<?>) {
 				query.setParameterList(key, (Collection<?>)value);
 			} else {
 				query.setParameter(key, value);

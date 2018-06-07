@@ -39,7 +39,7 @@ public class JedisClusterFactory implements FactoryBean<BinaryJedisCluster> {
 		return true;
 	}
 
-	public void init() throws Exception {
+	public void init() {
 		Assert.notEmpty(redisNodeList, "[Assertion failed] - this collection must not be empty: it must contain at least 1 element");
 		Set<HostAndPort> nodes = new HashSet<HostAndPort>(redisNodeList);
 		binaryJedisCluster = new BinaryJedisCluster(nodes, timeout, maxRedirections, jedisPoolConfig);

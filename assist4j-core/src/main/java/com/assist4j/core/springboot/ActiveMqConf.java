@@ -17,7 +17,6 @@ import javax.jms.ConnectionFactory;
  * @author yuwei
  */
 public class ActiveMqConf {
-
 	/**
 	 * 真正可以产生Connection的ConnectionFactory，由对应的 JMS服务厂商提供
 	 */

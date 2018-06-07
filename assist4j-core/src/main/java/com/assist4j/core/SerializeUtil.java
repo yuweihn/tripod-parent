@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class SerializeUtil {
 	private static final Logger log = LoggerFactory.getLogger(SerializeUtil.class);
+
+
 	/**
 	 * 序列化
 	 * @param object
@@ -34,14 +36,14 @@ public abstract class SerializeUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if(oos != null) {
+			if (oos != null) {
 				try {
 					oos.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(baos != null) {
+			if (baos != null) {
 				try {
 					baos.close();
 				} catch (IOException e) {
@@ -67,14 +69,14 @@ public abstract class SerializeUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if(ois != null) {
+			if (ois != null) {
 				try {
 					ois.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(bais != null) {
+			if (bais != null) {
 				try {
 					bais.close();
 				} catch (IOException e) {

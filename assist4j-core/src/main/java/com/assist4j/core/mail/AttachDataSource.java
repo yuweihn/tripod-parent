@@ -24,7 +24,7 @@ public class AttachDataSource implements DataSource {
 	 **/
 	private String name;
 	
-	public AttachDataSource(byte[] attachData, String contentType, String name){
+	public AttachDataSource(byte[] attachData, String contentType, String name) {
 		this.attachData = attachData;
 		this.contentType = contentType;
 		this.name = name;

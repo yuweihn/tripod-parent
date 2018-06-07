@@ -20,7 +20,7 @@ public class DataSourceCluster {
 
 
 	public DataSourceCluster addSlave(KvPair slave) {
-		if(slaveList == null) {
+		if (slaveList == null) {
 			slaveList = new ArrayList<KvPair>();
 		}
 		slaveList.add(slave);

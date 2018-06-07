@@ -22,6 +22,8 @@ import org.springframework.util.Assert;
  */
 public class HttpFilter extends AbstractFilter {
 	private static final Logger log = LoggerFactory.getLogger(HttpFilter.class);
+
+
 	private static final String DEFAULT_METHOD_PARAM = "_method";
 	private static final String DEFAULT_ENCODING = Constant.ENCODING_UTF_8;
 	private static final String DEFAULT_STATIC_PATH = "/static/";

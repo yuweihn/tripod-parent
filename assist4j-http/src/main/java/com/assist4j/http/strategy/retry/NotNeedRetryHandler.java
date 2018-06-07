@@ -22,10 +22,10 @@ public class NotNeedRetryHandler implements HttpRequestRetryHandler {
 	}
 
 	public static NotNeedRetryHandler get() {
-		if(instance == null) {
+		if (instance == null) {
 			lock.lock();
 			try {
-				if(instance == null) {
+				if (instance == null) {
 					instance = new NotNeedRetryHandler();
 				}
 			} finally {

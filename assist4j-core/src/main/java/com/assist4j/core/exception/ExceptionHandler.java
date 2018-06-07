@@ -38,7 +38,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response
 			, Object handler, Exception ex) {
 		log.error("", ex);
-		if(InterceptorUtil.hasResponseBodyAnnotation(handler) || errorPage == null) {
+		if (InterceptorUtil.hasResponseBodyAnnotation(handler) || errorPage == null) {
 			return createJsonView(ex);
 		}
 
@@ -61,15 +61,15 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 
 	private String showMessage(Exception ex) {
 		String msg = null;
-		if(errorMsgMap != null) {
+		if (errorMsgMap != null) {
 			msg = errorMsgMap.get(ex.getClass());
 		}
-		if(msg != null && !"".equals(msg)) {
+		if (msg != null && !"".equals(msg)) {
 			return msg;
 		}
 
 		msg = ex.getMessage();
-		if(msg != null && !"".equals(msg)) {
+		if (msg != null && !"".equals(msg)) {
 			return msg;
 		}
 

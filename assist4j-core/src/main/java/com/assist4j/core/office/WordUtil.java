@@ -49,14 +49,14 @@ public abstract class WordUtil {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
-			if(outputStream != null) {
+			if (outputStream != null) {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
 					log.error("", e);
 				}
 			}
-			if(inputStream != null) {
+			if (inputStream != null) {
 				try {
 					inputStream.close();
 				} catch (IOException e) {
@@ -89,7 +89,7 @@ public abstract class WordUtil {
 					List<XWPFTableCell> cells = row.getTableCells();
 					for (XWPFTableCell cell: cells) {
 						List<XWPFParagraph> cellParas = cell.getParagraphs();
-						for(XWPFParagraph cellPara: cellParas) {
+						for (XWPFParagraph cellPara: cellParas) {
 							replaceInAParagraph(cellPara, map);
 						}
 //
@@ -111,21 +111,21 @@ public abstract class WordUtil {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
-			if(outputStream != null) {
+			if (outputStream != null) {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
 					log.error("", e);
 				}
 			}
-			if(inputStream != null) {
+			if (inputStream != null) {
 				try {
 					inputStream.close();
 				} catch (IOException e) {
 					log.error("", e);
 				}
 			}
-			if(document != null) {
+			if (document != null) {
 				try {
 					document.close();
 				} catch (IOException e) {
@@ -153,10 +153,10 @@ public abstract class WordUtil {
 	 * fileType取值：doc或docx
 	 */
 	public static byte[] replace(byte[] fileData, String fileType, Map<String, String> map) {
-		if(fileData == null || fileData.length <= 0) {
-			throw new IllegalArgumentException("[fileData] can not be empty.");
+		if (fileData == null || fileData.length <= 0) {
+			throw new IllegalArgumentException("[fileData] is required.");
 		}
-		Assert.notEmpty(map, "[map] can not be empty.");
+		Assert.notEmpty(map, "[map] is required.");
 
 		if (TYPE_DOCX.equals(fileType)) {
 			return replaceInDocx(fileData, map);

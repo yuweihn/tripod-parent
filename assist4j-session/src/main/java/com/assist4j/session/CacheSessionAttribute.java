@@ -48,7 +48,7 @@ public class CacheSessionAttribute implements Serializable {
 	}
 
 	public void putAttribute(String name, Object value) {
-		if(StringUtils.isEmpty(name) || StringUtils.isEmpty(value)) {
+		if (StringUtils.isEmpty(name) || StringUtils.isEmpty(value)) {
 			return;
 		}
 		AttributeData data = new AttributeData();
@@ -60,11 +60,11 @@ public class CacheSessionAttribute implements Serializable {
 	}
 
 	public Object removeAttribute(String name) {
-		if(name == null || isEmpty()) {
+		if (name == null || isEmpty()) {
 			return null;
 		}
-		for(AttributeData data: attributes) {
-			if(name.equals(data.getKey())) {
+		for (AttributeData data: attributes) {
+			if (name.equals(data.getKey())) {
 				Object value = data.getValue();
 				attributes.remove(data);
 				return value;
@@ -74,11 +74,11 @@ public class CacheSessionAttribute implements Serializable {
 	}
 
 	public Object getAttribute(String name) {
-		if(name == null || isEmpty()) {
+		if (name == null || isEmpty()) {
 			return null;
 		}
-		for(AttributeData data: attributes) {
-			if(name.equals(data.getKey())) {
+		for (AttributeData data: attributes) {
+			if (name.equals(data.getKey())) {
 				return data.getValue();
 			}
 		}
@@ -87,11 +87,11 @@ public class CacheSessionAttribute implements Serializable {
 
 	public Set<String> getAttributeNames() {
 		Set<String> set = new HashSet<String>();
-		if(isEmpty()) {
+		if (isEmpty()) {
 			return set;
 		}
 
-		for(AttributeData data: attributes) {
+		for (AttributeData data: attributes) {
 			set.add(data.getKey());
 		}
 		return set;
@@ -139,7 +139,7 @@ public class CacheSessionAttribute implements Serializable {
 
 
 	public static String encode(CacheSessionAttribute attr) {
-		if(attr == null) {
+		if (attr == null) {
 			return null;
 		}
 		
@@ -148,14 +148,14 @@ public class CacheSessionAttribute implements Serializable {
 		map.put("lastAccessTime", attr.lastAccessTime == null ? null : formatDate(attr.lastAccessTime, "yyyy-MM-dd HH:mm:ss.SSS"));
 		map.put("createTime", attr.createTime == null ? null : formatDate(attr.createTime, "yyyy-MM-dd HH:mm:ss.SSS"));
 
-		if(!attr.isEmpty()) {
+		if (!attr.isEmpty()) {
 			List<String> attributeStrList = new ArrayList<String>();
-			for(AttributeData data: attr.attributes) {
+			for (AttributeData data: attr.attributes) {
 				attributeStrList.add(data.encode());
 			}
 			map.put("attribute", attributeStrList);
 		}
-		if(!StringUtils.isEmpty(attr.repeatKey) && !StringUtils.isEmpty(attr.repeatValue)) {
+		if (!StringUtils.isEmpty(attr.repeatKey) && !StringUtils.isEmpty(attr.repeatValue)) {
 			map.put("repeatKey", attr.repeatKey);
 			map.put("repeatValue", attr.repeatValue);
 		}
@@ -170,7 +170,7 @@ public class CacheSessionAttribute implements Serializable {
 		} catch (Exception e) {
 		}
 		
-		if(map == null) {
+		if (map == null) {
 			return null;
 		}
 
@@ -189,9 +189,9 @@ public class CacheSessionAttribute implements Serializable {
 						: parseDate(createTimeObj.toString(), "yyyy-MM-dd HH:mm:ss.SSS");
 
 		List<String> attributeStrList = (List<String>) attributeObj;
-		if(CollectionUtils.isNotEmpty(attributeStrList)) {
+		if (CollectionUtils.isNotEmpty(attributeStrList)) {
 			Set<AttributeData> _attributes = new HashSet<AttributeData>();
-			for(String attributeStr: attributeStrList) {
+			for (String attributeStr: attributeStrList) {
 				AttributeData data = new AttributeData();
 				data.decode(attributeStr);
 				_attributes.add(data);

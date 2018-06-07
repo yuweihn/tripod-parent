@@ -30,10 +30,10 @@ public class NeedRetryHandler implements HttpRequestRetryHandler {
 	}
 
 	public static NeedRetryHandler get() {
-		if(instance == null) {
+		if (instance == null) {
 			lock.lock();
 			try {
-				if(instance == null) {
+				if (instance == null) {
 					instance = new NeedRetryHandler();
 				}
 			} finally {

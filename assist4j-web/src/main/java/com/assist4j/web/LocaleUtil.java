@@ -17,7 +17,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public abstract class LocaleUtil {
 	public static Locale getLocale(){
 		HttpServletRequest request = ActionUtil.getRequest();
-		if(request == null) {
+		if (request == null) {
 			return getLocaleFromString(Constant.LOCALE_ZH_CN);
 		}
 		LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);

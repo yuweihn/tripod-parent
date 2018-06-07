@@ -46,21 +46,21 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	}
 	
 	private void initDataSourceRouteRule() {
-		if(rule != null) {
+		if (rule != null) {
 			return;
 		}
 		
 		int segCount = getSegmentCount();
 		
-		if(ruleClassName == null || "".equals(ruleClassName.trim())) {
+		if (ruleClassName == null || "".equals(ruleClassName.trim())) {
 			rule = new RoundRobinRule(segCount);
 		} else {
 			try {
 				Class<?> ruleClass = Class.forName(ruleClassName.trim());
-				if(!IRule.class.isAssignableFrom(ruleClass)) {
+				if (!IRule.class.isAssignableFrom(ruleClass)) {
 					throw new SequenceException("[ruleClassName] must be a subclass of [" + IRule.class.getName() + "], but now it is [" + ruleClassName + "].");
 				}
-				rule = (IRule)ruleClass.newInstance();
+				rule = (IRule) ruleClass.newInstance();
 				rule.setSegmentCount(segCount);
 			} catch (Exception e) {
 				throw new SequenceException(e);
@@ -70,13 +70,13 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 
 	@Override
 	public void ensure(String seqName) {
-		for(int i = 0; i < getSegmentCount(); ++i) {
+		for (int i = 0; i < getSegmentCount(); ++i) {
 			Long oldValue = selectSeqValue(i, seqName);
 			if (oldValue == null) {
 				insertSeq(i, seqName, i * getInnerStep());
 			} else {
 				long oldValue0 = adjustCurrentValue(i, oldValue);
-				if(oldValue != oldValue0) {
+				if (oldValue != oldValue0) {
 					updateSeqValue(i, seqName, oldValue, oldValue0);
 				}
 			}
@@ -89,7 +89,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 		int segCount = getSegmentCount();
 		
 		int retryTimes = getRetryTimes();
-		for(int i = 0; i < retryTimes + 1; ++i) {
+		for (int i = 0; i < retryTimes + 1; ++i) {
 			int segment = rule.chooseSegment(seqName);
 			Long oldValue = selectSeqValueFromASegment(segment, seqName);
 			
@@ -107,7 +107,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 				continue;
 			}
 			
-			if(i >= retryTimes - 1) {
+			if (i >= retryTimes - 1) {
 				cleanExcludedSegment();
 			}
 			
@@ -117,7 +117,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	}
 	
 	protected void cleanExcludedSegment() {
-		if(!CollectionUtils.isEmpty(excludedSegment)) {
+		if (!CollectionUtils.isEmpty(excludedSegment)) {
 			excludedSegment.clear();
 		}
 	}
@@ -157,7 +157,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	}
 
 	private long adjustCurrentValue(int segment, long currentValue) {
-		if(currentValue < 0) {
+		if (currentValue < 0) {
 			currentValue = 0;
 		}
 		

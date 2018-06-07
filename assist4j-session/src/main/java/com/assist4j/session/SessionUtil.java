@@ -36,7 +36,7 @@ public final class SessionUtil {
 	 * 查询指定session中指定属性的值
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T>T getAttributeBySessionId(String sessionId, String key) {
+	public static<T> T getAttributeBySessionId(String sessionId, String key) {
 		if (sessionId == null) {
 			return null;
 		}
@@ -47,7 +47,7 @@ public final class SessionUtil {
 		return (T) attribute.getAttribute(key);
 	}
 
-	public static <T>String getSessionIdByUserId(T userId) {
+	public static<T> String getSessionIdByUserId(T userId) {
 		String sessionIdKey = sessionIdKeyPre + "." + userId.toString();
 		return cache.get(sessionIdKey);
 	}

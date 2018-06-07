@@ -35,7 +35,9 @@ public class DataSourceAspect {
 
 	@Pointcut("@within(org.springframework.transaction.annotation.Transactional) "
 			+ " || @annotation(org.springframework.transaction.annotation.Transactional)")
-	public void cut(){}
+	public void cut() {
+
+	}
 
 
 	@Around("cut()")
@@ -65,7 +67,7 @@ public class DataSourceAspect {
 		}
 
 		Object result = point.proceed();
-		if(newDataSource) {
+		if (newDataSource) {
 			DataSourceHolder.clearDataSource();
 		}
 		return result;
@@ -74,8 +76,8 @@ public class DataSourceAspect {
 	private DataSourceCluster getDefaultCluster(){
 		Assert.notEmpty(dsClusterList, "[dsClusterList] is required.");
 
-		for(DataSourceCluster dsc: dsClusterList) {
-			if(dsc.getIsDefault()) {
+		for (DataSourceCluster dsc: dsClusterList) {
+			if (dsc.getIsDefault()) {
 				return dsc;
 			}
 		}
@@ -88,8 +90,8 @@ public class DataSourceAspect {
 		Assert.notNull(key, "[key] is required.");
 		Assert.notEmpty(dsClusterList, "[dsClusterList] is required.");
 
-		for(DataSourceCluster dsc: dsClusterList) {
-			if(dsc.getKey().equals(key)) {
+		for (DataSourceCluster dsc: dsClusterList) {
+			if (dsc.getKey().equals(key)) {
 				return dsc;
 			}
 		}
@@ -97,5 +99,4 @@ public class DataSourceAspect {
 		log.error("There isn't database named {}.", key);
 		throw new RuntimeException("There isn't database named " + key + ".");
 	}
-
 }

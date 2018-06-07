@@ -38,7 +38,7 @@ public abstract class JsonUtil {
 	}
 
 	public static<T> String toJson(List<T> list) {
-		if(CollectionUtils.isEmpty(list)) {
+		if (CollectionUtils.isEmpty(list)) {
 			return "[]";
 		}
 

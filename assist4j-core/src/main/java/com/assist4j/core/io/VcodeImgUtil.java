@@ -22,11 +22,11 @@ public abstract class VcodeImgUtil {
 	private static final String DEFAULT_IMAGE_TYPE = "jpg";
 	
 
-	public static final byte[] createImage(String code){
+	public static final byte[] createImage(String code) {
 		return createImage(code, DEFAULT_IMAGE_TYPE);
 	}
 	
-	public static final byte[] createImage(String code, String imgType){
+	public static final byte[] createImage(String code, String imgType) {
 		RenderedImage image = createImage0(code);
 		ByteArrayOutputStream output = null;
 		ImageOutputStream imageOut = null;
@@ -39,14 +39,14 @@ public abstract class VcodeImgUtil {
 			e.printStackTrace();
 			return null;
 		} finally {
-			if(imageOut != null) {
+			if (imageOut != null) {
 				try {
 					imageOut.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(output != null) {
+			if (output != null) {
 				try {
 					output.close();
 				} catch (IOException e) {
@@ -66,14 +66,14 @@ public abstract class VcodeImgUtil {
 		g.fillRect(0, 0, width, height);
 		g.setFont(new Font("Times New Roman", Font.PLAIN, 18));
 		g.setColor(getRandColor(160, 200));
-		for(int i = 0; i < 155; i++) {
+		for (int i = 0; i < 155; i++) {
 			int x = random.nextInt(width);
 			int y = random.nextInt(height);
 			int xl = random.nextInt(12);
 			int yl = random.nextInt(12);
 			g.drawLine(x, y, x + xl, y + yl);
 		}
-		for (int i = 0; i < code.length(); i++){
+		for (int i = 0; i < code.length(); i++) {
 			g.setColor(new Color(20 + random.nextInt(110), 20 + random.nextInt(110), 20 + random.nextInt(110)));
 			g.drawString(code.substring(i, i + 1), 13 * i + 6, 16);
 		}
@@ -82,15 +82,15 @@ public abstract class VcodeImgUtil {
 		return image;
 	}
 
-	private static Color getRandColor(int fc, int bc){
+	private static Color getRandColor(int fc, int bc) {
 		Random random = new Random();
 		int fc0 = fc;
-		if(fc0 > 255) {
+		if (fc0 > 255) {
 			fc0 = 255;
 		}
 		
 		int bc0 = bc;
-		if(bc0 > 255) {
+		if (bc0 > 255) {
 			bc0 = 255;
 		}
 		

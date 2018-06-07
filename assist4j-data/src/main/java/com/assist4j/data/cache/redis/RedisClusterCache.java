@@ -60,7 +60,7 @@ public class RedisClusterCache implements MessageCache {
 
 	@Override
 	public <T>boolean put(String key, T value, long expiredTime) {
-		if(expiredTime <= 0) {
+		if (expiredTime <= 0) {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
@@ -71,12 +71,12 @@ public class RedisClusterCache implements MessageCache {
 
 	@Override
 	public <T>boolean put(String key, T value, Date expiredTime) {
-		if(!expiredTime.after(new Date())) {
+		if (!expiredTime.after(new Date())) {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
 		boolean b = put0(key, value);
-		if(!b) {
+		if (!b) {
 			return false;
 		}
 		jedisCluster.pexpireAt(key, expiredTime.getTime());
@@ -86,7 +86,7 @@ public class RedisClusterCache implements MessageCache {
 	@Override
 	public <T>T get(String key) {
 		byte[] bytes = jedisCluster.getBytes(key);
-		if(bytes == null) {
+		if (bytes == null) {
 			return null;
 		}
 

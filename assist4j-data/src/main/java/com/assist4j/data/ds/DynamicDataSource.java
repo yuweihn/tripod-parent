@@ -18,13 +18,13 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 		super();
 		Assert.notEmpty(dsClusterList, "[dsClusterList] is required.");
 		Map<Object, Object> targetDataSources = new HashMap<Object, Object>();
-		for (DataSourceCluster dsCluster : dsClusterList) {
-			if(dsCluster.getIsDefault()) {
+		for (DataSourceCluster dsCluster: dsClusterList) {
+			if (dsCluster.getIsDefault()) {
 				this.setDefaultTargetDataSource(dsCluster.getMaster().getValue());
 			}
 			targetDataSources.put(dsCluster.getMaster().getKey(), dsCluster.getMaster().getValue());
-			if(!CollectionUtils.isEmpty(dsCluster.getSlaveList())) {
-				for (KvPair dsSlave : dsCluster.getSlaveList()) {
+			if (!CollectionUtils.isEmpty(dsCluster.getSlaveList())) {
+				for (KvPair dsSlave: dsCluster.getSlaveList()) {
 					targetDataSources.put(dsSlave.getKey(), dsSlave.getValue());
 				}
 			}

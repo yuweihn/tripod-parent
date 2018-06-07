@@ -28,6 +28,8 @@ import com.assist4j.core.Constant;
  */
 public class DefaultEmailSender implements EmailSender<Mail> {
 	private static final Logger log = LoggerFactory.getLogger(DefaultEmailSender.class);
+
+
 	public String server;
 	public int sslPort;
 	public boolean auth;
@@ -71,8 +73,8 @@ public class DefaultEmailSender implements EmailSender<Mail> {
 			mainPart.setHeader("TextSender", mail.getSenderEmail());
 			mp.addBodyPart(mainPart);
 			
-			if(mail.getAttachments() != null) {
-				for(DataSource ds : mail.getAttachments()) {
+			if (mail.getAttachments() != null) {
+				for (DataSource ds : mail.getAttachments()) {
 					MimeBodyPart attachment = new MimeBodyPart();
 					attachment.setDataHandler(new DataHandler(ds));
 					attachment.setFileName(ds.getName());

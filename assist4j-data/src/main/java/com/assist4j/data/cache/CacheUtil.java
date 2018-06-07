@@ -16,6 +16,8 @@ import com.alibaba.fastjson.JSONObject;
  */
 public abstract class CacheUtil {
 	private static final Logger log = LoggerFactory.getLogger(CacheUtil.class);
+
+
 	/**
 	 * 检查数据类型：
 	 * 1、只允许指定的几个类型存入缓存；
@@ -26,24 +28,24 @@ public abstract class CacheUtil {
 		Assert.notNull(value, "[value] is required.");
 		CacheClzEnum[] allowedClzs = CacheClzEnum.values();
 		Class<?> vClz = value.getClass();
-		if(StringUtils.isEmpty(allowedClzs) || vClz == null) {
+		if (StringUtils.isEmpty(allowedClzs) || vClz == null) {
 			throw new RuntimeException("error");
 		}
 
 		boolean checked = false;
-		for(CacheClzEnum clzEnum: allowedClzs) {
-			if(clzEnum.getClz().isAssignableFrom(vClz)) {
+		for (CacheClzEnum clzEnum: allowedClzs) {
+			if (clzEnum.getClz().isAssignableFrom(vClz)) {
 				checked = true;
 				break;
 			}
 		}
 
-		if(!checked) {
+		if (!checked) {
 			log.error("The type of value is {}, but only {} is/are supported.", vClz.getName(), toAllowedClazzStr(allowedClzs));
 			throw new RuntimeException("The type of value is not supported by cache.");
 		}
 
-		if(CacheValue.class.isAssignableFrom(vClz)) {
+		if (CacheValue.class.isAssignableFrom(vClz)) {
 			try {
 				vClz.getDeclaredConstructor();
 			} catch (NoSuchMethodException e) {
@@ -60,7 +62,7 @@ public abstract class CacheUtil {
 		ValueData vd = new ValueData();
 		vd.setClassName(vClz.getName());
 
-		if(CacheValue.class.isAssignableFrom(vClz)) {
+		if (CacheValue.class.isAssignableFrom(vClz)) {
 			CacheValue<?> cv = (CacheValue<?>) value;
 			vd.setData(cv.encode());
 		} else {
@@ -71,13 +73,13 @@ public abstract class CacheUtil {
 
 	@SuppressWarnings("unchecked")
 	public static<T>T stringToObject(String str) {
-		if(StringUtils.isEmpty(str)) {
+		if (StringUtils.isEmpty(str)) {
 			return (T) null;
 		}
 		ValueData vd = JSONObject.parseObject(str, ValueData.class);
 		try {
 			Class<?> vClz = Class.forName(vd.getClassName());
-			if(CacheValue.class.isAssignableFrom(vClz)) {
+			if (CacheValue.class.isAssignableFrom(vClz)) {
 				Constructor<?> constructor = vClz.getDeclaredConstructor();
 				constructor.setAccessible(true);
 				CacheValue<?> cv = (CacheValue<?>) constructor.newInstance();
@@ -93,11 +95,11 @@ public abstract class CacheUtil {
 
 	private static final String toAllowedClazzStr(CacheClzEnum[] allowedClzs) {
 		StringBuilder builder = new StringBuilder("");
-		for(CacheClzEnum clzEnum: allowedClzs) {
+		for (CacheClzEnum clzEnum: allowedClzs) {
 			builder.append(", " + clzEnum.getClz().getName());
 		}
 		String str = builder.toString();
-		if(str.startsWith(",")) {
+		if (str.startsWith(",")) {
 			str = str.substring(2);
 		}
 		return str;

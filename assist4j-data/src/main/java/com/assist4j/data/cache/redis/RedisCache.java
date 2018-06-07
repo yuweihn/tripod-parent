@@ -56,11 +56,11 @@ public class RedisCache implements MessageCache {
 						String channel = null;
 						String msg = null;
 
-						if(message.getChannel() != null) {
+						if (message.getChannel() != null) {
 							channel = SafeEncoder.encode(message.getChannel());
 						}
 
-						if(message.getBody() != null) {
+						if (message.getBody() != null) {
 							msg = SafeEncoder.encode(message.getBody());
 						}
 
@@ -87,7 +87,7 @@ public class RedisCache implements MessageCache {
 
 	@Override
 	public <T>boolean put(String key, T value, long expiredTime) {
-		if(expiredTime <= 0) {
+		if (expiredTime <= 0) {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
@@ -98,7 +98,7 @@ public class RedisCache implements MessageCache {
 
 	@Override
 	public <T>boolean put(String key, T value, Date expiredTime) {
-		if(!expiredTime.after(new Date())) {
+		if (!expiredTime.after(new Date())) {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
@@ -109,8 +109,8 @@ public class RedisCache implements MessageCache {
 
 	@Override
 	public <T>T get(String key) {
-		String str = (String)redisTemplate.opsForValue().get(key);
-		if(str == null) {
+		String str = (String) redisTemplate.opsForValue().get(key);
+		if (str == null) {
 			return null;
 		}
 		try {

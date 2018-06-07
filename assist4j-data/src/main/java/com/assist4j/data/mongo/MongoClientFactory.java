@@ -18,7 +18,7 @@ public class MongoClientFactory implements FactoryBean<MongoClient> {
 
 
 	public MongoClientFactory(boolean needAuth, List<ServerAddress> seeds, MongoCredential credential) {
-		if(needAuth) {
+		if (needAuth) {
 			mongo = new MongoClient(seeds, credential, new MongoClientOptions.Builder().build());
 		} else {
 			mongo = new MongoClient(seeds);

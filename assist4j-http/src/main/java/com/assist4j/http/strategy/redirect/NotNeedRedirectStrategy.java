@@ -26,10 +26,10 @@ public class NotNeedRedirectStrategy implements RedirectStrategy {
 	}
 
 	public static NotNeedRedirectStrategy get() {
-		if(instance == null) {
+		if (instance == null) {
 			lock.lock();
 			try {
-				if(instance == null) {
+				if (instance == null) {
 					instance = new NotNeedRedirectStrategy();
 				}
 			} finally {

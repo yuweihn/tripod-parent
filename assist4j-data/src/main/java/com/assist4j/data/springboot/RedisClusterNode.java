@@ -18,13 +18,13 @@ public abstract class RedisClusterNode {
 	public List<HostAndPort> getHostAndPortList() {
 		List<HostAndPort> list = new ArrayList<HostAndPort>();
 		List<String> nodes = getNodeList();
-		if(nodes == null || nodes.size() <= 0) {
+		if (nodes == null || nodes.size() <= 0) {
 			return list;
 		}
 
-		for(String node: nodes) {
+		for (String node: nodes) {
 			boolean isIpPort = pattern.matcher(node).matches();
-			if(!isIpPort) {
+			if (!isIpPort) {
 				throw new IllegalArgumentException("ip 或 port 不合法");
 			}
 

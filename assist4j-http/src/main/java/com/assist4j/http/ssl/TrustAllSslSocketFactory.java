@@ -19,7 +19,7 @@ import org.apache.http.ssl.TrustStrategy;
  */
 public class TrustAllSslSocketFactory extends SSLConnectionSocketFactory {
 	private static volatile TrustAllSslSocketFactory instance = null;
-	private static final String[] SUPPORTED_PROTOCOLS = new String[]{"TLSv1.1", "TLSv1.2"};
+	private static final String[] SUPPORTED_PROTOCOLS = new String[] {"TLSv1.1", "TLSv1.2"};
 	private static final Lock lock = new ReentrantLock();
 
 	private TrustAllSslSocketFactory(SSLContext sslContext) {
@@ -27,10 +27,10 @@ public class TrustAllSslSocketFactory extends SSLConnectionSocketFactory {
 	}
 
 	public static TrustAllSslSocketFactory get() {
-		if(instance == null) {
+		if (instance == null) {
 			lock.lock();
 			try {
-				if(instance == null) {
+				if (instance == null) {
 					instance = new TrustAllSslSocketFactory(createSslContext());
 				}
 			} finally {

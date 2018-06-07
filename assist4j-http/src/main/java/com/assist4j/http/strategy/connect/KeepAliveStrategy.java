@@ -26,10 +26,10 @@ public class KeepAliveStrategy extends DefaultConnectionKeepAliveStrategy {
 	}
 	
 	public static KeepAliveStrategy get() {
-		if(instance == null) {
+		if (instance == null) {
 			lock.lock();
 			try {
-				if(instance == null) {
+				if (instance == null) {
 					instance = new KeepAliveStrategy();
 				}
 			} finally {

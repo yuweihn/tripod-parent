@@ -8,6 +8,11 @@ package com.assist4j.session;
  * @author yuwei
  */
 public abstract class SessionConstant {
+	/**
+	 * 默认Cookie的生存期为关闭浏览器
+	 */
+	public static final int COOKIE_MAX_AGE_DEFAULT = -1;
+
 	public static final String SESSION_ID_KEY_CURRENT = "current";
 
 	/**

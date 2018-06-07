@@ -19,10 +19,10 @@ public class NeedRedirectStrategy extends DefaultRedirectStrategy {
 	}
 
 	public static NeedRedirectStrategy get() {
-		if(instance == null) {
+		if (instance == null) {
 			lock.lock();
 			try {
-				if(instance == null) {
+				if (instance == null) {
 					instance = new NeedRedirectStrategy();
 				}
 			} finally {

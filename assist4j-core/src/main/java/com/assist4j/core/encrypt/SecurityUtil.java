@@ -22,8 +22,6 @@ public abstract class SecurityUtil {
 	private static final char HEX_DIGIT[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 
-
-
 	public static final String getMd5(String str) {
 		return getMd5(str, Constant.ENCODING_UTF_8);
 	}
@@ -80,10 +78,10 @@ public abstract class SecurityUtil {
 
 		try {
 			String[] arr = new String(decrypt(str)).split(",");
-			if(arr == null || arr.length != 2) {
+			if (arr == null || arr.length != 2) {
 				return null;
 			}
-			if(arr[1].equals(getMd5(arr[0] + "," + getMd5(SECURITY_KEY)))) {
+			if (arr[1].equals(getMd5(arr[0] + "," + getMd5(SECURITY_KEY)))) {
 				return new String(decrypt(arr[0]));
 			} else {
 				return null;

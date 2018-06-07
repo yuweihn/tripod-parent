@@ -11,14 +11,14 @@ import org.springframework.web.method.HandlerMethod;
  */
 public abstract class InterceptorUtil {
 	public static boolean hasResponseBodyAnnotation(Object handler) {
-		if(!(handler instanceof HandlerMethod)) {
+		if (!(handler instanceof HandlerMethod)) {
 			return false;
 		}
 
 		HandlerMethod handlerMethod = (HandlerMethod) handler;
 		ResponseBody responseBodyAnn = handlerMethod.getMethod().getAnnotation(ResponseBody.class);
 
-		if(responseBodyAnn != null) {
+		if (responseBodyAnn != null) {
 			return true;
 		}
 

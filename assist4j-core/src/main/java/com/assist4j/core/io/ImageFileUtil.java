@@ -43,7 +43,7 @@ public abstract class ImageFileUtil extends FileUtil {
 			int oldWidth = oldImage.getWidth(null);
 			int oldHeight = oldImage.getHeight(null);
 			
-			if(newWidth > oldWidth) {
+			if (newWidth > oldWidth) {
 				newWidth = oldWidth;
 			}
 
@@ -73,14 +73,14 @@ public abstract class ImageFileUtil extends FileUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if(outputStream != null) {
+			if (outputStream != null) {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(inputStream != null) {
+			if (inputStream != null) {
 				try {
 					inputStream.close();
 				} catch (IOException e) {
@@ -122,21 +122,21 @@ public abstract class ImageFileUtil extends FileUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if(outputStream != null) {
+			if (outputStream != null) {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(imgStream != null) {
+			if (imgStream != null) {
 				try {
 					imgStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(bgImgStream != null) {
+			if (bgImgStream != null) {
 				try {
 					bgImgStream.close();
 				} catch (IOException e) {
@@ -163,14 +163,14 @@ public abstract class ImageFileUtil extends FileUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if(imageInputStream != null) {
+			if (imageInputStream != null) {
 				try {
 					imageInputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(inputStream != null) {
+			if (inputStream != null) {
 				try {
 					inputStream.close();
 				} catch (IOException e) {
@@ -210,21 +210,21 @@ public abstract class ImageFileUtil extends FileUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if(outputStream != null) {
+			if (outputStream != null) {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(imageInputStream != null) {
+			if (imageInputStream != null) {
 				try {
 					imageInputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(inputStream != null) {
+			if (inputStream != null) {
 				try {
 					inputStream.close();
 				} catch (IOException e) {
@@ -263,14 +263,14 @@ public abstract class ImageFileUtil extends FileUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if(outputStream != null) {
+			if (outputStream != null) {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			if(inputStream != null) {
+			if (inputStream != null) {
 				try {
 					inputStream.close();
 				} catch (IOException e) {

@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
  * @author yuwei
  */
 public class SmtpConf {
-
 	@Bean(name = "defaultEmailSender")
 	public EmailSender<Mail> defaultSender(@Value("${smtp.server}") String server
 			, @Value("${smtp.ssl.port}") int sslPort

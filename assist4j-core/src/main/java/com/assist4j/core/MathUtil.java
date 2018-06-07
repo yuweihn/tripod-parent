@@ -36,12 +36,12 @@ public abstract class MathUtil {
 	 * @return
 	 */
 	public static double add(double... params) {
-		if(params == null || params.length < 2) {
+		if (params == null || params.length < 2) {
 			throw new RuntimeException("The number of params can not be less then two.");
 		}
 
 		BigDecimal b = new BigDecimal("0");
-		for(double num: params) {
+		for (double num: params) {
 			b = b.add(new BigDecimal(Double.toString(num)));
 		}
 		return b.doubleValue();
@@ -64,12 +64,12 @@ public abstract class MathUtil {
 	 * @return
 	 */
 	public static double mul(double... params) {
-		if(params == null || params.length < 2) {
+		if (params == null || params.length < 2) {
 			throw new RuntimeException("The number of params can not be less then two.");
 		}
 
 		BigDecimal b = new BigDecimal("1");
-		for(double num: params) {
+		for (double num: params) {
 			b = b.multiply(new BigDecimal(Double.toString(num)));
 		}
 		return b.doubleValue();
@@ -92,7 +92,7 @@ public abstract class MathUtil {
 	 * @return
 	 */
 	public static double div(double v1, double v2, int scale) {
-		if(scale < 0) {
+		if (scale < 0) {
 			throw new IllegalArgumentException("The scale must be a positive integer or zero.");
 		}
 		BigDecimal b1 = new BigDecimal(Double.toString(v1));
@@ -104,7 +104,7 @@ public abstract class MathUtil {
 	 * 取指定闭区间范围内的随机数，[min, max]
 	 */
 	public static int genRandNumber(int min, int max) {
-		if(min > max) {
+		if (min > max) {
 			throw new RuntimeException("[min] can not be larger than [max].");
 		}
 		return min + (int) (Math.random() * (max - min + 1));

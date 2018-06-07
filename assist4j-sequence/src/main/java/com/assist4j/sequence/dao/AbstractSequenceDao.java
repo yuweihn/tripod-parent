@@ -21,6 +21,8 @@ import org.springframework.util.Assert;
  */
 public abstract class AbstractSequenceDao implements SequenceDao {
 	private static final Logger log = LoggerFactory.getLogger(AbstractSequenceDao.class);
+
+
 	private int retryTimes = 2;
 	private int innerStep = 100;
 	private String tableName;

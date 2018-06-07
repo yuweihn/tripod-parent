@@ -26,7 +26,7 @@ public class TextMessageListener implements SessionAwareMessageListener<Message>
 
 	@Override
 	public void onMessage(Message message, Session session) {
-		if(receiver == null) {
+		if (receiver == null) {
 			return;
 		}
 		try {

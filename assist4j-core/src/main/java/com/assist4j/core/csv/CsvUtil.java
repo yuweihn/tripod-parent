@@ -28,6 +28,8 @@ import org.springframework.util.Assert;
  */
 public abstract class CsvUtil {
 	private static final Logger log = LoggerFactory.getLogger(CsvUtil.class);
+
+
 	/**
 	 * 导出数据
 	 * @param dataList 数据
@@ -37,7 +39,7 @@ public abstract class CsvUtil {
 		export(out, dataList);
 		byte[] data = out.toByteArray();
 
-		if(out != null) {
+		if (out != null) {
 			try {
 				out.close();
 			} catch (IOException e) {
@@ -64,7 +66,7 @@ public abstract class CsvUtil {
 			 * 输出头部
 			 **/
 			List<String> headList = getOutputHeadList(dataList.get(0));
-			for(String head: headList) {
+			for (String head: headList) {
 				bw.append(head).append(",");
 			}
 			bw.newLine();
@@ -73,9 +75,9 @@ public abstract class CsvUtil {
 			/**
 			 * 输出数据部分
 			 **/
-			for(T t: dataList) {
+			for (T t: dataList) {
 				List<Object> dList = getOutputDataList(keyList, t);
-				for(Object d: dList) {
+				for (Object d: dList) {
 					bw.append(convertToString(d)).append(",");
 				}
 				bw.newLine();
@@ -83,14 +85,14 @@ public abstract class CsvUtil {
 		} catch (Exception e) {
 			log.error("", e);
 		} finally {
-			if(bw != null) {
+			if (bw != null) {
 				try {
 					bw.close();
 				} catch (IOException e) {
 					log.error("", e);
 				}
 			}
-			if(osw != null) {
+			if (osw != null) {
 				try {
 					osw.close();
 				} catch (IOException e) {
@@ -102,18 +104,18 @@ public abstract class CsvUtil {
 
 	private static<T> List<String> getOutputHeadList(T t) {
 		List<String> list = new ArrayList<String>();
-		if(Map.class.isAssignableFrom(t.getClass())) {
+		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
 			Iterator<?> itr = map.keySet().iterator();
-			while(itr.hasNext()) {
+			while (itr.hasNext()) {
 				list.add(itr.next().toString());
 			}
 		} else {
 			Field[] fields = t.getClass().getDeclaredFields();
-			if(fields != null && fields.length > 0) {
-				for(Field field: fields) {
+			if (fields != null && fields.length > 0) {
+				for (Field field: fields) {
 					CsvKey csvKeyAno = field.getAnnotation(CsvKey.class);
-					if(csvKeyAno != null) {
+					if (csvKeyAno != null) {
 						list.add(csvKeyAno.value() == null || "".equals(csvKeyAno.value().trim()) ? field.getName() : csvKeyAno.value());
 					}
 				}
@@ -125,18 +127,18 @@ public abstract class CsvUtil {
 
 	private static<T> List<String> getOutputKeyList(T t) {
 		List<String> list = new ArrayList<String>();
-		if(Map.class.isAssignableFrom(t.getClass())) {
+		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
 			Iterator<?> itr = map.keySet().iterator();
-			while(itr.hasNext()) {
+			while (itr.hasNext()) {
 				list.add(itr.next().toString());
 			}
 		} else {
 			Field[] fields = t.getClass().getDeclaredFields();
-			if(fields != null && fields.length > 0) {
-				for(Field field: fields) {
+			if (fields != null && fields.length > 0) {
+				for (Field field: fields) {
 					CsvKey csvKeyAno = field.getAnnotation(CsvKey.class);
-					if(csvKeyAno != null) {
+					if (csvKeyAno != null) {
 						list.add(field.getName());
 					}
 				}
@@ -150,13 +152,13 @@ public abstract class CsvUtil {
 		Assert.notEmpty(keyList, "[keyList] must not be empty.");
 		List<Object> list = new ArrayList<Object>();
 		
-		if(Map.class.isAssignableFrom(t.getClass())) {
+		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
-			for(String key: keyList) {
+			for (String key: keyList) {
 				list.add(map.get(key));
 			}
 		} else {
-			for(String key: keyList) {
+			for (String key: keyList) {
 				PropertyDescriptor pd = null;
 				try {
 					pd = new PropertyDescriptor(key, t.getClass());
@@ -172,10 +174,10 @@ public abstract class CsvUtil {
 	}
 
 	private static String convertToString(Object value) {
-		if(value == null) {
+		if (value == null) {
 			return "";
 		}
-		if(value instanceof Date) {
+		if (value instanceof Date) {
 			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(value);
 		}
 		return value.toString();

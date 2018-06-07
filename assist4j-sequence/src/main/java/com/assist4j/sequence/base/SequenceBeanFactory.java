@@ -31,6 +31,8 @@ import org.springframework.util.StringUtils;
  */
 public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostProcessor {
 	private static final Logger log = LoggerFactory.getLogger(SequenceBeanFactory.class);
+
+
 	private static final String DEFAULT_FIELD_SEQUENCE_DAO = "sequenceDao";
 	private static final String DEFAULT_FIELD_SEQ_NAME = "name";
 	private static final String DEFAULT_METHOD_INIT = "init";
@@ -79,7 +81,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		Assert.notNull(sequenceBeanHolderBeanName, "[sequenceBeanHolderBeanName] is required.");
 		try {
 			Class<?> clz = Class.forName(sequenceClassName);
-			if(!Sequence.class.isAssignableFrom(clz)) {
+			if (!Sequence.class.isAssignableFrom(clz)) {
 				throw new SequenceException("[sequenceClassName] must be a subclass of " + Sequence.class.getName() + ".");
 			}
 			this.sequenceClass = (Class<? extends Sequence>) clz;

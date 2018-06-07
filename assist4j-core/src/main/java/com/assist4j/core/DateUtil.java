@@ -320,10 +320,10 @@ public abstract class DateUtil {
 	 * @param day
 	 */
 	public static void validate(int year, int month, int day) {
-		if(year < 1) {
+		if (year < 1) {
 			throw new IllegalArgumentException("年份不能小于1");
 		}
-		if(month < 1 || month > 12) {
+		if (month < 1 || month > 12) {
 			throw new IllegalArgumentException("月份只能取值1~12");
 		}
 
@@ -335,7 +335,7 @@ public abstract class DateUtil {
 		c.add(Calendar.DAY_OF_MONTH, -1);
 
 		int lastDay = c.get(Calendar.DAY_OF_MONTH);
-		if(day < 1 || day > lastDay) {
+		if (day < 1 || day > lastDay) {
 			throw new IllegalArgumentException("日取值不能超过" + 1 + "~" + lastDay);
 		}
 	}

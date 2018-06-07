@@ -27,7 +27,7 @@ public class JedisPoolConnFactory extends JedisConnectionFactory {
 
 	@Override
 	public void setHostName(String hostName) {
-		if(!StringUtils.isEmpty(hostName)) {
+		if (!StringUtils.isEmpty(hostName)) {
 			super.setHostName(hostName);
 		}
 	}
@@ -50,7 +50,7 @@ public class JedisPoolConnFactory extends JedisConnectionFactory {
 
 	@Override
 	public void setPassword(String password) {
-		if(needPassword) {
+		if (needPassword) {
 			super.setPassword(password);
 		}
 	}

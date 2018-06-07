@@ -51,11 +51,11 @@ public abstract class AbstractMongoDao<T extends Serializable, PK extends Serial
 
 	@Override
 	public void saveOrUpdateAll(Collection<T> entities) {
-		if(entities == null || entities.size() <= 0) {
+		if (entities == null || entities.size() <= 0) {
 			return;
 		}
 
-		for(T t : entities) {
+		for (T t: entities) {
 			save(t);
 		}
 	}
@@ -79,7 +79,7 @@ public abstract class AbstractMongoDao<T extends Serializable, PK extends Serial
 	@Override
 	public void deleteByKey(PK id) {
 		T t = get(id);
-		if(t != null) {
+		if (t != null) {
 			delete(t);
 		}
 	}

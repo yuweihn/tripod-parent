@@ -14,12 +14,10 @@ import java.util.Map;
 import java.util.UUID;
 
 
-
 /**
  * @author yuwei
  */
 public abstract class RSACoder {
-
 	public static final String ALGORITHM = "RSA";
 	/**
 	 * 默认密钥字节数

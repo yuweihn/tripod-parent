@@ -37,7 +37,7 @@ public class RandRouter implements Router {
 		Assert.notNull(dsc, "[dsc] is required.");
 
 		List<KvPair> slaveList = dsc.getSlaveList();
-		if(CollectionUtils.isEmpty(slaveList)) {
+		if (CollectionUtils.isEmpty(slaveList)) {
 			return dsc.getMaster();
 		}
 		return slaveList.get(new Random().nextInt(slaveList.size()));

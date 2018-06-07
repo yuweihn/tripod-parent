@@ -69,7 +69,7 @@ public abstract class ExcelUtil {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
-			if(is != null) {
+			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException e) {
@@ -83,25 +83,25 @@ public abstract class ExcelUtil {
 		List<T> list = new ArrayList<T>();
 
 		Field[] fields = clz.getDeclaredFields();
-		if(fields == null || fields.length <= 0) {
+		if (fields == null || fields.length <= 0) {
 			return list;
 		}
 
 		List<Map<String, Object>> mapList = read(fileData);
-		if(CollectionUtils.isEmpty(mapList)) {
+		if (CollectionUtils.isEmpty(mapList)) {
 			return list;
 		}
-		for(Map<String, Object> map: mapList) {
+		for (Map<String, Object> map: mapList) {
 			Map<String, Object> fieldValueMap = new HashMap<String, Object>();
-			for(Field field: fields) {
+			for (Field field: fields) {
 				ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
-				if(excelKeyAno == null) {
+				if (excelKeyAno == null) {
 					continue;
 				}
 
 				String key = excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim();
 				Object v = map.get(key);
-				if(v == null) {
+				if (v == null) {
 					continue;
 				}
 
@@ -122,7 +122,7 @@ public abstract class ExcelUtil {
 		export(out, dataList);
 		byte[] data = out.toByteArray();
 
-		if(out != null) {
+		if (out != null) {
 			try {
 				out.close();
 			} catch (IOException e) {
@@ -161,7 +161,7 @@ public abstract class ExcelUtil {
 			 **/
 			List<String> headList = getOutputHeadList(dataList.get(0));
 			SXSSFRow headRow = sheet.createRow(0);
-			for(int i = 0; i < headList.size(); i++) {
+			for (int i = 0; i < headList.size(); i++) {
 				String head = headList.get(i);
 				SXSSFCell cell = headRow.createCell(i);
 				cell.setCellValue(head);
@@ -173,11 +173,11 @@ public abstract class ExcelUtil {
 			/**
 			 * 输出数据部分
 			 **/
-			for(int i = 0; i < dataList.size(); i++) {
+			for (int i = 0; i < dataList.size(); i++) {
 				T t = dataList.get(i);
 				SXSSFRow dataRow = sheet.createRow(i + 1);
 				List<Object> dList = getOutputDataList(keyList, t);
-				for(int j = 0; j < dList.size(); j++) {
+				for (int j = 0; j < dList.size(); j++) {
 					SXSSFCell cell = dataRow.createCell(j);
 					setCellValue(cell, dList.get(j));
 				}
@@ -187,7 +187,7 @@ public abstract class ExcelUtil {
 		} catch (Exception e) {
 			log.error("", e);
 		} finally {
-			if(workbook != null) {
+			if (workbook != null) {
 				try {
 					workbook.close();
 				} catch (IOException e) {
@@ -199,18 +199,18 @@ public abstract class ExcelUtil {
 
 	private static<T> List<String> getOutputHeadList(T t) {
 		List<String> list = new ArrayList<String>();
-		if(Map.class.isAssignableFrom(t.getClass())) {
+		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
 			Iterator<?> itr = map.keySet().iterator();
-			while(itr.hasNext()) {
+			while (itr.hasNext()) {
 				list.add(itr.next().toString());
 			}
 		} else {
 			Field[] fields = t.getClass().getDeclaredFields();
-			if(fields != null && fields.length > 0) {
-				for(Field field: fields) {
+			if (fields != null && fields.length > 0) {
+				for (Field field: fields) {
 					ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
-					if(excelKeyAno != null) {
+					if (excelKeyAno != null) {
 						list.add(excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim());
 					}
 				}
@@ -222,18 +222,18 @@ public abstract class ExcelUtil {
 
 	private static<T> List<String> getOutputKeyList(T t) {
 		List<String> list = new ArrayList<String>();
-		if(Map.class.isAssignableFrom(t.getClass())) {
+		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
 			Iterator<?> itr = map.keySet().iterator();
-			while(itr.hasNext()) {
+			while (itr.hasNext()) {
 				list.add(itr.next().toString());
 			}
 		} else {
 			Field[] fields = t.getClass().getDeclaredFields();
-			if(fields != null && fields.length > 0) {
-				for(Field field: fields) {
+			if (fields != null && fields.length > 0) {
+				for (Field field: fields) {
 					ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
-					if(excelKeyAno != null) {
+					if (excelKeyAno != null) {
 						list.add(field.getName());
 					}
 				}
@@ -247,13 +247,13 @@ public abstract class ExcelUtil {
 		Assert.notEmpty(keyList, "[keyList] is required.");
 		List<Object> list = new ArrayList<Object>();
 
-		if(Map.class.isAssignableFrom(t.getClass())) {
+		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
-			for(String key: keyList) {
+			for (String key: keyList) {
 				list.add(map.get(key));
 			}
 		} else {
-			for(String key: keyList) {
+			for (String key: keyList) {
 				PropertyDescriptor pd = null;
 				try {
 					pd = new PropertyDescriptor(key, t.getClass());
@@ -270,9 +270,9 @@ public abstract class ExcelUtil {
 	
 	private static List<String> getInputHeadList(Row row) {
 		List<String> list = new ArrayList<String>();
-		for(Cell cell: row) {
+		for (Cell cell: row) {
 			String head = cell.toString();
-			if(head == null || "".equals(head.trim())) {
+			if (head == null || "".equals(head.trim())) {
 				continue;
 			}
 			list.add(head.trim());
@@ -282,14 +282,14 @@ public abstract class ExcelUtil {
 	
 	private static List<Map<String, Object>> getInputDataList(Sheet sheet, List<String> keyList) {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		for(Row row: sheet) {
-			if(row.getRowNum() <= 0) {
+		for (Row row: sheet) {
+			if (row.getRowNum() <= 0) {
 				continue;
 			}
 			
 			Map<String, Object> map = new HashMap<String, Object>();
 			int i = 0;
-			for(Cell cell: row) {
+			for (Cell cell: row) {
 				map.put(keyList.get(i++), getCellValue(cell));
 			}
 			list.add(map);
@@ -298,11 +298,11 @@ public abstract class ExcelUtil {
 	}
 
 	private static void setCellValue(Cell cell, Object value) {
-		if(value instanceof Number) {
+		if (value instanceof Number) {
 			cell.setCellValue(value == null ? 0 : Double.parseDouble(value.toString()));
-		} else if(value instanceof Boolean) {
+		} else if (value instanceof Boolean) {
 			cell.setCellValue(value == null ? false : Boolean.valueOf(value.toString()));
-		} else if(value instanceof Date) {
+		} else if (value instanceof Date) {
 			cell.setCellValue(value == null ? "" : new SimpleDateFormat(DEFAULT_DATE_FORMAT).format(value));
 		} else {
 			cell.setCellValue(value == null ? "" : value.toString());
@@ -311,36 +311,36 @@ public abstract class ExcelUtil {
 
 	private static Object getCellValue(Cell cell) {
 		int ct = cell.getCellType();
-		if(Cell.CELL_TYPE_NUMERIC == ct) {
+		if (Cell.CELL_TYPE_NUMERIC == ct) {
 			if (DateUtil.isCellDateFormatted(cell)) {
 				return cell.getDateCellValue();
 			}
 
 			double d = cell.getNumericCellValue();
 			int i = (int) d;
-			if(d == i) {
+			if (d == i) {
 				return Integer.valueOf(i);
 			} else {
 				return Double.valueOf(d);
 			}
 //			return NumberToTextConverter.toText(cell.getNumericCellValue());
 		}
-		if(Cell.CELL_TYPE_STRING == ct) {
+		if (Cell.CELL_TYPE_STRING == ct) {
 			return cell.getRichStringCellValue().getString();
 		}
-		if(Cell.CELL_TYPE_FORMULA == ct) {
+		if (Cell.CELL_TYPE_FORMULA == ct) {
 			Workbook wb = cell.getSheet().getWorkbook();
 			CreationHelper crateHelper = wb.getCreationHelper();
 			FormulaEvaluator evaluator = crateHelper.createFormulaEvaluator();
 			return getCellValue(evaluator.evaluateInCell(cell));
 		}
-		if(Cell.CELL_TYPE_BLANK == ct) {
+		if (Cell.CELL_TYPE_BLANK == ct) {
 			return null;
 		}
-		if(Cell.CELL_TYPE_BOOLEAN == ct) {
+		if (Cell.CELL_TYPE_BOOLEAN == ct) {
 			return cell.getBooleanCellValue();
 		}
-		if(Cell.CELL_TYPE_ERROR == ct) {
+		if (Cell.CELL_TYPE_ERROR == ct) {
 			return null;
 		}
 		return null;

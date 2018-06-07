@@ -132,7 +132,7 @@ public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 		CacheHttpSession session = new CacheHttpSession(sessionId, maxInactiveInterval, sessionKeyPrefix, cache);
 
 		if (cookie) {
-			CookiesUtil.addCookie(request, response, sessionCookieName, sessionId, CookiesUtil.COOKIE_MAXAGE_DEFAULT);
+			CookiesUtil.addCookie(request, response, sessionCookieName, sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 		}
 
 		return session;

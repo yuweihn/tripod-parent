@@ -46,11 +46,11 @@ public class SpringContext implements ApplicationContextAware {
 		BeanDefinitionRegistry beanDefRegistry = (BeanDefinitionRegistry) applicationContext.getBeanFactory();
 		
 		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(clz);
-		if(!CollectionUtils.isEmpty(constructorArgList)) {
-			for(Property constructorArg: constructorArgList) {
-				if(Property.TYPE_VALUE == constructorArg.getType()) {
+		if (!CollectionUtils.isEmpty(constructorArgList)) {
+			for (Property constructorArg: constructorArgList) {
+				if (Property.TYPE_VALUE == constructorArg.getType()) {
 					builder.addConstructorArgValue(constructorArg.getValue());
-				} else if(Property.TYPE_REFERENCE == constructorArg.getType()) {
+				} else if (Property.TYPE_REFERENCE == constructorArg.getType()) {
 					builder.addConstructorArgReference(constructorArg.getValue().toString());
 				} else {
 					throw new RuntimeException("Error parameter [type] in constructorArgList!");
@@ -58,11 +58,11 @@ public class SpringContext implements ApplicationContextAware {
 			}
 		}
 		
-		if(!CollectionUtils.isEmpty(propertyList)) {
-			for(Property prop: propertyList) {
-				if(Property.TYPE_VALUE == prop.getType()) {
+		if (!CollectionUtils.isEmpty(propertyList)) {
+			for (Property prop: propertyList) {
+				if (Property.TYPE_VALUE == prop.getType()) {
 					builder.addPropertyValue(prop.getPropertyName(), prop.getValue());
-				} else if(Property.TYPE_REFERENCE == prop.getType()) {
+				} else if (Property.TYPE_REFERENCE == prop.getType()) {
 					builder.addPropertyReference(prop.getPropertyName(), prop.getValue().toString());
 				} else {
 					throw new RuntimeException("Error parameter [type] in propertyList!");
@@ -73,12 +73,12 @@ public class SpringContext implements ApplicationContextAware {
 		/**
 		 * 如果有initMethod，直接使用，否则反射clz的init
 		 */
-		if(!StringUtils.isEmpty(initMethod)) {
+		if (!StringUtils.isEmpty(initMethod)) {
 			builder.setInitMethodName(initMethod);
 		} else {
 			try {
 				Method defaultInitMethod = clz.getMethod(DEFAULT_INIT_METHOD);
-				if(defaultInitMethod != null) {
+				if (defaultInitMethod != null) {
 					builder.setInitMethodName(defaultInitMethod.getName());
 				}
 			} catch (NoSuchMethodException | SecurityException e) {
@@ -88,12 +88,12 @@ public class SpringContext implements ApplicationContextAware {
 		/**
 		 * 如果有destroyMethod，直接使用，否则反射clz的destroy
 		 */
-		if(!StringUtils.isEmpty(destroyMethod)) {
+		if (!StringUtils.isEmpty(destroyMethod)) {
 			builder.setDestroyMethodName(destroyMethod);
 		} else {
 			try {
 				Method defaultDestroyMethod = clz.getMethod(DEFAULT_DESTROY_METHOD);
-				if(defaultDestroyMethod != null) {
+				if (defaultDestroyMethod != null) {
 					builder.setDestroyMethodName(defaultDestroyMethod.getName());
 				}
 			} catch (NoSuchMethodException | SecurityException e) {
@@ -105,7 +105,7 @@ public class SpringContext implements ApplicationContextAware {
 	
 	@SuppressWarnings("unchecked")
 	public static<T> T getBean(String beanName) {
-		return (T)applicationContext.getBean(beanName);
+		return (T) applicationContext.getBean(beanName);
 	}
 	@SuppressWarnings("unchecked")
 	public static<T> T getBeanIgnoreNull(String beanName) {
@@ -148,6 +148,7 @@ public class SpringContext implements ApplicationContextAware {
 		public static final byte TYPE_REFERENCE = 1;
 		
 		public Property() {
+
 		}
 		public Property(String propertyName, Object value, byte type) {
 			this.propertyName = propertyName;

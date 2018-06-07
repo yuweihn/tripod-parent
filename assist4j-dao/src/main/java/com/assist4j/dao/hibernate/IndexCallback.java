@@ -38,20 +38,23 @@ public class IndexCallback extends IndexParamCallback {
 		SQLQuery query = session.createSQLQuery(sql);
 		assembleParams(query, params);
 
-		if(clz == null) {
+		if (clz == null) {
 			
-		} else if(Number.class.isAssignableFrom(clz)) {
+		} else if (Number.class.isAssignableFrom(clz)) {
 
-		} else if(Map.class.isAssignableFrom(clz)) {
+		} else if (Map.class.isAssignableFrom(clz)) {
 			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 		} else {
 			query.addEntity(clz);
 		}
 
-		if(pageNo != null && pageSize != null) {
-			if (pageNo <= 0) pageNo = 1;
-			if (pageSize <= 0) pageSize = DEFAULT_PAGE_SIZE;
-			
+		if (pageNo != null && pageSize != null) {
+			if (pageNo <= 0) {
+				pageNo = 1;
+			}
+			if (pageSize <= 0) {
+				pageSize = DEFAULT_PAGE_SIZE;
+			}
 			query.setFirstResult((pageNo - 1) * pageSize).setMaxResults(pageSize);
 		}
 

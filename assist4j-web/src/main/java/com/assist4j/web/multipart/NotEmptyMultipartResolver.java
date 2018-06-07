@@ -23,15 +23,15 @@ public class NotEmptyMultipartResolver extends CommonsMultipartResolver {
 	 */
 	@Override
 	protected MultipartParsingResult parseFileItems(List<FileItem> fileItems, String encoding) {
-		if(CollectionUtils.isEmpty(fileItems)) {
+		if (CollectionUtils.isEmpty(fileItems)) {
 			/**
 			 * do nothing.
 			 */
 		} else {
 			List<FileItem> tempList = new ArrayList<FileItem>();
 
-			for(FileItem fileItem: fileItems) {
-				if(fileItem == null || fileItem.isFormField() || fileItem.getSize() > 0) {
+			for (FileItem fileItem: fileItems) {
+				if (fileItem == null || fileItem.isFormField() || fileItem.getSize() > 0) {
 					tempList.add(fileItem);
 				}
 			}

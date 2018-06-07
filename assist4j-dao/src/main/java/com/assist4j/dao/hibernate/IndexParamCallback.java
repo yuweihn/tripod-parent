@@ -9,7 +9,7 @@ import org.hibernate.Query;
  */
 public abstract class IndexParamCallback extends AbstractParamCallback {
 	protected void assembleParams(Query query, Object[] params) {
-		if(params == null || params.length <= 0) {
+		if (params == null || params.length <= 0) {
 			return;
 		}
 

@@ -4,6 +4,7 @@ package com.assist4j.web;
 import com.assist4j.core.Constant;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -45,20 +46,20 @@ public class Page {
 	private boolean hasNext;
 
 
-	public Page(int rowCount, int currentPage, int pageSize, HttpServletRequest request){
+	public Page(int rowCount, int currentPage, int pageSize, HttpServletRequest request) {
 		this(rowCount, currentPage, pageSize, 10, request);
 	}
-	public Page(int rowCount, int currentPage, int pageSize, int num, HttpServletRequest request){
-		if(rowCount <= 0) {
+	public Page(int rowCount, int currentPage, int pageSize, int num, HttpServletRequest request) {
+		if (rowCount <= 0) {
 			rowCount = 0;
 		}
-		if(currentPage <= 0) {
+		if (currentPage <= 0) {
 			currentPage = 1;
 		}
-		if(pageSize <= 0) {
+		if (pageSize <= 0) {
 			pageSize = 10;
 		}
-		if(num <= 0) {
+		if (num <= 0) {
 			num = 10;
 		}
 
@@ -74,12 +75,12 @@ public class Page {
 		this.pageNos = initPageNos();
 	}
 
-	private List<Integer> initPageNos(){
+	private List<Integer> initPageNos() {
 		List<Integer> list = new ArrayList<Integer>();
 		/**
 		 * 如果当前页currentPage超过合法范围(1~pageCount)，则返回空
 		 **/
-		if(this.currentPage < 1 || this.currentPage > this.pageCount) {
+		if (this.currentPage < 1 || this.currentPage > this.pageCount) {
 			return list;
 		}
 		/**
@@ -87,49 +88,55 @@ public class Page {
 		 **/
 		int start = 0;
 		int end = 0;
-		if(this.num >= this.pageCount) {
+		if (this.num >= this.pageCount) {
 			start = 1;
 			end = this.pageCount;
 		} else {
 			start = this.currentPage - this.num / 2;
-			if(start < 1) {
+			if (start < 1) {
 				start = 1;
 			}
 			end = start + this.num - 1;
-			if(end > this.pageCount) {
+			if (end > this.pageCount) {
 				end = this.pageCount;
 				start = end - this.num + 1;
 			}
 		}
 
-		for(int i = start; i <= end; i++){
+		for (int i = start; i <= end; i++) {
 			list.add(i);
 		}
 		return list;
 	}
 
-	private String initURL(HttpServletRequest request){
-		StringBuffer buf = new StringBuffer("");
+	private String initURL(HttpServletRequest request) {
+		StringBuilder buf = new StringBuilder("");
 		buf.append(request.getRequestURI()).append("?");
 
 		Enumeration<?> paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()) {
 			String paramName = (String) paramNames.nextElement();
-			if ("pageNo".equals(paramName)) continue;
-			if ("pageSize".equals(paramName)) continue;
+			if ("pageNo".equals(paramName)) {
+				continue;
+			}
+			if ("pageSize".equals(paramName)) {
+				continue;
+			}
 
 			String[] paramValues = request.getParameterValues(paramName);
-			for (String paramValue : paramValues) {
-				if (paramValue == null || "".equals(paramValue)) continue;
+			for (String paramValue: paramValues) {
+				if (paramValue == null || "".equals(paramValue)) {
+					continue;
+				}
 				try {
-					paramValue = java.net.URLEncoder.encode(paramValue, Constant.ENCODING_UTF_8);
+					paramValue = URLEncoder.encode(paramValue, Constant.ENCODING_UTF_8);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
 				buf.append(paramName).append("=").append(paramValue).append("&");
 			}
 		}
-		if(buf.substring(buf.length() - 1).equals("&")){
+		if (buf.substring(buf.length() - 1).equals("&")) {
 			buf.deleteCharAt(buf.length() - 1);
 		}
 		return buf.toString();

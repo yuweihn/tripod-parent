@@ -13,10 +13,10 @@ public class SequenceHolder {
 	private final AtomicLong currentValue;
 	
 	public SequenceHolder(long min, long max) {
-		if(min <= 0) {
+		if (min <= 0) {
 			throw new SequenceException("[min] must be larger then 0.");
 		}
-		if(min >= max) {
+		if (min >= max) {
 			throw new SequenceException("[max] must be larger then [min].");
 		}
 		
