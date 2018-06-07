@@ -53,6 +53,11 @@ public class CacheHttpSession implements HttpSession {
 	private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10, Integer.MAX_VALUE
 															, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
+	/**
+	 * 是否收集session
+	 */
+	private boolean ifCollect = false;
+
 
 
 	/**
@@ -123,6 +128,10 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	public int getMaxInactiveInterval() {
 		return maxInactiveInterval;
+	}
+
+	public void setIfCollect(boolean ifCollect) {
+		this.ifCollect = ifCollect;
 	}
 
 	/**
@@ -367,6 +376,9 @@ public class CacheHttpSession implements HttpSession {
 
 		public boolean putSession(final String key, String value) {
 			boolean b = target.put(key, value, maxInactiveInterval * 60);
+			if (!ifCollect) {
+				return b;
+			}
 			if (b) {
 				threadPoolExecutor.submit(new Runnable() {
 					@Override
@@ -401,6 +413,9 @@ public class CacheHttpSession implements HttpSession {
 
 		public void removeSession(final String key) {
 			target.remove(key);
+			if (!ifCollect) {
+				return;
+			}
 
 			threadPoolExecutor.submit(new Runnable() {
 				@Override

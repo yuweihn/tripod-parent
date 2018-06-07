@@ -36,22 +36,32 @@ public class SessionFilter implements Filter {
 	 * Cookie中保存sessionId的属性名称
 	 */
 	private String cookieSessionName;
+	/**
+	 * 是否收集session
+	 */
+	private boolean ifCollect = false;
 
 
 	public SessionFilter(SessionCache cache, String cacheSessionKey, String cookieSessionName) {
 		this(cache, cacheSessionKey, SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL, cookieSessionName);
+	}
+	public SessionFilter(SessionCache cache, String cacheSessionKey, int maxInactiveInterval, String cookieSessionName) {
+		this(cache, cacheSessionKey, SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL, cookieSessionName, false);
 	}
 	/**
 	 * @param cache                           缓存引擎
 	 * @param cacheSessionKey                 缓存中session对象的key的前缀
 	 * @param maxInactiveInterval             session有效期(分钟)
 	 * @param cookieSessionName               Cookie中保存sessionId的属性名称
+	 * @param ifCollect                       是否收集session
 	 */
-	public SessionFilter(SessionCache cache, String cacheSessionKey, int maxInactiveInterval, String cookieSessionName) {
+	public SessionFilter(SessionCache cache, String cacheSessionKey, int maxInactiveInterval
+			, String cookieSessionName, boolean ifCollect) {
 		this.cache = cache;
 		this.cacheSessionKey = cacheSessionKey;
 		this.maxInactiveInterval = maxInactiveInterval;
 		this.cookieSessionName = cookieSessionName;
+		this.ifCollect = ifCollect;
 		initSessionUtil(cache);
 	}
 
@@ -63,6 +73,7 @@ public class SessionFilter implements Filter {
 		CacheSessionHttpServletRequest cacheRequest = new CacheSessionHttpServletRequest(httpRequest, httpResponse, cacheSessionKey, cache);
 		cacheRequest.setSessionCookieName(cookieSessionName);
 		cacheRequest.setMaxInactiveInterval(maxInactiveInterval);
+		cacheRequest.setIfCollect(ifCollect);
 
 		chain.doFilter(cacheRequest, httpResponse);
 		cacheRequest.syncSessionToCache();

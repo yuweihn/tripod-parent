@@ -36,6 +36,10 @@ public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 
 	private HttpServletRequest request;
 	private HttpServletResponse response;
+	/**
+	 * 是否收集session
+	 */
+	private boolean ifCollect = false;
 	
 	
 	/**
@@ -79,6 +83,10 @@ public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 
 	public void setMaxInactiveInterval(int maxInactiveInterval) {
 		this.maxInactiveInterval = maxInactiveInterval;
+	}
+
+	public void setIfCollect(boolean ifCollect) {
+		this.ifCollect = ifCollect;
 	}
 
 	/**
@@ -130,6 +138,7 @@ public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 	 */
 	private CacheHttpSession buildCacheHttpSession(String sessionId, boolean cookie) {
 		CacheHttpSession session = new CacheHttpSession(sessionId, maxInactiveInterval, sessionKeyPrefix, cache);
+		session.setIfCollect(ifCollect);
 
 		if (cookie) {
 			CookiesUtil.addCookie(request, response, sessionCookieName, sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
