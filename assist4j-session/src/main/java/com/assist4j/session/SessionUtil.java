@@ -1,7 +1,11 @@
 package com.assist4j.session;
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import com.alibaba.fastjson.JSONObject;
 import com.assist4j.session.cache.SessionCache;
 
 
@@ -21,7 +25,7 @@ public final class SessionUtil {
 
 	/**
 	 * 根据指定sessionId获得登录时间
-	 * eg.  sessionId:  cache.weixin.session.9ee627c1a0d14d17a5c794ad2dd8421d
+	 * eg.  sessionId:  cache.assist4j.session.9ee627c1a0d14d17a5c794ad2dd8421d
 	 * @return
 	 */
 	public static Date getCreateTimeBySessionId(String sessionId) {
@@ -50,5 +54,24 @@ public final class SessionUtil {
 	public static<T> String getSessionIdByUserId(T userId) {
 		String sessionIdKey = sessionIdKeyPre + "." + userId.toString();
 		return cache.get(sessionIdKey);
+	}
+
+	/**
+	 * 获取所有的sessionId
+	 * @return
+	 */
+	public static List<String> getAllSessionIdList() {
+		List<String> sessionIdList;
+		String sessionIdListStr = cache.get(SessionConstant.SESSION_ID_LIST_KEY);
+		if (sessionIdListStr != null) {
+			sessionIdList = new ArrayList<String>();
+		} else {
+			try {
+				sessionIdList = JSONObject.parseArray(sessionIdListStr, String.class);
+			} catch (Exception e) {
+				sessionIdList = new ArrayList<String>();
+			}
+		}
+		return sessionIdList;
 	}
 }
