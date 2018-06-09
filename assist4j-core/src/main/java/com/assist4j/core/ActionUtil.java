@@ -8,6 +8,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -192,15 +194,25 @@ public abstract class ActionUtil {
 		}
 	}
 
+	public static void output(byte[] content, String contentType) {
+		output(content, contentType, null);
+	}
+
 	/**
 	 * contentType 不含字符集
 	 */
-	public static void output(byte[] content, String contentType) {
+	public static void output(byte[] content, String contentType, Map<String, String> headers) {
 		HttpServletResponse response = getResponse();
 		response.setContentType(contentType + "; charset=" + Constant.ENCODING_UTF_8);
 		response.setHeader("Cache-Control", "no-cache, no-store");
 		response.setHeader("Pragma", "no-cache");
 		response.setDateHeader("Expires", 0);
+
+		if (headers != null) {
+			for (Map.Entry<String, String> entry: headers.entrySet()) {
+				response.setHeader(entry.getKey(), entry.getValue());
+			}
+		}
 
 		try {
 			response.getOutputStream().write(content);
