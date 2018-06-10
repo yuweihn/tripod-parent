@@ -10,6 +10,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -31,62 +32,60 @@ public abstract class ImageFileUtil extends FileUtil {
 
 
 	/**
-	 * 图片按比例压缩
+	 * 按比例压缩图片
 	 */
 	public static byte[] compress(byte[] imgData, double proportion) {
 		ByteArrayInputStream inputStream = null;
-		ByteArrayOutputStream outputStream = null;
-		try {
-			inputStream = new ByteArrayInputStream(imgData);
-			BufferedImage oldImage = ImageIO.read(inputStream);
-			int oldWidth = oldImage.getWidth(null);
-			return compress(imgData, (int) (oldWidth * proportion));
-		} catch (IOException e) {
-			log.error("", e);
-			return null;
-		} finally {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	/**
-	 * 图片按指定宽度等比例压缩
-	 * @param imgData
-	 * @param newWidth
-	 * @return
-	 */
-	public static byte[] compress(byte[] imgData, int newWidth) {
-		ByteArrayInputStream inputStream = null;
-		ByteArrayOutputStream outputStream = null;
 		try {
 			inputStream = new ByteArrayInputStream(imgData);
 			BufferedImage oldImage = ImageIO.read(inputStream);
 			int oldWidth = oldImage.getWidth(null);
 			int oldHeight = oldImage.getHeight(null);
-			
+			return compress0(oldImage, (int) (oldWidth * proportion), (int) (oldHeight * proportion), getImageType(imgData));
+		} catch (IOException e) {
+			log.error("", e);
+			return null;
+		} finally {
+			close(inputStream);
+		}
+	}
+	public static byte[] compress(byte[] imgData, int newWidth) {
+		ByteArrayInputStream inputStream = null;
+		try {
+			inputStream = new ByteArrayInputStream(imgData);
+			BufferedImage oldImage = ImageIO.read(inputStream);
+			int oldWidth = oldImage.getWidth(null);
+			int oldHeight = oldImage.getHeight(null);
+
 			if (newWidth > oldWidth) {
 				newWidth = oldWidth;
 			}
-
-			Image resizedImage = null;
-			if (oldWidth > oldHeight) {
-				resizedImage = oldImage.getScaledInstance(newWidth, (newWidth * oldHeight) / oldWidth, Image.SCALE_SMOOTH);
-			} else {
-				resizedImage = oldImage.getScaledInstance((newWidth * oldWidth) / oldHeight, newWidth, Image.SCALE_SMOOTH);
-			}
-
+			int newHeight = (newWidth * oldHeight) / oldWidth;
+			return compress0(oldImage, newWidth, newHeight, getImageType(imgData));
+		} catch (IOException e) {
+			log.error("", e);
+			return null;
+		} finally {
+			close(inputStream);
+		}
+	}
+	public static byte[] compress(byte[] imgData, int newWidth, int newHeight) {
+		ByteArrayInputStream inputStream = null;
+		try {
+			inputStream = new ByteArrayInputStream(imgData);
+			BufferedImage oldImage = ImageIO.read(inputStream);
+			return compress0(oldImage, newWidth, newHeight, getImageType(imgData));
+		} catch (IOException e) {
+			log.error("", e);
+			return null;
+		} finally {
+			close(inputStream);
+		}
+	}
+	private static byte[] compress0(BufferedImage oldImage, int newWidth, int newHeight, String formatName) {
+		ByteArrayOutputStream outputStream = null;
+		try {
+			Image resizedImage = oldImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
 			Image temp = new ImageIcon(resizedImage).getImage();
 			BufferedImage bufferedImage = new BufferedImage(temp.getWidth(null), temp.getHeight(null), BufferedImage.TYPE_INT_RGB);
 
@@ -100,26 +99,13 @@ public abstract class ImageFileUtil extends FileUtil {
 			g.dispose();
 
 			outputStream = new ByteArrayOutputStream();
-			ImageIO.write(bufferedImage, getImageType(imgData), outputStream);
+			ImageIO.write(bufferedImage, formatName, outputStream);
 			return outputStream.toByteArray();
 		} catch (IOException e) {
 			log.error("", e);
 			return null;
 		} finally {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			close(outputStream);
 		}
 	}
 
@@ -155,27 +141,9 @@ public abstract class ImageFileUtil extends FileUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (imgStream != null) {
-				try {
-					imgStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (bgImgStream != null) {
-				try {
-					bgImgStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			close(outputStream);
+			close(imgStream);
+			close(bgImgStream);
 		}
 	}
 
@@ -196,20 +164,8 @@ public abstract class ImageFileUtil extends FileUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if (imageInputStream != null) {
-				try {
-					imageInputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			close(imageInputStream);
+			close(inputStream);
 		}
 	}
 
@@ -243,27 +199,9 @@ public abstract class ImageFileUtil extends FileUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (imageInputStream != null) {
-				try {
-					imageInputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			close(outputStream);
+			close(imageInputStream);
+			close(inputStream);
 		}
 	}
 
@@ -296,19 +234,16 @@ public abstract class ImageFileUtil extends FileUtil {
 			log.error("", e);
 			return null;
 		} finally {
-			if (outputStream != null) {
-				try {
-					outputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			close(outputStream);
+			close(inputStream);
+		}
+	}
+	private static void close(Closeable stream) {
+		if (stream != null) {
+			try {
+				stream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
