@@ -28,8 +28,41 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ImageFileUtil extends FileUtil {
 	private static final Logger log = LoggerFactory.getLogger(ImageFileUtil.class);
+
+
 	/**
-	 * 图片等比例压缩
+	 * 图片按比例压缩
+	 */
+	public static byte[] compress(byte[] imgData, double proportion) {
+		ByteArrayInputStream inputStream = null;
+		ByteArrayOutputStream outputStream = null;
+		try {
+			inputStream = new ByteArrayInputStream(imgData);
+			BufferedImage oldImage = ImageIO.read(inputStream);
+			int oldWidth = oldImage.getWidth(null);
+			return compress(imgData, (int) (oldWidth * proportion));
+		} catch (IOException e) {
+			log.error("", e);
+			return null;
+		} finally {
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (inputStream != null) {
+				try {
+					inputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	/**
+	 * 图片按指定宽度等比例压缩
 	 * @param imgData
 	 * @param newWidth
 	 * @return
