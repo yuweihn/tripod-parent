@@ -53,7 +53,7 @@ public class SessionFilter implements Filter {
 	 * @param cacheSessionKey                 缓存中session对象的key的前缀
 	 * @param maxInactiveInterval             session有效期(分钟)
 	 * @param cookieSessionName               Cookie中保存sessionId的属性名称
-	 * @param ifCollect                       是否收集session
+	 * @param ifCollect                       是否收集session(这个字段为true时有效率问题，还需优化。慎用！！！)
 	 */
 	public SessionFilter(SessionCache cache, String cacheSessionKey, int maxInactiveInterval
 			, String cookieSessionName, boolean ifCollect) {

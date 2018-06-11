@@ -385,15 +385,14 @@ public class CacheHttpSession implements HttpSession {
 				threadPoolExecutor.submit(new Runnable() {
 					@Override
 					public void run() {
-						List<String> sessionIdList;
+						Set<String> sessionIdList = new HashSet<String>();
 						String sessionIdListStr = target.get(sessionIdListKey);
-						if (sessionIdListStr == null) {
-							sessionIdList = new ArrayList<String>();
-						} else {
+						if (sessionIdListStr != null) {
 							try {
-								sessionIdList = JSONObject.parseArray(sessionIdListStr, String.class);
+								List<String> list = JSONObject.parseArray(sessionIdListStr, String.class);
+								sessionIdList.addAll(list);
 							} catch (Exception e) {
-								sessionIdList = new ArrayList<String>();
+								sessionIdList = new HashSet<String>();
 							}
 						}
 						sessionIdList.add(key);
@@ -422,15 +421,16 @@ public class CacheHttpSession implements HttpSession {
 			threadPoolExecutor.submit(new Runnable() {
 				@Override
 				public void run() {
-					List<String> sessionIdList;
+					Set<String> sessionIdList = new HashSet<String>();
 					String sessionIdListStr = target.get(sessionIdListKey);
-					if (sessionIdListStr == null) {
-
-					} else {
-						try {
-							sessionIdList = JSONObject.parseArray(sessionIdListStr, String.class);
-						} catch (Exception e) {
-							sessionIdList = new ArrayList<String>();
+					if (sessionIdListStr != null) {
+						if (sessionIdListStr != null) {
+							try {
+								List<String> list = JSONObject.parseArray(sessionIdListStr, String.class);
+								sessionIdList.addAll(list);
+							} catch (Exception e) {
+								sessionIdList = new HashSet<String>();
+							}
 						}
 						sessionIdList.remove(key);
 						sessionIdListStr = JSONObject.toJSONString(sessionIdList);
