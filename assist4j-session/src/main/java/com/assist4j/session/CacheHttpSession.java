@@ -50,6 +50,7 @@ public class CacheHttpSession implements HttpSession {
 	private String sessionIdKey;
 	private String sessionIdKeyPre;
 	private CacheSessionAttribute sessionAttribute;
+	private String sessionIdListKey;
 	private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10, Integer.MAX_VALUE
 															, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
@@ -70,6 +71,7 @@ public class CacheHttpSession implements HttpSession {
 		this.maxInactiveInterval = maxInactiveInterval;
 		this.proxyCache = new ProxySessionCache(cache);
 		this.sessionIdKeyPre = sessionKeyPrefix.trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
+		this.sessionIdListKey = sessionKeyPrefix.trim() + "." + SessionConstant.SESSION_ID_LIST_KEY;
 		this.fullSessionId = sessionKeyPrefix.trim() + "." + this.id;
 		init();
 	}
@@ -384,7 +386,7 @@ public class CacheHttpSession implements HttpSession {
 					@Override
 					public void run() {
 						List<String> sessionIdList;
-						String sessionIdListStr = target.get(SessionConstant.SESSION_ID_LIST_KEY);
+						String sessionIdListStr = target.get(sessionIdListKey);
 						if (sessionIdListStr == null) {
 							sessionIdList = new ArrayList<String>();
 						} else {
@@ -396,7 +398,7 @@ public class CacheHttpSession implements HttpSession {
 						}
 						sessionIdList.add(key);
 						sessionIdListStr = JSONObject.toJSONString(sessionIdList);
-						target.put(SessionConstant.SESSION_ID_LIST_KEY, sessionIdListStr, maxInactiveInterval * 60);
+						target.put(sessionIdListKey, sessionIdListStr, maxInactiveInterval * 60);
 					}
 				});
 			}
@@ -421,7 +423,7 @@ public class CacheHttpSession implements HttpSession {
 				@Override
 				public void run() {
 					List<String> sessionIdList;
-					String sessionIdListStr = target.get(SessionConstant.SESSION_ID_LIST_KEY);
+					String sessionIdListStr = target.get(sessionIdListKey);
 					if (sessionIdListStr == null) {
 
 					} else {
@@ -432,7 +434,7 @@ public class CacheHttpSession implements HttpSession {
 						}
 						sessionIdList.remove(key);
 						sessionIdListStr = JSONObject.toJSONString(sessionIdList);
-						target.put(SessionConstant.SESSION_ID_LIST_KEY, sessionIdListStr, maxInactiveInterval * 60);
+						target.put(sessionIdListKey, sessionIdListStr, maxInactiveInterval * 60);
 					}
 				}
 			});

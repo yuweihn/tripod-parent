@@ -23,5 +23,5 @@ public abstract class SessionConstant {
 	/**
 	 * 为了便于统计session，将所有sessionId存入一个list，然后将该list存入cache中，以SESSION_ID_LIST_KEY为键。
 	 */
-	public static final String SESSION_ID_LIST_KEY = "session.constant.cache.session.id.list";
+	public static final String SESSION_ID_LIST_KEY = "session.id.list";
 }

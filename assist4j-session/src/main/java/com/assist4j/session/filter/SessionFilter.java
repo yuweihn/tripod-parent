@@ -98,7 +98,7 @@ public class SessionFilter implements Filter {
 			Class<?> clz = Class.forName(SessionUtil.class.getName());
 			Constructor<?> constructor = clz.getDeclaredConstructor(SessionCache.class, String.class);
 			constructor.setAccessible(true);
-			constructor.newInstance(cache, cacheSessionKey + "." + SessionConstant.SESSION_ID_KEY_CURRENT);
+			constructor.newInstance(cache, cacheSessionKey);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

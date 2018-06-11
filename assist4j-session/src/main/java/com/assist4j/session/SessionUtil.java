@@ -15,11 +15,13 @@ import com.assist4j.session.cache.SessionCache;
 public final class SessionUtil {
 	private static SessionCache cache;
 	private static String sessionIdKeyPre;
+	private static String sessionIdListKey;
 
 
-	private SessionUtil(SessionCache cache, String sessionIdKeyPre) {
+	private SessionUtil(SessionCache cache, String sessionKeyPrefix) {
 		SessionUtil.cache = cache;
-		SessionUtil.sessionIdKeyPre = sessionIdKeyPre;
+		SessionUtil.sessionIdKeyPre = sessionKeyPrefix.trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
+		SessionUtil.sessionIdListKey = sessionKeyPrefix.trim() + "." + SessionConstant.SESSION_ID_LIST_KEY;
 	}
 
 
@@ -62,7 +64,7 @@ public final class SessionUtil {
 	 */
 	public static List<String> getAllSessionIdList() {
 		List<String> sessionIdList;
-		String sessionIdListStr = cache.get(SessionConstant.SESSION_ID_LIST_KEY);
+		String sessionIdListStr = cache.get(sessionIdListKey);
 		if (sessionIdListStr != null) {
 			sessionIdList = new ArrayList<String>();
 		} else {
