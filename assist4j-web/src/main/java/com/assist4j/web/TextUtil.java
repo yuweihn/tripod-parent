@@ -3,7 +3,6 @@ package com.assist4j.web;
 
 import java.util.Locale;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import javax.annotation.Resource;
 
 
 /**
@@ -38,7 +37,6 @@ public class TextUtil {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
-	@Resource
 	public void setMessageSource(ResourceBundleMessageSource messageSource) {
 		TextUtil.messageSource = messageSource;
 	}
