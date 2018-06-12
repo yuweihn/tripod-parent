@@ -2,14 +2,14 @@ package com.assist4j.web;
 
 
 import java.util.Locale;
-import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.context.MessageSource;
 
 
 /**
  * @author wei
  */
 public class TextUtil {
-	private static ResourceBundleMessageSource messageSource;
+	private static MessageSource messageSource;
 
 	private TextUtil() {
 
@@ -37,7 +37,7 @@ public class TextUtil {
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////
-	public void setMessageSource(ResourceBundleMessageSource messageSource) {
+	public void setMessageSource(MessageSource messageSource) {
 		TextUtil.messageSource = messageSource;
 	}
 }
