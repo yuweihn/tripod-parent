@@ -8,8 +8,6 @@ import java.util.Map;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
-import javax.annotation.Resource;
-
 
 /**
  * @author wei
@@ -37,12 +35,10 @@ public class FreemarkerUtil {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	@Resource
 	public void setCfg(Configuration cfg) {
 		FreemarkerUtil.cfg = cfg;
 	}
 
-	@Resource
 	public void setFtlPath(String ftlPath) {
 		FreemarkerUtil.ftlPath = ftlPath;
 	}
