@@ -43,7 +43,7 @@ public class FreemarkerUtil {
 	}
 
 	@Resource
-	public static void setFtlPath(String ftlPath) {
+	public void setFtlPath(String ftlPath) {
 		FreemarkerUtil.ftlPath = ftlPath;
 	}
 }
