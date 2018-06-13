@@ -16,52 +16,20 @@ import javax.servlet.http.HttpServletResponse;
 import com.assist4j.session.CacheSessionHttpServletRequest;
 import com.assist4j.session.SessionUtil;
 import com.assist4j.session.cache.SessionCache;
-import com.assist4j.session.SessionConstant;
 
 
 /**
  * @author yuwei
  */
 public class SessionFilter implements Filter {
-	/**
-	 * session有效期(分钟)
-	 */
-	private int maxInactiveInterval;
 	private SessionCache cache;
-	/**
-	 * 缓存中session对象的key的前缀
-	 */
-	private String cacheSessionKey;
-	/**
-	 * Cookie中保存sessionId的属性名称
-	 */
-	private String cookieSessionName;
-	/**
-	 * 是否收集session
-	 */
-	private boolean ifCollect = false;
 
 
-	public SessionFilter(SessionCache cache, String cacheSessionKey, String cookieSessionName) {
-		this(cache, cacheSessionKey, SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL, cookieSessionName);
-	}
-	public SessionFilter(SessionCache cache, String cacheSessionKey, int maxInactiveInterval, String cookieSessionName) {
-		this(cache, cacheSessionKey, SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL, cookieSessionName, false);
-	}
 	/**
 	 * @param cache                           缓存引擎
-	 * @param cacheSessionKey                 缓存中session对象的key的前缀
-	 * @param maxInactiveInterval             session有效期(分钟)
-	 * @param cookieSessionName               Cookie中保存sessionId的属性名称
-	 * @param ifCollect                       是否收集session(这个字段为true时有效率问题，还需优化。慎用！！！)
 	 */
-	public SessionFilter(SessionCache cache, String cacheSessionKey, int maxInactiveInterval
-			, String cookieSessionName, boolean ifCollect) {
+	public SessionFilter(SessionCache cache) {
 		this.cache = cache;
-		this.cacheSessionKey = cacheSessionKey;
-		this.maxInactiveInterval = maxInactiveInterval;
-		this.cookieSessionName = cookieSessionName;
-		this.ifCollect = ifCollect;
 		initSessionUtil(cache);
 	}
 
@@ -70,10 +38,7 @@ public class SessionFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-		CacheSessionHttpServletRequest cacheRequest = new CacheSessionHttpServletRequest(httpRequest, httpResponse, cacheSessionKey, cache);
-		cacheRequest.setSessionCookieName(cookieSessionName);
-		cacheRequest.setMaxInactiveInterval(maxInactiveInterval);
-		cacheRequest.setIfCollect(ifCollect);
+		CacheSessionHttpServletRequest cacheRequest = new CacheSessionHttpServletRequest(httpRequest, httpResponse, cache);
 
 		chain.doFilter(cacheRequest, httpResponse);
 		cacheRequest.syncSessionToCache();
@@ -96,9 +61,9 @@ public class SessionFilter implements Filter {
 	private void initSessionUtil(SessionCache cache) {
 		try {
 			Class<?> clz = Class.forName(SessionUtil.class.getName());
-			Constructor<?> constructor = clz.getDeclaredConstructor(SessionCache.class, String.class);
+			Constructor<?> constructor = clz.getDeclaredConstructor(SessionCache.class);
 			constructor.setAccessible(true);
-			constructor.newInstance(cache, cacheSessionKey);
+			constructor.newInstance(cache);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

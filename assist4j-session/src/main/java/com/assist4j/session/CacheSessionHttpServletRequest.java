@@ -23,34 +23,20 @@ import com.assist4j.session.cache.SessionCache;
  */
 public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 	private SessionCache cache;
-	/**
-	 * session有效期(分钟)
-	 */
-	private int maxInactiveInterval;
 	private CacheHttpSession cacheSession;
-	/**
-	 * Cookie中保存sessionID的属性名称
-	 */
-	private String sessionCookieName;
-	private String sessionKeyPrefix;
 
 	private HttpServletRequest request;
 	private HttpServletResponse response;
-	/**
-	 * 是否收集session
-	 */
-	private boolean ifCollect = false;
 	
 	
 	/**
 	 * 构造一个HttpServletRequest的包装器。
 	 */
-	public CacheSessionHttpServletRequest(HttpServletRequest request, HttpServletResponse response, String sessionKeyPrefix, SessionCache cache) {
+	public CacheSessionHttpServletRequest(HttpServletRequest request, HttpServletResponse response, SessionCache cache) {
 		super(request);
 		this.request = request;
 		this.response = response;
 		this.cache = cache;
-		this.sessionKeyPrefix = sessionKeyPrefix;
 	}
 
 
@@ -74,22 +60,6 @@ public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 	}
 
 	/**
-	 * 设置在Cookie中保存sessionID的属性名称.
-	 * @param sessionCookieName 属性名称。
-	 */
-	public void setSessionCookieName(String sessionCookieName) {
-		this.sessionCookieName = sessionCookieName;
-	}
-
-	public void setMaxInactiveInterval(int maxInactiveInterval) {
-		this.maxInactiveInterval = maxInactiveInterval;
-	}
-
-	public void setIfCollect(boolean ifCollect) {
-		this.ifCollect = ifCollect;
-	}
-
-	/**
 	 * 如果Session不为空，同步至缓存。
 	 */
 	public void syncSessionToCache() {
@@ -105,7 +75,7 @@ public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 	 */
 	private HttpSession doGetSession(boolean create) {
 		if (cacheSession == null) {
-			String sessionId = CookiesUtil.findValueByKey(request, sessionCookieName);
+			String sessionId = CookiesUtil.findValueByKey(request, cache.getCookieSessionName());
 			if (sessionId != null) {
 				cacheSession = buildCacheHttpSession(sessionId, false);
 			} else {
@@ -137,11 +107,10 @@ public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 	 * @return 会话实例。
 	 */
 	private CacheHttpSession buildCacheHttpSession(String sessionId, boolean cookie) {
-		CacheHttpSession session = new CacheHttpSession(sessionId, maxInactiveInterval, sessionKeyPrefix, cache);
-		session.setIfCollect(ifCollect);
+		CacheHttpSession session = new CacheHttpSession(sessionId, cache);
 
 		if (cookie) {
-			CookiesUtil.addCookie(request, response, sessionCookieName, sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
+			CookiesUtil.addCookie(request, response, cache.getCookieSessionName(), sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 		}
 
 		return session;

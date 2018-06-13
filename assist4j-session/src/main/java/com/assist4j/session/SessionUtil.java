@@ -1,11 +1,7 @@
 package com.assist4j.session;
 
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-
-import com.alibaba.fastjson.JSONObject;
 import com.assist4j.session.cache.SessionCache;
 
 
@@ -15,13 +11,11 @@ import com.assist4j.session.cache.SessionCache;
 public final class SessionUtil {
 	private static SessionCache cache;
 	private static String sessionIdKeyPre;
-	private static String sessionIdListKey;
 
 
-	private SessionUtil(SessionCache cache, String sessionKeyPrefix) {
+	private SessionUtil(SessionCache cache) {
 		SessionUtil.cache = cache;
-		SessionUtil.sessionIdKeyPre = sessionKeyPrefix.trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
-		SessionUtil.sessionIdListKey = sessionKeyPrefix.trim() + "." + SessionConstant.SESSION_ID_LIST_KEY;
+		SessionUtil.sessionIdKeyPre = cache.getCacheSessionKey().trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
 	}
 
 
@@ -56,24 +50,5 @@ public final class SessionUtil {
 	public static<T> String getSessionIdByUserId(T userId) {
 		String sessionIdKey = sessionIdKeyPre + "." + userId.toString();
 		return cache.get(sessionIdKey);
-	}
-
-	/**
-	 * 获取所有的sessionId
-	 * @return
-	 */
-	public static List<String> getAllSessionIdList() {
-		List<String> sessionIdList;
-		String sessionIdListStr = cache.get(sessionIdListKey);
-		if (sessionIdListStr != null) {
-			sessionIdList = new ArrayList<String>();
-		} else {
-			try {
-				sessionIdList = JSONObject.parseArray(sessionIdListStr, String.class);
-			} catch (Exception e) {
-				sessionIdList = new ArrayList<String>();
-			}
-		}
-		return sessionIdList;
 	}
 }

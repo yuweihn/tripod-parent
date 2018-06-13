@@ -2,15 +2,10 @@ package com.assist4j.session;
 
 
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
-import com.alibaba.fastjson.JSONObject;
 import com.assist4j.session.cache.SessionCache;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -50,14 +45,6 @@ public class CacheHttpSession implements HttpSession {
 	private String sessionIdKey;
 	private String sessionIdKeyPre;
 	private CacheSessionAttribute sessionAttribute;
-	private String sessionIdListKey;
-	private ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(10, Integer.MAX_VALUE
-															, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-
-	/**
-	 * 是否收集session
-	 */
-	private boolean ifCollect = false;
 
 
 
@@ -66,13 +53,15 @@ public class CacheHttpSession implements HttpSession {
 	 * @param id id字符串。
 	 * @param cache 缓存引擎。
 	 */
-	public CacheHttpSession(String id, int maxInactiveInterval, String sessionKeyPrefix, SessionCache cache) {
+	public CacheHttpSession(String id, SessionCache cache) {
 		this.id = id;
-		this.maxInactiveInterval = maxInactiveInterval;
+		this.maxInactiveInterval = cache.getMaxInactiveInterval();
+		if (this.maxInactiveInterval <= 0) {
+			this.maxInactiveInterval = SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL;
+		}
 		this.proxyCache = new ProxySessionCache(cache);
-		this.sessionIdKeyPre = sessionKeyPrefix.trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
-		this.sessionIdListKey = sessionKeyPrefix.trim() + "." + SessionConstant.SESSION_ID_LIST_KEY;
-		this.fullSessionId = sessionKeyPrefix.trim() + "." + this.id;
+		this.sessionIdKeyPre = cache.getCacheSessionKey().trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
+		this.fullSessionId = cache.getCacheSessionKey().trim() + "." + this.id;
 		init();
 	}
 
@@ -130,10 +119,6 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	public int getMaxInactiveInterval() {
 		return maxInactiveInterval;
-	}
-
-	public void setIfCollect(boolean ifCollect) {
-		this.ifCollect = ifCollect;
 	}
 
 	/**
@@ -235,7 +220,7 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	public void removeSessionFromCache(){
-		proxyCache.removeSession(fullSessionId);
+		proxyCache.remove0(fullSessionId);
 		if (sessionIdKey != null) {
 			proxyCache.remove0(sessionIdKey);
 		}
@@ -251,7 +236,7 @@ public class CacheHttpSession implements HttpSession {
 			return false;
 		}
 
-		proxyCache.putSession(fullSessionId, CacheSessionAttribute.encode(sessionAttribute));
+		proxyCache.put0(fullSessionId, CacheSessionAttribute.encode(sessionAttribute));
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -259,9 +244,9 @@ public class CacheHttpSession implements HttpSession {
 			/**
 			 * 把当前账号之前登录的session清除掉，防止重复登录
 			 */
-			String sessionId = proxyCache.get(sessionIdKey);
+			String sessionId = proxyCache.get0(sessionIdKey);
 			if (sessionId != null && !sessionId.equals(fullSessionId)) {
-				proxyCache.removeSession(sessionId);
+				proxyCache.remove0(sessionId);
 			}
 			proxyCache.put0(sessionIdKey, fullSessionId);
 		}
@@ -289,7 +274,7 @@ public class CacheHttpSession implements HttpSession {
 			return;
 		}
 		
-		sessionAttribute = CacheSessionAttribute.decode(proxyCache.get(fullSessionId));
+		sessionAttribute = CacheSessionAttribute.decode(proxyCache.get0(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new CacheSessionAttribute();
@@ -376,70 +361,18 @@ public class CacheHttpSession implements HttpSession {
 			this.target = target;
 		}
 
-		public boolean putSession(final String key, String value) {
-			boolean b = target.put(key, value, maxInactiveInterval * 60);
-			if (!ifCollect) {
-				return b;
-			}
-			if (b) {
-				threadPoolExecutor.submit(new Runnable() {
-					@Override
-					public void run() {
-						String sessionIdListStr = target.get(sessionIdListKey);
-						Set<String> sessionIdSet = parse(sessionIdListStr);
-						sessionIdSet.add(key);
-						sessionIdListStr = JSONObject.toJSONString(sessionIdSet);
-						target.put(sessionIdListKey, sessionIdListStr, maxInactiveInterval * 60);
-					}
-				});
-			}
-			return b;
-		}
 
 		public boolean put0(String key, String value) {
 			return target.put(key, value, maxInactiveInterval * 60);
 		}
 
-		public String get(String key) {
+		public String get0(String key) {
 			Object obj = target.get(key);
 			if (obj instanceof String) {
 				return (String) obj;
 			}
 			target.remove(key);
 			return null;
-		}
-
-		public void removeSession(final String key) {
-			target.remove(key);
-			if (!ifCollect) {
-				return;
-			}
-
-			threadPoolExecutor.submit(new Runnable() {
-				@Override
-				public void run() {
-					String sessionIdListStr = target.get(sessionIdListKey);
-					Set<String> sessionIdSet = parse(sessionIdListStr);
-					if (sessionIdSet != null) {
-						sessionIdSet.remove(key);
-						sessionIdListStr = JSONObject.toJSONString(sessionIdSet);
-						target.put(sessionIdListKey, sessionIdListStr, maxInactiveInterval * 60);
-					}
-				}
-			});
-		}
-
-		private Set<String> parse(String sessionIdListStr) {
-			Set<String> sessionIdSet = new HashSet<String>();
-			if (sessionIdListStr != null) {
-				try {
-					List<String> list = JSONObject.parseArray(sessionIdListStr, String.class);
-					sessionIdSet.addAll(list);
-				} catch (Exception e) {
-					sessionIdSet = new HashSet<String>();
-				}
-			}
-			return sessionIdSet;
 		}
 
 		public void remove0(String key) {
