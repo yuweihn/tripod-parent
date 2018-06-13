@@ -26,7 +26,7 @@ public interface SessionCache {
 	String getCookieSessionName();
 	
 	/**
-	 * session保存完成之后的操作
+	 * session同步完成之后的操作
 	 */
 	void afterCompletion(String sessionId);
 }
