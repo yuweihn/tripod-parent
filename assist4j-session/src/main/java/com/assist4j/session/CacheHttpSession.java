@@ -409,7 +409,12 @@ public class CacheHttpSession implements HttpSession {
 		}
 
 		public String get(String key) {
-			return target.get(key);
+			Object obj = target.get(key);
+			if (obj instanceof String) {
+				return (String) obj;
+			}
+			target.remove(key);
+			return null;
 		}
 
 		public void removeSession(final String key) {
