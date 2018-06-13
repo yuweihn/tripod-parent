@@ -9,10 +9,6 @@ import com.assist4j.session.cache.SessionCache;
  * @author yuwei
  */
 public abstract class SessionUtil {
-	private SessionUtil() {
-
-	}
-
 
 	/**
 	 * 根据指定sessionId获得登录时间
