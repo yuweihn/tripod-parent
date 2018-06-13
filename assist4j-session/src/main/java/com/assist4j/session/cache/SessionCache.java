@@ -2,7 +2,6 @@ package com.assist4j.session.cache;
 
 
 /**
- * 缓存引擎接口
  * @author yuwei
  */
 public interface SessionCache {
