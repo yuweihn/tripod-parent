@@ -19,7 +19,7 @@ public abstract class SessionUtil {
 		if (sessionId == null) {
 			return null;
 		}
-		CacheSessionAttribute attribute = CacheSessionAttribute.decode(cache.get(sessionId));
+		SessionAttribute attribute = SessionAttribute.decode(cache.get(sessionId));
 		return attribute == null ? null : attribute.getCreateTime();
 	}
 
@@ -31,7 +31,7 @@ public abstract class SessionUtil {
 		if (sessionId == null) {
 			return null;
 		}
-		CacheSessionAttribute attribute = CacheSessionAttribute.decode(cache.get(sessionId));
+		SessionAttribute attribute = SessionAttribute.decode(cache.get(sessionId));
 		if (attribute == null) {
 			return null;
 		}

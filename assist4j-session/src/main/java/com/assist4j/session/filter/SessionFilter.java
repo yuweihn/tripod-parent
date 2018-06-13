@@ -12,7 +12,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.assist4j.session.CacheSessionHttpServletRequest;
+import com.assist4j.session.CacheHttpServletRequest;
 import com.assist4j.session.cache.SessionCache;
 
 
@@ -35,7 +35,7 @@ public class SessionFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-		CacheSessionHttpServletRequest cacheRequest = new CacheSessionHttpServletRequest(httpRequest, httpResponse, cache);
+		CacheHttpServletRequest cacheRequest = new CacheHttpServletRequest(httpRequest, httpResponse, cache);
 
 		chain.doFilter(cacheRequest, httpResponse);
 		cacheRequest.syncSessionToCache();

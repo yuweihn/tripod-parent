@@ -22,11 +22,13 @@ import com.alibaba.fastjson.JSONObject;
  * Session的相关属性键值对储存Bean.
  * @author yuwei
  */
-public class CacheSessionAttribute implements Serializable {
+public class SessionAttribute implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1978262792864619187L;
+
+
 	private boolean newBuild;
 	private Date lastAccessTime;
 	private Date createTime;
@@ -39,10 +41,10 @@ public class CacheSessionAttribute implements Serializable {
 		return CollectionUtils.isEmpty(attributes);
 	}
 
-	public CacheSessionAttribute() {
+	public SessionAttribute() {
 		attributes = new HashSet<AttributeData>();
 	}
-	public CacheSessionAttribute(Date createTime) {
+	public SessionAttribute(Date createTime) {
 		this();
 		this.createTime = createTime;
 	}
@@ -138,7 +140,7 @@ public class CacheSessionAttribute implements Serializable {
 	}
 
 
-	public static String encode(CacheSessionAttribute attr) {
+	public static String encode(SessionAttribute attr) {
 		if (attr == null) {
 			return null;
 		}
@@ -163,7 +165,7 @@ public class CacheSessionAttribute implements Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static CacheSessionAttribute decode(String value) {
+	public static SessionAttribute decode(String value) {
 		Map<String, Object> map = null;
 		try {
 			map = JSONObject.parseObject(value, Map.class);
@@ -181,7 +183,7 @@ public class CacheSessionAttribute implements Serializable {
 		Object repeatKeyObj = map.get("repeatKey");
 		Object repeatValueObj = map.get("repeatValue");
 		
-		CacheSessionAttribute attr = new CacheSessionAttribute();
+		SessionAttribute attr = new SessionAttribute();
 		attr.newBuild = Boolean.valueOf(newBuildObj == null ? "false" : newBuildObj.toString());
 		attr.lastAccessTime = lastAccessTimeObj == null ? null 
 						: parseDate(lastAccessTimeObj.toString(), "yyyy-MM-dd HH:mm:ss.SSS");

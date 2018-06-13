@@ -44,7 +44,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	private String sessionIdKey;
 	private String sessionIdKeyPre;
-	private CacheSessionAttribute sessionAttribute;
+	private SessionAttribute sessionAttribute;
 
 
 
@@ -94,7 +94,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 获取当前的属性键值对。
 	 * @return 属性键值对。
 	 */
-	public CacheSessionAttribute getSessionAttribute() {
+	public SessionAttribute getSessionAttribute() {
 		return sessionAttribute;
 	}
 
@@ -236,7 +236,7 @@ public class CacheHttpSession implements HttpSession {
 			return null;
 		}
 
-		proxyCache.put0(fullSessionId, CacheSessionAttribute.encode(sessionAttribute));
+		proxyCache.put0(fullSessionId, SessionAttribute.encode(sessionAttribute));
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -274,10 +274,10 @@ public class CacheHttpSession implements HttpSession {
 			return;
 		}
 		
-		sessionAttribute = CacheSessionAttribute.decode(proxyCache.get0(fullSessionId));
+		sessionAttribute = SessionAttribute.decode(proxyCache.get0(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
-			sessionAttribute = new CacheSessionAttribute();
+			sessionAttribute = new SessionAttribute();
 			Calendar now = Calendar.getInstance();
 			sessionAttribute.setCreateTime(now.getTime());
 			sessionAttribute.setLastAccessTime(now.getTime());

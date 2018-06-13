@@ -21,7 +21,7 @@ import com.assist4j.session.cache.SessionCache;
  *
  * @author yuwei
  */
-public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
+public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	private SessionCache cache;
 	private CacheHttpSession cacheSession;
 
@@ -32,7 +32,7 @@ public class CacheSessionHttpServletRequest extends HttpServletRequestWrapper {
 	/**
 	 * 构造一个HttpServletRequest的包装器。
 	 */
-	public CacheSessionHttpServletRequest(HttpServletRequest request, HttpServletResponse response, SessionCache cache) {
+	public CacheHttpServletRequest(HttpServletRequest request, HttpServletResponse response, SessionCache cache) {
 		super(request);
 		this.request = request;
 		this.response = response;
