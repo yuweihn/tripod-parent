@@ -385,18 +385,10 @@ public class CacheHttpSession implements HttpSession {
 				threadPoolExecutor.submit(new Runnable() {
 					@Override
 					public void run() {
-						Set<String> sessionIdList = new HashSet<String>();
 						String sessionIdListStr = target.get(sessionIdListKey);
-						if (sessionIdListStr != null) {
-							try {
-								List<String> list = JSONObject.parseArray(sessionIdListStr, String.class);
-								sessionIdList.addAll(list);
-							} catch (Exception e) {
-								sessionIdList = new HashSet<String>();
-							}
-						}
-						sessionIdList.add(key);
-						sessionIdListStr = JSONObject.toJSONString(sessionIdList);
+						Set<String> sessionIdSet = parse(sessionIdListStr);
+						sessionIdSet.add(key);
+						sessionIdListStr = JSONObject.toJSONString(sessionIdSet);
 						target.put(sessionIdListKey, sessionIdListStr, maxInactiveInterval * 60);
 					}
 				});
@@ -426,23 +418,28 @@ public class CacheHttpSession implements HttpSession {
 			threadPoolExecutor.submit(new Runnable() {
 				@Override
 				public void run() {
-					Set<String> sessionIdList = new HashSet<String>();
 					String sessionIdListStr = target.get(sessionIdListKey);
-					if (sessionIdListStr != null) {
-						if (sessionIdListStr != null) {
-							try {
-								List<String> list = JSONObject.parseArray(sessionIdListStr, String.class);
-								sessionIdList.addAll(list);
-							} catch (Exception e) {
-								sessionIdList = new HashSet<String>();
-							}
-						}
-						sessionIdList.remove(key);
-						sessionIdListStr = JSONObject.toJSONString(sessionIdList);
+					Set<String> sessionIdSet = parse(sessionIdListStr);
+					if (sessionIdSet != null) {
+						sessionIdSet.remove(key);
+						sessionIdListStr = JSONObject.toJSONString(sessionIdSet);
 						target.put(sessionIdListKey, sessionIdListStr, maxInactiveInterval * 60);
 					}
 				}
 			});
+		}
+
+		private Set<String> parse(String sessionIdListStr) {
+			Set<String> sessionIdSet = new HashSet<String>();
+			if (sessionIdListStr != null) {
+				try {
+					List<String> list = JSONObject.parseArray(sessionIdListStr, String.class);
+					sessionIdSet.addAll(list);
+				} catch (Exception e) {
+					sessionIdSet = new HashSet<String>();
+				}
+			}
+			return sessionIdSet;
 		}
 
 		public void remove0(String key) {
