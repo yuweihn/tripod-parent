@@ -2,7 +2,6 @@ package com.assist4j.session.filter;
 
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.assist4j.session.CacheSessionHttpServletRequest;
-import com.assist4j.session.SessionUtil;
 import com.assist4j.session.cache.SessionCache;
 
 
@@ -30,7 +28,6 @@ public class SessionFilter implements Filter {
 	 */
 	public SessionFilter(SessionCache cache) {
 		this.cache = cache;
-		initSessionUtil(cache);
 	}
 
 	@Override
@@ -52,20 +49,5 @@ public class SessionFilter implements Filter {
 	@Override
 	public void destroy() {
 		
-	}
-
-	/**
-	 * 初始化{@link SessionUtil}
-	 * @param cache
-	 */
-	private void initSessionUtil(SessionCache cache) {
-		try {
-			Class<?> clz = Class.forName(SessionUtil.class.getName());
-			Constructor<?> constructor = clz.getDeclaredConstructor(SessionCache.class);
-			constructor.setAccessible(true);
-			constructor.newInstance(cache);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 }

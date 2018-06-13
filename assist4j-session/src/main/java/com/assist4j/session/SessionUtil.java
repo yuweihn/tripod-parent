@@ -8,14 +8,9 @@ import com.assist4j.session.cache.SessionCache;
 /**
  * @author yuwei
  */
-public final class SessionUtil {
-	private static SessionCache cache;
-	private static String sessionIdKeyPre;
+public abstract class SessionUtil {
+	private SessionUtil() {
 
-
-	private SessionUtil(SessionCache cache) {
-		SessionUtil.cache = cache;
-		SessionUtil.sessionIdKeyPre = cache.getCacheSessionKey().trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
 	}
 
 
@@ -24,7 +19,7 @@ public final class SessionUtil {
 	 * eg.  sessionId:  cache.assist4j.session.9ee627c1a0d14d17a5c794ad2dd8421d
 	 * @return
 	 */
-	public static Date getCreateTimeBySessionId(String sessionId) {
+	public static Date getCreateTimeBySessionId(SessionCache cache, String sessionId) {
 		if (sessionId == null) {
 			return null;
 		}
@@ -36,7 +31,7 @@ public final class SessionUtil {
 	 * 查询指定session中指定属性的值
 	 */
 	@SuppressWarnings("unchecked")
-	public static<T> T getAttributeBySessionId(String sessionId, String key) {
+	public static<T> T getAttributeBySessionId(SessionCache cache, String sessionId, String key) {
 		if (sessionId == null) {
 			return null;
 		}
@@ -47,8 +42,8 @@ public final class SessionUtil {
 		return (T) attribute.getAttribute(key);
 	}
 
-	public static<T> String getSessionIdByUserId(T userId) {
-		String sessionIdKey = sessionIdKeyPre + "." + userId.toString();
+	public static<T> String getSessionIdByUserId(SessionCache cache, T userId) {
+		String sessionIdKey = cache.getCacheSessionKey().trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT + "." + userId.toString();
 		return cache.get(sessionIdKey);
 	}
 }
