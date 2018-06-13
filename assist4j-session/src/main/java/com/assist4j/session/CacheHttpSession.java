@@ -228,12 +228,12 @@ public class CacheHttpSession implements HttpSession {
 
 	/**
 	 * 更新当前Session至缓存。如果已经失效，从缓存中删除。
-	 * @return false此缓存已经失效，true缓存继续有效。
+	 * @return sessionId
 	 */
-	public boolean syncToCache() {
+	public String syncToCache() {
 		if (isInvalid() || sessionAttribute == null || sessionAttribute.isEmpty()) {
 			removeSessionFromCache();
-			return false;
+			return null;
 		}
 
 		proxyCache.put0(fullSessionId, CacheSessionAttribute.encode(sessionAttribute));
@@ -250,7 +250,7 @@ public class CacheHttpSession implements HttpSession {
 			}
 			proxyCache.put0(sessionIdKey, fullSessionId);
 		}
-		return true;
+		return fullSessionId;
 	}
 
 	/**

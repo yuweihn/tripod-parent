@@ -2,7 +2,6 @@ package com.assist4j.session.cache;
 
 
 /**
- * 缓存引擎接口
  * @author yuwei
  */
 public interface SessionCache {
@@ -25,4 +24,9 @@ public interface SessionCache {
 	 * Cookie中保存sessionId的属性名称
 	 */
 	String getCookieSessionName();
+	
+	/**
+	 * session保存完成之后的操作
+	 */
+	void afterCompletion(String sessionId);
 }
