@@ -38,7 +38,7 @@ public class SessionFilter implements Filter {
 		CacheHttpServletRequest cacheRequest = new CacheHttpServletRequest(httpRequest, httpResponse, cache);
 
 		chain.doFilter(cacheRequest, httpResponse);
-		cacheRequest.syncSessionToCache();
+		cacheRequest.sync();
 	}
 
 	@Override

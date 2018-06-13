@@ -62,11 +62,11 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	/**
 	 * 如果Session不为空，同步至缓存。
 	 */
-	public void syncSessionToCache() {
+	public void sync() {
 		if (cacheSession == null) {
 			return;
 		}
-		String sessionId = cacheSession.syncToCache();
+		String sessionId = cacheSession.sync();
 		if (sessionId == null || "".equals(sessionId)) {
 			return;
 		}

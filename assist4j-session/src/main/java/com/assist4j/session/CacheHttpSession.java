@@ -230,7 +230,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 更新当前Session至缓存。如果已经失效，从缓存中删除。
 	 * @return sessionId
 	 */
-	public String syncToCache() {
+	public String sync() {
 		if (isInvalid() || sessionAttribute == null || sessionAttribute.isEmpty()) {
 			removeSessionFromCache();
 			return null;
