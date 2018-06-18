@@ -233,7 +233,7 @@ public class CacheHttpSession implements HttpSession {
 	public String sync() {
 		if (isInvalid() || sessionAttribute == null || sessionAttribute.isEmpty()) {
 			removeSessionFromCache();
-			return null;
+			return fullSessionId;
 		}
 
 		proxyCache.put0(fullSessionId, SessionAttribute.encode(sessionAttribute));
