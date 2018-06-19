@@ -21,12 +21,12 @@ public class FreemarkerUtil {
 	}
 
 
-	public static String merge(String templateName) {
-		return merge(templateName, null);
+	public static String merge(String template) {
+		return merge(template, null);
 	}
-	public static String merge(String templateName, Map<String, Object> params) {
+	public static String merge(String template, Map<String, Object> params) {
 		try {
-			Template temp = cfg.getTemplate(ftlPath + templateName);
+			Template temp = cfg.getTemplate(ftlPath + template);
 
 			Writer out = new StringWriter();
 			temp.process(params, out);
