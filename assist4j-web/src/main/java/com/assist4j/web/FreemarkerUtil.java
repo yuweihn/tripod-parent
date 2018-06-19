@@ -14,7 +14,7 @@ import freemarker.template.Template;
  */
 public class FreemarkerUtil {
 	private static Configuration cfg;
-	private static String ftlPath;
+	private static String ftlPath = "";
 
 	private FreemarkerUtil() {
 
