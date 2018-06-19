@@ -21,6 +21,9 @@ public class FreemarkerUtil {
 	}
 
 
+	public static String merge(String templateName) {
+		return merge(templateName, null);
+	}
 	public static String merge(String templateName, Map<String, Object> params) {
 		try {
 			Template temp = cfg.getTemplate(ftlPath + templateName);
