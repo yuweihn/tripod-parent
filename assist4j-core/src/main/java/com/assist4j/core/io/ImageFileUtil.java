@@ -32,6 +32,25 @@ public abstract class ImageFileUtil extends FileUtil {
 
 
 	/**
+	 * 读取图片的尺寸
+	 */
+	public static Img read(byte[] imgData) {
+		ByteArrayInputStream inputStream = null;
+		try {
+			inputStream = new ByteArrayInputStream(imgData);
+			BufferedImage image = ImageIO.read(inputStream);
+			int width = image.getWidth(null);
+			int height = image.getHeight(null);
+			return new Img(width, height);
+		} catch (IOException e) {
+			log.error("", e);
+			return null;
+		} finally {
+			close(inputStream);
+		}
+	}
+
+	/**
 	 * 按比例压缩图片
 	 */
 	public static byte[] compress(byte[] imgData, double proportion) {
@@ -245,6 +264,23 @@ public abstract class ImageFileUtil extends FileUtil {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public static final class Img {
+		private int width;
+		private int height;
+		private Img(int width, int height) {
+			this.width = width;
+			this.height = width;
+		}
+
+		public int getWidth() {
+			return width;
+		}
+
+		public int getHeight() {
+			return height;
 		}
 	}
 }
