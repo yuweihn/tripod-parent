@@ -38,8 +38,8 @@ public abstract class SessionUtil {
 		return (T) attribute.getAttribute(key);
 	}
 
-	public static<T> String getSessionIdByUserId(SessionCache cache, T userId) {
-		String sessionIdKey = cache.getCacheSessionKey().trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT + "." + userId.toString();
+	public static<T> String getSessionIdByRepeatKey(SessionCache cache, T repeatKey) {
+		String sessionIdKey = cache.getCacheSessionKey().trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT + "." + repeatKey.toString();
 		return cache.get(sessionIdKey);
 	}
 }
