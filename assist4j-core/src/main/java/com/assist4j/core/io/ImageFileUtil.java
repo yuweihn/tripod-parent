@@ -34,14 +34,14 @@ public abstract class ImageFileUtil extends FileUtil {
 	/**
 	 * 读取图片的尺寸
 	 */
-	public static Img read(byte[] imgData) {
+	public static Dimension measure(byte[] imgData) {
 		ByteArrayInputStream inputStream = null;
 		try {
 			inputStream = new ByteArrayInputStream(imgData);
 			BufferedImage image = ImageIO.read(inputStream);
 			int width = image.getWidth(null);
 			int height = image.getHeight(null);
-			return new Img(width, height);
+			return new Dimension(width, height);
 		} catch (IOException e) {
 			log.error("", e);
 			return null;
@@ -267,10 +267,10 @@ public abstract class ImageFileUtil extends FileUtil {
 		}
 	}
 
-	public static final class Img {
+	public static final class Dimension {
 		private int width;
 		private int height;
-		private Img(int width, int height) {
+		private Dimension(int width, int height) {
 			this.width = width;
 			this.height = width;
 		}
