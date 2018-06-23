@@ -22,13 +22,12 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		long startTimeMillis = System.currentTimeMillis();
-		String url = request.getRequestURL().toString();
 		HttpServletRequest requestWrapper = wrap(request);
 		beforeFilter(requestWrapper, response);
 		filterChain.doFilter(requestWrapper, response);
 		afterFilter(requestWrapper, response);
 		long endTimeMillis = System.currentTimeMillis();
-		log.info("URL: {}. Status: {}. Time Cost: {} ms.", url, response.getStatus(), endTimeMillis - startTimeMillis);
+		log.info("Status: {}. Time Cost: {} ms.", response.getStatus(), endTimeMillis - startTimeMillis);
 	}
 
 	protected abstract void beforeFilter(HttpServletRequest request, HttpServletResponse response);
