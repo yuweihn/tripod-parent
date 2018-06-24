@@ -265,4 +265,5 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	public void delete(final T entity) {
 		getSession().delete(entity);
 	}
+
 }
