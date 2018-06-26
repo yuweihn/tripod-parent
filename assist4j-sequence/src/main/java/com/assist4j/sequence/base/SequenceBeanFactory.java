@@ -36,7 +36,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 
 	private static final String DEFAULT_FIELD_SEQUENCE_DAO = "sequenceDao";
 	private static final String DEFAULT_FIELD_SEQ_NAME = "name";
-	private static final String DEFAULT_FIELD_INIT_VALUE = "initValue";
+	private static final String DEFAULT_FIELD_MIN_VALUE = "minValue";
 	private static final String DEFAULT_METHOD_INIT = "init";
 	private static final String DEFAULT_METHOD_DESTROY = "destroy";
 
@@ -44,7 +44,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	private List<Property> constructorArgList;
 	private List<Property> propertyList;
 	private String fieldSeqName;
-	private String fieldInitValue;
+	private String fieldMinValue;
 	private String sequenceBeanHolderBeanName;
 	private String initMethod;
 	private String destroyMethod;
@@ -59,24 +59,24 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		this(sequenceClass.getName(), sequenceBeanHolderBeanName);
 	}
 	public SequenceBeanFactory(String sequenceClassName, String sequenceBeanHolderBeanName) {
-		this(sequenceClassName, null, null, sequenceBeanHolderBeanName);
+		this(sequenceClassName, null,null, sequenceBeanHolderBeanName);
 	}
-	public SequenceBeanFactory(String sequenceClassName, String fieldSeqName, String fieldInitValue, String sequenceBeanHolderBeanName) {
-		this(sequenceClassName, null, null, fieldSeqName, fieldInitValue, sequenceBeanHolderBeanName, null, null);
+	public SequenceBeanFactory(String sequenceClassName, String fieldSeqName, String fieldMinValue, String sequenceBeanHolderBeanName) {
+		this(sequenceClassName, null, null, fieldSeqName, fieldMinValue, sequenceBeanHolderBeanName, null, null);
 	}
 	/**
 	 * @param sequenceClassName                       准备实例化的Sequence实现类
 	 * @param constructorArgList                      Sequence实现类的构造函数参数序列
 	 * @param propertyList                            Sequence实现类的属性列表
 	 * @param fieldSeqName                            Sequence实现类的seqName属性名
-	 * @param fieldInitValue                          Sequence实现类的seqName初始值对应的属性名
+	 * @param fieldMinValue                           Sequence实现类的seqName最小值对应的属性名
 	 * @param sequenceBeanHolderBeanName              准备实例化的bean列表的持有者
 	 * @param initMethod
 	 * @param destroyMethod
 	 */
 	@SuppressWarnings("unchecked")
 	public SequenceBeanFactory(String sequenceClassName, List<Property> constructorArgList, List<Property> propertyList
-			, String fieldSeqName, String fieldInitValue, String sequenceBeanHolderBeanName, String initMethod, String destroyMethod) {
+			, String fieldSeqName, String fieldMinValue, String sequenceBeanHolderBeanName, String initMethod, String destroyMethod) {
 		Assert.notNull(sequenceBeanHolderBeanName, "[sequenceBeanHolderBeanName] is required.");
 		try {
 			Class<?> clz = Class.forName(sequenceClassName);
@@ -95,10 +95,10 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		} else {
 			this.fieldSeqName = fieldSeqName;
 		}
-		if (fieldInitValue == null || "".equals(fieldInitValue)) {
-			this.fieldInitValue = DEFAULT_FIELD_INIT_VALUE;
+		if (fieldMinValue == null || "".equals(fieldMinValue)) {
+			this.fieldMinValue = DEFAULT_FIELD_MIN_VALUE;
 		} else {
-			this.fieldInitValue = fieldInitValue;
+			this.fieldMinValue = fieldMinValue;
 		}
 		this.sequenceBeanHolderBeanName = sequenceBeanHolderBeanName;
 		this.initMethod = initMethod;
@@ -110,7 +110,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	}
 
 	/**
-	 * 检查sequenceClass，必须含有fieldSeqName和fieldInitValue指定的属性名和propertyList中的所有属性名。
+	 * 检查sequenceClass，必须含有fieldSeqName和fieldMinValue指定的属性名和propertyList中的所有属性名。
 	 */
 	private void checkSequenceClass() {
 		try {
@@ -118,9 +118,9 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 			if (seqNameField == null) {
 				throw new NoSuchFieldException(this.fieldSeqName);
 			}
-			Field initValueField = this.sequenceClass.getDeclaredField(this.fieldInitValue);
-			if (initValueField == null) {
-				throw new NoSuchFieldException(this.fieldInitValue);
+			Field minValueField = this.sequenceClass.getDeclaredField(this.fieldMinValue);
+			if (minValueField == null) {
+				throw new NoSuchFieldException(this.fieldMinValue);
 			}
 			if (this.propertyList != null && this.propertyList.size() > 0) {
 				for (Property prop: this.propertyList) {
@@ -198,29 +198,29 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		while (entryItr.hasNext()) {
 			Entry<String, String> entry = entryItr.next();
 			String beanName = entry.getKey();
-			String seqNameAndInitValue = entry.getValue();
+			String seqNameValue = entry.getValue();
 
 			if (beanName == null || "".equals(beanName.trim())) {
 				continue;
 			}
 			beanName = beanName.trim();
 
-			if (seqNameAndInitValue == null || "".equals(seqNameAndInitValue.trim())) {
-				seqNameAndInitValue = beanName.trim();
+			if (seqNameValue == null || "".equals(seqNameValue.trim())) {
+				seqNameValue = beanName.trim();
 			} else {
-				seqNameAndInitValue = seqNameAndInitValue.trim();
+				seqNameValue = seqNameValue.trim();
 			}
 
-			String[] arr = seqNameAndInitValue.split(SPLIT);
+			String[] arr = seqNameValue.split(SPLIT);
 			String seqName = arr[0];
-			long initValue = arr.length == 2 ? Long.parseLong(arr[1]) : 0;
+			long minValue = arr.length == 2 ? Long.parseLong(arr[1]) : 0;
 
 			List<Property> propList = new ArrayList<Property>();
 			if (this.propertyList != null && this.propertyList.size() > 0) {
 				propList.addAll(this.propertyList);
 			}
 			propList.add(new Property(fieldSeqName, seqName, Property.TYPE_VALUE));
-			propList.add(new Property(fieldInitValue, initValue, Property.TYPE_VALUE));
+			propList.add(new Property(fieldMinValue, minValue, Property.TYPE_VALUE));
 			registerBean(beanName, this.constructorArgList, propList);
 		}
 	}

@@ -70,21 +70,21 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	}
 
 	@Override
-	public void ensure(String seqName, long initValue) {
-		if (initValue < 0) {
-			initValue = 0;
+	public void ensure(String seqName, long minValue) {
+		if (minValue < 0) {
+			minValue = 0;
 		}
 
 		for (int i = 0; i < getSegmentCount(); ++i) {
 			Long oldValue = selectSeqValue(i, seqName);
 			if (oldValue == null) {
-				long adjustInitValue = adjustValue(i, initValue);
-				insertSeq(i, seqName, adjustInitValue);
+				long adjustMinValue = adjustValue(i, minValue);
+				insertSeq(i, seqName, adjustMinValue);
 			} else {
 				long adjustOldValue = adjustValue(i, oldValue);
-				long adjustInitValue = adjustValue(i, initValue);
+				long adjustMinValue = adjustValue(i, minValue);
 
-				long newValue = Math.max(adjustOldValue, adjustInitValue);
+				long newValue = Math.max(adjustOldValue, adjustMinValue);
 				if (oldValue != newValue) {
 					updateSeqValue(i, seqName, oldValue, newValue);
 				}
