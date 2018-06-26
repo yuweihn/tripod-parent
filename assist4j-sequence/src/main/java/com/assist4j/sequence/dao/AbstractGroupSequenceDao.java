@@ -21,6 +21,8 @@ import org.springframework.util.CollectionUtils;
  */
 public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	private static final Logger log = LoggerFactory.getLogger(AbstractGroupSequenceDao.class);
+
+
 	private Map<Integer, AtomicInteger> excludedSegment;
 	/**
 	 * 一旦被剔除，最多被忽略的次数
@@ -75,9 +77,9 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 			if (oldValue == null) {
 				insertSeq(i, seqName, i * getInnerStep());
 			} else {
-				long oldValue0 = adjustCurrentValue(i, oldValue);
-				if (oldValue != oldValue0) {
-					updateSeqValue(i, seqName, oldValue, oldValue0);
+				long adjustOldValue = adjustCurrentValue(i, oldValue);
+				if (oldValue != adjustOldValue) {
+					updateSeqValue(i, seqName, oldValue, adjustOldValue);
 				}
 			}
 		}
@@ -163,7 +165,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 		
 		int outStep = getSegmentCount() * getInnerStep();
 		long standardValue = currentValue - currentValue % (long)outStep + (long)(segment * getInnerStep());
-		return currentValue <= standardValue ? standardValue : (long)(standardValue + outStep);
+		return currentValue <= standardValue ? standardValue : (standardValue + outStep);
 	}
 	
 	protected abstract int getSegmentCount();
