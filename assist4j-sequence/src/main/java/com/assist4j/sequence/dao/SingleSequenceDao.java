@@ -30,15 +30,16 @@ public class SingleSequenceDao extends AbstractSequenceDao {
 	}
 
 	@Override
-	public void ensure(String seqName) {
-		ensure(seqName, 0);
-	}
-
-	@Override
 	public void ensure(String seqName, long initValue) {
-		Long value = selectSeqValue(0, seqName);
-		if (value == null) {
+		if (initValue < 0) {
+			initValue = 0;
+		}
+
+		Long oldValue = selectSeqValue(0, seqName);
+		if (oldValue == null) {
 			insertSeq(0, seqName, initValue);
+		} else if (oldValue < initValue) {
+			updateSeqValue(0, seqName, oldValue, initValue);
 		}
 	}
 

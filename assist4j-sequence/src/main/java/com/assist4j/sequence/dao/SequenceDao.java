@@ -11,7 +11,6 @@ public interface SequenceDao {
 	void init();
 	void destroy();
 
-	void ensure(String seqName);
 	void ensure(String seqName, long initValue);
 	SequenceHolder nextRange(String seqName);
 }

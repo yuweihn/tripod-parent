@@ -70,21 +70,23 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	}
 
 	@Override
-	public void ensure(String seqName) {
-		ensure(seqName, 0);
-	}
-
-	@Override
 	public void ensure(String seqName, long initValue) {
+		if (initValue < 0) {
+			initValue = 0;
+		}
+
 		for (int i = 0; i < getSegmentCount(); ++i) {
 			Long oldValue = selectSeqValue(i, seqName);
 			if (oldValue == null) {
-				long adjustInitValue = adjustCurrentValue(i, initValue);
+				long adjustInitValue = adjustValue(i, initValue);
 				insertSeq(i, seqName, adjustInitValue);
 			} else {
-				long adjustOldValue = adjustCurrentValue(i, oldValue);
-				if (oldValue != adjustOldValue) {
-					updateSeqValue(i, seqName, oldValue, adjustOldValue);
+				long adjustOldValue = adjustValue(i, oldValue);
+				long adjustInitValue = adjustValue(i, initValue);
+
+				long newValue = Math.max(adjustOldValue, adjustInitValue);
+				if (oldValue != newValue) {
+					updateSeqValue(i, seqName, oldValue, newValue);
 				}
 			}
 		}
@@ -105,7 +107,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 				continue;
 			}
 			
-			long adjustOldValue = adjustCurrentValue(segment, oldValue);
+			long adjustOldValue = adjustValue(segment, oldValue);
 			long newValue = adjustOldValue + (long)(segCount * getInnerStep());
 			try {
 				updateSeqValue(segment, seqName, oldValue, newValue);
@@ -163,7 +165,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 		}
 	}
 
-	private long adjustCurrentValue(int segment, long currentValue) {
+	private long adjustValue(int segment, long currentValue) {
 		if (currentValue < 0) {
 			currentValue = 0;
 		}
