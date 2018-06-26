@@ -25,6 +25,7 @@ import org.springframework.util.Assert;
 
 
 /**
+ * 注册一系列{@link Sequence}实例到Spring容器中
  * @author yuwei
  */
 public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostProcessor {
