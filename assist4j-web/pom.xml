@@ -202,6 +202,7 @@
 				<directory>src/main/java</directory>
 				<includes>
 					<include>**/*.xml</include>
+					<include>**/*.ftl</include>
 				</includes>
 			</resource>
 			<resource>
