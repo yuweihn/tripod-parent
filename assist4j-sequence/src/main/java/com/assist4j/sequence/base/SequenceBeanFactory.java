@@ -110,13 +110,17 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	}
 
 	/**
-	 * 检查sequenceClass，必须含有fieldSeqName指定的属性名和propertyList中的所有属性名。
+	 * 检查sequenceClass，必须含有fieldSeqName和fieldInitValue指定的属性名和propertyList中的所有属性名。
 	 */
 	private void checkSequenceClass() {
 		try {
 			Field seqNameField = this.sequenceClass.getDeclaredField(this.fieldSeqName);
 			if (seqNameField == null) {
 				throw new NoSuchFieldException(this.fieldSeqName);
+			}
+			Field initValueField = this.sequenceClass.getDeclaredField(this.fieldInitValue);
+			if (initValueField == null) {
+				throw new NoSuchFieldException(this.fieldInitValue);
 			}
 			if (this.propertyList != null && this.propertyList.size() > 0) {
 				for (Property prop: this.propertyList) {
