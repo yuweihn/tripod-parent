@@ -16,12 +16,16 @@ import com.assist4j.sequence.dao.SequenceDao;
  */
 public class DefaultSequence implements Sequence {
 	private static final Logger log = LoggerFactory.getLogger(DefaultSequence.class);
+
+
 	private final Lock lock = new ReentrantLock();
 	private SequenceDao sequenceDao;
 	private String name;
 	private volatile SequenceHolder sequenceHolder;
 
-	public DefaultSequence() {}
+	public DefaultSequence() {
+
+	}
 
 	@Override
 	public void init() {
@@ -61,15 +65,7 @@ public class DefaultSequence implements Sequence {
 
 	@Override
 	public void destroy() {
-		if (sequenceHolder == null) {
-			return;
-		}
-		
-		long curValue = sequenceHolder.get();
-		log.info("{}: {}", name, curValue);
-		//TODO
-		
-		sequenceHolder = null;
+
 	}
 
 	public void setSequenceDao(SequenceDao sequenceDao) {
