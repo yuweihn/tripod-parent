@@ -10,7 +10,8 @@ import com.assist4j.sequence.bean.SequenceHolder;
 public interface SequenceDao {
 	void init();
 	void destroy();
-	
+
 	void ensure(String seqName);
+	void ensure(String seqName, long initValue);
 	SequenceHolder nextRange(String seqName);
 }

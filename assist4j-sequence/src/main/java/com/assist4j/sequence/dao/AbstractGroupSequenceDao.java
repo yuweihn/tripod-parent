@@ -13,7 +13,6 @@ import com.assist4j.sequence.exception.SequenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 
 /**
@@ -72,10 +71,16 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 
 	@Override
 	public void ensure(String seqName) {
+		ensure(seqName, 0);
+	}
+
+	@Override
+	public void ensure(String seqName, long initValue) {
 		for (int i = 0; i < getSegmentCount(); ++i) {
 			Long oldValue = selectSeqValue(i, seqName);
 			if (oldValue == null) {
-				insertSeq(i, seqName, i * getInnerStep());
+				long adjustInitValue = adjustCurrentValue(i, initValue);
+				insertSeq(i, seqName, adjustInitValue);
 			} else {
 				long adjustOldValue = adjustCurrentValue(i, oldValue);
 				if (oldValue != adjustOldValue) {
@@ -119,7 +124,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	}
 	
 	protected void cleanExcludedSegment() {
-		if (!CollectionUtils.isEmpty(excludedSegment)) {
+		if (excludedSegment != null && !excludedSegment.isEmpty()) {
 			excludedSegment.clear();
 		}
 	}

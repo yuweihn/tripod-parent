@@ -15,6 +15,7 @@ public class DefaultSequence implements Sequence {
 	private final Lock lock = new ReentrantLock();
 	private SequenceDao sequenceDao;
 	private String name;
+	private long initValue;
 	private volatile SequenceHolder sequenceHolder;
 
 	public DefaultSequence() {
@@ -24,7 +25,7 @@ public class DefaultSequence implements Sequence {
 	@Override
 	public void init() {
 		synchronized(this) {
-			sequenceDao.ensure(name);
+			sequenceDao.ensure(name, initValue);
 		}
 	}
 
@@ -68,5 +69,9 @@ public class DefaultSequence implements Sequence {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void setInitValue(long initValue) {
+		this.initValue = initValue;
 	}
 }

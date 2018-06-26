@@ -31,9 +31,14 @@ public class SingleSequenceDao extends AbstractSequenceDao {
 
 	@Override
 	public void ensure(String seqName) {
+		ensure(seqName, 0);
+	}
+
+	@Override
+	public void ensure(String seqName, long initValue) {
 		Long value = selectSeqValue(0, seqName);
 		if (value == null) {
-			insertSeq(0, seqName, 0);
+			insertSeq(0, seqName, initValue);
 		}
 	}
 

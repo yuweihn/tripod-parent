@@ -32,8 +32,11 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	private static final Logger log = LoggerFactory.getLogger(SequenceBeanFactory.class);
 
 
+	private static final String SPLIT = ",";
+
 	private static final String DEFAULT_FIELD_SEQUENCE_DAO = "sequenceDao";
 	private static final String DEFAULT_FIELD_SEQ_NAME = "name";
+	private static final String DEFAULT_FIELD_INIT_VALUE = "initValue";
 	private static final String DEFAULT_METHOD_INIT = "init";
 	private static final String DEFAULT_METHOD_DESTROY = "destroy";
 
@@ -41,6 +44,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	private List<Property> constructorArgList;
 	private List<Property> propertyList;
 	private String fieldSeqName;
+	private String fieldInitValue;
 	private String sequenceBeanHolderBeanName;
 	private String initMethod;
 	private String destroyMethod;
@@ -55,28 +59,24 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		this(sequenceClass.getName(), sequenceBeanHolderBeanName);
 	}
 	public SequenceBeanFactory(String sequenceClassName, String sequenceBeanHolderBeanName) {
-		this(sequenceClassName, null, null, null, sequenceBeanHolderBeanName);
+		this(sequenceClassName, null, null, sequenceBeanHolderBeanName);
 	}
-	public SequenceBeanFactory(String sequenceClassName, List<Property> propertyList
-			, String fieldSeqName, String sequenceBeanHolderBeanName) {
-		this(sequenceClassName, null, propertyList, fieldSeqName, sequenceBeanHolderBeanName);
-	}
-	public SequenceBeanFactory(String sequenceClassName, List<Property> constructorArgList, List<Property> propertyList
-			, String fieldSeqName, String sequenceBeanHolderBeanName) {
-		this(sequenceClassName, constructorArgList, propertyList, fieldSeqName, sequenceBeanHolderBeanName, null, null);
+	public SequenceBeanFactory(String sequenceClassName, String fieldSeqName, String fieldInitValue, String sequenceBeanHolderBeanName) {
+		this(sequenceClassName, null, null, fieldSeqName, fieldInitValue, sequenceBeanHolderBeanName, null, null);
 	}
 	/**
 	 * @param sequenceClassName                       准备实例化的Sequence实现类
 	 * @param constructorArgList                      Sequence实现类的构造函数参数序列
 	 * @param propertyList                            Sequence实现类的属性列表
 	 * @param fieldSeqName                            Sequence实现类的seqName属性名
+	 * @param fieldInitValue                          Sequence实现类的seqName初始值对应的属性名
 	 * @param sequenceBeanHolderBeanName              准备实例化的bean列表的持有者
 	 * @param initMethod
 	 * @param destroyMethod
 	 */
 	@SuppressWarnings("unchecked")
 	public SequenceBeanFactory(String sequenceClassName, List<Property> constructorArgList, List<Property> propertyList
-			, String fieldSeqName, String sequenceBeanHolderBeanName, String initMethod, String destroyMethod) {
+			, String fieldSeqName, String fieldInitValue, String sequenceBeanHolderBeanName, String initMethod, String destroyMethod) {
 		Assert.notNull(sequenceBeanHolderBeanName, "[sequenceBeanHolderBeanName] is required.");
 		try {
 			Class<?> clz = Class.forName(sequenceClassName);
@@ -94,6 +94,11 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 			this.fieldSeqName = DEFAULT_FIELD_SEQ_NAME;
 		} else {
 			this.fieldSeqName = fieldSeqName;
+		}
+		if (fieldInitValue == null || "".equals(fieldInitValue)) {
+			this.fieldInitValue = DEFAULT_FIELD_INIT_VALUE;
+		} else {
+			this.fieldInitValue = fieldInitValue;
 		}
 		this.sequenceBeanHolderBeanName = sequenceBeanHolderBeanName;
 		this.initMethod = initMethod;
@@ -189,24 +194,29 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		while (entryItr.hasNext()) {
 			Entry<String, String> entry = entryItr.next();
 			String beanName = entry.getKey();
-			String seqName = entry.getValue();
+			String seqNameAndInitValue = entry.getValue();
 
 			if (beanName == null || "".equals(beanName.trim())) {
 				continue;
 			}
 			beanName = beanName.trim();
 
-			if (seqName == null || "".equals(seqName.trim())) {
-				seqName = beanName.trim();
+			if (seqNameAndInitValue == null || "".equals(seqNameAndInitValue.trim())) {
+				seqNameAndInitValue = beanName.trim();
 			} else {
-				seqName = seqName.trim();
+				seqNameAndInitValue = seqNameAndInitValue.trim();
 			}
+
+			String[] arr = seqNameAndInitValue.split(SPLIT);
+			String seqName = arr[0];
+			long initValue = arr.length == 2 ? Long.parseLong(arr[1]) : 0;
 
 			List<Property> propList = new ArrayList<Property>();
 			if (this.propertyList != null && this.propertyList.size() > 0) {
 				propList.addAll(this.propertyList);
 			}
 			propList.add(new Property(fieldSeqName, seqName, Property.TYPE_VALUE));
+			propList.add(new Property(fieldInitValue, initValue, Property.TYPE_VALUE));
 			registerBean(beanName, this.constructorArgList, propList);
 		}
 	}
