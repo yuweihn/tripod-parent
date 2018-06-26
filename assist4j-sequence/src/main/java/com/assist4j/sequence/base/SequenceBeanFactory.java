@@ -32,7 +32,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	private static final Logger log = LoggerFactory.getLogger(SequenceBeanFactory.class);
 
 
-	private static final String SPLIT = ",";
+	private static final String DELIMITER = ",";
 
 	private static final String DEFAULT_FIELD_SEQUENCE_DAO = "sequenceDao";
 	private static final String DEFAULT_FIELD_SEQ_NAME = "name";
@@ -211,7 +211,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 				seqNameValue = seqNameValue.trim();
 			}
 
-			String[] arr = seqNameValue.split(SPLIT);
+			String[] arr = seqNameValue.split(DELIMITER);
 			String seqName = arr[0];
 			long minValue = arr.length == 2 ? Long.parseLong(arr[1]) : 0;
 
