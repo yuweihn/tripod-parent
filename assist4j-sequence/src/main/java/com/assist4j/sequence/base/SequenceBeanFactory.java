@@ -22,8 +22,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -91,7 +89,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 
 		this.constructorArgList = constructorArgList;
 		this.propertyList = propertyList;
-		if (StringUtils.isEmpty(fieldSeqName)) {
+		if (fieldSeqName == null || "".equals(fieldSeqName)) {
 			this.fieldSeqName = DEFAULT_FIELD_SEQ_NAME;
 		} else {
 			this.fieldSeqName = fieldSeqName;
@@ -114,7 +112,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 			if (seqNameField == null) {
 				throw new NoSuchFieldException(this.fieldSeqName);
 			}
-			if (!CollectionUtils.isEmpty(this.propertyList)) {
+			if (this.propertyList != null && this.propertyList.size() > 0) {
 				for (Property prop: this.propertyList) {
 					Field field = this.sequenceClass.getDeclaredField(prop.getPropertyName());
 					if (field == null) {
@@ -180,7 +178,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	private void registerBeans() {
 		SequenceBeanHolder sequenceBeanHolder = beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
 		Map<String, String> beanSeqMap = sequenceBeanHolder.getBeanSeqNameMap();
-		if (CollectionUtils.isEmpty(beanSeqMap)) {
+		if (beanSeqMap == null || beanSeqMap.isEmpty()) {
 			return;
 		}
 
@@ -204,7 +202,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 			}
 
 			List<Property> propList = new ArrayList<Property>();
-			if (!CollectionUtils.isEmpty(this.propertyList)) {
+			if (this.propertyList != null && this.propertyList.size() > 0) {
 				propList.addAll(this.propertyList);
 			}
 			propList.add(new Property(fieldSeqName, seqName, Property.TYPE_VALUE));
@@ -213,7 +211,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	}
 	private void registerBean(String beanName, List<Property> constArgList, List<Property> propList) {
 		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(sequenceClass);
-		if (!CollectionUtils.isEmpty(constArgList)) {
+		if (constArgList != null && constArgList.size() > 0) {
 			for (Property constructorArg: constArgList) {
 				if (Property.TYPE_VALUE == constructorArg.getType()) {
 					builder.addConstructorArgValue(constructorArg.getValue());
@@ -225,7 +223,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 			}
 		}
 
-		if (!CollectionUtils.isEmpty(propList)) {
+		if (propList != null && propList.size() > 0) {
 			for (Property prop: propList) {
 				if (Property.TYPE_VALUE == prop.getType()) {
 					builder.addPropertyValue(prop.getPropertyName(), prop.getValue());
@@ -236,10 +234,10 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 				}
 			}
 		}
-		if (!StringUtils.isEmpty(initMethod)) {
+		if (initMethod != null && !"".equals(initMethod)) {
 			builder.setInitMethodName(initMethod);
 		}
-		if (!StringUtils.isEmpty(destroyMethod)) {
+		if (destroyMethod != null && !"".equals(destroyMethod)) {
 			builder.setDestroyMethodName(destroyMethod);
 		}
 		beanFactory.registerBeanDefinition(beanName, builder.getBeanDefinition());
