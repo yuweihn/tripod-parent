@@ -235,7 +235,10 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 	}
 
 	public void setTableName(String tableName) {
-		this.tableName = tableName;
+		if (tableName == null || "".equals(tableName.trim())) {
+			return;
+		}
+		this.tableName = tableName.trim();
 	}
 
 	public String getNameColumnName() {
@@ -243,7 +246,10 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 	}
 
 	public void setNameColumnName(String nameColumnName) {
-		this.nameColumnName = nameColumnName;
+		if (nameColumnName == null || "".equals(nameColumnName.trim())) {
+			return;
+		}
+		this.nameColumnName = nameColumnName.trim();
 	}
 
 	public String getValueColumnName() {
@@ -251,7 +257,10 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 	}
 
 	public void setValueColumnName(String valueColumnName) {
-		this.valueColumnName = valueColumnName;
+		if (valueColumnName == null || "".equals(valueColumnName.trim())) {
+			return;
+		}
+		this.valueColumnName = valueColumnName.trim();
 	}
 
 	public String getSegmentColumnName() {
@@ -259,7 +268,10 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 	}
 
 	public void setSegmentColumnName(String segmentColumnName) {
-		this.segmentColumnName = segmentColumnName;
+		if (segmentColumnName == null || "".equals(segmentColumnName.trim())) {
+			return;
+		}
+		this.segmentColumnName = segmentColumnName.trim();
 	}
 
 	public String getCreateTimeColumnName() {
@@ -267,7 +279,10 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 	}
 
 	public void setCreateTimeColumnName(String createTimeColumnName) {
-		this.createTimeColumnName = createTimeColumnName;
+		if (createTimeColumnName == null || "".equals(createTimeColumnName.trim())) {
+			return;
+		}
+		this.createTimeColumnName = createTimeColumnName.trim();
 	}
 
 	public String getUpdateTimeColumnName() {
@@ -275,6 +290,9 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 	}
 
 	public void setUpdateTimeColumnName(String updateTimeColumnName) {
-		this.updateTimeColumnName = updateTimeColumnName;
+		if (updateTimeColumnName == null || "".equals(updateTimeColumnName.trim())) {
+			return;
+		}
+		this.updateTimeColumnName = updateTimeColumnName.trim();
 	}
 }
