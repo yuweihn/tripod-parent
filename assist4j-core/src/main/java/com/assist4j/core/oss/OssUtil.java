@@ -146,9 +146,7 @@ public class OssUtil {
 		return url;
 	}
 	private String getProtocol(String endpoint) {
-		if (endpoint.startsWith("http://")) {
-			return "http://";
-		} else if (endpoint.startsWith("https://")) {
+		if (endpoint.startsWith("https://")) {
 			return "https://";
 		} else {
 			return "http://";
