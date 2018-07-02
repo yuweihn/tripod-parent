@@ -130,7 +130,7 @@ public class OssUtil {
 	 */
 	public String uploadFile(byte[] content, String key) {
 		log.info("OSS upload file: key[{}]", key);
-		String protocol = "http://";
+		String protocol = getProtocol(endpoint);
 		ByteArrayInputStream bis = new ByteArrayInputStream(content);
 
 		ObjectMetadata objectMeta = new ObjectMetadata();
@@ -144,6 +144,15 @@ public class OssUtil {
 			log.error("", e);
 		}
 		return url;
+	}
+	private String getProtocol(String endpoint) {
+		if (endpoint.startsWith("http://")) {
+			return "http://";
+		} else if (endpoint.startsWith("https://")) {
+			return "https://";
+		} else {
+			return "http://";
+		}
 	}
 
 	/**
