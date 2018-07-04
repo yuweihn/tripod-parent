@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class ZkLeaderElector implements LeaderElector {
 	private static final Logger log = LoggerFactory.getLogger(ZkLeaderElector.class);
 	/**
-	 * zookeeper root node
+	 * root node
 	 */
 	private static final String EPHEMERAL_ROOT_NODE = "/Schedule_leader_";
 
