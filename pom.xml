@@ -28,6 +28,7 @@
         <module>assist4j-sequence</module>
         <module>assist4j-session</module>
         <module>assist4j-web</module>
+        <module>assist4j-schedule</module>
         <module>assist4j</module>
     </modules>
 

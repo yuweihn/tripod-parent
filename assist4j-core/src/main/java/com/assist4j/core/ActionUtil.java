@@ -48,7 +48,7 @@ public abstract class ActionUtil {
 	}
 
 	/**
-	 * 获取当前服务器内网IP
+	 * 获取本机内网IP
 	 */
 	public static String getLocalInnerIP() {
 		String reqIp = null;
@@ -61,7 +61,7 @@ public abstract class ActionUtil {
 	}
 
 	/**
-	 * 获取当前服务器外网IP
+	 * 获取本机外网IP
 	 */
 	public static String getLocalOuterIP() {
 		String netIp = null;

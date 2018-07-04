@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.assist4j</groupId>
-	<artifactId>assist4j</artifactId>
+	<artifactId>assist4j-schedule</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0.14</version>
 
@@ -17,51 +17,30 @@
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
 		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
-		<maven.shade.plugin.version>3.1.0</maven.shade.plugin.version>
 		<maven.source.plugin.version>3.0.1</maven.source.plugin.version>
+		<slf4j.version>1.7.25</slf4j.version>
+		<spring.version>4.3.15.RELEASE</spring.version>
 	</properties>
 
 
 	<dependencies>
 		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-core</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-dao</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-data</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-http</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-sequence</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-session</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-web</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-schedule</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -188,28 +167,6 @@
 						<goals>
 							<goal>sign</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>${maven.shade.plugin.version}</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<createSourcesJar>true</createSourcesJar>
-							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
-							<artifactSet>
-								<includes>
-									<include>com.assist4j:*</include>
-								</includes>
-							</artifactSet>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
