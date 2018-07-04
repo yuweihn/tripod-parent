@@ -23,6 +23,7 @@ public class SingleNodeTaskScheduler extends ThreadPoolTaskScheduler {
 
 	private LeaderElector leaderElector;
 
+
 	private Runnable taskWrapper(final Runnable task) {
 		return new Runnable() {
 			@Override
@@ -65,10 +66,6 @@ public class SingleNodeTaskScheduler extends ThreadPoolTaskScheduler {
 	@Override
 	public ScheduledFuture scheduleWithFixedDelay(Runnable task, long delay) {
 		return super.scheduleWithFixedDelay(taskWrapper(task), delay);
-	}
-
-	public LeaderElector getLeaderElector() {
-		return leaderElector;
 	}
 
 	public void setLeaderElector(LeaderElector leaderElector) {
