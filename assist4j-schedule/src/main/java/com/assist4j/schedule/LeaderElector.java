@@ -19,8 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
-import com.zhongan.common.utils.IpUtil;
-
 
 /**
  * @author yuwei
@@ -74,7 +72,7 @@ public class LeaderElector {
 	public void register() {
 		//如果nodeTag为空则取本地网卡作为nodeTag,
 		if (null == nodeTag || "".equals(nodeTag.trim())) {
-			this.nodeTag = IpUtil.getLocalIp();
+			this.nodeTag = getLocalInnerIP();
 		}
 
 		if (registered) {
