@@ -187,6 +187,10 @@ public class ZkLeaderElector implements LeaderElector {
 		return nodeTag;
 	}
 
+	public void setNodeTag(String nodeTag) {
+		this.nodeTag = nodeTag;
+	}
+
 	/**
 	 * 取当前leader的nodeTag
 	 */
