@@ -68,10 +68,7 @@ public class ZkLeaderElector implements LeaderElector {
 	}
 
 	public void init() {
-		//如果nodeTag为空则取本地网卡作为nodeTag,
-		if (null == nodeTag || "".equals(nodeTag.trim())) {
-			this.nodeTag = IpUtil.getLocalInnerIP();
-		}
+		String thisNodeTag = getNodeTag();
 
 		if (registered) {
 			return;
@@ -80,14 +77,14 @@ public class ZkLeaderElector implements LeaderElector {
 			initPath();
 
 			//一旦创建了子节点，path的值已经改变，后面会自动加上序列号。
-			this.path = getZkClient().create(projectNo + "/", nodeTag.getBytes()
+			this.path = getZkClient().create(projectNo + "/", thisNodeTag.getBytes()
 					, Collections.singletonList(new ACL(ZooDefs.Perms.ALL, ZooDefs.Ids.ANYONE_ID_UNSAFE))
 					, CreateMode.EPHEMERAL_SEQUENTIAL);
 			registered = true;
 		} catch (Exception e) {
 			destroy();
 			log.error("Exception occurred when try to create EPHEMERAL_SEQUENTIAL znode.", e);
-			throw new RuntimeException(projectNo + "/" + this.nodeTag + "register failed", e);
+			throw new RuntimeException(projectNo + "/" + thisNodeTag + "register failed", e);
 		}
 	}
 
@@ -172,6 +169,13 @@ public class ZkLeaderElector implements LeaderElector {
 	}
 
 	public String getNodeTag() {
+		if (null == nodeTag || "".equals(nodeTag.trim())) {
+			synchronized(this) {
+				if (null == nodeTag || "".equals(nodeTag.trim())) {
+					this.nodeTag = IpUtil.getLocalInnerIP();
+				}
+			}
+		}
 		return nodeTag;
 	}
 
