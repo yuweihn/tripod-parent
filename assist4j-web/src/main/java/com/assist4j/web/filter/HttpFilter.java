@@ -2,6 +2,7 @@ package com.assist4j.web.filter;
 
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Locale;
 import java.util.Map;
 
@@ -125,6 +126,11 @@ public class HttpFilter extends AbstractFilter {
 	protected void setAccessControl(HttpServletRequest request, HttpServletResponse response) {
 		String referrer = request.getHeader("Referer");
 		if (referrer != null) {
+			try {
+				referrer = URLDecoder.decode(referrer, Constant.ENCODING_UTF_8);
+			} catch (Exception e) {
+				log.error("", e);
+			}
 			log.info("Referrer: {}", referrer);
 		}
 
