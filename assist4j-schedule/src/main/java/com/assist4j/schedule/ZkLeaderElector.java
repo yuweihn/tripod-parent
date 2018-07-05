@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import com.assist4j.schedule.util.IpUtil;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -21,7 +20,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author yuwei
  */
-public class ZkLeaderElector implements LeaderElector {
+public class ZkLeaderElector extends AbstractLeaderElector {
 	private static final Logger log = LoggerFactory.getLogger(ZkLeaderElector.class);
 	/**
 	 * root node
@@ -50,11 +49,6 @@ public class ZkLeaderElector implements LeaderElector {
 	private String path;
 
 	/**
-	 * task node flag
-	 */
-	private String nodeTag;
-
-	/**
 	 * create ephemeral node flag
 	 */
 	private boolean registered = false;
@@ -67,8 +61,9 @@ public class ZkLeaderElector implements LeaderElector {
 		this.projectNo = EPHEMERAL_ROOT_NODE + "/" + projectNo;
 	}
 
+	@Override
 	public void init() {
-		String thisNodeTag = getNodeTag();
+		String thisNodeName = getNodeName();
 
 		if (registered) {
 			return;
@@ -77,14 +72,14 @@ public class ZkLeaderElector implements LeaderElector {
 			initPath();
 
 			//一旦创建了子节点，path的值已经改变，后面会自动加上序列号。
-			this.path = getZkClient().create(projectNo + "/", thisNodeTag.getBytes()
+			this.path = getZkClient().create(projectNo + "/", thisNodeName.getBytes()
 					, Collections.singletonList(new ACL(ZooDefs.Perms.ALL, ZooDefs.Ids.ANYONE_ID_UNSAFE))
 					, CreateMode.EPHEMERAL_SEQUENTIAL);
 			registered = true;
 		} catch (Exception e) {
 			destroy();
 			log.error("Exception occurred when try to create EPHEMERAL_SEQUENTIAL znode.", e);
-			throw new RuntimeException(projectNo + "/" + thisNodeTag + "register failed", e);
+			throw new RuntimeException(projectNo + "/" + thisNodeName + "register failed", e);
 		}
 	}
 
@@ -101,6 +96,7 @@ public class ZkLeaderElector implements LeaderElector {
 		}
 	}
 
+	@Override
 	public synchronized boolean isLeader() {
 		if (!registered) {
 			init();
@@ -129,11 +125,12 @@ public class ZkLeaderElector implements LeaderElector {
 		return path.equals(smallestChild);
 	}
 
+	@Override
 	public void destroy() {
 		this.registered = false;
 		this.path = null;
 
-		if (null != zkClient) {
+		if (zkClient != null) {
 			try {
 				zkClient.close();
 			} catch (InterruptedException e) {
@@ -147,9 +144,9 @@ public class ZkLeaderElector implements LeaderElector {
 	 * 创建zookeeper客户端，单例
 	 */
 	private ZooKeeper getZkClient() {
-		if (null == zkClient) {
+		if (zkClient == null) {
 			synchronized (ZkLeaderElector.class) {
-				if (null == zkClient) {
+				if (zkClient == null) {
 					try {
 						zkClient = new ZooKeeper(zkConn, zkTimeout, new Watcher() {
 							@Override
@@ -168,25 +165,11 @@ public class ZkLeaderElector implements LeaderElector {
 		return zkClient;
 	}
 
-	public String getNodeTag() {
-		if (null == nodeTag || "".equals(nodeTag.trim())) {
-			synchronized(this) {
-				if (null == nodeTag || "".equals(nodeTag.trim())) {
-					this.nodeTag = IpUtil.getLocalInnerIP();
-				}
-			}
-		}
-		return nodeTag;
-	}
-
-	public void setNodeTag(String nodeTag) {
-		this.nodeTag = nodeTag;
-	}
-
 	/**
-	 * 取当前leader的nodeTag
+	 * 取当前leader的nodeName
 	 */
-	public String getLeaderNodeTag() {
+	@Override
+	public String getLeaderNodeName() {
 		byte[] vals = null;
 		try {
 			vals = getZkClient().getData(path, false, null);
@@ -195,7 +178,7 @@ public class ZkLeaderElector implements LeaderElector {
 		}
 
 		String resStr = "";
-		if (null != vals) {
+		if (vals != null) {
 			resStr = new String(vals);
 		}
 		return resStr;

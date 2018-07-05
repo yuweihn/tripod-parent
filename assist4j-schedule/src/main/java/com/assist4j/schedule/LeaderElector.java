@@ -8,8 +8,8 @@ package com.assist4j.schedule;
  */
 public interface LeaderElector {
 	boolean isLeader();
-	String getNodeTag();
-	String getLeaderNodeTag();
+	String getNodeName();
+	String getLeaderNodeName();
 
 	void init();
 	void destroy();

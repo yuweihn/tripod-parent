@@ -2,13 +2,12 @@ package com.assist4j.schedule;
 
 
 import com.assist4j.data.cache.Cache;
-import com.assist4j.schedule.util.IpUtil;
 
 
 /**
  * @author yuwei
  */
-public class RedisLeaderElector implements LeaderElector {
+public class RedisLeaderElector extends AbstractLeaderElector {
 	private static final String CACHE_LEADER_KEY_PRE = "cache.schedule.leader.";
 
 
@@ -25,9 +24,6 @@ public class RedisLeaderElector implements LeaderElector {
 	private String projectNo;
 
 
-	private String nodeTag;
-
-
 
 	public RedisLeaderElector(Cache cache, int timeout, String projectNo) {
 		this.cache = cache;
@@ -37,34 +33,18 @@ public class RedisLeaderElector implements LeaderElector {
 
 	@Override
 	public synchronized boolean isLeader() {
-		String thisNodeTag = getNodeTag();
+		String thisNodeName = getNodeName();
 		String leaderNoteTag = cache.get(projectNo);
 		if (leaderNoteTag == null || "".equals(leaderNoteTag)) {
-			cache.put(projectNo, thisNodeTag, timeout / 1000);
+			cache.put(projectNo, thisNodeName, timeout / 1000);
 		}
 
 		leaderNoteTag = cache.get(projectNo);
-		return thisNodeTag.equals(leaderNoteTag);
+		return thisNodeName.equals(leaderNoteTag);
 	}
 
 	@Override
-	public String getNodeTag() {
-		if (null == nodeTag || "".equals(nodeTag.trim())) {
-			synchronized(this) {
-				if (null == nodeTag || "".equals(nodeTag.trim())) {
-					this.nodeTag = IpUtil.getLocalInnerIP();
-				}
-			}
-		}
-		return nodeTag;
-	}
-
-	public void setNodeTag(String nodeTag) {
-		this.nodeTag = nodeTag;
-	}
-
-	@Override
-	public String getLeaderNodeTag() {
+	public String getLeaderNodeName() {
 		return cache.get(projectNo);
 	}
 
