@@ -37,7 +37,7 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	 */
 	private int zkTimeout;
 	/**
-	 * zk node name
+	 * zookeeper node name
 	 */
 	private String zkNodeName;
 
