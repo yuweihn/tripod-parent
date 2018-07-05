@@ -30,10 +30,10 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 
 
 
-	public RedisLeaderElector(Cache cache, int timeout, String projectNo) {
+	public RedisLeaderElector(Cache cache, int timeout, String prjNo) {
 		this.cache = cache;
 		this.timeout = timeout;
-		this.key = CACHE_LEADER_KEY_PRE + projectNo;
+		this.key = CACHE_LEADER_KEY_PRE + prjNo;
 	}
 
 	@Override

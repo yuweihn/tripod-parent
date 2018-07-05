@@ -43,10 +43,10 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 
 
 
-	public ZkLeaderElector(String zkConn, int zkTimeout, String projectNo) {
+	public ZkLeaderElector(String zkConn, int zkTimeout, String prjNo) {
 		this.zkConn = zkConn;
 		this.zkTimeout = zkTimeout;
-		this.zkNodeName = ZK_NODE_NAME_PRE + projectNo;
+		this.zkNodeName = ZK_NODE_NAME_PRE + prjNo;
 	}
 
 
