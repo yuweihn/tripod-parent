@@ -11,9 +11,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author yuwei
  */
 public abstract class AbstractLeaderElector implements LeaderElector {
-	private String localNode;
 	private Lock localNodeLock = new ReentrantLock();
 	private Lock createLeaderNodeLock = new ReentrantLock();
+
+	private String localNode;
 
 
 	@Override
