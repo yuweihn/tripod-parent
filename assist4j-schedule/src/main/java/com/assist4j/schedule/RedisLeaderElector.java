@@ -3,12 +3,17 @@ package com.assist4j.schedule;
 
 import com.assist4j.data.cache.Cache;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 
 /**
  * @author yuwei
  */
 public class RedisLeaderElector extends AbstractLeaderElector {
 	private static final String CACHE_LEADER_KEY_PRE = "cache.schedule.leader.";
+
+	private Lock registLeaderLock = new ReentrantLock();
 
 
 	private Cache cache;
@@ -19,33 +24,38 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 	private int timeout;
 
 	/**
-	 * task type flag
+	 * redis key
 	 */
-	private String projectNo;
+	private String key;
 
 
 
 	public RedisLeaderElector(Cache cache, int timeout, String projectNo) {
 		this.cache = cache;
 		this.timeout = timeout;
-		this.projectNo = CACHE_LEADER_KEY_PRE + projectNo;
+		this.key = CACHE_LEADER_KEY_PRE + projectNo;
 	}
 
 	@Override
-	public synchronized boolean isLeader() {
-		String thisNodeName = getNodeName();
-		String leaderNoteTag = cache.get(projectNo);
-		if (leaderNoteTag == null || "".equals(leaderNoteTag)) {
-			cache.put(projectNo, thisNodeName, timeout / 1000);
+	protected void assureLeader() {
+		String leaderNode = getLeaderNode();
+		try {
+			if (leaderNode == null || "".equals(leaderNode)) {
+				registLeaderLock.lock();
+				leaderNode = getLeaderNode();
+				if (leaderNode == null || "".equals(leaderNode)) {
+					String localNode = getLocalNode();
+					cache.put(key, localNode, timeout / 1000);
+				}
+			}
+		} finally {
+			registLeaderLock.unlock();
 		}
-
-		leaderNoteTag = cache.get(projectNo);
-		return thisNodeName.equals(leaderNoteTag);
 	}
 
 	@Override
-	public String getLeaderNodeName() {
-		return cache.get(projectNo);
+	public String getLeaderNode() {
+		return cache.get(key);
 	}
 
 	@Override
