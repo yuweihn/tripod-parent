@@ -3,8 +3,6 @@ package com.assist4j.schedule;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
@@ -12,7 +10,6 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
-import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +21,6 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	private static final Logger log = LoggerFactory.getLogger(ZkLeaderElector.class);
 	private static final String ZK_NODE_NAME_PRE = "/Schedule_leader_";
 
-	private Lock createZkNodeLock = new ReentrantLock();
 	private ZooKeeper zk;
 
 
@@ -102,22 +98,10 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	}
 
 	@Override
-	protected void assureLeader() {
+	protected void registLeader(String node) {
 		try {
-			Stat stat = zk.exists(zkNodeName, false);
-			if (stat == null) {
-				try {
-					createZkNodeLock.lock();
-					stat = zk.exists(zkNodeName, false);
-					if (stat == null) {
-						String localNode = getLocalNode();
-						String path = zk.create(zkNodeName, localNode.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-						log.info("Create server node ({} => {})", path, localNode);
-					}
-				} finally {
-					createZkNodeLock.unlock();
-				}
-			}
+			String path = zk.create(zkNodeName, node.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+			log.info("Create server node ({} => {})", path, node);
 		} catch (KeeperException | InterruptedException e) {
 			log.error("", e);
 			throw new RuntimeException(e);
