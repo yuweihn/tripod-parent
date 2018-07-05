@@ -2,11 +2,10 @@ package com.assist4j.schedule;
 
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.List;
 
+import com.assist4j.schedule.util.IpUtil;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
@@ -33,17 +32,17 @@ public class ZkLeaderElector implements LeaderElector {
 	/**
 	 * zookeeper connection string
 	 */
-	private String zkConnectionString;
+	private String zkConn;
 
 	/**
-	 * zookeeper session timeout
+	 * zookeeper session timeout in milliseconds
 	 */
-	private int zkSessionTimeout;
+	private int zkTimeout;
 
 	/**
 	 * task type flag
 	 */
-	private String ephemeralBodeNamePrefix;
+	private String projectNo;
 
 	/**
 	 * zookeeper ephemeral reference
@@ -62,16 +61,16 @@ public class ZkLeaderElector implements LeaderElector {
 
 	private ZooKeeper zkClient = null;
 
-	public ZkLeaderElector(String zkConnectionString, int zkSessionTimeout, String ephemeralBodeNamePrefix) {
-		this.zkConnectionString = zkConnectionString;
-		this.zkSessionTimeout = zkSessionTimeout;
-		this.ephemeralBodeNamePrefix = ephemeralBodeNamePrefix;
+	public ZkLeaderElector(String zkConn, int zkTimeout, String projectNo) {
+		this.zkConn = zkConn;
+		this.zkTimeout = zkTimeout;
+		this.projectNo = EPHEMERAL_ROOT_NODE + "/" + projectNo;
 	}
 
 	public void init() {
 		//如果nodeTag为空则取本地网卡作为nodeTag,
 		if (null == nodeTag || "".equals(nodeTag.trim())) {
-			this.nodeTag = getLocalInnerIP();
+			this.nodeTag = IpUtil.getLocalInnerIP();
 		}
 
 		if (registered) {
@@ -81,14 +80,14 @@ public class ZkLeaderElector implements LeaderElector {
 			initPath();
 
 			//一旦创建了子节点，path的值已经改变，后面会自动加上序列号。
-			this.path = getZkClient().create(getSecondPath() + "/", nodeTag.getBytes()
+			this.path = getZkClient().create(projectNo + "/", nodeTag.getBytes()
 					, Collections.singletonList(new ACL(ZooDefs.Perms.ALL, ZooDefs.Ids.ANYONE_ID_UNSAFE))
 					, CreateMode.EPHEMERAL_SEQUENTIAL);
 			registered = true;
 		} catch (Exception e) {
 			destroy();
 			log.error("Exception occurred when try to create EPHEMERAL_SEQUENTIAL znode.", e);
-			throw new RuntimeException(getSecondPath() + "/" + this.nodeTag + "register failed", e);
+			throw new RuntimeException(projectNo + "/" + this.nodeTag + "register failed", e);
 		}
 	}
 
@@ -100,19 +99,8 @@ public class ZkLeaderElector implements LeaderElector {
 			getZkClient().create(EPHEMERAL_ROOT_NODE, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);// create persistent parent node
 		}
 
-		if (getZkClient().exists(getSecondPath(), true) == null) {
-			getZkClient().create(getSecondPath(), null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);// create persistent parent next node
-		}
-	}
-
-	/**
-	 * 获取本机内网IP
-	 */
-	private static String getLocalInnerIP() {
-		try {
-			return InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			throw new RuntimeException(e);
+		if (getZkClient().exists(projectNo, true) == null) {
+			getZkClient().create(projectNo, null, Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);// create persistent parent next node
 		}
 	}
 
@@ -122,7 +110,7 @@ public class ZkLeaderElector implements LeaderElector {
 		}
 		List<String> children = null;
 		try {
-			children = getZkClient().getChildren(getSecondPath(), false);
+			children = getZkClient().getChildren(projectNo, false);
 		} catch (Exception e) {
 			log.error("2.1 Exception occurred when try to get children of /Schedule_leader_", e);
 			try {
@@ -133,12 +121,12 @@ public class ZkLeaderElector implements LeaderElector {
 		}
 
 		if (children == null || children.size() <= 0) {
-			log.error(getSecondPath() + " have no children");
+			log.error(projectNo + " have no children");
 			return false;
 		}
 
 		Collections.sort(children);
-		String smallestChild = getSecondPath() + "/" + children.get(0);
+		String smallestChild = projectNo + "/" + children.get(0);
 		log.info("My node: " + path + ", Leader node: " + smallestChild);
 
 		return path.equals(smallestChild);
@@ -166,15 +154,15 @@ public class ZkLeaderElector implements LeaderElector {
 			synchronized (ZkLeaderElector.class) {
 				if (null == zkClient) {
 					try {
-						zkClient = new ZooKeeper(zkConnectionString, zkSessionTimeout, new Watcher() {
+						zkClient = new ZooKeeper(zkConn, zkTimeout, new Watcher() {
 							@Override
 							public void process(WatchedEvent event) {
 								log.info("event occ, here, " + event);
 							}
 						});
 					} catch (IOException e) {
-						log.warn("connect to zk err, " + zkConnectionString + ", timeout: " + zkSessionTimeout, e);
-						throw new RuntimeException("connect to zookeeper error, " + zkConnectionString, e);
+						log.warn("connect to zk err, " + zkConn + ", timeout: " + zkTimeout, e);
+						throw new RuntimeException("connect to zookeeper error, " + zkConn, e);
 					}
 				}
 			}
@@ -207,12 +195,5 @@ public class ZkLeaderElector implements LeaderElector {
 			resStr = new String(vals);
 		}
 		return resStr;
-	}
-
-	/**
-	 * create task node path
-	 */
-	private String getSecondPath() {
-		return EPHEMERAL_ROOT_NODE + "/" + ephemeralBodeNamePrefix;
 	}
 }

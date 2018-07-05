@@ -49,6 +49,11 @@
 			<version>${zookeeper.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-data</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 

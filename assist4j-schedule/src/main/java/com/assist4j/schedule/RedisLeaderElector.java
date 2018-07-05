@@ -1,6 +1,8 @@
 package com.assist4j.schedule;
 
 
+import com.assist4j.data.cache.Cache;
+import com.assist4j.schedule.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,26 +12,63 @@ import org.slf4j.LoggerFactory;
  */
 public class RedisLeaderElector implements LeaderElector {
 	private static final Logger log = LoggerFactory.getLogger(RedisLeaderElector.class);
+	private static final String CACHE_LEADER_KEY_PRE = "cache.schedule.leader.";
+
+
+	private Cache cache;
+
 	/**
-	 * root node
+	 * timeout in milliseconds
 	 */
-	private static final String EPHEMERAL_ROOT_NODE = "/Schedule_leader_";
+	private int timeout;
+
+	/**
+	 * task type flag
+	 */
+	private String projectNo;
 
 
+	private String nodeTag;
+
+
+
+	public RedisLeaderElector(Cache cache, int timeout, String projectNo) {
+		this.cache = cache;
+		this.timeout = timeout;
+		this.projectNo = CACHE_LEADER_KEY_PRE + projectNo;
+	}
 
 	@Override
-	public boolean isLeader() {
-		return false;
+	public synchronized boolean isLeader() {
+		String thisNodeTag = getNodeTag();
+		String leaderNoteTag = cache.get(projectNo);
+		if (leaderNoteTag == null || "".equals(leaderNoteTag)) {
+			cache.put(projectNo, thisNodeTag, timeout / 1000);
+		}
+
+		leaderNoteTag = cache.get(projectNo);
+		return thisNodeTag.equals(leaderNoteTag);
 	}
 
 	@Override
 	public String getNodeTag() {
-		return null;
+		if (null == nodeTag || "".equals(nodeTag.trim())) {
+			synchronized(this) {
+				if (null == nodeTag || "".equals(nodeTag.trim())) {
+					this.nodeTag = IpUtil.getLocalInnerIP();
+				}
+			}
+		}
+		return nodeTag;
+	}
+
+	public void setNodeTag(String nodeTag) {
+		this.nodeTag = nodeTag;
 	}
 
 	@Override
 	public String getLeaderNodeTag() {
-		return null;
+		return cache.get(projectNo);
 	}
 
 	@Override
