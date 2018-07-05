@@ -98,7 +98,7 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	}
 
 	@Override
-	protected void registLeader(String node) {
+	protected void createLeaderNode(String node) {
 		try {
 			String path = zk.create(zkNodeName, node.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
 			log.info("Create server node ({} => {})", path, node);

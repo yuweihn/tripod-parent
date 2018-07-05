@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public abstract class AbstractLeaderElector implements LeaderElector {
 	private String localNode;
 	private Lock localNodeLock = new ReentrantLock();
-	private Lock registLeaderLock = new ReentrantLock();
+	private Lock createLeaderNodeLock = new ReentrantLock();
 
 
 	@Override
@@ -44,24 +44,24 @@ public abstract class AbstractLeaderElector implements LeaderElector {
 		String leaderNode = getLeaderNode();
 		if (leaderNode == null || "".equals(leaderNode)) {
 			try {
-				registLeaderLock.lock();
+				createLeaderNodeLock.lock();
 				leaderNode = getLeaderNode();
 				if (leaderNode == null || "".equals(leaderNode)) {
 					String localNode = getLocalNode();
-					registLeader(localNode);
+					createLeaderNode(localNode);
 					return localNode;
 				} else {
 					return leaderNode;
 				}
 			} finally {
-				registLeaderLock.unlock();
+				createLeaderNodeLock.unlock();
 			}
 		} else {
 			return leaderNode;
 		}
 	}
 
-	abstract void registLeader(String node);
+	abstract void createLeaderNode(String node);
 
 
 	@Override
