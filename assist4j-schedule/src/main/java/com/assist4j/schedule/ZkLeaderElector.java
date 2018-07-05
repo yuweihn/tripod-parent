@@ -105,19 +105,21 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 		try {
 			Stat stat = zk.exists(zkNodeName, false);
 			if (stat == null) {
-				createZkNodeLock.lock();
-				stat = zk.exists(zkNodeName, false);
-				if (stat == null) {
-					String localNode = getLocalNode();
-					String path = zk.create(zkNodeName, localNode.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-					log.info("Create server node ({} => {})", path, localNode);
+				try {
+					createZkNodeLock.lock();
+					stat = zk.exists(zkNodeName, false);
+					if (stat == null) {
+						String localNode = getLocalNode();
+						String path = zk.create(zkNodeName, localNode.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+						log.info("Create server node ({} => {})", path, localNode);
+					}
+				} finally {
+					createZkNodeLock.unlock();
 				}
 			}
 		} catch (KeeperException | InterruptedException e) {
 			log.error("", e);
 			throw new RuntimeException(e);
-		} finally {
-			createZkNodeLock.unlock();
 		}
 	}
 

@@ -39,17 +39,17 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 	@Override
 	protected void assureLeader() {
 		String leaderNode = getLeaderNode();
-		try {
-			if (leaderNode == null || "".equals(leaderNode)) {
+		if (leaderNode == null || "".equals(leaderNode)) {
+			try {
 				registLeaderLock.lock();
 				leaderNode = getLeaderNode();
 				if (leaderNode == null || "".equals(leaderNode)) {
 					String localNode = getLocalNode();
 					cache.put(key, localNode, timeout / 1000);
 				}
+			} finally {
+				registLeaderLock.unlock();
 			}
-		} finally {
-			registLeaderLock.unlock();
 		}
 	}
 
