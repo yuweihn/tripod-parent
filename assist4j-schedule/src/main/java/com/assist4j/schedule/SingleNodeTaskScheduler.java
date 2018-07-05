@@ -39,32 +39,32 @@ public class SingleNodeTaskScheduler extends ThreadPoolTaskScheduler {
 	}
 
 	@Override
-	public ScheduledFuture schedule(Runnable task, Trigger trigger) {
+	public ScheduledFuture<?> schedule(Runnable task, Trigger trigger) {
 		return super.schedule(taskWrapper(task), trigger);
 	}
 
 	@Override
-	public ScheduledFuture schedule(Runnable task, Date startTime) {
+	public ScheduledFuture<?> schedule(Runnable task, Date startTime) {
 		return super.schedule(taskWrapper(task), startTime);
 	}
 
 	@Override
-	public ScheduledFuture scheduleAtFixedRate(Runnable task, Date startTime, long period) {
+	public ScheduledFuture<?> scheduleAtFixedRate(Runnable task, Date startTime, long period) {
 		return super.scheduleAtFixedRate(taskWrapper(task), startTime, period);
 	}
 
 	@Override
-	public ScheduledFuture scheduleAtFixedRate(Runnable task, long period) {
+	public ScheduledFuture<?> scheduleAtFixedRate(Runnable task, long period) {
 		return super.scheduleAtFixedRate(taskWrapper(task), period);
 	}
 
 	@Override
-	public ScheduledFuture scheduleWithFixedDelay(Runnable task, Date startTime, long delay) {
+	public ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, Date startTime, long delay) {
 		return super.scheduleWithFixedDelay(taskWrapper(task), startTime, delay);
 	}
 
 	@Override
-	public ScheduledFuture scheduleWithFixedDelay(Runnable task, long delay) {
+	public ScheduledFuture<?> scheduleWithFixedDelay(Runnable task, long delay) {
 		return super.scheduleWithFixedDelay(taskWrapper(task), delay);
 	}
 
