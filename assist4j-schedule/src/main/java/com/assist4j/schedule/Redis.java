@@ -16,4 +16,5 @@ public interface Redis {
 	 */
 	boolean put(String key, String value, long expiredTime);
 	String get(String key);
+	void remove(String key);
 }

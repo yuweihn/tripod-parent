@@ -50,6 +50,6 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 
 	@Override
 	public void destroy() {
-
+		redis.remove(key);
 	}
 }
