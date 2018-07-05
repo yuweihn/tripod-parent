@@ -90,6 +90,11 @@ public class HttpFilter extends AbstractFilter {
 	protected void printRequest(HttpServletRequest request) {
 		String ip = ActionUtil.getRequestIP();
 		String url = request.getRequestURL().toString();
+		try {
+			url = URLDecoder.decode(url, Constant.ENCODING_UTF_8);
+		} catch (UnsupportedEncodingException e) {
+			log.error("", e);
+		}
 		String method = request.getMethod().toLowerCase();
 		Map<String, String[]> params = request.getParameterMap();
 
