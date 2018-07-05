@@ -3,15 +3,12 @@ package com.assist4j.schedule;
 
 import com.assist4j.data.cache.Cache;
 import com.assist4j.schedule.util.IpUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
  * @author yuwei
  */
 public class RedisLeaderElector implements LeaderElector {
-	private static final Logger log = LoggerFactory.getLogger(RedisLeaderElector.class);
 	private static final String CACHE_LEADER_KEY_PRE = "cache.schedule.leader.";
 
 
