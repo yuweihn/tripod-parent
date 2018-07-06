@@ -17,7 +17,7 @@
 		<activemq.pool.version>5.15.0</activemq.pool.version>
 		<aspectj.version>1.8.13</aspectj.version>
 		<fastjson.version>1.2.47</fastjson.version>
-		<hibernate.version>5.0.12.Final</hibernate.version>
+		<hibernate.version>5.2.14.Final</hibernate.version>
 		<jdk.version>1.8</jdk.version>
 		<jedis.version>2.9.0</jedis.version>
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>

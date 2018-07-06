@@ -13,7 +13,7 @@
 	<url>http://assist4j.com</url>
 
 	<properties>
-		<hibernate.version>5.0.12.Final</hibernate.version>
+		<hibernate.version>5.2.14.Final</hibernate.version>
 		<jdk.version>1.8</jdk.version>
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
