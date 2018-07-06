@@ -11,7 +11,10 @@ import java.util.Map;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import com.assist4j.dao.Dao;
+import org.hibernate.query.Query;
+
 import javax.annotation.Resource;
+import javax.persistence.criteria.CriteriaQuery;
 
 
 /**
@@ -40,11 +43,13 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		}
 	}
 
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public List<T> getAll() {
-//		return getSession().createCriteria(clz).list();
-//	}
+	@Override
+	public List<T> getAll() {
+		Session session = getSession();
+		CriteriaQuery<T> criteriaQuery = session.getCriteriaBuilder().createQuery(clz);
+		Query<T> query = session.createQuery(criteriaQuery);
+		return query.list();
+	}
 
 	@Override
 	public T get(final PK id) {

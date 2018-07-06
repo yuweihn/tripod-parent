@@ -27,9 +27,9 @@ public class SingleDataSourceHibernateConf {
 		sessionFactoryBean.setDataSource(dataSource);
 
 		Properties hibernateProperties = new Properties();
-		hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+		hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
 		hibernateProperties.setProperty("hibernate.current_session_context_class", "org.springframework.orm.hibernate5.SpringSessionContext");
-		hibernateProperties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
+		hibernateProperties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFAactory");
 		hibernateProperties.setProperty("hibernate.cache.use_query_cache", "true");
 		hibernateProperties.setProperty("hibernate.cache.use_second_level_cache", "false");
 		hibernateProperties.setProperty("hibernate.show_sql", "false");

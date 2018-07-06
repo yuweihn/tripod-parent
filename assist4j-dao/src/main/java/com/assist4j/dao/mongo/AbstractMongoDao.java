@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -33,10 +34,10 @@ public abstract class AbstractMongoDao<T extends Serializable, PK extends Serial
 
 
 
-//	@Override
-//	public List<T> getAll() {
-//		return mongoTemplate.findAll(entityClass);
-//	}
+	@Override
+	public List<T> getAll() {
+		return mongoTemplate.findAll(entityClass);
+	}
 
 	@Override
 	public T get(PK id) {
