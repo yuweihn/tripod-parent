@@ -10,6 +10,7 @@ import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +116,11 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	public String getLeaderNode() {
 		byte[] val = null;
 		try {
-			val = zk.getData(zkNodeName, false, null);
+			Stat stat = zk.exists(zkNodeName, false);
+			if (stat == null) {
+				return null;
+			}
+			val = zk.getData(zkNodeName, false, stat);
 		} catch (Exception e) {
 			log.error("get " + zkNodeName + " error, ", e);
 		}
