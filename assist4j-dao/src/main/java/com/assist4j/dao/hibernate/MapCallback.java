@@ -1,31 +1,31 @@
 package com.assist4j.dao.hibernate;
 
 
+import java.util.List;
 import java.util.Map;
 
 import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.transform.Transformers;
+import org.hibernate.query.NativeQuery;
 
 
 /**
  * @author wei
  */
-public class MapCallback extends MapParamCallback {
+public class MapCallback<T> extends MapParamCallback<T> {
 	protected String sql;
-	protected Class<?> clz;
+	protected Class<T> clz;
 	protected Map<String, Object> params;
 	protected Integer pageNo;
 	protected Integer pageSize;
 
-	public MapCallback(String sql, Class<?> clz, Map<String, Object> params) {
+	public MapCallback(String sql, Class<T> clz, Map<String, Object> params) {
 		this.sql = sql;
 		this.clz = clz;
 		this.params = params;
 	}
 
-	public MapCallback(String sql, Class<?> clz, int pageNo, int pageSize, Map<String, Object> params) {
+	public MapCallback(String sql, Class<T> clz, int pageNo, int pageSize, Map<String, Object> params) {
 		this.sql = sql;
 		this.clz = clz;
 		this.params = params;
@@ -34,8 +34,8 @@ public class MapCallback extends MapParamCallback {
 	}
 
 	@Override
-	public Object doInHibernate(Session session) throws HibernateException {
-		SQLQuery query = session.createSQLQuery(sql);
+	public List<T> doInHibernate(Session session) throws HibernateException {
+		NativeQuery<T> query = session.createNativeQuery(sql, clz);
 		assembleParams(query, params);
 
 		if (clz == null) {
@@ -43,7 +43,7 @@ public class MapCallback extends MapParamCallback {
 		} else if (Number.class.isAssignableFrom(clz)) {
 			
 		} else if (Map.class.isAssignableFrom(clz)) {
-			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+//			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 		} else {
 			query.addEntity(clz);
 		}

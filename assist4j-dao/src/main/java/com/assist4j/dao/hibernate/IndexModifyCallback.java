@@ -2,14 +2,17 @@ package com.assist4j.dao.hibernate;
 
 
 import org.hibernate.HibernateException;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * @author wei
  */
-public class IndexModifyCallback extends IndexParamCallback {
+public class IndexModifyCallback extends IndexParamCallback<Integer> {
 	protected String sql;
 	protected Object[] params;
 
@@ -19,9 +22,13 @@ public class IndexModifyCallback extends IndexParamCallback {
 	}
 
 	@Override
-	public Object doInHibernate(Session session) throws HibernateException {
-		SQLQuery query = session.createSQLQuery(sql);
+	public List<Integer> doInHibernate(Session session) throws HibernateException {
+		NativeQuery<Integer> query = session.createNativeQuery(sql);
 		assembleParams(query, params);
-		return query.executeUpdate();
+		int count = query.executeUpdate();
+
+		List<Integer> list = new ArrayList<Integer>();
+		list.add(count);
+		return list;
 	}
 }

@@ -1,14 +1,14 @@
 package com.assist4j.dao.hibernate;
 
 
-import org.hibernate.Query;
+import org.hibernate.query.NativeQuery;
 
 
 /**
  * @author wei
  */
-public abstract class IndexParamCallback extends AbstractParamCallback {
-	protected void assembleParams(Query query, Object[] params) {
+public abstract class IndexParamCallback<T> extends AbstractParamCallback<T> {
+	protected void assembleParams(NativeQuery<T> query, Object[] params) {
 		if (params == null || params.length <= 0) {
 			return;
 		}

@@ -3,7 +3,6 @@ package com.assist4j.dao;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 
 /**
@@ -13,7 +12,6 @@ import java.util.List;
  * @param <PK>
  */
 public interface Dao<T extends Serializable, PK extends Serializable> {
-	List<T> getAll();
 	T get(PK id);
 	void save(T entity);
 	void saveOrUpdateAll(Collection<T> entities);
