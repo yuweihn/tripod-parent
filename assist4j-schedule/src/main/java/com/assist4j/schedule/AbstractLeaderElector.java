@@ -8,7 +8,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
- * 2.0
  * @author yuwei
  */
 public abstract class AbstractLeaderElector implements LeaderElector {
