@@ -18,7 +18,7 @@ public abstract class AbstractLeaderElector implements LeaderElector {
 
 
 	@Override
-	public String getLocalNode() {
+	public String getLocalNode() {/**/
 		if (localNode == null || "".equals(localNode.trim())) {
 			localNodeLock.lock();
 			try {
