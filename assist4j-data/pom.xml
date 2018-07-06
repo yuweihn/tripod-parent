@@ -18,7 +18,7 @@
 		<aspectj.version>1.8.13</aspectj.version>
 		<fastjson.version>1.2.47</fastjson.version>
 		<hibernate.version>5.0.12.Final</hibernate.version>
-		<jdk.version>1.7</jdk.version>
+		<jdk.version>1.8</jdk.version>
 		<jedis.version>2.9.0</jedis.version>
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>

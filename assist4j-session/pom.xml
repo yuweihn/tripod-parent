@@ -15,7 +15,7 @@
 	<properties>
 		<commons.collections.version>3.2.2</commons.collections.version>
 		<fastjson.version>1.2.47</fastjson.version>
-		<jdk.version>1.7</jdk.version>
+		<jdk.version>1.8</jdk.version>
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
 		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
