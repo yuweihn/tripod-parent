@@ -7,8 +7,6 @@ import com.alibaba.fastjson.JSONObject;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.util.CollectionUtils;
-
 
 /**
  * @author yuwei
@@ -38,7 +36,7 @@ public abstract class JsonUtil {
 	}
 
 	public static<T> String toJson(List<T> list) {
-		if (CollectionUtils.isEmpty(list)) {
+		if (list == null || list.size() <= 0) {
 			return "[]";
 		}
 

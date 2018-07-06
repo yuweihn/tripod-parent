@@ -20,7 +20,6 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.util.EntityUtils;
 import com.assist4j.http.response.HttpResponse;
-import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -93,7 +92,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 				cookies = cookieStore.getCookies();
 			}
 		}
-		if (!CollectionUtils.isEmpty(cookies)) {
+		if (cookies != null && cookies.size() > 0) {
 			for (org.apache.http.cookie.Cookie c: cookies) {
 				Date now = new Date();
 				Date expiryDate = c.getExpiryDate();

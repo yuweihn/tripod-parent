@@ -14,8 +14,6 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import com.assist4j.http.HttpConstant;
 import com.assist4j.http.response.HttpResponse;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -79,7 +77,7 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 		return this;
 	}
 	public HttpFileRequest addFormField(String key, String value) {
-		if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
+		if (key == null || "".equals(key) || value == null || "".equals(value)) {
 			return this;
 		}
 
@@ -98,10 +96,10 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 		MultipartEntityBuilder builder = MultipartEntityBuilder.create()
 															.setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
 															.setCharset(Charset.forName(charset));
-		if (!CollectionUtils.isEmpty(fileFieldList)) {
+		if (fileFieldList != null && fileFieldList.size() > 0) {
 			for (FileField fileField: fileFieldList) {
 				List<FileWrapper> fileList = fileField.getFileList();
-				if (!CollectionUtils.isEmpty(fileList)) {
+				if (fileList != null && fileList.size()> 0) {
 					for (FileWrapper fw: fileList) {
 						builder.addBinaryBody(fileField.getFieldName(), fw.getContent(), multipartContentType, fw.getFileName());
 					}
@@ -109,11 +107,11 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 			}
 		}
 
-		if (!CollectionUtils.isEmpty(formFieldList)) {
+		if (formFieldList != null && formFieldList.size() > 0) {
 			for (FormField ff: formFieldList) {
 				String k = ff.getKey();
 				String v = ff.getValue();
-				if (StringUtils.isEmpty(k) || StringUtils.isEmpty(v)) {
+				if (k == null || "".equals(k) || v == null || "".equals(v)) {
 					continue;
 				}
 				builder.addTextBody(k, v, textContentType);

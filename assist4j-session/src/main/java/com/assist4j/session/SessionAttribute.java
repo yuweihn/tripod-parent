@@ -12,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -38,7 +36,7 @@ public class SessionAttribute implements Serializable {
 
 
 	public boolean isEmpty(){
-		return CollectionUtils.isEmpty(attributes);
+		return attributes == null || attributes.size() <= 0;
 	}
 
 	public SessionAttribute() {
@@ -50,7 +48,7 @@ public class SessionAttribute implements Serializable {
 	}
 
 	public void putAttribute(String name, Object value) {
-		if (StringUtils.isEmpty(name) || StringUtils.isEmpty(value)) {
+		if (name == null || "".equals(name) || value == null || "".equals(value)) {
 			return;
 		}
 		AttributeData data = new AttributeData();
@@ -157,7 +155,7 @@ public class SessionAttribute implements Serializable {
 			}
 			map.put("attribute", attributeStrList);
 		}
-		if (!StringUtils.isEmpty(attr.repeatKey) && !StringUtils.isEmpty(attr.repeatValue)) {
+		if (attr.repeatKey != null && !"".equals(attr.repeatKey) && attr.repeatValue != null && !"".equals(attr.repeatValue.toString())) {
 			map.put("repeatKey", attr.repeatKey);
 			map.put("repeatValue", attr.repeatValue);
 		}
@@ -191,7 +189,7 @@ public class SessionAttribute implements Serializable {
 						: parseDate(createTimeObj.toString(), "yyyy-MM-dd HH:mm:ss.SSS");
 
 		List<String> attributeStrList = (List<String>) attributeObj;
-		if (CollectionUtils.isNotEmpty(attributeStrList)) {
+		if (attributeStrList != null && attributeStrList.size() > 0) {
 			Set<AttributeData> _attributes = new HashSet<AttributeData>();
 			for (String attributeStr: attributeStrList) {
 				AttributeData data = new AttributeData();

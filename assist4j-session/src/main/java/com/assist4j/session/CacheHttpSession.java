@@ -7,8 +7,6 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
 import com.assist4j.session.cache.SessionCache;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -260,8 +258,9 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	private void init() {
 		findSessionAttribute();
-		if (!StringUtils.isEmpty(sessionAttribute.getRepeatValue())) {
-			this.sessionIdKey = sessionIdKeyPre + "." + sessionAttribute.getRepeatValue();
+		Object repeatValue = sessionAttribute.getRepeatValue();
+		if (repeatValue != null && !"".equals(repeatValue.toString())) {
+			this.sessionIdKey = sessionIdKeyPre + "." + repeatValue;
 		}
 	}
 
@@ -307,7 +306,7 @@ public class CacheHttpSession implements HttpSession {
 		private Iterator<String> iterator;
 		public SessionEnumeration (Set<String> _attributeNames) {
 			Set<String> attributeNames = new HashSet<String>();
-			if (!CollectionUtils.isEmpty(_attributeNames)) {
+			if (_attributeNames != null && !"".equals(_attributeNames)) {
 				attributeNames.addAll(_attributeNames);
 			}
 			iterator = attributeNames.iterator();

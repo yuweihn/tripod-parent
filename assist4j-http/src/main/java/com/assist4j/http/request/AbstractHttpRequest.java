@@ -33,7 +33,6 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import com.assist4j.http.ssl.TrustAllSslSocketFactory;
 import com.assist4j.http.response.HttpResponse;
-import org.springframework.util.CollectionUtils;
 
 
 /**
@@ -191,7 +190,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 		if (hct != null) {
 			httpUriRequest.setHeader(new BasicHeader(HTTP.CONTENT_TYPE, hct.toString()));
 		}
-		if (!CollectionUtils.isEmpty(headerList)) {
+		if (headerList != null && headerList.size() > 0) {
 			for (Header header: headerList) {
 				httpUriRequest.setHeader(header);
 			}
@@ -199,7 +198,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 		/**
 		 * cookie
 		 */
-		if (!CollectionUtils.isEmpty(cookieList)) {
+		if (cookieList != null && cookieList.size() > 0) {
 			StringBuilder builder = new StringBuilder("");
 			for (Cookie cookie: cookieList) {
 				builder.append(cookie.getName()).append("=").append(cookie.getValue()).append(";");
@@ -223,7 +222,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 		/**
 		 * add first http request interceptor list
 		 */
-		if (!CollectionUtils.isEmpty(firstRequestInterceptorList)) {
+		if (firstRequestInterceptorList != null && firstRequestInterceptorList.size() > 0) {
 			for (HttpRequestInterceptor interceptor: firstRequestInterceptorList) {
 				builder.addInterceptorFirst(interceptor);
 			}
@@ -232,7 +231,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 		/**
 		 * add last http request interceptor list
 		 */
-		if (!CollectionUtils.isEmpty(lastRequestInterceptorList)) {
+		if (lastRequestInterceptorList != null && lastRequestInterceptorList.size() > 0) {
 			for (HttpRequestInterceptor interceptor: lastRequestInterceptorList) {
 				builder.addInterceptorLast(interceptor);
 			}
@@ -241,7 +240,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 		/**
 		 * add first http response interceptor list
 		 */
-		if (!CollectionUtils.isEmpty(firstResponseInterceptorList)) {
+		if (firstResponseInterceptorList != null && firstResponseInterceptorList.size() > 0) {
 			for (HttpResponseInterceptor interceptor: firstResponseInterceptorList) {
 				builder.addInterceptorFirst(interceptor);
 			}
@@ -250,7 +249,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 		/**
 		 * add last http response interceptor list
 		 */
-		if (!CollectionUtils.isEmpty(lastResponseInterceptorList)) {
+		if (lastResponseInterceptorList != null && lastResponseInterceptorList.size() > 0) {
 			for (HttpResponseInterceptor interceptor: lastResponseInterceptorList) {
 				builder.addInterceptorLast(interceptor);
 			}

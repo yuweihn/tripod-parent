@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import com.assist4j.core.JsonUtil;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 
 /**
@@ -88,7 +87,7 @@ public abstract class ExcelUtil {
 		}
 
 		List<Map<String, Object>> mapList = read(fileData);
-		if (CollectionUtils.isEmpty(mapList)) {
+		if (mapList == null || mapList.size() <= 0) {
 			return list;
 		}
 		for (Map<String, Object> map: mapList) {

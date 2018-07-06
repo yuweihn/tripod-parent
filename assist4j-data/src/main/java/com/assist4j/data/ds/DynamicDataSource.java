@@ -3,7 +3,6 @@ package com.assist4j.data.ds;
 
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +22,9 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
 				this.setDefaultTargetDataSource(dsCluster.getMaster().getValue());
 			}
 			targetDataSources.put(dsCluster.getMaster().getKey(), dsCluster.getMaster().getValue());
-			if (!CollectionUtils.isEmpty(dsCluster.getSlaveList())) {
-				for (KvPair dsSlave: dsCluster.getSlaveList()) {
+			List<KvPair> slaveList = dsCluster.getSlaveList();
+			if (slaveList != null && slaveList.size() > 0) {
+				for (KvPair dsSlave: slaveList) {
 					targetDataSources.put(dsSlave.getKey(), dsSlave.getValue());
 				}
 			}

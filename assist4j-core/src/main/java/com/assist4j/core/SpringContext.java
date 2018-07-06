@@ -12,8 +12,6 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -46,7 +44,7 @@ public class SpringContext implements ApplicationContextAware {
 		BeanDefinitionRegistry beanDefRegistry = (BeanDefinitionRegistry) applicationContext.getBeanFactory();
 		
 		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(clz);
-		if (!CollectionUtils.isEmpty(constructorArgList)) {
+		if (constructorArgList != null && constructorArgList.size() > 0) {
 			for (Property constructorArg: constructorArgList) {
 				if (Property.TYPE_VALUE == constructorArg.getType()) {
 					builder.addConstructorArgValue(constructorArg.getValue());
@@ -58,7 +56,7 @@ public class SpringContext implements ApplicationContextAware {
 			}
 		}
 		
-		if (!CollectionUtils.isEmpty(propertyList)) {
+		if (propertyList != null && propertyList.size() > 0) {
 			for (Property prop: propertyList) {
 				if (Property.TYPE_VALUE == prop.getType()) {
 					builder.addPropertyValue(prop.getPropertyName(), prop.getValue());
@@ -73,7 +71,7 @@ public class SpringContext implements ApplicationContextAware {
 		/**
 		 * 如果有initMethod，直接使用，否则反射clz的init
 		 */
-		if (!StringUtils.isEmpty(initMethod)) {
+		if (initMethod != null && !"".equals(initMethod)) {
 			builder.setInitMethodName(initMethod);
 		} else {
 			try {
@@ -88,7 +86,7 @@ public class SpringContext implements ApplicationContextAware {
 		/**
 		 * 如果有destroyMethod，直接使用，否则反射clz的destroy
 		 */
-		if (!StringUtils.isEmpty(destroyMethod)) {
+		if (destroyMethod != null && !"".equals(destroyMethod)) {
 			builder.setDestroyMethodName(destroyMethod);
 		} else {
 			try {

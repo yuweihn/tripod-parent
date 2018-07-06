@@ -20,8 +20,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicNameValuePair;
 import com.assist4j.http.response.HttpResponse;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 
 /**
@@ -64,7 +62,7 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 		return this;
 	}
 	public HttpFormRequest addField(String key, String value) {
-		if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value)) {
+		if (key == null || "".equals(key) || value == null || "".equals(value)) {
 			return this;
 		}
 
@@ -76,11 +74,11 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 	private <B>HttpResponse<B> doGet() {
 		try {
 			URIBuilder uriBuilder = new URIBuilder(this.getUrl());
-			if (!CollectionUtils.isEmpty(fieldList)) {
+			if (fieldList != null && fieldList.size() > 0) {
 				for (FormField ff: fieldList) {
 					String k = ff.getKey();
 					String v = ff.getValue();
-					if (StringUtils.isEmpty(k) || StringUtils.isEmpty(v)) {
+					if (k == null || "".equals(k) || v == null || "".equals(v)) {
 						continue;
 					}
 					uriBuilder.setParameter(k, v);
@@ -97,14 +95,14 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 
 	private static List<NameValuePair> toNameValuePairList(List<FormField> fieldList) {
 		List<NameValuePair> list = new ArrayList<NameValuePair>();
-		if (CollectionUtils.isEmpty(fieldList)) {
+		if (fieldList == null || fieldList.size() <= 0) {
 			return list;
 		}
 
 		for (FormField ff: fieldList) {
 			String k = ff.getKey();
 			String v = ff.getValue();
-			if (StringUtils.isEmpty(k) || StringUtils.isEmpty(v)) {
+			if (k == null || "".equals(k) || v == null || "".equals(v)) {
 				continue;
 			}
 			list.add(new BasicNameValuePair(k, v));

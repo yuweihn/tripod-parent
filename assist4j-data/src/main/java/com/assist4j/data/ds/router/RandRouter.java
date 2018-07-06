@@ -4,7 +4,6 @@ package com.assist4j.data.ds.router;
 import com.assist4j.data.ds.KvPair;
 import com.assist4j.data.ds.DataSourceCluster;
 import org.springframework.util.Assert;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Random;
@@ -37,7 +36,7 @@ public class RandRouter implements Router {
 		Assert.notNull(dsc, "[dsc] is required.");
 
 		List<KvPair> slaveList = dsc.getSlaveList();
-		if (CollectionUtils.isEmpty(slaveList)) {
+		if (slaveList == null || slaveList.size() <= 0) {
 			return dsc.getMaster();
 		}
 		return slaveList.get(new Random().nextInt(slaveList.size()));

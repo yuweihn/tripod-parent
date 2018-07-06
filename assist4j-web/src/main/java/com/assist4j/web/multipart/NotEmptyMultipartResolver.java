@@ -4,7 +4,6 @@ package com.assist4j.web.multipart;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.fileupload.FileItem;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 
@@ -23,7 +22,7 @@ public class NotEmptyMultipartResolver extends CommonsMultipartResolver {
 	 */
 	@Override
 	protected MultipartParsingResult parseFileItems(List<FileItem> fileItems, String encoding) {
-		if (CollectionUtils.isEmpty(fileItems)) {
+		if (fileItems == null || fileItems.size() <= 0) {
 			/**
 			 * do nothing.
 			 */
