@@ -5,9 +5,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 /**
  * @author wei
@@ -22,13 +19,9 @@ public class IndexModifyCallback extends IndexParamCallback<Integer> {
 	}
 
 	@Override
-	public List<Integer> doInHibernate(Session session) throws HibernateException {
+	public Object doInHibernate(Session session) throws HibernateException {
 		NativeQuery<Integer> query = session.createNativeQuery(sql);
 		assembleParams(query, params);
-		int count = query.executeUpdate();
-
-		List<Integer> list = new ArrayList<Integer>();
-		list.add(count);
-		return list;
+		return query.executeUpdate();
 	}
 }

@@ -1,7 +1,6 @@
 package com.assist4j.dao.hibernate;
 
 
-import java.util.List;
 import java.util.Map;
 
 import org.hibernate.HibernateException;

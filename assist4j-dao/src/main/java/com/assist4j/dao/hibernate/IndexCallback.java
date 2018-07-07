@@ -35,7 +35,7 @@ public class IndexCallback<T> extends IndexParamCallback<T> {
 	}
 
 	@Override
-	public List<T> doInHibernate(Session session) throws HibernateException {
+	public Object doInHibernate(Session session) throws HibernateException {
 		NativeQuery<T> query = session.createNativeQuery(sql, clz);
 		assembleParams(query, params);
 
@@ -59,8 +59,6 @@ public class IndexCallback<T> extends IndexParamCallback<T> {
 			query.setFirstResult((pageNo - 1) * pageSize).setMaxResults(pageSize);
 		}
 
-		query.
-		List<T> list = query.list();
-		return list;
+		return query.list();
 	}
 }
