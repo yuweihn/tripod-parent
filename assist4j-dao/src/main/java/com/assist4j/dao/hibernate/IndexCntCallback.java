@@ -20,7 +20,7 @@ public class IndexCntCallback extends IndexParamCallback<Integer> {
 
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
-		NativeQuery<Integer> query = session.createNativeQuery(sql);
+		NativeQuery<Integer> query = session.createNativeQuery(sql, Integer.class);
 		assembleParams(query, params);
 		return new Integer(query.uniqueResult().toString());
 	}
