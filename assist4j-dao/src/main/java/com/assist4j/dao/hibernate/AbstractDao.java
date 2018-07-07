@@ -100,8 +100,9 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @param params
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	protected List<T> query(String sql, Map<String, Object> params) {
-		return new MapCallback<T>(sql, clz, params).doInHibernate(getSession());
+		return (List<T>) new MapCallback<T>(sql, clz, params).doInHibernate(getSession());
 	}
 	/**
 	 * 查询某个表的所有字段
@@ -117,8 +118,9 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @param params
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	protected List<T> query(String sql, Object[] params) {
-		return new IndexCallback<T>(sql, clz, params).doInHibernate(getSession());
+		return (List<T>) new IndexCallback<T>(sql, clz, params).doInHibernate(getSession());
 	}
 
 
@@ -130,8 +132,9 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @param params
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	protected List<T> query(String sql, int pageNo, int pageSize, Map<String, Object> params) {
-		return new MapCallback<T>(sql, clz, pageNo, pageSize, params).doInHibernate(getSession());
+		return (List<T>) new MapCallback<T>(sql, clz, pageNo, pageSize, params).doInHibernate(getSession());
 	}
 	/**
 	 * 查询某个表的所有字段。分页查询
@@ -151,8 +154,9 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @param params
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	protected List<T> query(String sql, int pageNo, int pageSize, Object[] params) {
-		return new IndexCallback<T>(sql, clz, pageNo, pageSize, params).doInHibernate(getSession());
+		return (List<T>) new IndexCallback<T>(sql, clz, pageNo, pageSize, params).doInHibernate(getSession());
 	}
 
 
@@ -163,8 +167,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @return
 	 */
 	protected int queryCount(String sql, Map<String, Object> params) {
-		List<Integer> list = new MapCallback<Integer>(sql, Integer.class, params).doInHibernate(getSession());
-		return list == null || list.size() <= 0 ? 0 : list.get(0);
+		return (Integer) new MapCntCallback(sql, params).doInHibernate(getSession());
 	}
 	/**
 	 * 查询记录的条数
@@ -181,8 +184,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @return
 	 */
 	protected int queryCount(String sql, Object[] params) {
-		List<Integer> list = new IndexCallback<Integer>(sql, Integer.class, params).doInHibernate(getSession());
-		return list == null || list.size() <= 0 ? 0 : list.get(0);
+		return (Integer) new IndexCntCallback(sql, params).doInHibernate(getSession());
 	}
 
 
@@ -244,8 +246,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @return
 	 */
 	protected int execute(String sql, Map<String, Object> params) {
-		List<Integer> list = new MapModifyCallback(sql, params).doInHibernate(getSession());
-		return list == null || list.size() <= 0 ? 0 : list.get(0);
+		return (Integer) new MapModifyCallback(sql, params).doInHibernate(getSession());
 	}
 	/**
 	 * 执行增删改操作
@@ -254,8 +255,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @return
 	 */
 	protected int execute(String sql, Object[] params) {
-		List<Integer> list = new IndexModifyCallback(sql, params).doInHibernate(getSession());
-		return list == null || list.size() <= 0 ? 0 : list.get(0);
+		return (Integer) new IndexModifyCallback(sql, params).doInHibernate(getSession());
 	}
 	/**
 	 * 执行增删改操作
