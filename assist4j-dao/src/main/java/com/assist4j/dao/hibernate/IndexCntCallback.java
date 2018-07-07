@@ -9,7 +9,7 @@ import org.hibernate.query.NativeQuery;
 /**
  * @author wei
  */
-public class IndexCntCallback extends IndexParamCallback<Integer> {
+public class IndexCntCallback extends IndexParamCallback<Object> {
 	protected String sql;
 	protected Object[] params;
 
@@ -20,7 +20,7 @@ public class IndexCntCallback extends IndexParamCallback<Integer> {
 
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
-		NativeQuery<Integer> query = session.createNativeQuery(sql, Integer.class);
+		NativeQuery<Object> query = session.createNativeQuery(sql);
 		assembleParams(query, params);
 		return new Integer(query.uniqueResult().toString());
 	}

@@ -11,7 +11,7 @@ import org.hibernate.query.NativeQuery;
 /**
  * @author wei
  */
-public class MapCntCallback extends MapParamCallback<Integer> {
+public class MapCntCallback extends MapParamCallback<Object> {
 	protected String sql;
 	protected Map<String, Object> params;
 
@@ -22,7 +22,7 @@ public class MapCntCallback extends MapParamCallback<Integer> {
 
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
-		NativeQuery<Integer> query = session.createNativeQuery(sql, Integer.class);
+		NativeQuery<Object> query = session.createNativeQuery(sql);
 		assembleParams(query, params);
 		return new Integer(query.uniqueResult().toString());
 	}
