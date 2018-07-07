@@ -62,8 +62,7 @@ public class RedisMsConf {
 	@Bean(name = "jedisConnectionFactory")
 	public JedisConnectionFactory jedisConnectionFactory(@Qualifier("jedisPoolConfig") JedisPoolConfig jedisPoolConfig
 			, @Qualifier("redisSentinelConfiguration") RedisSentinelConfiguration sentinelConfig) {
-		JedisConnectionFactory factory = new JedisConnectionFactory(sentinelConfig);
-		factory.setPoolConfig(jedisPoolConfig);
+		JedisConnectionFactory factory = new JedisConnectionFactory(sentinelConfig, jedisPoolConfig);
 		return factory;
 	}
 

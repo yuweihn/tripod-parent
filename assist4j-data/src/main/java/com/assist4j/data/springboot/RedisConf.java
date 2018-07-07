@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -53,8 +54,8 @@ public class RedisConf {
 	@Bean(name = "jedisConnectionFactory")
 	public JedisConnectionFactory jedisConnectionFactory(@Qualifier("jedisPoolConfig") JedisPoolConfig jedisPoolConfig
 			, @Qualifier("redisStandaloneConfiguration") RedisStandaloneConfiguration config) {
-		JedisConnectionFactory factory = new JedisConnectionFactory(config);
-		factory.setPoolConfig(jedisPoolConfig);
+		JedisClientConfiguration jedisClientConfiguration = JedisClientConfiguration.builder().usePooling().poolConfig(jedisPoolConfig).build();
+		JedisConnectionFactory factory = new JedisConnectionFactory(config, jedisClientConfiguration);
 		return factory;
 	}
 
