@@ -35,16 +35,6 @@ public class IndexCallback<T> extends IndexParamCallback<T> {
 		NativeQuery<T> query = session.createNativeQuery(sql, clz);
 		assembleParams(query, params);
 
-		if (clz == null) {
-			
-		} else if (Number.class.isAssignableFrom(clz)) {
-
-//		} else if (Map.class.isAssignableFrom(clz)) {
-////			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
-		} else {
-			query.addEntity(clz);
-		}
-
 		if (pageNo != null && pageSize != null) {
 			if (pageNo <= 0) {
 				pageNo = 1;
