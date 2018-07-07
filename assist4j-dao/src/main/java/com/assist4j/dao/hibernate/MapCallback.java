@@ -34,7 +34,7 @@ public class MapCallback<T> extends MapParamCallback<T> {
 	}
 
 	@Override
-	public List<T> doInHibernate(Session session) throws HibernateException {
+	public Object doInHibernate(Session session) throws HibernateException {
 		NativeQuery<T> query = session.createNativeQuery(sql, clz);
 		assembleParams(query, params);
 
@@ -42,8 +42,8 @@ public class MapCallback<T> extends MapParamCallback<T> {
 			
 		} else if (Number.class.isAssignableFrom(clz)) {
 			
-		} else if (Map.class.isAssignableFrom(clz)) {
-//			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+//		} else if (Map.class.isAssignableFrom(clz)) {
+////			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 		} else {
 			query.addEntity(clz);
 		}
@@ -58,6 +58,6 @@ public class MapCallback<T> extends MapParamCallback<T> {
 			query.setFirstResult((pageNo - 1) * pageSize).setMaxResults(pageSize);
 		}
 
-		return query.getResultList();
+		return query.list();
 	}
 }

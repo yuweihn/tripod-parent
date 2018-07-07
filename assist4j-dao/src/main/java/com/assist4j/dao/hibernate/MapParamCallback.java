@@ -11,7 +11,7 @@ import org.hibernate.query.NativeQuery;
 /**
  * @author wei
  */
-public abstract class MapParamCallback<T> extends AbstractParamCallback<T> {
+public abstract class MapParamCallback<T> extends AbstractParamCallback {
 	protected void assembleParams(NativeQuery<T> query, Map<String, Object> params) {
 		if (params == null || params.size() <= 0) {
 			return;

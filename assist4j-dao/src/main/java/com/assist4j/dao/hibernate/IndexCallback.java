@@ -43,8 +43,8 @@ public class IndexCallback<T> extends IndexParamCallback<T> {
 			
 		} else if (Number.class.isAssignableFrom(clz)) {
 
-		} else if (Map.class.isAssignableFrom(clz)) {
-//			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+//		} else if (Map.class.isAssignableFrom(clz)) {
+////			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 		} else {
 			query.addEntity(clz);
 		}
@@ -59,6 +59,8 @@ public class IndexCallback<T> extends IndexParamCallback<T> {
 			query.setFirstResult((pageNo - 1) * pageSize).setMaxResults(pageSize);
 		}
 
-		return query.getResultList();
+		query.
+		List<T> list = query.list();
+		return list;
 	}
 }
