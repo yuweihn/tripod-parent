@@ -58,6 +58,6 @@ public class MapCallback<T> extends MapParamCallback<T> {
 			query.setFirstResult((pageNo - 1) * pageSize).setMaxResults(pageSize);
 		}
 
-		return query.list();
+		return query.getResultList();
 	}
 }

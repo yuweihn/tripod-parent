@@ -59,6 +59,6 @@ public class IndexCallback<T> extends IndexParamCallback<T> {
 			query.setFirstResult((pageNo - 1) * pageSize).setMaxResults(pageSize);
 		}
 
-		return query.list();
+		return query.getResultList();
 	}
 }
