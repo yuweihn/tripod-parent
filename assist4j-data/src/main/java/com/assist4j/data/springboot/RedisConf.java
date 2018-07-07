@@ -2,12 +2,14 @@ package com.assist4j.data.springboot;
 
 
 import com.assist4j.data.cache.Cache;
-import com.assist4j.data.cache.redis.JedisPoolConnFactory;
 import com.assist4j.data.cache.redis.RedisCache;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPassword;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
@@ -32,20 +34,27 @@ public class RedisConf {
 		return config;
 	}
 
-	@Bean(name = "jedisConnectionFactory")
-	public JedisPoolConnFactory jedisPoolConnFactory(@Qualifier("jedisPoolConfig") JedisPoolConfig jedisPoolConfig
-			, @Value("${redis.host:}") String host
+	@Bean(name = "redisStandaloneConfiguration")
+	public RedisStandaloneConfiguration redisStandaloneConfiguration(@Value("${redis.host:}") String host
 			, @Value("${redis.port:0}") int port
 			, @Value("${redis.dbIndex:0}") int dbIndex
 			, @Value("${redis.needPassword:false}") boolean needPassword
 			, @Value("${redis.password:}") String password) {
-		JedisPoolConnFactory factory = new JedisPoolConnFactory();
+		RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration();
+		conf.setHostName(host);
+		conf.setPort(port);
+		conf.setDatabase(dbIndex);
+		if (needPassword) {
+			conf.setPassword(RedisPassword.of(password));
+		}
+		return conf;
+	}
+
+	@Bean(name = "jedisConnectionFactory")
+	public JedisConnectionFactory jedisConnectionFactory(@Qualifier("jedisPoolConfig") JedisPoolConfig jedisPoolConfig
+			, @Qualifier("redisStandaloneConfiguration") RedisStandaloneConfiguration config) {
+		JedisConnectionFactory factory = new JedisConnectionFactory(config);
 		factory.setPoolConfig(jedisPoolConfig);
-		factory.setHostName(host);
-		factory.setPort(port);
-		factory.setDatabase(dbIndex);
-		factory.setNeedPassword(needPassword);
-		factory.setPassword(password);
 		return factory;
 	}
 

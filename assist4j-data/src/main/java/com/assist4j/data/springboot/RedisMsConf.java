@@ -2,14 +2,15 @@ package com.assist4j.data.springboot;
 
 
 import com.assist4j.data.cache.Cache;
-import com.assist4j.data.cache.redis.JedisPoolConnFactory;
 import com.assist4j.data.cache.redis.RedisCache;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
+import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
@@ -40,10 +41,17 @@ public class RedisMsConf {
 	@Bean(name = "redisSentinelConfiguration")
 	public RedisSentinelConfiguration redisSentinelConfiguration(@Value("${redis.master.name}") String masterName
 			, @Value("${redis.sentinel.ip}") String host
-			, @Value("${redis.sentinel.port}") int port) {
+			, @Value("${redis.sentinel.port}") int port
+			, @Value("${redis.dbIndex:0}") int dbIndex
+			, @Value("${redis.needPassword:false}") boolean needPassword
+			, @Value("${redis.password:}") String password) {
 		RedisSentinelConfiguration conf = new RedisSentinelConfiguration();
 		RedisNode redisNode = new RedisNode.RedisNodeBuilder().withName(masterName).build();
 		conf.setMaster(redisNode);
+		conf.setDatabase(dbIndex);
+		if (needPassword) {
+			conf.setPassword(RedisPassword.of(password));
+		}
 
 		Set<RedisNode> sentinels = new HashSet<RedisNode>();
 		sentinels.add(new RedisNode(host, port));
@@ -52,16 +60,10 @@ public class RedisMsConf {
 	}
 
 	@Bean(name = "jedisConnectionFactory")
-	public JedisPoolConnFactory jedisPoolConnFactory(@Qualifier("redisSentinelConfiguration") RedisSentinelConfiguration sentinelConfig
-			, @Qualifier("jedisPoolConfig") JedisPoolConfig jedisPoolConfig
-			, @Value("${redis.dbIndex:0}") int dbIndex
-			, @Value("${redis.needPassword:false}") boolean needPassword
-			, @Value("${redis.password:}") String password) {
-		JedisPoolConnFactory factory = new JedisPoolConnFactory(sentinelConfig);
+	public JedisConnectionFactory jedisConnectionFactory(@Qualifier("jedisPoolConfig") JedisPoolConfig jedisPoolConfig
+			, @Qualifier("redisSentinelConfiguration") RedisSentinelConfiguration sentinelConfig) {
+		JedisConnectionFactory factory = new JedisConnectionFactory(sentinelConfig);
 		factory.setPoolConfig(jedisPoolConfig);
-		factory.setDatabase(dbIndex);
-		factory.setNeedPassword(needPassword);
-		factory.setPassword(password);
 		return factory;
 	}
 

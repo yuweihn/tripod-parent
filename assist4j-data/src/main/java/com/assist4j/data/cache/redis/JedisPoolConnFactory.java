@@ -2,6 +2,7 @@ package com.assist4j.data.cache.redis;
 
 
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 
 import org.springframework.util.Assert;
@@ -11,6 +12,7 @@ import org.springframework.util.StringUtils;
 /**
  * @author yuwei
  */
+@Deprecated
 public class JedisPoolConnFactory extends JedisConnectionFactory {
 	private boolean needPassword;
 
@@ -18,8 +20,9 @@ public class JedisPoolConnFactory extends JedisConnectionFactory {
 	public JedisPoolConnFactory() {
 		
 	}
-
-
+	public JedisPoolConnFactory(RedisStandaloneConfiguration config) {
+		super(config);
+	}
 	public JedisPoolConnFactory(RedisSentinelConfiguration sentinelConfig) {
 		super(sentinelConfig);
 	}
