@@ -9,7 +9,7 @@ import org.hibernate.query.NativeQuery;
 /**
  * @author wei
  */
-public class IndexModifyCallback extends IndexParamCallback<Object> {
+public class IndexModifyCallback extends IndexParamCallback {
 	protected String sql;
 	protected Object[] params;
 

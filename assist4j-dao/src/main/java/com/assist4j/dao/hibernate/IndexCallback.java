@@ -12,20 +12,20 @@ import java.util.Map;
 /**
  * @author wei
  */
-public class IndexCallback<T> extends IndexParamCallback<T> {
+public class IndexCallback extends IndexParamCallback {
 	protected String sql;
-	protected Class<T> clz;
+	protected Class<?> clz;
 	protected Object[] params;
 	protected Integer pageNo;
 	protected Integer pageSize;
 
-	public IndexCallback(String sql, Class<T> clz, Object[] params) {
+	public IndexCallback(String sql, Class<?> clz, Object[] params) {
 		this.sql = sql;
 		this.clz = clz;
 		this.params = params;
 	}
 
-	public IndexCallback(String sql, Class<T> clz, int pageNo, int pageSize, Object[] params) {
+	public IndexCallback(String sql, Class<?> clz, int pageNo, int pageSize, Object[] params) {
 		this.sql = sql;
 		this.clz = clz;
 		this.params = params;
@@ -35,7 +35,7 @@ public class IndexCallback<T> extends IndexParamCallback<T> {
 
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
-		NativeQuery<T> query = null;
+		NativeQuery<?> query = null;
 		if (clz != null && Map.class.isAssignableFrom(clz)) {
 			query = session.createNativeQuery(sql);
 			query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);

@@ -11,7 +11,7 @@ import org.hibernate.query.NativeQuery;
 /**
  * @author wei
  */
-public class MapModifyCallback extends MapParamCallback<Object> {
+public class MapModifyCallback extends MapParamCallback {
 	protected String sql;
 	protected Map<String, Object> params;
 

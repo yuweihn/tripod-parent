@@ -12,20 +12,20 @@ import org.hibernate.query.NativeQuery;
 /**
  * @author wei
  */
-public class MapCallback<T> extends MapParamCallback<T> {
+public class MapCallback extends MapParamCallback {
 	protected String sql;
-	protected Class<T> clz;
+	protected Class<?> clz;
 	protected Map<String, Object> params;
 	protected Integer pageNo;
 	protected Integer pageSize;
 
-	public MapCallback(String sql, Class<T> clz, Map<String, Object> params) {
+	public MapCallback(String sql, Class<?> clz, Map<String, Object> params) {
 		this.sql = sql;
 		this.clz = clz;
 		this.params = params;
 	}
 
-	public MapCallback(String sql, Class<T> clz, int pageNo, int pageSize, Map<String, Object> params) {
+	public MapCallback(String sql, Class<?> clz, int pageNo, int pageSize, Map<String, Object> params) {
 		this.sql = sql;
 		this.clz = clz;
 		this.params = params;
@@ -35,7 +35,7 @@ public class MapCallback<T> extends MapParamCallback<T> {
 
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
-		NativeQuery<T> query = null;
+		NativeQuery<?> query = null;
 		if (clz != null && Map.class.isAssignableFrom(clz)) {
 			query = session.createNativeQuery(sql);
 			query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
