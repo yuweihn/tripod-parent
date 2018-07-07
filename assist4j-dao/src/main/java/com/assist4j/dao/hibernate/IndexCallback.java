@@ -4,10 +4,6 @@ package com.assist4j.dao.hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
-//import org.hibernate.transform.Transformers;
-
-import java.util.List;
-import java.util.Map;
 
 
 /**
