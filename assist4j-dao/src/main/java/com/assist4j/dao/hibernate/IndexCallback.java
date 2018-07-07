@@ -3,7 +3,10 @@ package com.assist4j.dao.hibernate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.query.NativeQuery;
+
+import java.util.Map;
 
 
 /**
@@ -32,7 +35,13 @@ public class IndexCallback<T> extends IndexParamCallback<T> {
 
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
-		NativeQuery<T> query = session.createNativeQuery(sql, clz);
+		NativeQuery<T> query = null;
+		if (clz != null && Map.class.isAssignableFrom(clz)) {
+			query = session.createNativeQuery(sql);
+			query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
+		} else {
+			query = session.createNativeQuery(sql, clz);
+		}
 		assembleParams(query, params);
 
 		if (pageNo != null && pageSize != null) {
