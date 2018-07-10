@@ -31,17 +31,17 @@ public class NotEscapeHtmlOutputFormatList extends ArrayList<OutputFormat> {
 
 	private static OutputFormat INSTANCE = new CommonMarkupOutputFormat<TemplateHTMLOutputModel>() {
 		@Override
-		public void output(String textToEsc, Writer out) throws IOException, TemplateModelException {
+		public void output(String textToEsc, Writer out) throws IOException {
 			out.write(textToEsc);
 		}
 
 		@Override
-		public String escapePlainText(String plainTextContent) throws TemplateModelException {
+		public String escapePlainText(String plainTextContent) {
 			return plainTextContent;
 		}
 
 		@Override
-		public boolean isLegacyBuiltInBypassed(String builtInName) throws TemplateModelException {
+		public boolean isLegacyBuiltInBypassed(String builtInName) {
 			return false;
 		}
 
@@ -51,7 +51,7 @@ public class NotEscapeHtmlOutputFormatList extends ArrayList<OutputFormat> {
 		}
 
 		@Override
-		protected TemplateHTMLOutputModel newTemplateMarkupOutputModel(String plainTextContent, String markupContent) throws TemplateModelException {
+		protected TemplateHTMLOutputModel newTemplateMarkupOutputModel(String plainTextContent, String markupContent) {
 			return null;
 		}
 
