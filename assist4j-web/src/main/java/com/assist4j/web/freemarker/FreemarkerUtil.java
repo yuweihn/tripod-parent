@@ -1,4 +1,4 @@
-package com.assist4j.web;
+package com.assist4j.web.freemarker;
 
 
 import java.io.StringWriter;
