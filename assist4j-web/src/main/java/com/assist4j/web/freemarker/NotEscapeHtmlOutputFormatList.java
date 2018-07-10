@@ -4,7 +4,6 @@ package com.assist4j.web.freemarker;
 import freemarker.core.CommonMarkupOutputFormat;
 import freemarker.core.OutputFormat;
 import freemarker.core.TemplateHTMLOutputModel;
-import freemarker.template.TemplateModelException;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -15,6 +14,7 @@ import java.util.ArrayList;
  * html标签不逃逸。当使用SpringMVC5.×的时候使用。
  * 如果字符串中包含了html标签，则按照html的语法进行解析后输出，而不是原样输出。
  * @author yuwei
+ * @since 1.1.0
  */
 public class NotEscapeHtmlOutputFormatList extends ArrayList<OutputFormat> {
 	/**
