@@ -12,9 +12,8 @@ import java.util.ArrayList;
 
 
 /**
- * html标签不逃逸。
- * 比如，字符串中包含<br/>，则将该字符串折行显示，而不是将<br/>这几个字符串输出。
- * 当使用Springmvc5.×的时候使用。
+ * html标签不逃逸。当使用SpringMVC5.×的时候使用。
+ * 如果字符串中包含了html标签，则按照html的语法进行解析后输出，而不是原样输出。
  * @author yuwei
  */
 public class NotEscapeHtmlOutputFormatList extends ArrayList<OutputFormat> {
@@ -25,6 +24,7 @@ public class NotEscapeHtmlOutputFormatList extends ArrayList<OutputFormat> {
 
 
 	public NotEscapeHtmlOutputFormatList() {
+        super();
 		add(INSTANCE);
 	}
 
