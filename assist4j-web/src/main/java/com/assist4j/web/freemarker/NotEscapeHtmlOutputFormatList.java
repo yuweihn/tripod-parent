@@ -24,7 +24,7 @@ public class NotEscapeHtmlOutputFormatList extends ArrayList<OutputFormat> {
 
 
 	public NotEscapeHtmlOutputFormatList() {
-        super();
+		super();
 		add(INSTANCE);
 	}
 
