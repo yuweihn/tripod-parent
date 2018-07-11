@@ -26,16 +26,16 @@ public class SingleDataSourceHibernateConf {
 		LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource);
 
-		Properties properties = new Properties();
-		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-		properties.setProperty("hibernate.current_session_context_class", "org.springframework.orm.hibernate5.SpringSessionContext");
-		properties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
-		properties.setProperty("hibernate.cache.use_query_cache", "true");
-		properties.setProperty("hibernate.cache.use_second_level_cache", "false");
-		properties.setProperty("hibernate.show_sql", "false");
-		properties.setProperty("hibernate.jdbc.batch_size", "20");
-		properties.setProperty("hibernate.connection.release_mode", "auto");
-		sessionFactoryBean.setHibernateProperties(properties);
+		Properties hibernateProperties = new Properties();
+		hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+		hibernateProperties.setProperty("hibernate.current_session_context_class", "org.springframework.orm.hibernate5.SpringSessionContext");
+		hibernateProperties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
+		hibernateProperties.setProperty("hibernate.cache.use_query_cache", "true");
+		hibernateProperties.setProperty("hibernate.cache.use_second_level_cache", "false");
+		hibernateProperties.setProperty("hibernate.show_sql", "false");
+		hibernateProperties.setProperty("hibernate.jdbc.batch_size", "20");
+		hibernateProperties.setProperty("hibernate.connection.release_mode", "auto");
+		sessionFactoryBean.setHibernateProperties(hibernateProperties);
 		sessionFactoryBean.setMappingLocations(mappingLocations);
 		sessionFactoryBean.setPackagesToScan(packagesToScan);
 		return sessionFactoryBean;

@@ -1,4 +1,4 @@
 # assist4j
-支持SpringBoot2.*以上
+支持SpringBoot 1.*
 <br/>
-jdk1.8+
+jdk1.7+

@@ -4,9 +4,9 @@ package com.assist4j.dao.hibernate;
 import java.util.Map;
 
 import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.query.NativeQuery;
+import org.hibernate.transform.Transformers;
 
 
 /**
@@ -35,17 +35,17 @@ public class MapCallback extends MapParamCallback {
 
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
-		NativeQuery<?> query = null;
-		if (clz != null && Map.class.isAssignableFrom(clz)) {
-			query = session.createNativeQuery(sql);
-			query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
-		} else {
-			query = session.createNativeQuery(sql, clz);
-		}
+		SQLQuery query = session.createSQLQuery(sql);
 		assembleParams(query, params);
 
-		if (clz != null && Map.class.isAssignableFrom(clz)) {
-			query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
+		if (clz == null) {
+			
+		} else if (Number.class.isAssignableFrom(clz)) {
+			
+		} else if (Map.class.isAssignableFrom(clz)) {
+			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
+		} else {
+			query.addEntity(clz);
 		}
 
 		if (pageNo != null && pageSize != null) {

@@ -11,10 +11,7 @@ import java.util.Map;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import com.assist4j.dao.Dao;
-import org.hibernate.query.Query;
-
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaQuery;
 
 
 /**
@@ -43,12 +40,10 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> getAll() {
-		Session session = getSession();
-		CriteriaQuery<T> criteriaQuery = session.getCriteriaBuilder().createQuery(clz);
-		Query<T> query = session.createQuery(criteriaQuery);
-		return query.list();
+		return getSession().createCriteria(clz).list();
 	}
 
 	@Override
@@ -245,8 +240,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @param params
 	 * @return
 	 */
-	protected int execute(String sql, Map<String, Object> params) {
-		return (Integer) new MapModifyCallback(sql, params).doInHibernate(getSession());
+	protected Object execute(String sql, Map<String, Object> params) {
+		return new MapModifyCallback(sql, params).doInHibernate(getSession());
 	}
 	/**
 	 * 执行增删改操作
@@ -254,15 +249,15 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @param params
 	 * @return
 	 */
-	protected int execute(String sql, Object[] params) {
-		return (Integer) new IndexModifyCallback(sql, params).doInHibernate(getSession());
+	protected Object execute(String sql, Object[] params) {
+		return new IndexModifyCallback(sql, params).doInHibernate(getSession());
 	}
 	/**
 	 * 执行增删改操作
 	 * @param sql
 	 * @return
 	 */
-	protected int execute(String sql) {
+	protected Object execute(String sql) {
 		return execute(sql, (Object[]) null);
 	}
 	

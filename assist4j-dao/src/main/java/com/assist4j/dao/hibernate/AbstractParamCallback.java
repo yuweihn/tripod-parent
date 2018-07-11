@@ -1,7 +1,7 @@
 package com.assist4j.dao.hibernate;
 
 
-import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.orm.hibernate4.HibernateCallback;
 
 
 /**

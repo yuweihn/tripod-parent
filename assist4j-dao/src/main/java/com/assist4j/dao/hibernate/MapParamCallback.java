@@ -5,14 +5,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.hibernate.query.NativeQuery;
+import org.hibernate.Query;
 
 
 /**
  * @author wei
  */
 public abstract class MapParamCallback extends AbstractParamCallback {
-	protected void assembleParams(NativeQuery<?> query, Map<String, Object> params) {
+	protected void assembleParams(Query query, Map<String, Object> params) {
 		if (params == null || params.size() <= 0) {
 			return;
 		}
