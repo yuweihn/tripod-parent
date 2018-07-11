@@ -20,6 +20,7 @@ public class MapModifyCallback extends MapParamCallback {
 		this.params = params;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
 		NativeQuery<Object> query = session.createNativeQuery(sql);

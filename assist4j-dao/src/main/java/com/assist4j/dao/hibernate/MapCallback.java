@@ -33,6 +33,7 @@ public class MapCallback extends MapParamCallback {
 		this.pageSize = pageSize;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
 		NativeQuery<?> query = null;
@@ -43,10 +44,6 @@ public class MapCallback extends MapParamCallback {
 			query = session.createNativeQuery(sql, clz);
 		}
 		assembleParams(query, params);
-
-		if (clz != null && Map.class.isAssignableFrom(clz)) {
-			query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
-		}
 
 		if (pageNo != null && pageSize != null) {
 			if (pageNo <= 0) {
