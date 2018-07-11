@@ -6,7 +6,7 @@
 	<groupId>com.assist4j</groupId>
 	<artifactId>assist4j-session</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.14</version>
+	<version>1.0.15</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>The Project of Assist4j</description>
@@ -195,9 +195,6 @@
 		<resources>
 			<resource>
 				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.xml</include>
-				</includes>
 			</resource>
 			<resource>
 				<directory>src/main/resources</directory>
