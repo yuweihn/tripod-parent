@@ -67,7 +67,7 @@
 				var pageNo = $(this).attr("pn");
 				
 				/*检查url是否以问号结尾*/
-				if(/\?$/.test(url)) {
+				if (/\?$/.test(url)) {
 					location.href = url + "pageNo=" + pageNo + "&pageSize=${page.pageSize}";
 				} else {
 					location.href = url + "&pageNo=" + pageNo + "&pageSize=${page.pageSize}";
