@@ -33,6 +33,7 @@ public class IndexCallback extends IndexParamCallback {
 		this.pageSize = pageSize;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
 		SQLQuery query = session.createSQLQuery(sql);
