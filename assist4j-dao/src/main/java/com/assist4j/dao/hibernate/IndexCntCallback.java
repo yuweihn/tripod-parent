@@ -18,7 +18,6 @@ public class IndexCntCallback extends IndexParamCallback {
 		this.params = params;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object doInHibernate(Session session) throws HibernateException {
 		SQLQuery query = session.createSQLQuery(sql);
