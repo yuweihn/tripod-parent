@@ -8,6 +8,9 @@ package com.assist4j.data.cache;
  * @author yuwei
  */
 public interface DistLock {
-	boolean lock();
-	void unlock();
+	/**
+	 * @param expiredTime 单位：秒。
+	 */
+	boolean lock(String key, String owner, long expiredTime);
+	boolean unlock(String key, String owner);
 }
