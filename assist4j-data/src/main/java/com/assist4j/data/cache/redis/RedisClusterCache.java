@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.assist4j.data.cache.Cache;
 import com.assist4j.data.cache.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ import redis.clients.jedis.JedisPubSub;
 /**
  * @author yuwei
  */
-public class RedisClusterCache implements MessageCache {
+public class RedisClusterCache implements MessageCache, Cache {
 	private static final Logger log = LoggerFactory.getLogger(RedisClusterCache.class);
 	private static final String UTF_8 = "utf-8";
 	private BinaryJedisCluster jedisCluster;
