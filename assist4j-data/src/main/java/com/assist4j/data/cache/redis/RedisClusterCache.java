@@ -5,20 +5,17 @@ import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.assist4j.data.cache.Cache;
-import com.assist4j.data.cache.MessageHandler;
+import com.assist4j.data.cache.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.assist4j.data.cache.MessageCache;
-import com.assist4j.data.cache.CacheUtil;
 import redis.clients.jedis.JedisPubSub;
 
 
 /**
  * @author yuwei
  */
-public class RedisClusterCache implements MessageCache, Cache {
+public class RedisClusterCache implements Cache, MessageCache, DistLock {
 	private static final Logger log = LoggerFactory.getLogger(RedisClusterCache.class);
 	private static final String UTF_8 = "utf-8";
 	private BinaryJedisCluster jedisCluster;
@@ -66,7 +63,7 @@ public class RedisClusterCache implements MessageCache, Cache {
 		}
 
 		Calendar c = Calendar.getInstance();
-		c.add(Calendar.SECOND, (int)expiredTime);
+		c.add(Calendar.SECOND, (int) expiredTime);
 		return put(key, value, c.getTime());
 	}
 
@@ -106,4 +103,21 @@ public class RedisClusterCache implements MessageCache, Cache {
 	public void remove(String key) {
 		jedisCluster.del(key);
 	}
+
+    @Override
+    public boolean lock(String key, String owner, long expiredTime) {
+        String res = jedisCluster.setex(key, (int) expiredTime, owner);
+        return "1".equals(res);
+    }
+
+    @Override
+    public boolean unlock(String key, String owner) {
+        String val = get(key);
+        if (val == null || val.equals(owner)) {
+            Long reply = jedisCluster.del(key);
+            return reply != null && reply > 0;
+        } else {
+            return false;
+        }
+    }
 }

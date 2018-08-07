@@ -4,11 +4,8 @@ package com.assist4j.data.cache.redis;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import com.assist4j.data.cache.Cache;
-import com.assist4j.data.cache.MessageCache;
-import com.assist4j.data.cache.CacheUtil;
+import com.assist4j.data.cache.*;
 
-import com.assist4j.data.cache.MessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -24,7 +21,7 @@ import redis.clients.util.SafeEncoder;
 /**
  * @author yuwei
  */
-public class RedisCache implements MessageCache, Cache {
+public class RedisCache implements Cache, MessageCache, DistLock {
 	private static final Logger log = LoggerFactory.getLogger(RedisCache.class);
 	private RedisTemplate<String, Object> redisTemplate;
 
@@ -126,5 +123,27 @@ public class RedisCache implements MessageCache, Cache {
 	@Override
 	public void remove(String key) {
 		redisTemplate.delete(key);
+	}
+
+	@Override
+	public boolean lock(String key, String owner, long expiredTime) {
+		Boolean b = redisTemplate.execute(new RedisCallback<Boolean>() {
+			@Override
+			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
+				return connection.setEx(SafeEncoder.encode(key), expiredTime, SafeEncoder.encode(owner));
+			}
+		});
+		return b != null && b;
+	}
+
+	@Override
+	public boolean unlock(String key, String owner) {
+		String val = (String) redisTemplate.opsForValue().get(key);
+		if (val == null || val.equals(owner)) {
+			Boolean b = redisTemplate.delete(key);
+			return b != null && b;
+		} else {
+			return false;
+		}
 	}
 }
