@@ -99,13 +99,14 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	}
 
 	@Override
-	protected void createLeaderNode(String node) {
+	protected boolean createLeaderNode(String node) {
 		try {
 			String path = zk.create(zkNodeName, node.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 			log.info("Create server node ({} => {})", path, node);
+			return true;
 		} catch (KeeperException | InterruptedException e) {
 			log.error("", e);
-			throw new RuntimeException(e);
+			return false;
 		}
 	}
 

@@ -31,11 +31,8 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 	}
 
 	@Override
-	protected void createLeaderNode(String node) {
-		boolean b = redis.put(key, node, timeout / 1000);
-		if (!b) {
-			throw new RuntimeException("Error happened in cache.");
-		}
+	protected boolean createLeaderNode(String node) {
+		return redis.lock(key, node, timeout / 1000);
 	}
 
 	@Override
@@ -50,6 +47,6 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 
 	@Override
 	public void destroy() {
-		redis.remove(key);
+
 	}
 }
