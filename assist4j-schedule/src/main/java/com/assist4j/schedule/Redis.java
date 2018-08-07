@@ -8,13 +8,8 @@ package com.assist4j.schedule;
  */
 public interface Redis {
 	/**
-	 * 设置缓存中指定key的值
-	 * @param key 缓存key。
-	 * @param value 缓存的值。
-	 * @param expiredTime 缓存过期的秒数。
-	 * @return true更新成功，false更新失败。
+	 * @param expiredTime 单位：秒。
 	 */
-	boolean put(String key, String value, long expiredTime);
+	boolean lock(String key, String owner, long expiredTime);
 	String get(String key);
-	void remove(String key);
 }
