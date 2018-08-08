@@ -8,6 +8,11 @@ import java.util.Map;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import org.springframework.web.servlet.support.RequestContext;
+import org.springframework.web.servlet.view.AbstractTemplateView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 
 /**
@@ -26,8 +31,15 @@ public class FreemarkerUtil {
 		return merge(template, null);
 	}
 	public static String merge(String template, Map<String, Object> params) {
+		return merge(template, params, null, null);
+	}
+	public static String merge(String template, Map<String, Object> params, HttpServletRequest request, HttpServletResponse response) {
 		if (params == null) {
 			params = new HashMap<String, Object>();
+		}
+		if (request != null) {
+			params.put(AbstractTemplateView.SPRING_MACRO_REQUEST_CONTEXT_ATTRIBUTE, new RequestContext(request
+					, response, request.getServletContext(), params));
 		}
 
 		try {
