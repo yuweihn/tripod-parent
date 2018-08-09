@@ -15,7 +15,7 @@ import redis.clients.jedis.JedisPubSub;
 /**
  * @author yuwei
  */
-public class RedisClusterCache implements Cache, PubSub, DistLock {
+public class RedisClusterCache implements Cache, MessageCache, DistLock {
 	private static final Logger log = LoggerFactory.getLogger(RedisClusterCache.class);
 	private static final String UTF_8 = "utf-8";
 	private BinaryJedisCluster jedisCluster;

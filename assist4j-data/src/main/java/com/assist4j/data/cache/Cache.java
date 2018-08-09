@@ -8,7 +8,7 @@ import java.util.Date;
  * 缓存引擎接口
  * @author yuwei
  */
-public interface Cache extends PubSub, DistLock {
+public interface Cache extends MessageCache, DistLock {
 	/**
 	 * 缓存中是否包含key
 	 * 找到返回为true，找不到返回为false
