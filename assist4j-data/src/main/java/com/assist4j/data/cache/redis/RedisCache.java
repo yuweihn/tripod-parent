@@ -21,7 +21,7 @@ import redis.clients.util.SafeEncoder;
 /**
  * @author yuwei
  */
-public class RedisCache implements Cache, PubSub, DistLock {
+public class RedisCache implements Cache, MessageCache, DistLock {
 	private static final Logger log = LoggerFactory.getLogger(RedisCache.class);
 	private RedisTemplate<String, Object> redisTemplate;
 
