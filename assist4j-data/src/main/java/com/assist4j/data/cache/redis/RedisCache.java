@@ -126,6 +126,32 @@ public class RedisCache implements Cache, MessageCache, DistLock {
 	}
 
 	@Override
+	public <T> void hset(String key, String field, T value) {
+		String v = CacheUtil.objectToString(value);
+		redisTemplate.opsForHash().put(key, field, v);
+	}
+
+	@Override
+	public <T> T hget(String key, String field) {
+		String str = (String) redisTemplate.opsForHash().get(key, field);
+		if (str == null) {
+			return null;
+		}
+		try {
+			return CacheUtil.stringToObject(str);
+		} catch (Exception e) {
+			log.error("数据异常！！！key={}, field={}", key, field);
+			hdel(key, field);
+			return null;
+		}
+	}
+
+	@Override
+	public void hdel(String key, String field) {
+		redisTemplate.opsForHash().delete(key, field);
+	}
+
+	@Override
 	public boolean lock(String key, String owner, long expiredTime) {
 		Boolean b = redisTemplate.execute(new RedisCallback<Boolean>() {
 			@Override
