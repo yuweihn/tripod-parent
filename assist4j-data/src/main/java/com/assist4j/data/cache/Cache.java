@@ -47,4 +47,15 @@ public interface Cache {
 	 * @param key 缓存对象的key
 	 */
 	void remove(String key);
+
+	/**
+	 * 将哈希表 key 中的字段 field 的值设为 value
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @param <T>
+	 */
+	<T>void hset(String key, String field, T value);
+	<T>T hget(String key, String field);
+	void hdel(String key, String field);
 }

@@ -105,6 +105,36 @@ public class RedisClusterCache implements Cache, MessageCache, DistLock {
 	}
 
 	@Override
+	public <T> void hset(String key, String field, T value) {
+		String v = CacheUtil.objectToString(value);
+		Charset charset = Charset.forName(UTF_8);
+		jedisCluster.hset(key, field, v.getBytes(charset));
+	}
+
+	@Override
+	public <T> T hget(String key, String field) {
+		byte[] bytes = jedisCluster.hgetBytes(key, field);
+		if (bytes == null) {
+			return null;
+		}
+
+		Charset charset = Charset.forName(UTF_8);
+		String str = new String(bytes, charset);
+		try {
+			return CacheUtil.stringToObject(str);
+		} catch(Exception e) {
+			log.error("数据异常！！！key={}, field={}", key, field);
+			hdel(key, field);
+			return null;
+		}
+	}
+
+	@Override
+	public void hdel(String key, String field) {
+		jedisCluster.hdel(key, field);
+	}
+
+	@Override
 	public boolean lock(String key, String owner, long expiredTime) {
 		String res = jedisCluster.setex(key, (int) expiredTime, owner);
 		return "1".equals(res);
