@@ -2,6 +2,7 @@ package com.assist4j.data.cache;
 
 
 import java.util.Date;
+import java.util.Set;
 
 
 /**
@@ -56,6 +57,7 @@ public interface Cache {
 	 * @param <T>
 	 */
 	<T>void hset(String key, String field, T value);
+	Set<String> hfields(String key);
 	<T>T hget(String key, String field);
 	void hdel(String key, String field);
 }

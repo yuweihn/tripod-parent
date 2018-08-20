@@ -2,6 +2,8 @@ package com.assist4j.data.cache.redis;
 
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.assist4j.data.cache.*;
@@ -129,6 +131,20 @@ public class RedisCache implements Cache, MessageCache, DistLock {
 	public <T> void hset(String key, String field, T value) {
 		String v = CacheUtil.objectToString(value);
 		redisTemplate.opsForHash().put(key, field, v);
+	}
+
+	@Override
+	public Set<String> hfields(String key) {
+		Set<String> fieldSet = new HashSet<String>();
+		Set<Object> objectSet = redisTemplate.opsForHash().keys(key);
+		if (objectSet == null || objectSet.size() <= 0) {
+			return fieldSet;
+		}
+
+		for (Object obj: objectSet) {
+			fieldSet.add(obj.toString());
+		}
+		return fieldSet;
 	}
 
 	@Override

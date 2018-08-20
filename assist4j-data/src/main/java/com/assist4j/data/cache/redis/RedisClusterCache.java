@@ -4,6 +4,7 @@ package com.assist4j.data.cache.redis;
 import java.nio.charset.Charset;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Set;
 
 import com.assist4j.data.cache.*;
 import org.slf4j.Logger;
@@ -109,6 +110,11 @@ public class RedisClusterCache implements Cache, MessageCache, DistLock {
 		String v = CacheUtil.objectToString(value);
 		Charset charset = Charset.forName(UTF_8);
 		jedisCluster.hset(key, field, v.getBytes(charset));
+	}
+
+	@Override
+	public Set<String> hfields(String key) {
+		return jedisCluster.hkeys(key);
 	}
 
 	@Override
