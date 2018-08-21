@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.springframework.util.Assert;
+
 import com.alibaba.fastjson.JSON;
 import com.sun.management.OperatingSystemMXBean;
 
@@ -24,26 +26,23 @@ import com.sun.management.OperatingSystemMXBean;
  * @author yuwei
  */
 public abstract class MonitorUtil {
-	private static final long CPU_SLEEP_TIME = 1000L;
 	private static final int FAULT_LENGTH = 10;
 	private static final String OS_NAME = System.getProperty("os.name");
-	/**
-	 * 测网速时线程睡眠时间
-	 */
-	private static final long NET_SLEEP_TIME = 2000L;
 
 
 
 
 	/**
 	 * 获取cpu使用率
+	 * @param sleep            两次检测cpu的时间间隔(ms)
 	 * @return
 	 */
-	public static double getCpuUsage() {
+	public static double getCpuUsage(long sleep) {
+		Assert.isTrue(sleep > 0, "[sleep] must be larger than 0.");
 		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
-			return getCpuUsageForWindows();
+			return getCpuUsageForWindows(sleep);
 		} else {
-			return getCpuUsageForLinux();
+			return getCpuUsageForLinux(sleep);
 		}
 	}
 
@@ -51,14 +50,14 @@ public abstract class MonitorUtil {
 	 * 获取windows环境下cpu的使用率
 	 * @return
 	 */
-	private static double getCpuUsageForWindows() {
+	private static double getCpuUsageForWindows(long sleep) {
 		try {
 			String procCmd = System.getenv("windir")
 					+ "//system32//wbem//wmic.exe process get Caption,CommandLine,"
 					+ "KernelModeTime,ReadOperationCount,ThreadCount,UserModeTime,WriteOperationCount";
 			// 取进程信息
 			long[] c0 = readCpuForWindows(Runtime.getRuntime().exec(procCmd));
-			Thread.sleep(CPU_SLEEP_TIME);
+			Thread.sleep(sleep);
 			long[] c1 = readCpuForWindows(Runtime.getRuntime().exec(procCmd));
 			if (c0 != null && c1 != null) {
 				long idletime = c1[0] - c0[0];
@@ -83,10 +82,10 @@ public abstract class MonitorUtil {
 	 * 获取linux环境下cpu的使用率
 	 * @return
 	 */
-	private static double getCpuUsageForLinux() {
+	private static double getCpuUsageForLinux(long sleep) {
 		try {
 			Map<String, String> map1 = readCpuForLinux();
-			Thread.sleep(CPU_SLEEP_TIME);
+			Thread.sleep(sleep);
 			Map<String, String> map2 = readCpuForLinux();
 
 			long user1 = Long.parseLong(map1.get("user"));
@@ -395,17 +394,19 @@ public abstract class MonitorUtil {
 
 	/**
 	 * 获取网口的上下行速率(MB/s)
+	 * @param sleep            测网速时线程睡眠时间(ms)
 	 * @return
 	 */
-	public static NetSpeed getNetworkThroughput() {
+	public static NetSpeed getNetworkThroughput(long sleep) {
+		Assert.isTrue(sleep > 0, "[sleep] must be larger than 0.");
 		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
-			return getNetworkThroughputForWindows();
+			return getNetworkThroughputForWindows(sleep);
 		} else {
-			return getNetworkThroughputForLinux();
+			return getNetworkThroughputForLinux(sleep);
 		}
 	}
 
-	private static NetSpeed getNetworkThroughputForWindows() {
+	private static NetSpeed getNetworkThroughputForWindows(long sleep) {
 		Process pro1 = null;
 		Process pro2 = null;
 		Runtime r = Runtime.getRuntime();
@@ -416,12 +417,12 @@ public abstract class MonitorUtil {
 			pro1 = r.exec(command);
 			input1 = new BufferedReader(new InputStreamReader(pro1.getInputStream()));
 			NetDataBytes ndb1 = readInLine(input1, "windows");
-			Thread.sleep(NET_SLEEP_TIME);
+			Thread.sleep(sleep);
 			pro2 = r.exec(command);
 			input2 = new BufferedReader(new InputStreamReader(pro2.getInputStream()));
 			NetDataBytes ndb2 = readInLine(input2, "windows");
-			double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, 1024 * 1024 * NET_SLEEP_TIME);
-			double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, 1024 * 1024 * NET_SLEEP_TIME);
+			double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, 1024 * 1024 * sleep);
+			double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, 1024 * 1024 * sleep);
 			return new NetSpeed(rx, tx);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -440,7 +441,7 @@ public abstract class MonitorUtil {
 		}
 	}
 
-	private static NetSpeed getNetworkThroughputForLinux() {
+	private static NetSpeed getNetworkThroughputForLinux(long sleep) {
 		Process pro1 = null;
 		Process pro2 = null;
 		Runtime r = Runtime.getRuntime();
@@ -451,12 +452,12 @@ public abstract class MonitorUtil {
 			pro1 = r.exec(command);
 			input1 = new BufferedReader(new InputStreamReader(pro1.getInputStream()));
 			NetDataBytes ndb1 = readInLine(input1, "linux");
-			Thread.sleep(NET_SLEEP_TIME);
+			Thread.sleep(sleep);
 			pro2 = r.exec(command);
 			input2 = new BufferedReader(new InputStreamReader(pro2.getInputStream()));
 			NetDataBytes ndb2 = readInLine(input2, "linux");
-			double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, 1024 * 1024 * NET_SLEEP_TIME);
-			double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, 1024 * 1024 * NET_SLEEP_TIME);
+			double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, 1024 * 1024 * sleep);
+			double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, 1024 * 1024 * sleep);
 			return new NetSpeed(rx, tx);
 		} catch (Exception e) {
 			e.printStackTrace();
