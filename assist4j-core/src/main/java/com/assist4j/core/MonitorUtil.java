@@ -2,17 +2,21 @@ package com.assist4j.core;
 
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import com.alibaba.fastjson.JSON;
 import com.sun.management.OperatingSystemMXBean;
 
 
@@ -23,6 +27,10 @@ public abstract class MonitorUtil {
 	private static final long CPU_SLEEP_TIME = 1000L;
 	private static final int FAULT_LENGTH = 10;
 	private static final String OS_NAME = System.getProperty("os.name");
+	/**
+	 * 测网速时线程睡眠时间
+	 */
+	private static final long NET_SLEEP_TIME = 2000L;
 
 
 
@@ -301,4 +309,241 @@ public abstract class MonitorUtil {
 			}
 		}
 	}
+
+
+	/**
+	 * 获取磁盘使用率
+	 * @return
+	 */
+	public static double getDiskUsage() {
+		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
+			return getDiskUsageForWindows();
+		} else {
+			return getDiskUsageForLinux();
+		}
+	}
+
+	private static double getDiskUsageForWindows() {
+		long allTotal = 0;
+		long allFree = 0;
+		for (char c = 'A'; c <= 'Z'; c++) {
+			String dirName = c + ":/";
+			File win = new File(dirName);
+			if (win.exists()) {
+				allTotal = allTotal + win.getTotalSpace();
+				allFree = allFree + win.getFreeSpace();
+			}
+		}
+		return MathUtil.div(allTotal - allFree, allTotal);
+	}
+
+	private static double getDiskUsageForLinux() {
+		double totalHD = 0;
+		double usedHD = 0;
+		BufferedReader in = null;
+		try {
+			Runtime rt = Runtime.getRuntime();
+			Process p = rt.exec("df -hl");// df -hl 查看硬盘空间
+			in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String str = null;
+			String[] strArray = null;
+			while ((str = in.readLine()) != null) {
+				int m = 0;
+				strArray = str.split(" ");
+				for (String tmp : strArray) {
+					if (tmp.trim().length() == 0) {
+						continue;
+					}
+					++m;
+					if (tmp.indexOf("G") != -1) {
+						if (m == 2) {
+							if (!tmp.equals("") && !tmp.equals("0")) {
+								totalHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1)) * 1024;
+							}
+						}
+						if (m == 3) {
+							if (!tmp.equals("none") && !tmp.equals("0")) {
+								usedHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1)) * 1024;
+							}
+						}
+					}
+					if (tmp.indexOf("M") != -1) {
+						if (m == 2) {
+							if (!tmp.equals("") && !tmp.equals("0")) {
+								totalHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1));
+							}
+						}
+						if (m == 3) {
+							if (!tmp.equals("none") && !tmp.equals("0")) {
+								usedHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1));
+							}
+						}
+					}
+				}
+			}
+			return MathUtil.div(usedHD, totalHD);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+			}
+		}
+	}
+
+	/**
+	 * 获取网口的上下行速率(MB/s)
+	 * @return
+	 */
+	public static NetSpeed getNetworkThroughput() {
+		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
+			return getNetworkThroughputForWindows();
+		} else {
+			return getNetworkThroughputForLinux();
+		}
+	}
+
+	private static NetSpeed getNetworkThroughputForWindows() {
+		Process pro1 = null;
+		Process pro2 = null;
+		Runtime r = Runtime.getRuntime();
+		BufferedReader input1 = null;
+		BufferedReader input2 = null;
+		try {
+			String command = "netstat -e";
+			pro1 = r.exec(command);
+			input1 = new BufferedReader(new InputStreamReader(pro1.getInputStream()));
+			NetDataBytes ndb1 = readInLine(input1, "windows");
+			Thread.sleep(NET_SLEEP_TIME);
+			pro2 = r.exec(command);
+			input2 = new BufferedReader(new InputStreamReader(pro2.getInputStream()));
+			NetDataBytes ndb2 = readInLine(input2, "windows");
+			double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, 1024 * 1024 * NET_SLEEP_TIME);
+			double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, 1024 * 1024 * NET_SLEEP_TIME);
+			return new NetSpeed(rx, tx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new NetSpeed(0, 0);
+		} finally {
+			try {
+				input1.close();
+			} catch (IOException e) {
+			}
+			try {
+				input2.close();
+			} catch (IOException e) {
+			}
+			pro1.destroy();
+			pro2.destroy();
+		}
+	}
+
+	private static NetSpeed getNetworkThroughputForLinux() {
+		Process pro1 = null;
+		Process pro2 = null;
+		Runtime r = Runtime.getRuntime();
+		BufferedReader input1 = null;
+		BufferedReader input2 = null;
+		try {
+			String command = "watch ifconfig";
+			pro1 = r.exec(command);
+			input1 = new BufferedReader(new InputStreamReader(pro1.getInputStream()));
+			NetDataBytes ndb1 = readInLine(input1, "linux");
+			Thread.sleep(NET_SLEEP_TIME);
+			pro2 = r.exec(command);
+			input2 = new BufferedReader(new InputStreamReader(pro2.getInputStream()));
+			NetDataBytes ndb2 = readInLine(input2, "linux");
+			double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, 1024 * 1024 * NET_SLEEP_TIME);
+			double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, 1024 * 1024 * NET_SLEEP_TIME);
+			return new NetSpeed(rx, tx);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new NetSpeed(0, 0);
+		} finally {
+			try {
+				input1.close();
+			} catch (IOException e) {
+			}
+			try {
+				input2.close();
+			} catch (IOException e) {
+			}
+			pro1.destroy();
+			pro2.destroy();
+		}
+	}
+
+	private static NetDataBytes readInLine(BufferedReader input, String osType) {
+		String rxResult = "";
+		String txResult = "";
+		StringTokenizer tokenStat = null;
+		try {
+			if ("linux".equalsIgnoreCase(osType)) {
+				String result[] = input.readLine().split(" ");
+				int j = 0, k = 0;
+				for (int i = 0; i < result.length; i++) {
+					if (result[i].indexOf("RX") != -1) {
+						j++;
+						if (j == 2) {
+							rxResult = result[i + 1].split(":")[1];
+						}
+					}
+					if (result[i].indexOf("TX") != -1) {
+						k++;
+						if (k == 2) {
+							txResult = result[i + 1].split(":")[1];
+							break;
+						}
+					}
+				}
+			} else {
+				input.readLine();
+				input.readLine();
+				input.readLine();
+				input.readLine();
+				tokenStat = new StringTokenizer(input.readLine());
+				tokenStat.nextToken();
+				rxResult = tokenStat.nextToken();
+				txResult = tokenStat.nextToken();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new NetDataBytes(Long.parseLong(txResult), Long.parseLong(rxResult));
+	}
+
+	private static class NetDataBytes {
+		private long up;
+		private long down;
+		private NetDataBytes(long up, long down) {
+			this.up = up;
+			this.down = down;
+		}
+	}
+	public static class NetSpeed {
+		private Date time;
+		private double up;
+		private double down;
+		private NetSpeed(double up, double down) {
+			this.time = new Date();
+			this.up = up;
+			this.down = down;
+		}
+		public Date getTime() {
+			return time;
+		}
+		public double getUp() {
+			return up;
+		}
+		public double getDown() {
+			return down;
+		}
+		@Override
+		public String toString() {
+			return JSON.toJSONString(NetSpeed.this);
+		}
+	}
 }
+
