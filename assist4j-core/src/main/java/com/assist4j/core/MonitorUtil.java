@@ -393,7 +393,7 @@ public abstract class MonitorUtil {
     }
 
     /**
-     * 获取网口的上下行速率(MB/s)
+     * 获取网口的上下行速率(B/s)
      * @param sleep            测网速时线程睡眠时间(ms)
      * @return
      */
@@ -421,8 +421,8 @@ public abstract class MonitorUtil {
             pro2 = r.exec(command);
             input2 = new BufferedReader(new InputStreamReader(pro2.getInputStream()));
             NetDataBytes ndb2 = readInLine(input2, "windows");
-            double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, 1024 * 1024 * sleep);
-            double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, 1024 * 1024 * sleep);
+            double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, sleep);
+            double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, sleep);
             return new NetSpeed(rx, tx);
         } catch (Exception e) {
             e.printStackTrace();
@@ -456,8 +456,8 @@ public abstract class MonitorUtil {
             pro2 = r.exec(command);
             input2 = new BufferedReader(new InputStreamReader(pro2.getInputStream()));
             NetDataBytes ndb2 = readInLine(input2, "linux");
-            double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, 1024 * 1024 * sleep);
-            double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, 1024 * 1024 * sleep);
+            double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, sleep);
+            double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, sleep);
             return new NetSpeed(rx, tx);
         } catch (Exception e) {
             e.printStackTrace();
