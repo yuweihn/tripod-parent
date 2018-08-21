@@ -6,11 +6,14 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+
+import com.sun.management.OperatingSystemMXBean;
 
 
 /**
@@ -19,32 +22,33 @@ import java.util.StringTokenizer;
 public abstract class MonitorUtil {
 	private static final long CPU_SLEEP_TIME = 1000L;
 	private static final int FAULT_LENGTH = 10;
-	
-	
+	private static final String OS_NAME = System.getProperty("os.name");
+
+
+
 
 	/**
 	 * 获取cpu使用率
 	 * @return
 	 */
 	public static double getCpuUsage() {
-		String osName = System.getProperty("os.name");
-		if (osName.toLowerCase().contains("windows") || osName.toLowerCase().contains("win")) {
-			return getCpuRateForWindows();
+		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
+			return getCpuUsageForWindows();
 		} else {
-			return getCpuRateForLinux();
+			return getCpuUsageForLinux();
 		}
 	}
-	
+
 	/**
 	 * 获取windows环境下cpu的使用率
 	 * @return
 	 */
-	private static double getCpuRateForWindows() {
+	private static double getCpuUsageForWindows() {
 		try {
-			String procCmd = System.getenv("windir") 
-					+ "//system32//wbem//wmic.exe process get Caption,CommandLine," 
+			String procCmd = System.getenv("windir")
+					+ "//system32//wbem//wmic.exe process get Caption,CommandLine,"
 					+ "KernelModeTime,ReadOperationCount,ThreadCount,UserModeTime,WriteOperationCount";
-			// 取进程信息  
+			// 取进程信息
 			long[] c0 = readCpuForWindows(Runtime.getRuntime().exec(procCmd));
 			Thread.sleep(CPU_SLEEP_TIME);
 			long[] c1 = readCpuForWindows(Runtime.getRuntime().exec(procCmd));
@@ -71,7 +75,7 @@ public abstract class MonitorUtil {
 	 * 获取linux环境下cpu的使用率
 	 * @return
 	 */
-	private static double getCpuRateForLinux() {
+	private static double getCpuUsageForLinux() {
 		try {
 			Map<String, String> map1 = readCpuForLinux();
 			Thread.sleep(CPU_SLEEP_TIME);
@@ -107,7 +111,7 @@ public abstract class MonitorUtil {
 			return 0;
 		}
 	}
-	
+
 	private static Map<String, String> readCpuForLinux() {
 		InputStreamReader inputs = null;
 		BufferedReader buffer = null;
@@ -144,16 +148,16 @@ public abstract class MonitorUtil {
 		} finally {
 			try {
 				buffer.close();
-			} catch (Exception e2) {
+			} catch (Exception e) {
 			}
 			try {
 				inputs.close();
-			} catch (Exception e2) {
+			} catch (Exception e) {
 			}
 		}
 		return map;
 	}
-	
+
 	/**
 	 * window读取cpu相关信息
 	 * @param proc
@@ -196,7 +200,7 @@ public abstract class MonitorUtil {
 					idletime += Long.valueOf(substring(line, umtidx, wocidx - 1).trim()).longValue();
 					continue;
 				}
-				
+
 				kneltime += Long.valueOf(substring(line, kmtidx, rocidx - 1).trim()).longValue();
 				usertime += Long.valueOf(substring(line, umtidx, wocidx - 1).trim()).longValue();
 			}
@@ -214,7 +218,7 @@ public abstract class MonitorUtil {
 		}
 		return null;
 	}
-	
+
 	private static String substring(String src, int start_idx, int end_idx) throws UnsupportedEncodingException {
 		byte[] b = src.getBytes("utf-8");
 		String tgt = "";
@@ -222,5 +226,79 @@ public abstract class MonitorUtil {
 			tgt += (char) b[i];
 		}
 		return tgt;
+	}
+
+
+	/**
+	 * 获取内存使用率
+	 * @return
+	 */
+	public static double getMemUsage() {
+		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
+			return getMemUsageForWindows();
+		} else {
+			return getMemUsageForLinux();
+		}
+	}
+
+	private static double getMemUsageForWindows() {
+		try {
+			OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+			// 总的物理内存+虚拟内存
+			long totalVirtualMemory = osmxb.getTotalSwapSpaceSize();
+			// 剩余的物理内存
+			long freePhysicalMemorySize = osmxb.getFreePhysicalMemorySize();
+			return MathUtil.div(totalVirtualMemory - freePhysicalMemorySize, totalVirtualMemory);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	private static double getMemUsageForLinux() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		InputStreamReader inputs = null;
+		BufferedReader buffer = null;
+		try {
+			inputs = new InputStreamReader(new FileInputStream("/proc/meminfo"));
+			buffer = new BufferedReader(inputs);
+			String line = "";
+			while (true) {
+				line = buffer.readLine();
+				if (line == null) {
+					break;
+				}
+				int beginIndex = 0;
+				int endIndex = line.indexOf(":");
+				if (endIndex != -1) {
+					String key = line.substring(beginIndex, endIndex);
+					beginIndex = endIndex + 1;
+					endIndex = line.length();
+					String memory = line.substring(beginIndex, endIndex);
+					String value = memory.replace("kB", "").trim();
+					map.put(key, value);
+				}
+			}
+
+			long memTotal = Long.parseLong(map.get("MemTotal").toString());
+			long memFree = Long.parseLong(map.get("MemFree").toString());
+			long memUsed = memTotal - memFree;
+			long buffers = Long.parseLong(map.get("Buffers").toString());
+			long cached = Long.parseLong(map.get("Cached").toString());
+
+			return MathUtil.div(memUsed - buffers - cached, memTotal);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		} finally {
+			try {
+				buffer.close();
+			} catch (Exception e) {
+			}
+			try {
+				inputs.close();
+			} catch (Exception e) {
+			}
+		}
 	}
 }
