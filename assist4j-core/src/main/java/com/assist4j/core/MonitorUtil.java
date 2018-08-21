@@ -93,9 +93,9 @@ public abstract class MonitorUtil {
 
 			long totalIdle1 = user1 + nice1 + system1 + idle1;
 			long totalIdle2 = user2 + nice2 + system2 + idle2;
-			long totalidle = totalIdle2 - totalIdle1;
+			long totalIdle = totalIdle2 - totalIdle1;
 
-			double cpuRate = MathUtil.div(total, totalidle);
+			double cpuRate = MathUtil.div(total, totalIdle);
 			if (cpuRate > 1) {
 				cpuRate = 1;
 			} else if (cpuRate < 0) {
