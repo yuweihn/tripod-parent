@@ -134,14 +134,18 @@ public class RedisCache implements Cache, MessageCache, DistLock {
 	}
 
     @Override
-    public Set<String> hfields(String key) {
-        Set<String> fieldSet = new HashSet<String>();
-        redisTemplate.opsForHash().keys(key).stream().flatMap(f -> {
-            fieldSet.add(f.toString());
-            return null;
-        });
-        return fieldSet;
-    }
+	public Set<String> hfields(String key) {
+		Set<String> fieldSet = new HashSet<String>();
+		Set<Object> objectSet = redisTemplate.opsForHash().keys(key);
+		if (objectSet == null || objectSet.size() <= 0) {
+			return fieldSet;
+		}
+
+		for (Object obj: objectSet) {
+			fieldSet.add(obj.toString());
+		}
+		return fieldSet;
+	}
 
     @Override
 	public <T> T hget(String key, String field) {
