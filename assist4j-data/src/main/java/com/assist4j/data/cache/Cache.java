@@ -22,7 +22,7 @@ public interface Cache {
 	 * 更新缓存中指定key的值
 	 * @param key 缓存key。
 	 * @param value 缓存的值。
-	 * @param expiredTime 缓存过期的秒数。
+	 * @param expiredTime 过期时间(s)。
 	 * @return true更新成功，false更新失败。
 	 */
 	<T>boolean put(String key, T value, long expiredTime);
@@ -54,9 +54,10 @@ public interface Cache {
 	 * @param key
 	 * @param field
 	 * @param value
+	 * @param expiredTime 过期时间(s)。
 	 * @param <T>
 	 */
-	<T>void hset(String key, String field, T value);
+	<T>void hset(String key, String field, T value, long expiredTime);
 	Set<String> hfields(String key);
 	<T>T hget(String key, String field);
 	void hdel(String key, String field);
