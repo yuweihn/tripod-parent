@@ -106,10 +106,15 @@ public class RedisClusterCache implements Cache, MessageCache, DistLock {
 	}
 
 	@Override
-	public <T> void hset(String key, String field, T value) {
+	public <T> void hset(String key, String field, T value, long expiredTime) {
+		if (expiredTime <= 0) {
+			throw new RuntimeException("Invalid expiredTime.");
+		}
+
 		String v = CacheUtil.objectToString(value);
 		Charset charset = Charset.forName(UTF_8);
 		jedisCluster.hset(key, field, v.getBytes(charset));
+		jedisCluster.expire(key, (int) expiredTime);
 	}
 
 	@Override

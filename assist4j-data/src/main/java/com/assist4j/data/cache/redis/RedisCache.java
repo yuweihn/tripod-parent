@@ -128,9 +128,14 @@ public class RedisCache implements Cache, MessageCache, DistLock {
 	}
 
 	@Override
-	public <T> void hset(String key, String field, T value) {
+	public <T> void hset(String key, String field, T value, long expiredTime) {
+		if (expiredTime <= 0) {
+			throw new RuntimeException("Invalid expiredTime.");
+		}
+
 		String v = CacheUtil.objectToString(value);
 		redisTemplate.opsForHash().put(key, field, v);
+		redisTemplate.expire(key, expiredTime, TimeUnit.SECONDS);
 	}
 
 	@Override
