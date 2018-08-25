@@ -1,14 +1,14 @@
 package com.assist4j.data.springboot;
 
 
-import com.assist4j.data.cache.redis.BinaryJedisCluster;
-import com.assist4j.data.cache.redis.RedisClusterCache;
-import com.assist4j.data.cache.redis.JedisClusterFactory;
+import com.assist4j.data.cache.redis.RedisCache;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.JedisPoolConfig;
+import org.springframework.data.redis.connection.RedisClusterConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.List;
 
@@ -19,36 +19,34 @@ import java.util.List;
  */
 public class RedisClusterConf {
 
-	@Bean(name = "jedisPoolConfig")
-	public JedisPoolConfig jedisPoolConfig(@Value("${redis.pool.maxTotal:1024}") int maxTotal
-			, @Value("${redis.pool.maxIdle:200}") int maxIdle
-			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
-			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow) {
-		JedisPoolConfig config = new JedisPoolConfig();
-		config.setMaxTotal(maxTotal);
-		config.setMaxIdle(maxIdle);
-		config.setMaxWaitMillis(maxWaitMillis);
-		config.setTestOnBorrow(testOnBorrow);
-		return config;
-	}
-
-	@Bean(name = "jedisCluster", initMethod = "init")
-	public JedisClusterFactory jedisClusterFactory(@Qualifier("jedisPoolConfig") JedisPoolConfig jedisPoolConfig
-			, @Qualifier("redisNodeList") List<HostAndPort> redisNodeList
+	@Bean(name = "redisClusterConfiguration")
+	public RedisClusterConfiguration redisClusterConfiguration(@Qualifier("redisNodeList") List<String> redisNodeList
 			, @Value("${redis.cluster.timeout:300000}") int timeout
 			, @Value("${redis.cluster.maxRedirections:6}") int maxRedirections) {
-		JedisClusterFactory factory = new JedisClusterFactory();
-		factory.setJedisPoolConfig(jedisPoolConfig);
-		factory.setRedisNodeList(redisNodeList);
-		factory.setTimeout(timeout);
-		factory.setMaxRedirections(maxRedirections);
-		return factory;
+		RedisClusterConfiguration conf = new RedisClusterConfiguration(redisNodeList);
+		conf.setMaxRedirects(maxRedirections);
+		return conf;
+	}
+
+	@Bean(name = "lettuceConnectionFactory")
+	public LettuceConnectionFactory lettuceConnectionFactory(@Qualifier("redisClusterConfiguration") RedisClusterConfiguration config) {
+		LettuceConnectionFactory connFactory = new LettuceConnectionFactory(config);
+		return connFactory;
+	}
+
+	@Bean(name = "redisTemplate")
+	public RedisTemplate<String, Object> redisTemplate(@Qualifier("lettuceConnectionFactory") LettuceConnectionFactory connFactory) {
+		RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+		template.setConnectionFactory(connFactory);
+		template.setKeySerializer(new StringRedisSerializer());
+		template.setValueSerializer(new StringRedisSerializer());
+		return template;
 	}
 
 	@Bean(name = "redisCache")
-	public RedisClusterCache redisClusterCache(@Qualifier("jedisCluster") BinaryJedisCluster jedisCluster) {
-		RedisClusterCache cache = new RedisClusterCache();
-		cache.setJedisCluster(jedisCluster);
+	public RedisCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template) {
+		RedisCache cache = new RedisCache();
+		cache.setRedisTemplate(template);
 		return cache;
 	}
 }

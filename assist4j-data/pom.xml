@@ -19,7 +19,7 @@
 		<fastjson.version>1.2.47</fastjson.version>
 		<hibernate.version>5.2.17.Final</hibernate.version>
 		<jdk.version>1.8</jdk.version>
-		<jedis.version>2.9.0</jedis.version>
+		<lettuce.version>5.0.4.RELEASE</lettuce.version>
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
 		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
@@ -60,9 +60,9 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>redis.clients</groupId>
-			<artifactId>jedis</artifactId>
-			<version>${jedis.version}</version>
+			<groupId>io.lettuce</groupId>
+			<artifactId>lettuce-core</artifactId>
+			<version>${lettuce.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

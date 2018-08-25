@@ -1,6 +1,7 @@
 package com.assist4j.data.cache.redis;
 
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,8 +17,7 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-
-import redis.clients.util.SafeEncoder;
+import org.springframework.data.redis.serializer.RedisSerializer;
 
 
 /**
@@ -25,6 +25,7 @@ import redis.clients.util.SafeEncoder;
  */
 public class RedisCache implements Cache, MessageCache, DistLock {
 	private static final Logger log = LoggerFactory.getLogger(RedisCache.class);
+	private static final String CHARSET = "utf-8";
 	private RedisTemplate<String, Object> redisTemplate;
 
 
@@ -33,13 +34,31 @@ public class RedisCache implements Cache, MessageCache, DistLock {
 	}
 
 
+
+	private static byte[] encode(final String str) {
+		try {
+			if (str == null) {
+				throw new RuntimeException("value sent to redis cannot be null");
+			}
+			return str.getBytes(CHARSET);
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	private static String decode(final byte[] data) {
+		try {
+			return new String(data, CHARSET);
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	@Override
 	public <T>void publish(final String channel, final T value) {
 		final String v = CacheUtil.objectToString(value);
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.publish(SafeEncoder.encode(channel), SafeEncoder.encode(v));
+				connection.publish(encode(channel), encode(v));
 				return null;
 			}
 		});
@@ -57,17 +76,17 @@ public class RedisCache implements Cache, MessageCache, DistLock {
 						String msg = null;
 
 						if (message.getChannel() != null) {
-							channel = SafeEncoder.encode(message.getChannel());
+							channel = decode(message.getChannel());
 						}
 
 						if (message.getBody() != null) {
-							msg = SafeEncoder.encode(message.getBody());
+							msg = decode(message.getBody());
 						}
 
 						T t = CacheUtil.stringToObject(msg);
 						handler.handle(channel, t);
 					}
-				}, SafeEncoder.encode(channel));
+				}, encode(channel));
 				return null;
 			}
 		});
@@ -177,7 +196,12 @@ public class RedisCache implements Cache, MessageCache, DistLock {
 		Boolean b = redisTemplate.execute(new RedisCallback<Boolean>() {
 			@Override
 			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-				return connection.setEx(SafeEncoder.encode(key), expiredTime, SafeEncoder.encode(owner));
+				RedisSerializer keySerializer = redisTemplate.getKeySerializer();
+				byte[] bkey = keySerializer.serialize(key);
+
+				RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
+				byte[] bvalue = valueSerializer.serialize(owner);
+				return connection.setEx(bkey, expiredTime, bvalue);
 			}
 		});
 		return b != null && b;
