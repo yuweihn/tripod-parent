@@ -2,12 +2,15 @@ package com.assist4j.data.springboot;
 
 
 import com.assist4j.data.cache.redis.RedisCache;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -17,6 +20,21 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  * @author yuwei
  */
 public class RedisConf {
+	@Bean(name = "lettuceClientConfiguration")
+	public LettuceClientConfiguration clientConfiguration(@Value("${redis.pool.maxTotal:1024}") int maxTotal
+			, @Value("${redis.pool.maxIdle:200}") int maxIdle
+			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
+			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow) {
+		GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+		poolConfig.setMaxTotal(maxTotal);
+		poolConfig.setMaxIdle(maxIdle);
+		poolConfig.setMaxWaitMillis(maxWaitMillis);
+		poolConfig.setTestOnBorrow(testOnBorrow);
+
+		LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder builder = LettucePoolingClientConfiguration.builder();
+		builder.poolConfig(poolConfig);
+		return builder.build();
+	}
 
 	@Bean(name = "redisStandaloneConfiguration")
 	public RedisStandaloneConfiguration redisStandaloneConfiguration(@Value("${redis.host:}") String host
@@ -35,8 +53,9 @@ public class RedisConf {
 	}
 
 	@Bean(name = "lettuceConnectionFactory")
-	public LettuceConnectionFactory lettuceConnectionFactory(@Qualifier("redisStandaloneConfiguration") RedisStandaloneConfiguration config) {
-		LettuceConnectionFactory connFactory = new LettuceConnectionFactory(config);
+	public LettuceConnectionFactory lettuceConnectionFactory(@Qualifier("lettuceClientConfiguration") LettuceClientConfiguration clientConfig
+			, @Qualifier("redisStandaloneConfiguration") RedisStandaloneConfiguration config) {
+		LettuceConnectionFactory connFactory = new LettuceConnectionFactory(config, clientConfig);
 		return connFactory;
 	}
 
