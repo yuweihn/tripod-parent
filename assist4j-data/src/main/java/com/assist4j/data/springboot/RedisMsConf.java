@@ -15,6 +15,7 @@ import org.springframework.data.redis.connection.lettuce.LettucePoolingClientCon
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+import java.time.Duration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,6 +38,7 @@ public class RedisMsConf {
 
 		LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder builder = LettucePoolingClientConfiguration.builder();
 		builder.poolConfig(poolConfig);
+		builder.commandTimeout(Duration.ofMillis(maxWaitMillis));
 		return builder.build();
 	}
 
