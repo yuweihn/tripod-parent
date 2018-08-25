@@ -2,7 +2,8 @@ package com.assist4j.data.springboot;
 
 
 import com.assist4j.data.cache.redis.RedisCache;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import io.lettuce.core.ClientOptions;
+import io.lettuce.core.SocketOptions;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +11,6 @@ import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -23,19 +23,21 @@ import java.time.Duration;
  */
 public class RedisConf {
 	@Bean(name = "lettuceClientConfiguration")
-	public LettuceClientConfiguration clientConfiguration(@Value("${redis.pool.maxTotal:1024}") int maxTotal
-			, @Value("${redis.pool.maxIdle:200}") int maxIdle
-			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
-			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow) {
-		GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
-		poolConfig.setMaxTotal(maxTotal);
-		poolConfig.setMaxIdle(maxIdle);
-		poolConfig.setMaxWaitMillis(maxWaitMillis);
-		poolConfig.setTestOnBorrow(testOnBorrow);
+	public LettuceClientConfiguration clientConfiguration(@Value("${redis.socket.connectTimeoutMillis:10000}") long connectTimeoutMillis) {
+		SocketOptions socketOptions = SocketOptions.builder()
+				.keepAlive(true)
+				.tcpNoDelay(true)
+				.connectTimeout(Duration.ofMillis(connectTimeoutMillis))
+				.build();
 
-		LettucePoolingClientConfiguration.LettucePoolingClientConfigurationBuilder builder = LettucePoolingClientConfiguration.builder();
-		builder.poolConfig(poolConfig);
-		builder.commandTimeout(Duration.ofMillis(maxWaitMillis));
+		ClientOptions clientOptions = ClientOptions.builder()
+				.socketOptions(socketOptions)
+				.pingBeforeActivateConnection(true)
+				.autoReconnect(false)
+				.build();
+
+		LettuceClientConfiguration.LettuceClientConfigurationBuilder builder = LettuceClientConfiguration.builder();
+		builder.clientOptions(clientOptions);
 		return builder.build();
 	}
 
