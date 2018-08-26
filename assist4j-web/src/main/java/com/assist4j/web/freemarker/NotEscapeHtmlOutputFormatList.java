@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 /**
- * html标签不逃逸。当使用SpringMVC5.×的时候使用。
+ * html标签不逃逸。当使用SpringMVC5.0.0 ~ 5.0.7的时候使用，5.0.8之后不需要了。
  * 如果字符串中包含了html标签，则按照html的语法进行解析后输出，而不是原样输出。
  * @author yuwei
  * @since 1.1.0
