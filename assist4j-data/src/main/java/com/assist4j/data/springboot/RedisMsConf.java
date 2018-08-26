@@ -36,7 +36,6 @@ public class RedisMsConf {
 		ClientOptions clientOptions = ClientOptions.builder()
 				.socketOptions(socketOptions)
 				.pingBeforeActivateConnection(true)
-				.autoReconnect(false)
 				.build();
 
 		LettuceClientConfiguration.LettuceClientConfigurationBuilder builder = LettuceClientConfiguration.builder();
@@ -70,6 +69,7 @@ public class RedisMsConf {
 			, @Qualifier("redisSentinelConfiguration") RedisSentinelConfiguration config) {
 		LettuceConnectionFactory connFactory = new LettuceConnectionFactory(config, clientConfig);
 		connFactory.setValidateConnection(true);
+		connFactory.setShareNativeConnection(false);
 		return connFactory;
 	}
 

@@ -33,7 +33,6 @@ public class RedisConf {
 		ClientOptions clientOptions = ClientOptions.builder()
 				.socketOptions(socketOptions)
 				.pingBeforeActivateConnection(true)
-				.autoReconnect(false)
 				.build();
 
 		LettuceClientConfiguration.LettuceClientConfigurationBuilder builder = LettuceClientConfiguration.builder();
@@ -62,6 +61,7 @@ public class RedisConf {
 			, @Qualifier("redisStandaloneConfiguration") RedisStandaloneConfiguration config) {
 		LettuceConnectionFactory connFactory = new LettuceConnectionFactory(config, clientConfig);
 		connFactory.setValidateConnection(true);
+		connFactory.setShareNativeConnection(false);
 		return connFactory;
 	}
 
