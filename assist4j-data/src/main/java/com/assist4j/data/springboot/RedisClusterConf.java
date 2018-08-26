@@ -2,14 +2,14 @@ package com.assist4j.data.springboot;
 
 
 import com.assist4j.data.cache.redis.RedisCache;
-import io.lettuce.core.ClientOptions;
-import io.lettuce.core.SocketOptions;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -23,21 +23,25 @@ import java.util.List;
  */
 public class RedisClusterConf {
 	@Bean(name = "lettuceClientConfiguration")
-	public LettuceClientConfiguration clientConfiguration(@Value("${redis.socket.connectTimeoutMillis:5000}") long connectTimeoutMillis) {
-		SocketOptions socketOptions = SocketOptions.builder()
-				.keepAlive(true)
-				.tcpNoDelay(true)
-				.connectTimeout(Duration.ofMillis(connectTimeoutMillis))
+	public LettuceClientConfiguration clientConfiguration(@Value("${redis.pool.maxTotal:1024}") int maxTotal
+			, @Value("${redis.pool.maxIdle:200}") int maxIdle
+			, @Value("${redis.pool.minIdle:100}") int minIdle
+			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
+			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow
+			, @Value("${redis.timeoutMillis:10000}") long timeoutMillis) {
+		GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+		poolConfig.setMaxTotal(maxTotal);
+		poolConfig.setMaxIdle(maxIdle);
+		poolConfig.setMinIdle(minIdle);
+		poolConfig.setMaxWaitMillis(maxWaitMillis);
+		poolConfig.setTestOnBorrow(testOnBorrow);
+
+		LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
+				.commandTimeout(Duration.ofMillis(timeoutMillis))
+				.poolConfig(poolConfig)
 				.build();
 
-		ClientOptions clientOptions = ClientOptions.builder()
-				.socketOptions(socketOptions)
-				.pingBeforeActivateConnection(true)
-				.build();
-
-		LettuceClientConfiguration.LettuceClientConfigurationBuilder builder = LettuceClientConfiguration.builder();
-		builder.clientOptions(clientOptions);
-		return builder.build();
+		return clientConfig;
 	}
 
 	@Bean(name = "redisClusterConfiguration")
