@@ -69,6 +69,7 @@ public class RedisMsConf {
 	public LettuceConnectionFactory lettuceConnectionFactory(@Qualifier("lettuceClientConfiguration") LettuceClientConfiguration clientConfig
 			, @Qualifier("redisSentinelConfiguration") RedisSentinelConfiguration config) {
 		LettuceConnectionFactory connFactory = new LettuceConnectionFactory(config, clientConfig);
+		connFactory.setValidateConnection(true);
 		return connFactory;
 	}
 
@@ -78,6 +79,8 @@ public class RedisMsConf {
 		template.setConnectionFactory(connFactory);
 		template.setKeySerializer(new StringRedisSerializer());
 		template.setValueSerializer(new StringRedisSerializer());
+		template.setEnableDefaultSerializer(true);
+		template.setEnableTransactionSupport(true);
 		return template;
 	}
 
