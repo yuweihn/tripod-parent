@@ -24,11 +24,11 @@ import java.util.List;
 public class RedisClusterConf {
 	@Bean(name = "lettuceClientConfiguration")
 	public LettuceClientConfiguration clientConfiguration(@Value("${redis.pool.maxTotal:1024}") int maxTotal
-			, @Value("${redis.pool.maxIdle:200}") int maxIdle
+			, @Value("${redis.pool.maxIdle:100}") int maxIdle
 			, @Value("${redis.pool.minIdle:100}") int minIdle
 			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
 			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow
-			, @Value("${redis.timeoutMillis:10000}") long timeoutMillis) {
+			, @Value("${redis.timeoutMillis:5000}") long timeoutMillis) {
 		GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
 		poolConfig.setMaxTotal(maxTotal);
 		poolConfig.setMaxIdle(maxIdle);
