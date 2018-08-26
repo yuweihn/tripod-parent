@@ -26,7 +26,7 @@ import java.util.Set;
  */
 public class RedisMsConf {
 	@Bean(name = "lettuceClientConfiguration")
-	public LettuceClientConfiguration clientConfiguration(@Value("${redis.socket.connectTimeoutMillis:10000}") long connectTimeoutMillis) {
+	public LettuceClientConfiguration clientConfiguration(@Value("${redis.socket.connectTimeoutMillis:5000}") long connectTimeoutMillis) {
 		SocketOptions socketOptions = SocketOptions.builder()
 				.keepAlive(true)
 				.tcpNoDelay(true)
