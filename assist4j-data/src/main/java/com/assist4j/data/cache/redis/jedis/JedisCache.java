@@ -194,6 +194,7 @@ public class JedisCache implements RedisCache {
 	@Override
 	public boolean lock(String key, String owner, long expiredTime) {
 		Boolean b = redisTemplate.execute(new RedisCallback<Boolean>() {
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
 				RedisSerializer keySerializer = redisTemplate.getKeySerializer();
