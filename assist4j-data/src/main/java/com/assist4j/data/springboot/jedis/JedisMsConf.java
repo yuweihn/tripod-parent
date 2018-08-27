@@ -1,7 +1,6 @@
 package com.assist4j.data.springboot.jedis;
 
 
-import com.assist4j.data.cache.Cache;
 import com.assist4j.data.cache.redis.jedis.JedisCache;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,7 +77,7 @@ public class JedisMsConf {
 	}
 
 	@Bean(name = "redisCache")
-	public Cache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template) {
+	public JedisCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template) {
 		JedisCache cache = new JedisCache();
 		cache.setRedisTemplate(template);
 		return cache;

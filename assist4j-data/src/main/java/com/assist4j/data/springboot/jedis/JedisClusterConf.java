@@ -1,7 +1,6 @@
 package com.assist4j.data.springboot.jedis;
 
 
-import com.assist4j.data.cache.Cache;
 import com.assist4j.data.cache.redis.jedis.BinaryJedisCluster;
 import com.assist4j.data.cache.redis.jedis.JedisClusterCache;
 import com.assist4j.data.cache.redis.jedis.JedisClusterFactory;
@@ -49,7 +48,7 @@ public class JedisClusterConf {
 	}
 
 	@Bean(name = "redisCache")
-	public Cache redisClusterCache(@Qualifier("jedisCluster") BinaryJedisCluster jedisCluster) {
+	public JedisClusterCache redisClusterCache(@Qualifier("jedisCluster") BinaryJedisCluster jedisCluster) {
 		JedisClusterCache cache = new JedisClusterCache();
 		cache.setJedisCluster(jedisCluster);
 		return cache;

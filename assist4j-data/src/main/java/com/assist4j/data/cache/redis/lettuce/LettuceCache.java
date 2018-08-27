@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.assist4j.data.cache.*;
 
+import com.assist4j.data.cache.redis.Redis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -23,7 +24,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 /**
  * @author yuwei
  */
-public class LettuceCache implements Cache, MessageCache, DistLock {
+public class LettuceCache implements Redis {
 	private static final Logger log = LoggerFactory.getLogger(LettuceCache.class);
 	private static final String CHARSET = "utf-8";
 	private RedisTemplate<String, Object> redisTemplate;

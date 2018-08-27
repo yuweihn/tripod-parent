@@ -2,6 +2,7 @@ package com.assist4j.data.cache.redis.jedis;
 
 
 import com.assist4j.data.cache.*;
+import com.assist4j.data.cache.redis.Redis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -22,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author yuwei
  */
-public class JedisCache implements Cache, MessageCache, DistLock {
+public class JedisCache implements Redis {
 	private static final Logger log = LoggerFactory.getLogger(JedisCache.class);
 	private static final String CHARSET = "utf-8";
 	private RedisTemplate<String, Object> redisTemplate;
