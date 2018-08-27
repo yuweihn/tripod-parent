@@ -1,4 +1,4 @@
-package com.assist4j.data.springboot;
+package com.assist4j.data.springboot.jedis;
 
 
 import redis.clients.jedis.HostAndPort;

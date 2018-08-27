@@ -1,9 +1,9 @@
-package com.assist4j.data.springboot;
+package com.assist4j.data.springboot.jedis;
 
 
-import com.assist4j.data.cache.redis.BinaryJedisCluster;
-import com.assist4j.data.cache.redis.RedisClusterCache;
-import com.assist4j.data.cache.redis.JedisClusterFactory;
+import com.assist4j.data.cache.redis.jedis.BinaryJedisCluster;
+import com.assist4j.data.cache.redis.jedis.JedisClusterCache;
+import com.assist4j.data.cache.redis.jedis.JedisClusterFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,16 +17,18 @@ import java.util.List;
  * redis集群
  * @author yuwei
  */
-public class RedisClusterConf {
+public class JedisClusterConf {
 
 	@Bean(name = "jedisPoolConfig")
 	public JedisPoolConfig jedisPoolConfig(@Value("${redis.pool.maxTotal:1024}") int maxTotal
-			, @Value("${redis.pool.maxIdle:200}") int maxIdle
+			, @Value("${redis.pool.maxIdle:100}") int maxIdle
+			, @Value("${redis.pool.minIdle:100}") int minIdle
 			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
 			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow) {
 		JedisPoolConfig config = new JedisPoolConfig();
 		config.setMaxTotal(maxTotal);
 		config.setMaxIdle(maxIdle);
+		config.setMinIdle(minIdle);
 		config.setMaxWaitMillis(maxWaitMillis);
 		config.setTestOnBorrow(testOnBorrow);
 		return config;
@@ -46,8 +48,8 @@ public class RedisClusterConf {
 	}
 
 	@Bean(name = "redisCache")
-	public RedisClusterCache redisClusterCache(@Qualifier("jedisCluster") BinaryJedisCluster jedisCluster) {
-		RedisClusterCache cache = new RedisClusterCache();
+	public JedisClusterCache redisClusterCache(@Qualifier("jedisCluster") BinaryJedisCluster jedisCluster) {
+		JedisClusterCache cache = new JedisClusterCache();
 		cache.setJedisCluster(jedisCluster);
 		return cache;
 	}

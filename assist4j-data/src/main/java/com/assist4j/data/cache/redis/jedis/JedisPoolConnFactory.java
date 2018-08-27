@@ -1,4 +1,4 @@
-package com.assist4j.data.cache.redis;
+package com.assist4j.data.cache.redis.jedis;
 
 
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
