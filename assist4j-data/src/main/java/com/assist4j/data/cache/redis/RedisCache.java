@@ -9,6 +9,6 @@ import com.assist4j.data.cache.DistLock;
 /**
  * @author yuwei
  */
-public interface Redis extends Cache, MessageCache, DistLock {
+public interface RedisCache extends Cache, MessageCache, DistLock {
 
 }
