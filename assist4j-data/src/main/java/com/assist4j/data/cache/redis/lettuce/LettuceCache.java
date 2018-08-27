@@ -1,4 +1,4 @@
-package com.assist4j.data.cache.redis;
+package com.assist4j.data.cache.redis.lettuce;
 
 
 import java.io.UnsupportedEncodingException;
@@ -23,8 +23,8 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 /**
  * @author yuwei
  */
-public class RedisCache implements Cache, MessageCache, DistLock {
-	private static final Logger log = LoggerFactory.getLogger(RedisCache.class);
+public class LettuceCache implements Cache, MessageCache, DistLock {
+	private static final Logger log = LoggerFactory.getLogger(LettuceCache.class);
 	private static final String CHARSET = "utf-8";
 	private RedisTemplate<String, Object> redisTemplate;
 

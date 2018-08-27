@@ -1,7 +1,7 @@
-package com.assist4j.data.springboot;
+package com.assist4j.data.springboot.lettuce;
 
 
-import com.assist4j.data.cache.redis.RedisCache;
+import com.assist4j.data.cache.redis.lettuce.LettuceCache;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ import java.time.Duration;
  * 单实例redis
  * @author yuwei
  */
-public class RedisConf {
+public class LettuceConf {
 	@Bean(name = "lettuceClientConfiguration")
 	public LettuceClientConfiguration clientConfiguration(@Value("${redis.pool.maxTotal:1024}") int maxTotal
 			, @Value("${redis.pool.maxIdle:100}") int maxIdle
@@ -81,8 +81,8 @@ public class RedisConf {
 	}
 
 	@Bean(name = "redisCache")
-	public RedisCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template) {
-		RedisCache cache = new RedisCache();
+	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template) {
+		LettuceCache cache = new LettuceCache();
 		cache.setRedisTemplate(template);
 		return cache;
 	}
