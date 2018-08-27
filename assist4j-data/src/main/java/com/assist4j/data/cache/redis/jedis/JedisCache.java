@@ -19,7 +19,7 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import redis.clients.util.SafeEncoder;
+import org.springframework.data.redis.serializer.RedisSerializer;
 
 
 /**
@@ -195,9 +195,16 @@ public class JedisCache implements RedisCache {
 	@Override
 	public boolean lock(final String key, final String owner, final long expiredTime) {
 		Boolean b = redisTemplate.execute(new RedisCallback<Boolean>() {
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.setEx(SafeEncoder.encode(key), expiredTime, SafeEncoder.encode(owner));
+				RedisSerializer keySerializer = redisTemplate.getKeySerializer();
+				byte[] bkey = keySerializer.serialize(key);
+
+				RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
+				byte[] bvalue = valueSerializer.serialize(owner);
+
+				connection.setEx(bkey, expiredTime, bvalue);
 				String val = (String) redisTemplate.opsForValue().get(key);
 				return val != null && val.equals(owner);
 			}
