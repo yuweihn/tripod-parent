@@ -69,7 +69,7 @@ public class LettuceClusterConf {
 		template.setKeySerializer(new StringRedisSerializer());
 		template.setValueSerializer(new StringRedisSerializer());
 		template.setEnableDefaultSerializer(true);
-		template.setEnableTransactionSupport(true);
+//		template.setEnableTransactionSupport(true);
 		return template;
 	}
 
