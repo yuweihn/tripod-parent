@@ -139,12 +139,15 @@ public class HttpFilter extends AbstractFilter {
 			log.info("Referrer: {}", referrer);
 		}
 
-		String requestOrigin = request.getHeader("origin");
-		if (requestOrigin != null && !"".equals(requestOrigin.trim()) && !"null".equals(requestOrigin.trim())
-				&& !response.containsHeader("Access-Control-Allow-Origin")) {
-			response.setHeader("Access-Control-Allow-Origin", requestOrigin);
+		if (!response.containsHeader("Access-Control-Allow-Origin")) {
+			String requestOrigin = request.getHeader("origin");
+			if (requestOrigin != null && !"".equals(requestOrigin.trim()) && !"null".equals(requestOrigin.trim())) {
+				response.setHeader("Access-Control-Allow-Origin", requestOrigin);
+				response.setHeader("Access-Control-Allow-Credentials", "true");
+			} else {
+				response.setHeader("Access-Control-Allow-Origin", "*");
+			}
 			response.setHeader("Access-Control-Max-Age", "3600");
-			response.setHeader("Access-Control-Allow-Credentials", "true");
 		}
 
 		if (!response.containsHeader("Access-Control-Allow-Methods")) {
