@@ -3,6 +3,8 @@ package com.assist4j.web.filter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -15,7 +17,9 @@ import com.assist4j.web.HttpMethodRequestWrapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 
 /**
@@ -151,7 +155,8 @@ public class HttpFilter extends AbstractFilter {
 		}
 
 		if (!response.containsHeader("Access-Control-Allow-Methods")) {
-			response.setHeader("Access-Control-Allow-Methods", "*");
+			List<HttpMethod> allowedMethods = Arrays.asList(HttpMethod.values());
+			response.setHeader("Access-Control-Allow-Methods", StringUtils.collectionToCommaDelimitedString(allowedMethods));
 		}
 		if (!response.containsHeader("Access-Control-Allow-Headers")) {
 			response.setHeader("Access-Control-Allow-Headers", "*");
