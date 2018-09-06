@@ -64,8 +64,7 @@ public class HttpFilter extends AbstractFilter {
 	/**
 	 * 浏览器不支持put,delete等method,由该filter将/service?_method=delete转换为标准的http delete方法
 	 **/
-	@Override
-	protected HttpServletRequest wrap(HttpServletRequest request) {
+	private HttpServletRequest wrap(HttpServletRequest request) {
 		String paramValue = request.getParameter(methodParam);
 		if ("POST".equalsIgnoreCase(request.getMethod()) && paramValue != null && !"".equals(paramValue.trim())) {
 			String method = paramValue.trim().toUpperCase(Locale.ENGLISH);
@@ -76,11 +75,13 @@ public class HttpFilter extends AbstractFilter {
 	}
 
 	@Override
-	protected void beforeFilter(HttpServletRequest request, HttpServletResponse response) {
-		printRequest(request);
-		setCharacterEncoding(request, response);
-		setContextPath(request);
-		setAccessControl(request, response);
+	protected HttpServletRequest beforeFilter(HttpServletRequest request, HttpServletResponse response) {
+		HttpServletRequest newRequest = wrap(request);
+		newRequest = printRequest(newRequest);
+		setCharacterEncoding(newRequest, response);
+		setContextPath(newRequest);
+		setAccessControl(newRequest, response);
+		return newRequest;
 	}
 
 	@Override
@@ -91,7 +92,7 @@ public class HttpFilter extends AbstractFilter {
 	/**
 	 * 打印请求参数
 	 */
-	protected void printRequest(HttpServletRequest request) {
+	protected HttpServletRequest printRequest(HttpServletRequest request) {
 		String ip = ActionUtil.getRequestIP();
 		String url = request.getRequestURL().toString();
 		try {
@@ -107,6 +108,7 @@ public class HttpFilter extends AbstractFilter {
 		} else {
 			log.info("ip: {}, method: {}, url: {}, params: {}", ip, method, url, params);
 		}
+		return request;
 	}
 
 	/**
