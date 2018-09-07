@@ -8,6 +8,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 
 /**
@@ -45,5 +46,10 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
                 log.info("body: {}", content);
             }
         }
+    }
+
+    @Override
+    protected void afterFilter(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException {
+        response.copyBodyToResponse();
     }
 }
