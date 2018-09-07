@@ -94,18 +94,22 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	 * 浏览器不支持put,delete等method,由该filter将/service?_method=delete转换为标准的http delete方法
 	 **/
 	private HttpServletRequest adjustMethod(HttpServletRequest request) {
-		String paramValue = request.getParameter(methodParam);
-		if ("POST".equalsIgnoreCase(request.getMethod()) && paramValue != null && !"".equals(paramValue.trim())) {
-			final String method = paramValue.trim().toUpperCase(Locale.ENGLISH);
-			return new HttpServletRequestWrapper(request) {
-				@Override
-				public String getMethod() {
-					return method;
-				}
-			};
-		} else {
+		if (!"post".equalsIgnoreCase(request.getMethod())) {
 			return request;
 		}
+
+		String paramValue = request.getParameter(methodParam);
+		if (paramValue == null || "".equals(paramValue.trim())) {
+			return request;
+		}
+
+		final String method = paramValue.trim().toUpperCase(Locale.ENGLISH);
+		return new HttpServletRequestWrapper(request) {
+			@Override
+			public String getMethod() {
+				return method;
+			}
+		};
 	}
 
 	/**
