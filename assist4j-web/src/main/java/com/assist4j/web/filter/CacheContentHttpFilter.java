@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author yuwei
  */
-public class CacheContentAbstractFilter extends AbstractFilter<ContentCachingRequestWrapper, ContentCachingResponseWrapper> {
-    private static final Logger log = LoggerFactory.getLogger(CacheContentAbstractFilter.class);
+public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequestWrapper, ContentCachingResponseWrapper> {
+    private static final Logger log = LoggerFactory.getLogger(CacheContentHttpFilter.class);
 
     private boolean logBody = false;
 
