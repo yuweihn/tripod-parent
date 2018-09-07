@@ -77,7 +77,7 @@ public class HttpFilter extends AbstractFilter {
 	@Override
 	protected HttpServletRequest beforeFilter(HttpServletRequest request, HttpServletResponse response) {
         HttpServletRequest newRequest = wrap(request);
-        newRequest = printRequest(newRequest);
+        printRequest(newRequest);
 		setCharacterEncoding(newRequest, response);
 		setContextPath(newRequest);
 		setAccessControl(newRequest, response);
@@ -92,7 +92,7 @@ public class HttpFilter extends AbstractFilter {
 	/**
 	 * 打印请求参数
 	 */
-	protected HttpServletRequest printRequest(HttpServletRequest request) {
+	protected void printRequest(HttpServletRequest request) {
 		String ip = ActionUtil.getRequestIP();
 		String url = request.getRequestURL().toString();
 		try {
@@ -108,7 +108,6 @@ public class HttpFilter extends AbstractFilter {
 		} else {
 			log.info("ip: {}, method: {}, url: {}, params: {}", ip, method, url, params);
 		}
-        return request;
 	}
 
 	/**
