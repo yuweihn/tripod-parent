@@ -18,7 +18,7 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
     private static final Logger log = LoggerFactory.getLogger(CacheContentHttpFilter.class);
 
     private boolean logBody = false;
-    private int contentLimit;
+    private int contentLimit = 100;
 
 
     public void setLogBody(boolean logBody) {
