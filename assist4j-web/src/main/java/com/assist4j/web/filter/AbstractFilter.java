@@ -88,7 +88,7 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	private HttpServletRequest wrapMethod(HttpServletRequest request) {
 		String paramValue = request.getParameter(methodParam);
 		if ("POST".equalsIgnoreCase(request.getMethod()) && paramValue != null && !"".equals(paramValue.trim())) {
-			String method = paramValue.trim().toUpperCase(Locale.ENGLISH);
+			final String method = paramValue.trim().toUpperCase(Locale.ENGLISH);
 			return new HttpServletRequestWrapper(request) {
 				@Override
 				public String getMethod() {
