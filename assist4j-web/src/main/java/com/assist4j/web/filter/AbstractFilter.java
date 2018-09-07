@@ -27,8 +27,8 @@ import java.util.Map;
 /**
  * @author yuwei
  */
-public abstract class HttpFilter<R extends HttpServletRequest, T extends HttpServletResponse> extends OncePerRequestFilter {
-	private static final Logger log = LoggerFactory.getLogger(HttpFilter.class);
+public abstract class AbstractFilter<R extends HttpServletRequest, T extends HttpServletResponse> extends OncePerRequestFilter {
+	private static final Logger log = LoggerFactory.getLogger(AbstractFilter.class);
 
 
 	private static final String DEFAULT_METHOD_PARAM = "_method";
