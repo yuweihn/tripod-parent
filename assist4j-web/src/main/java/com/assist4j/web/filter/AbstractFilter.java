@@ -184,11 +184,11 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	}
 
 
-	protected void beforeFilter(R request, T response) {
+	protected void beforeFilter(R request, T response) throws IOException {
 
 	}
 
-	protected void afterFilter(R request, T response) {
+	protected void afterFilter(R request, T response) throws IOException {
 
 	}
 }
