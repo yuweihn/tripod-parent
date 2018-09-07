@@ -15,61 +15,61 @@ import java.io.IOException;
  * @author yuwei
  */
 public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequestWrapper, ContentCachingResponseWrapper> {
-    private static final Logger log = LoggerFactory.getLogger(CacheContentHttpFilter.class);
+	private static final Logger log = LoggerFactory.getLogger(CacheContentHttpFilter.class);
 
-    private boolean logBody = false;
-    private int contentLimit = 100;
-
-
-    public void setLogBody(boolean logBody) {
-        this.logBody = logBody;
-    }
-
-    public void setContentLimit(int contentLimit) {
-        this.contentLimit = contentLimit;
-    }
+	private boolean logBody = false;
+	private int contentLimit = 100;
 
 
+	public void setLogBody(boolean logBody) {
+		this.logBody = logBody;
+	}
 
-    @Override
-    protected ContentCachingRequestWrapper wrap(HttpServletRequest request) {
-        return new ContentCachingRequestWrapper(request);
-    }
+	public void setContentLimit(int contentLimit) {
+		this.contentLimit = contentLimit;
+	}
 
-    @Override
-    protected ContentCachingResponseWrapper wrap(HttpServletResponse response) {
-        return new ContentCachingResponseWrapper(response);
-    }
 
-    @Override
-    protected void printRequest(ContentCachingRequestWrapper request) {
-        super.printRequest(request);
-        printBody(request);
-    }
 
-    private void printBody(ContentCachingRequestWrapper request) {
-        if (!logBody) {
-            return;
-        }
+	@Override
+	protected ContentCachingRequestWrapper wrap(HttpServletRequest request) {
+		return new ContentCachingRequestWrapper(request);
+	}
 
-        byte[] bytes = request.getContentAsByteArray();
-        if (bytes == null || bytes.length <= 0) {
-            return;
-        }
+	@Override
+	protected ContentCachingResponseWrapper wrap(HttpServletResponse response) {
+		return new ContentCachingResponseWrapper(response);
+	}
 
-        String content = new String(bytes);
-        if (content == null || "".equals(content)) {
-            return;
-        }
+	@Override
+	protected void printRequest(ContentCachingRequestWrapper request) {
+		super.printRequest(request);
+		printBody(request);
+	}
 
-        if (contentLimit > 0 && content.length() > contentLimit) {
-            content = content.substring(0, contentLimit) + "......";
-        }
-        log.info("RequestBody: {}", content);
-    }
+	private void printBody(ContentCachingRequestWrapper request) {
+		if (!logBody) {
+			return;
+		}
 
-    @Override
-    protected void afterFilter(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException {
-        response.copyBodyToResponse();
-    }
+		byte[] bytes = request.getContentAsByteArray();
+		if (bytes == null || bytes.length <= 0) {
+			return;
+		}
+
+		String content = new String(bytes);
+		if (content == null || "".equals(content)) {
+			return;
+		}
+
+		if (contentLimit > 0 && content.length() > contentLimit) {
+			content = content.substring(0, contentLimit) + "......";
+		}
+		log.info("RequestBody: {}", content);
+	}
+
+	@Override
+	protected void afterFilter(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException {
+		response.copyBodyToResponse();
+	}
 }
