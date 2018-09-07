@@ -18,11 +18,17 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
     private static final Logger log = LoggerFactory.getLogger(CacheContentHttpFilter.class);
 
     private boolean logBody = false;
+    private int contentLimit;
 
 
     public void setLogBody(boolean logBody) {
         this.logBody = logBody;
     }
+
+    public void setContentLimit(int contentLimit) {
+        this.contentLimit = contentLimit;
+    }
+
 
 
     @Override
@@ -38,14 +44,28 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
     @Override
     protected void printRequest(ContentCachingRequestWrapper request) {
         super.printRequest(request);
+        printBody(request);
+    }
 
-        if (logBody) {
-            byte[] bytes = request.getContentAsByteArray();
-            if (bytes != null && bytes.length > 0) {
-                String content = new String(bytes);
-                log.info("body: {}", content);
-            }
+    private void printBody(ContentCachingRequestWrapper request) {
+        if (!logBody) {
+            return;
         }
+
+        byte[] bytes = request.getContentAsByteArray();
+        if (bytes == null || bytes.length <= 0) {
+            return;
+        }
+
+        String content = new String(bytes);
+        if (content == null || "".equals(content)) {
+            return;
+        }
+
+        if (contentLimit > 0) {
+            content = content.substring(0, contentLimit);
+        }
+        log.info("body: {}", content);
     }
 
     @Override
