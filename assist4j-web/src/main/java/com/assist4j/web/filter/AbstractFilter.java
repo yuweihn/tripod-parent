@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * @author yuwei
  */
-public abstract class AbstractFilter extends OncePerRequestFilter {
+public abstract class AbstractFilter<R extends HttpServletRequest, T extends HttpServletResponse> extends OncePerRequestFilter {
 	private static final Logger log = LoggerFactory.getLogger(AbstractFilter.class);
 
 
@@ -65,27 +65,35 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		long startTimeMillis = System.currentTimeMillis();
-		beforeFilter(request, response);
+		R req = wrap(adjustMethod(request));
+		T resp = wrap(response);
+		beforeFilter(req, resp);
 
-		HttpServletRequest requestWrapper = wrapMethod(request);
-		printRequest(requestWrapper);
-		setCharacterEncoding(requestWrapper, response);
-		setContextPath(requestWrapper);
-		setAccessControl(requestWrapper, response);
+		setCharacterEncoding(req, resp);
+		setContextPath(req);
+		setAccessControl(req, resp);
 
-		filterChain.doFilter(requestWrapper, response);
+		filterChain.doFilter(req, resp);
 
-		afterFilter(requestWrapper, response);
+		printRequest(req);
+		afterFilter(req, resp);
 		long endTimeMillis = System.currentTimeMillis();
-		log.info("Status: {}. Time Cost: {} ms.", response.getStatus(), endTimeMillis - startTimeMillis);
+		log.info("Status: {}. Time Cost: {} ms.", resp.getStatus(), endTimeMillis - startTimeMillis);
 	}
 
 
+	protected R wrap(HttpServletRequest request) {
+		return (R) request;
+	}
+
+	protected T wrap(HttpServletResponse response) {
+		return (T) response;
+	}
 
 	/**
 	 * 浏览器不支持put,delete等method,由该filter将/service?_method=delete转换为标准的http delete方法
 	 **/
-	private HttpServletRequest wrapMethod(HttpServletRequest request) {
+	private HttpServletRequest adjustMethod(HttpServletRequest request) {
 		String paramValue = request.getParameter(methodParam);
 		if ("POST".equalsIgnoreCase(request.getMethod()) && paramValue != null && !"".equals(paramValue.trim())) {
 			final String method = paramValue.trim().toUpperCase(Locale.ENGLISH);
@@ -103,7 +111,7 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	/**
 	 * 打印请求参数
 	 */
-	protected void printRequest(HttpServletRequest request) {
+	protected void printRequest(R request) {
 		String ip = ActionUtil.getRequestIP();
 		String url = request.getRequestURL().toString();
 		try {
@@ -124,7 +132,7 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	/**
 	 * 设置字符集
 	 **/
-	protected void setCharacterEncoding(HttpServletRequest request, HttpServletResponse response) {
+	protected void setCharacterEncoding(R request, T response) {
 		try {
 			request.setCharacterEncoding(encoding);
 		} catch (UnsupportedEncodingException e) {
@@ -136,7 +144,7 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	/**
 	 * 将站点域名和static资源地址存入context
 	 **/
-	protected void setContextPath(HttpServletRequest request) {
+	protected void setContextPath(R request) {
 		ActionUtil.addContextPath(request, protocol);
 		ActionUtil.addStaticPath(request, staticPath);
 	}
@@ -144,7 +152,7 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	/**
 	 * 跨域请求设置
 	 */
-	protected void setAccessControl(HttpServletRequest request, HttpServletResponse response) {
+	protected void setAccessControl(R request, T response) {
 		String referrer = request.getHeader("Referer");
 		if (referrer != null) {
 			try {
@@ -176,11 +184,11 @@ public abstract class AbstractFilter extends OncePerRequestFilter {
 	}
 
 
-	protected void beforeFilter(HttpServletRequest request, HttpServletResponse response) {
+	protected void beforeFilter(R request, T response) {
 
 	}
 
-	protected void afterFilter(HttpServletRequest request, HttpServletResponse response) {
+	protected void afterFilter(R request, T response) {
 
 	}
 }
