@@ -43,9 +43,15 @@ public class JedisConf {
 			, @Value("${redis.needPassword:false}") boolean needPassword
 			, @Value("${redis.password:}") String password) {
 		RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration();
-		conf.setHostName(host);
-		conf.setPort(port);
-		conf.setDatabase(dbIndex);
+		if (host != null || !"".equals(host)) {
+			conf.setHostName(host);
+		}
+		if (port > 0) {
+			conf.setPort(port);
+		}
+		if (dbIndex > 0) {
+			conf.setDatabase(dbIndex);
+		}
 		if (needPassword) {
 			conf.setPassword(RedisPassword.of(password));
 		}
