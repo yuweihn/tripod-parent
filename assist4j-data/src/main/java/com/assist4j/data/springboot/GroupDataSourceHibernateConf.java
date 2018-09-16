@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import com.assist4j.data.ds.DataSourceAspect;
 import com.assist4j.data.ds.DynamicDataSource;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -22,6 +23,12 @@ import java.util.Properties;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 public class GroupDataSourceHibernateConf {
+
+	@ConditionalOnMissingBean(name = "mappingLocations")
+	@Bean(name = "mappingLocations")
+	public Resource[] mappingLocations() {
+		return new Resource[] {};
+	}
 
 	@Bean(name = "dataSource")
 	public DataSource dynamicDataSource(@Qualifier("dsClusterList") List<DataSourceCluster> dsClusterList) {
