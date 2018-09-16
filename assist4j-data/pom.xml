@@ -32,6 +32,7 @@
 		<spring.mongodb.version>1.10.9.RELEASE</spring.mongodb.version>
 		<spring.redis.version>2.0.8.RELEASE</spring.redis.version>
 		<spring.version>5.0.7.RELEASE</spring.version>
+		<springboot.version>2.0.4.RELEASE</springboot.version>
 	</properties>
 
 
@@ -154,6 +155,12 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
 			<version>${spring.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+			<version>${springboot.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
