@@ -42,9 +42,15 @@ public class JedisConf {
 			, @Value("${redis.password:}") String password) {
 		JedisPoolConnFactory factory = new JedisPoolConnFactory();
 		factory.setPoolConfig(jedisPoolConfig);
-		factory.setHostName(host);
-		factory.setPort(port);
-		factory.setDatabase(dbIndex);
+		if (host != null || !"".equals(host)) {
+			factory.setHostName(host);
+		}
+		if (port > 0) {
+			factory.setPort(port);
+		}
+		if (dbIndex > 0) {
+			factory.setDatabase(dbIndex);
+		}
 		factory.setNeedPassword(needPassword);
 		factory.setPassword(password);
 		return factory;
