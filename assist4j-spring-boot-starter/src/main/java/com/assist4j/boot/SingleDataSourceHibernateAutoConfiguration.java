@@ -2,6 +2,7 @@ package com.assist4j.boot;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.assist4j.data.springboot.SingleDataSourceHibernateConf;
 import com.assist4j.sequence.base.DefaultSequence;
 import com.assist4j.sequence.base.SequenceBeanFactory;
 import com.assist4j.sequence.base.SequenceBeanHolder;
@@ -13,6 +14,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -24,7 +26,8 @@ import java.util.Map;
  * @author yuwei
  */
 @Configuration
-public class PersistAutoConfiguration {
+@Import({SingleDataSourceHibernateConf.class})
+public class SingleDataSourceHibernateAutoConfiguration {
 
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
