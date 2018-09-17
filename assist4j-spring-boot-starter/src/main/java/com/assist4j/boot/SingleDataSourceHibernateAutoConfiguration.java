@@ -19,7 +19,9 @@ import org.springframework.context.annotation.Import;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -99,6 +101,28 @@ public class SingleDataSourceHibernateAutoConfiguration {
 		sequenceDao.setRuleClassName(ruleClassName);
 		sequenceDao.setTableName(tableName);
 		return sequenceDao;
+	}
+
+	private static interface Pack {
+		List<String> getPackages();
+	}
+	@ConditionalOnMissingBean(name = "packagesToScan")
+	@Bean(name = "packagesToScan")
+	@ConfigurationProperties(prefix = "hibernate.scan", ignoreUnknownFields = true)
+	public String[] packagesToScan() {
+		Pack pack = new Pack() {
+			private List<String> packages = new ArrayList<String>();
+
+			@Override
+			public List<String> getPackages() {
+				return packages;
+			}
+		};
+		List<String> packages = pack.getPackages();
+		if (packages == null || packages.size() <= 0) {
+			return new String[0];
+		}
+		return packages.toArray(new String[0]);
 	}
 
 	@ConditionalOnMissingBean(name = "sequenceBeanHolder")
