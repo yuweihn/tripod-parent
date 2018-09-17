@@ -6,12 +6,17 @@ import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 
 
 /**
@@ -19,6 +24,19 @@ import javax.sql.DataSource;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 public class SingleDataSourceMybatisConf {
+	@ConditionalOnMissingBean(name = "mapperLocations")
+	@Bean(name = "mapperLocations")
+	public Resource[] mapperLocations(@Value("${mybatis.mapper.locationPattern}") String locationPattern) throws IOException {
+		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+		Resource[] resources = resolver.getResources(locationPattern);
+		return resources;
+	}
+
+	@ConditionalOnMissingBean(name = "basePackage")
+	@Bean(name = "basePackage")
+	public String basePackage(@Value("${mybatis.basePackage}") String basePackage) {
+		return basePackage;
+	}
 
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactoryBean sqlSessionFactoryBean(@Qualifier("dataSource") DataSource dataSource
