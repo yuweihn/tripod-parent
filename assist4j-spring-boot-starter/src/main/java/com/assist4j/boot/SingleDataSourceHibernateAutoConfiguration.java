@@ -103,26 +103,13 @@ public class SingleDataSourceHibernateAutoConfiguration {
 		return sequenceDao;
 	}
 
-	private static interface Pack {
-		List<String> getPackages();
-	}
 	@ConditionalOnMissingBean(name = "packagesToScan")
 	@Bean(name = "packagesToScan")
-	@ConfigurationProperties(prefix = "hibernate.scan", ignoreUnknownFields = true)
-	public String[] packagesToScan() {
-		Pack pack = new Pack() {
-			private List<String> packages = new ArrayList<String>();
-
-			@Override
-			public List<String> getPackages() {
-				return packages;
-			}
-		};
-		List<String> packages = pack.getPackages();
-		if (packages == null || packages.size() <= 0) {
-			return new String[0];
-		}
-		return packages.toArray(new String[0]);
+	public String[] packagesToScan(@Value("${hibernate.scan.packages:}") String packages) {
+	    if (packages == null || "".equals(packages)) {
+	        return new String[0];
+        }
+		return packages.split(",");
 	}
 
 	@ConditionalOnMissingBean(name = "sequenceBeanHolder")
