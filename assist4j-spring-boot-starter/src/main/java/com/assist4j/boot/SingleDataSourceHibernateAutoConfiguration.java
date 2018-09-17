@@ -27,7 +27,7 @@ import java.util.Map;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.datasource", havingValue = "hibernate.single")
+@ConditionalOnProperty(name = "assist4j.boot.single.datasource.hibernate.enabled")
 @Import({SingleDataSourceHibernateConf.class})
 public class SingleDataSourceHibernateAutoConfiguration {
 
