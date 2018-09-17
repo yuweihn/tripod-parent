@@ -19,9 +19,7 @@ import org.springframework.context.annotation.Import;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -79,15 +77,6 @@ public class SingleDataSourceHibernateAutoConfiguration {
 		dataSource.setMaxPoolPreparedStatementPerConnectionSize(maxPoolPreparedStatementPerConnectionSize);
 		dataSource.setMaxOpenPreparedStatements(maxOpenPreparedStatements);
 		return dataSource;
-	}
-
-	@ConditionalOnMissingBean(name = "packagesToScan")
-	@Bean(name = "packagesToScan")
-	public String[] packagesToScan(@Value("${hibernate.scan.packages:}") String packages) {
-		if (packages == null || "".equals(packages)) {
-			return new String[0];
-		}
-		return packages.split(",");
 	}
 
 	@ConditionalOnMissingBean(name = "sequenceDao")
