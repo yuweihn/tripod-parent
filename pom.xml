@@ -30,6 +30,7 @@
         <module>assist4j-web</module>
         <module>assist4j-schedule</module>
         <module>assist4j</module>
+        <module>assist4j-spring-boot-starter</module>
     </modules>
 
 
