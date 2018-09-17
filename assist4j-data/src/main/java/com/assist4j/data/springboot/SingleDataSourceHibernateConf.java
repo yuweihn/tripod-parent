@@ -3,6 +3,7 @@ package com.assist4j.data.springboot;
 
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
@@ -24,6 +25,15 @@ public class SingleDataSourceHibernateConf {
 	@Bean(name = "mappingLocations")
 	public Resource[] mappingLocations() {
 		return new Resource[] {};
+	}
+
+	@ConditionalOnMissingBean(name = "packagesToScan")
+	@Bean(name = "packagesToScan")
+	public String[] packagesToScan(@Value("${hibernate.scan.packages:}") String packages) {
+		if (packages == null || "".equals(packages)) {
+			return new String[0];
+		}
+		return packages.split(",");
 	}
 
 	@Bean(name = "sessionFactory")
