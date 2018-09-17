@@ -4,7 +4,7 @@ package com.assist4j.boot;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.assist4j.data.ds.DataSourceCluster;
 import com.assist4j.data.ds.KvPair;
-import com.assist4j.data.springboot.GroupDataSourceHibernateConf;
+import com.assist4j.data.springboot.GroupDataSourceMybatisConf;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -23,9 +23,9 @@ import java.util.List;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.group.datasource.hibernate.enabled")
-@Import({GroupDataSourceHibernateConf.class})
-public class GroupDataSourceHibernateAutoConfiguration {
+@ConditionalOnProperty(name = "assist4j.boot.group.datasource.mybatis.enabled")
+@Import({GroupDataSourceMybatisConf.class})
+public class GroupDataSourceMybatisAutoConfiguration {
 
 	@ConditionalOnMissingBean(name = "ds-master")
 	@Bean(name = "ds-master", initMethod = "init", destroyMethod = "close")
