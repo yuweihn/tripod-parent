@@ -81,6 +81,15 @@ public class SingleDataSourceHibernateAutoConfiguration {
 		return dataSource;
 	}
 
+	@ConditionalOnMissingBean(name = "packagesToScan")
+	@Bean(name = "packagesToScan")
+	public String[] packagesToScan(@Value("${hibernate.scan.packages:}") String packages) {
+		if (packages == null || "".equals(packages)) {
+			return new String[0];
+		}
+		return packages.split(",");
+	}
+
 	@ConditionalOnMissingBean(name = "sequenceDao")
 	@Bean(name = "sequenceDao", initMethod = "init", destroyMethod = "destroy")
 	public SequenceDao sequenceDao(@Qualifier("dataSource") DataSource dataSource
@@ -101,15 +110,6 @@ public class SingleDataSourceHibernateAutoConfiguration {
 		sequenceDao.setRuleClassName(ruleClassName);
 		sequenceDao.setTableName(tableName);
 		return sequenceDao;
-	}
-
-	@ConditionalOnMissingBean(name = "packagesToScan")
-	@Bean(name = "packagesToScan")
-	public String[] packagesToScan(@Value("${hibernate.scan.packages:}") String packages) {
-	    if (packages == null || "".equals(packages)) {
-	        return new String[0];
-        }
-		return packages.split(",");
 	}
 
 	@ConditionalOnMissingBean(name = "sequenceBeanHolder")
