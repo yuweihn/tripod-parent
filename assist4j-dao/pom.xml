@@ -13,6 +13,9 @@
 	<url>http://assist4j.com</url>
 
 	<properties>
+		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
+		<maven.compiler.encoding>utf-8</maven.compiler.encoding>
 		<hibernate.version>5.0.12.Final</hibernate.version>
 		<jdk.version>1.7</jdk.version>
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
