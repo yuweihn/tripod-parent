@@ -5,7 +5,9 @@ import com.assist4j.data.cache.redis.lettuce.LettuceCache;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
@@ -66,6 +68,8 @@ public class LettuceConf {
 		return conf;
 	}
 
+	@Primary
+	@ConditionalOnMissingBean(name = "lettuceConnectionFactory")
 	@Bean(name = "lettuceConnectionFactory")
 	public LettuceConnectionFactory lettuceConnectionFactory(@Qualifier("lettuceClientConfiguration") LettuceClientConfiguration clientConfig
 			, @Qualifier("redisStandaloneConfiguration") RedisStandaloneConfiguration config) {
