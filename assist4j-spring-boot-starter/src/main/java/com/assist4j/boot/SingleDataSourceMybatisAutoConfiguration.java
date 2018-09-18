@@ -2,7 +2,7 @@ package com.assist4j.boot;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.assist4j.data.springboot.SingleDataSourceHibernateConf;
+import com.assist4j.data.springboot.SingleDataSourceMybatisConf;
 import com.assist4j.sequence.base.DefaultSequence;
 import com.assist4j.sequence.base.SequenceBeanFactory;
 import com.assist4j.sequence.base.SequenceBeanHolder;
@@ -27,9 +27,9 @@ import java.util.Map;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.single.datasource.hibernate.enabled")
-@Import({SingleDataSourceHibernateConf.class})
-public class SingleDataSourceHibernateAutoConfiguration {
+@ConditionalOnProperty(name = "assist4j.boot.single.datasource.mybatis.enabled")
+@Import({SingleDataSourceMybatisConf.class})
+public class SingleDataSourceMybatisAutoConfiguration {
 
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
