@@ -13,6 +13,6 @@ import org.springframework.context.annotation.Import;
 @Configuration
 @ConditionalOnProperty(name = "assist4j.boot.mongo.enabled")
 @Import({MongoConf.class})
-public class MongoConfAutoConfiguration {
+public class MongoAutoConfiguration {
 
 }

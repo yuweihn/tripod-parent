@@ -2,4 +2,4 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.assist4j.boot
   com.assist4j.boot.GroupDataSourceHibernateAutoConfiguration,\
   com.assist4j.boot.SingleDataSourceMybatisAutoConfiguration,\
   com.assist4j.boot.GroupDataSourceMybatisAutoConfiguration,\
-  com.assist4j.boot.MongoConfAutoConfiguration
+  com.assist4j.boot.MongoAutoConfiguration
