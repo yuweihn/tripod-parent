@@ -306,7 +306,7 @@ public class CacheHttpSession implements HttpSession {
 		private Iterator<String> iterator;
 		public SessionEnumeration (Set<String> _attributeNames) {
 			Set<String> attributeNames = new HashSet<String>();
-			if (_attributeNames != null && !"".equals(_attributeNames)) {
+			if (_attributeNames != null && _attributeNames.size() > 0) {
 				attributeNames.addAll(_attributeNames);
 			}
 			iterator = attributeNames.iterator();
