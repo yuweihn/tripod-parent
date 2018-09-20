@@ -1,12 +1,10 @@
 package com.assist4j.data.springboot;
 
 
-import org.apache.ibatis.session.SqlSessionFactory;
 import com.assist4j.data.ds.DataSourceCluster;
 import com.assist4j.data.ds.DataSourceAspect;
 import com.assist4j.data.ds.DynamicDataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +14,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -56,15 +56,10 @@ public class GroupDataSourceMybatisConf {
 		return sessionFactoryBean;
 	}
 
-	@Bean(name = "sqlSessionTemplate")
-	public SqlSessionTemplate sqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
-		return new SqlSessionTemplate(sqlSessionFactory);
-	}
-
 	@Bean
 	public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("basePackage") String basePackage) {
 		MapperScannerConfigurer configurer = new MapperScannerConfigurer();
-		configurer.setSqlSessionTemplateBeanName("sqlSessionTemplate");
+		configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
 		configurer.setBasePackage(basePackage);
 		return configurer;
 	}
@@ -74,6 +69,11 @@ public class GroupDataSourceMybatisConf {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
 		transactionManager.setDataSource(dataSource);
 		return transactionManager;
+	}
+
+	@Bean(name = "transactionTemplate")
+	public TransactionTemplate transactionTemplate(@Qualifier("transactionManager") PlatformTransactionManager transactionManager) {
+		return new TransactionTemplate(transactionManager);
 	}
 
 	@Bean(name = "dataSourceAspect")
