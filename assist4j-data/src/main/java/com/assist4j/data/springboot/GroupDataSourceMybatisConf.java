@@ -4,7 +4,9 @@ package com.assist4j.data.springboot;
 import com.assist4j.data.ds.DataSourceCluster;
 import com.assist4j.data.ds.DataSourceAspect;
 import com.assist4j.data.ds.DynamicDataSource;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
+import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,10 +58,16 @@ public class GroupDataSourceMybatisConf {
 		return sessionFactoryBean;
 	}
 
+	@Bean(name = "sqlSessionTemplate")
+	public SqlSessionTemplate SqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+		return new SqlSessionTemplate(sqlSessionFactory);
+	}
+
 	@Bean
 	public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("basePackage") String basePackage) {
 		MapperScannerConfigurer configurer = new MapperScannerConfigurer();
 		configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
+		configurer.setSqlSessionTemplateBeanName("sqlSessionTemplate");
 		configurer.setBasePackage(basePackage);
 		return configurer;
 	}
