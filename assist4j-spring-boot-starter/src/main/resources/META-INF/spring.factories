@@ -1,4 +1,5 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.assist4j.boot.SingleDataSourceHibernateAutoConfiguration,\
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.assist4j.boot.DefaultAutoConfiguration,\
+  com.assist4j.boot.SingleDataSourceHibernateAutoConfiguration,\
   com.assist4j.boot.GroupDataSourceHibernateAutoConfiguration,\
   com.assist4j.boot.SingleDataSourceMybatisAutoConfiguration,\
   com.assist4j.boot.GroupDataSourceMybatisAutoConfiguration,\
