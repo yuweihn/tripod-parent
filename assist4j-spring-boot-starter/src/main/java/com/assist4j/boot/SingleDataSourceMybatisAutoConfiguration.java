@@ -8,6 +8,7 @@ import com.assist4j.sequence.base.SequenceBeanFactory;
 import com.assist4j.sequence.base.SequenceBeanHolder;
 import com.assist4j.sequence.dao.SegmentSequenceDao;
 import com.assist4j.sequence.dao.SequenceDao;
+import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -119,5 +120,14 @@ public class SingleDataSourceMybatisAutoConfiguration {
 	@Bean(name = "sequenceBeanFactory")
 	public SequenceBeanFactory sequenceBeanFactory() {
 		return new SequenceBeanFactory(DefaultSequence.class, "sequenceBeanHolder");
+	}
+
+	@Bean
+	public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("basePackage") String basePackage) {
+		MapperScannerConfigurer configurer = new MapperScannerConfigurer();
+		configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
+		configurer.setSqlSessionTemplateBeanName("sqlSessionTemplate");
+		configurer.setBasePackage(basePackage);
+		return configurer;
 	}
 }
