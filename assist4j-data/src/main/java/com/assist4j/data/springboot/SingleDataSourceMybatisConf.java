@@ -54,6 +54,7 @@ public class SingleDataSourceMybatisConf {
 		return new SqlSessionTemplate(sqlSessionFactory);
 	}
 
+	@ConditionalOnMissingBean
 	@Bean
 	public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("basePackage") String basePackage) {
 		MapperScannerConfigurer configurer = new MapperScannerConfigurer();
