@@ -5,6 +5,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.assist4j.data.ds.DataSourceCluster;
 import com.assist4j.data.ds.KvPair;
 import com.assist4j.data.springboot.GroupDataSourceMybatisConf;
+import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -86,5 +87,14 @@ public class GroupDataSourceMybatisAutoConfiguration {
 		dsCluster.setMaster(new KvPair("dsMaster", dataSourceMaster));
 		dsClusterList.add(dsCluster);
 		return dsClusterList;
+	}
+
+	@Bean
+	public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("basePackage") String basePackage) {
+		MapperScannerConfigurer configurer = new MapperScannerConfigurer();
+		configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
+		configurer.setSqlSessionTemplateBeanName("sqlSessionTemplate");
+		configurer.setBasePackage(basePackage);
+		return configurer;
 	}
 }
