@@ -41,6 +41,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>5.0.4.RELEASE</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-core</artifactId>
 			<version>${project.version}</version>
@@ -53,6 +59,11 @@
 		<dependency>
 			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-data</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
