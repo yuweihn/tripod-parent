@@ -49,6 +49,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-core</artifactId>
 			<version>${project.version}</version>
