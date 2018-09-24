@@ -38,7 +38,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 	public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response
 			, Object handler, Exception ex) {
 		log.error("", ex);
-		if (InterceptorUtil.hasResponseBodyAnnotation(handler) || errorPage == null) {
+		if (InterceptorUtil.hasResponseBodyAnnotation(handler) || errorPage == null || "".equals(errorPage)) {
 			return createJsonView(ex);
 		}
 
