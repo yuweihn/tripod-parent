@@ -2,7 +2,9 @@ package com.assist4j.boot;
 
 
 import com.assist4j.web.TextUtil;
+import com.assist4j.web.freemarker.FreemarkerUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.MessageSource;
@@ -11,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import java.lang.reflect.Constructor;
 
@@ -49,5 +52,21 @@ public class WebAutoConfiguration {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("bundles.message");
         return messageSource;
+    }
+
+    @ConditionalOnBean(name = "freemarkerConfig")
+    @ConditionalOnMissingBean
+    @Bean
+    public FreemarkerUtil freemarkerUtil(@Qualifier("freemarkerConfig") FreeMarkerConfigurer freemarkerConfig) {
+        try {
+            Class<?> clz = Class.forName(FreemarkerUtil.class.getName());
+            Constructor<?> constructor = clz.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            FreemarkerUtil ftl = (FreemarkerUtil) constructor.newInstance();
+            ftl.setCfg(freemarkerConfig.getConfiguration());
+            return ftl;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
