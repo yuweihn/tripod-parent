@@ -25,6 +25,7 @@ import java.lang.reflect.Constructor;
 @ConditionalOnProperty(name = "assist4j.boot.web.enabled")
 public class WebAutoConfiguration {
 
+    @ConditionalOnBean(name = "messageSource")
     @ConditionalOnMissingBean
     @Bean
     public TextUtil textUtil(@Qualifier("messageSource") MessageSource messageSource) {
