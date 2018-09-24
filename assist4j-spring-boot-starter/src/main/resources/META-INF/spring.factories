@@ -7,4 +7,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.assist4j.boot
   com.assist4j.boot.JedisAutoConfiguration,\
   com.assist4j.boot.JedisMsAutoConfiguration,\
   com.assist4j.boot.JedisClusterAutoConfiguration,\
-  com.assist4j.boot.SmtpAutoConfiguration
+  com.assist4j.boot.SmtpAutoConfiguration,\
+  com.assist4j.boot.WebAutoConfiguration

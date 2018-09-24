@@ -23,6 +23,7 @@
 		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
 		<maven.source.plugin.version>3.0.1</maven.source.plugin.version>
 		<mybatis.spring.version>1.3.1</mybatis.spring.version>
+		<spring.version>4.3.15.RELEASE</spring.version>
 		<springboot.version>1.5.9.RELEASE</springboot.version>
 	</properties>
 
@@ -41,6 +42,12 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-core</artifactId>
 			<version>${project.version}</version>
@@ -53,6 +60,11 @@
 		<dependency>
 			<groupId>com.assist4j</groupId>
 			<artifactId>assist4j-data</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
