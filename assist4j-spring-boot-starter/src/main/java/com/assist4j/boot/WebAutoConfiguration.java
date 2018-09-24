@@ -48,9 +48,9 @@ public class WebAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "messageSource")
     @Bean(name = "messageSource")
-    public MessageSource messageSource(@Qualifier("messageBaseName") String messageBaseName) {
+    public MessageSource messageSource() {
         ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-        messageSource.setBasename(messageBaseName);
+        messageSource.setBasename("bundles.message");
         return messageSource;
     }
 
