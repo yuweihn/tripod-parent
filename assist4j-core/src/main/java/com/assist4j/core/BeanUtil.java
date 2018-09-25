@@ -5,12 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -256,5 +251,28 @@ public abstract class BeanUtil {
 		}
 		builder.delete(0, separator.length());
 		return builder.toString();
+	}
+
+	/**
+	 * 求集合的交集
+	 * @param list1
+	 * @param list2
+	 * @param <T>
+	 * @return
+	 */
+	public static<T> List<T> intersect(List<T> list1, List<T> list2) {
+		if (list1 == null || list1.size() <= 0
+				|| list2 == null || list2.size() <= 0) {
+			return new ArrayList<T>();
+		}
+
+		Set<T> set = new HashSet<T>();
+		set.addAll(list1);
+		set.addAll(list2);
+
+		List<T> list = new ArrayList<T>(list1);
+		set.removeAll(list2);
+		list.removeAll(set);
+		return list;
 	}
 }
