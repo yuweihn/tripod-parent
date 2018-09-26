@@ -2,19 +2,13 @@ package com.assist4j.boot;
 
 
 import com.assist4j.core.SpringContext;
-import com.assist4j.core.exception.ExceptionHandler;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.lang.reflect.Constructor;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -36,17 +30,5 @@ public class DefaultAutoConfiguration {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @ConditionalOnMissingBean(name = "exceptionHandler")
-    @Bean(name = "exceptionHandler")
-    public HandlerExceptionResolver handlerExceptionResolver(@Value("${error.page:}") String errorPage) {
-        Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
-        errorMsgMap.put(MaxUploadSizeExceededException.class, "上传文件太大");
-
-        ExceptionHandler exceptionHandler = new ExceptionHandler();
-        exceptionHandler.setErrorPage(errorPage);
-        exceptionHandler.setErrorMsgMap(errorMsgMap);
-        return exceptionHandler;
     }
 }
