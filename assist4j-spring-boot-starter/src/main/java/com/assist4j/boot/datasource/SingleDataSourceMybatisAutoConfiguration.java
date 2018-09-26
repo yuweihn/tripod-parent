@@ -1,4 +1,4 @@
-package com.assist4j.boot;
+package com.assist4j.boot.datasource;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
