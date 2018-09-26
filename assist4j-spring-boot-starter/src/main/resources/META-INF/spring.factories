@@ -10,6 +10,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.assist4j.boot
   com.assist4j.boot.redis.LettuceAutoConfiguration,\
   com.assist4j.boot.redis.LettuceMsAutoConfiguration,\
   com.assist4j.boot.redis.LettuceClusterAutoConfiguration,\
-  com.assist4j.boot.SmtpAutoConfiguration,\
+  com.assist4j.boot.smtp.SmtpAutoConfiguration,\
   com.assist4j.boot.WebAutoConfiguration,\
   com.assist4j.boot.FreeMarkerAutoConfiguration
