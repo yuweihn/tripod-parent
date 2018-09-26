@@ -3,8 +3,11 @@ package com.assist4j.data.cache;
 
 import java.lang.reflect.Constructor;
 
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
@@ -55,43 +58,50 @@ public abstract class CacheUtil {
 		}
 	}
 
-	public static<T>String objectToString(T value) {
-		validCacheValue(value);
+    public static<T>String objectToString(T value) {
+        validCacheValue(value);
 
-		Class<?> vClz = value.getClass();
-		ValueData vd = new ValueData();
-		vd.setClassName(vClz.getName());
+        Class<?> vClz = value.getClass();
+        ValueData vd = new ValueData();
+        vd.setClassName(vClz.getName());
 
-		if (CacheValue.class.isAssignableFrom(vClz)) {
-			CacheValue<?> cv = (CacheValue<?>) value;
-			vd.setData(cv.encode());
-		} else {
-			vd.setData(JSONObject.toJSONString(value));
-		}
-		return JSONObject.toJSONString(vd);
-	}
+        if (CacheValue.class.isAssignableFrom(vClz)) {
+            CacheValue<?> cv = (CacheValue<?>) value;
+            vd.setData(cv.encode());
+        } else {
+            vd.setData(JSONObject.toJSONString(value, SerializerFeature.WriteClassName));
+            ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
+        }
+        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+        ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
+        return JSONObject.toJSONString(vd, SerializerFeature.WriteClassName);
+    }
 
-	@SuppressWarnings("unchecked")
-	public static<T>T stringToObject(String str) {
-		if (StringUtils.isEmpty(str)) {
-			return (T) null;
-		}
-		ValueData vd = JSONObject.parseObject(str, ValueData.class);
-		try {
-			Class<?> vClz = Class.forName(vd.getClassName());
-			if (CacheValue.class.isAssignableFrom(vClz)) {
-				Constructor<?> constructor = vClz.getDeclaredConstructor();
-				constructor.setAccessible(true);
-				CacheValue<?> cv = (CacheValue<?>) constructor.newInstance();
-				cv.decode(vd.getData());
-				return (T) cv;
-			} else {
-				return (T) JSONObject.parseObject(vd.getData(), vClz);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public static<T>T stringToObject(String str) {
+        if (StringUtils.isEmpty(str)) {
+            return (T) null;
+        }
+        ValueData vd = JSONObject.parseObject(str, ValueData.class);
+        ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
+        ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
+        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+        try {
+            Class<?> vClz = Class.forName(vd.getClassName());
+            if (CacheValue.class.isAssignableFrom(vClz)) {
+                Constructor<?> constructor = vClz.getDeclaredConstructor();
+                constructor.setAccessible(true);
+                CacheValue<?> cv = (CacheValue<?>) constructor.newInstance();
+                CacheValue<?> obj = cv.decode(vd.getData());
+                BeanUtils.copyProperties(obj, cv);
+                return (T) cv;
+            } else {
+                return (T) JSONObject.parseObject(vd.getData(), vClz);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 	private static final String toAllowedClazzStr(CacheClzEnum[] allowedClzs) {
 		StringBuilder builder = new StringBuilder("");

@@ -95,7 +95,7 @@ public class JedisClusterCache implements RedisCache {
 		try {
 			return CacheUtil.stringToObject(str);
 		} catch(Exception e) {
-			log.error("数据异常！！！key={}", key);
+			log.error("数据异常！！！key: {}, message: {}", key, e.getMessage());
 			remove(key);
 			return null;
 		}
@@ -135,7 +135,7 @@ public class JedisClusterCache implements RedisCache {
 		try {
 			return CacheUtil.stringToObject(str);
 		} catch(Exception e) {
-			log.error("数据异常！！！key={}, field={}", key, field);
+			log.error("数据异常！！！key: {}, field: {}, message: {}", key, field, e.getMessage());
 			hdel(key, field);
 			return null;
 		}
