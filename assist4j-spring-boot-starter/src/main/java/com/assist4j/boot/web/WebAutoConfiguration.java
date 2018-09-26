@@ -1,4 +1,4 @@
-package com.assist4j.boot;
+package com.assist4j.boot.web;
 
 
 import com.assist4j.web.TextUtil;
