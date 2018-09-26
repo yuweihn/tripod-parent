@@ -1,11 +1,10 @@
-package com.assist4j.boot;
+package com.assist4j.boot.datasource;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.assist4j.data.ds.DataSourceCluster;
 import com.assist4j.data.ds.KvPair;
-import com.assist4j.data.springboot.GroupDataSourceMybatisConf;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import com.assist4j.data.springboot.GroupDataSourceHibernateConf;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,9 +23,9 @@ import java.util.List;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.group.datasource.mybatis.enabled")
-@Import({GroupDataSourceMybatisConf.class})
-public class GroupDataSourceMybatisAutoConfiguration {
+@ConditionalOnProperty(name = "assist4j.boot.group.datasource.hibernate.enabled")
+@Import({GroupDataSourceHibernateConf.class})
+public class GroupDataSourceHibernateAutoConfiguration {
 
 	@ConditionalOnMissingBean(name = "ds-master")
 	@Bean(name = "ds-master", initMethod = "init", destroyMethod = "close")
@@ -87,14 +86,5 @@ public class GroupDataSourceMybatisAutoConfiguration {
 		dsCluster.setMaster(new KvPair("dsMaster", dataSourceMaster));
 		dsClusterList.add(dsCluster);
 		return dsClusterList;
-	}
-
-	@Bean
-	public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("basePackage") String basePackage) {
-		MapperScannerConfigurer configurer = new MapperScannerConfigurer();
-		configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
-		configurer.setSqlSessionTemplateBeanName("sqlSessionTemplate");
-		configurer.setBasePackage(basePackage);
-		return configurer;
 	}
 }
