@@ -70,10 +70,11 @@ public abstract class CacheUtil {
             vd.setData(cv.encode());
         } else {
             vd.setData(JSONObject.toJSONString(value, SerializerFeature.WriteClassName));
-            ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
         }
+
+		ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
+		ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
         ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
-        ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
         return JSONObject.toJSONString(vd, SerializerFeature.WriteClassName);
     }
 
@@ -83,18 +84,17 @@ public abstract class CacheUtil {
             return (T) null;
         }
         ValueData vd = JSONObject.parseObject(str, ValueData.class);
-        ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
-        ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
-        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
         try {
+			ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
+			ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
+			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+
             Class<?> vClz = Class.forName(vd.getClassName());
             if (CacheValue.class.isAssignableFrom(vClz)) {
                 Constructor<?> constructor = vClz.getDeclaredConstructor();
                 constructor.setAccessible(true);
                 CacheValue<?> cv = (CacheValue<?>) constructor.newInstance();
-                CacheValue<?> obj = cv.decode(vd.getData());
-                BeanUtils.copyProperties(obj, cv);
-                return (T) cv;
+                return (T) cv.decode(vd.getData());
             } else {
                 return (T) JSONObject.parseObject(vd.getData(), vClz);
             }
