@@ -1,4 +1,4 @@
-package com.assist4j.boot;
+package com.assist4j.boot.smtp;
 
 
 import com.assist4j.core.springboot.SmtpConf;
