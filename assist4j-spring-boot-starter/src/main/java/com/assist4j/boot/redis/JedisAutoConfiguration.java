@@ -1,4 +1,4 @@
-package com.assist4j.boot;
+package com.assist4j.boot.redis;
 
 
 import com.assist4j.data.springboot.jedis.JedisConf;

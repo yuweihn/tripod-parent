@@ -4,12 +4,12 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.assist4j.boot
   com.assist4j.boot.datasource.SingleDataSourceMybatisAutoConfiguration,\
   com.assist4j.boot.datasource.GroupDataSourceMybatisAutoConfiguration,\
   com.assist4j.boot.MongoAutoConfiguration,\
-  com.assist4j.boot.JedisAutoConfiguration,\
-  com.assist4j.boot.JedisMsAutoConfiguration,\
-  com.assist4j.boot.JedisClusterAutoConfiguration,\
-  com.assist4j.boot.LettuceAutoConfiguration,\
-  com.assist4j.boot.LettuceMsAutoConfiguration,\
-  com.assist4j.boot.LettuceClusterAutoConfiguration,\
+  com.assist4j.boot.redis.JedisAutoConfiguration,\
+  com.assist4j.boot.redis.JedisMsAutoConfiguration,\
+  com.assist4j.boot.redis.JedisClusterAutoConfiguration,\
+  com.assist4j.boot.redis.LettuceAutoConfiguration,\
+  com.assist4j.boot.redis.LettuceMsAutoConfiguration,\
+  com.assist4j.boot.redis.LettuceClusterAutoConfiguration,\
   com.assist4j.boot.SmtpAutoConfiguration,\
   com.assist4j.boot.WebAutoConfiguration,\
   com.assist4j.boot.FreeMarkerAutoConfiguration
