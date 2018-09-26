@@ -1,4 +1,4 @@
-package com.assist4j.boot;
+package com.assist4j.boot.mongo;
 
 
 import com.assist4j.data.springboot.MongoConf;
