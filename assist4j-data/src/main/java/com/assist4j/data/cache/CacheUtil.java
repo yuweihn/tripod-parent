@@ -93,7 +93,8 @@ public abstract class CacheUtil {
 				Constructor<?> constructor = vClz.getDeclaredConstructor();
 				constructor.setAccessible(true);
 				CacheValue<?> cv = (CacheValue<?>) constructor.newInstance();
-				return (T) cv.decode(vd.getData());
+				cv = cv.decode(vd.getData());
+				return (T) cv;
 			} else {
 				return (T) JSONObject.parseObject(vd.getData(), vClz);
 			}
