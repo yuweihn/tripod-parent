@@ -58,7 +58,7 @@ public abstract class CacheUtil {
 	}
 
 	public static<T>String objectToString(T value) {
-		validCacheValue(value);
+//		validCacheValue(value);
 
 		Class<?> vClz = value.getClass();
 		ValueData vd = new ValueData();
