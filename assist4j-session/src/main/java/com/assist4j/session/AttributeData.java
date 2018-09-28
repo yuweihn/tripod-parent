@@ -4,6 +4,8 @@ package com.assist4j.session;
 import java.util.HashMap;
 import java.util.Map;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.springframework.util.StringUtils;
 
 
@@ -64,7 +66,10 @@ public class AttributeData {
 		map.put("key", key);
 		map.put("value", JSONObject.toJSONString(value));
 		map.put("valueClassName", valueClassName);
-		return JSONObject.toJSONString(map);
+
+		ParserConfig.getGlobalInstance().addAccept(valueClassName);
+		ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+		return JSONObject.toJSONString(map, SerializerFeature.WriteClassName);
 	}
 	@SuppressWarnings("unchecked")
 	public void decode(String str) {
@@ -75,6 +80,10 @@ public class AttributeData {
 
 		this.key = _key;
 		this.valueClassName = _valueClassName;
+
+		ParserConfig.getGlobalInstance().addAccept(this.valueClassName);
+		ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+
 		try {
 			Class<?> vClz = Class.forName(_valueClassName);
 			this.value = JSONObject.parseObject(_value, vClz);
