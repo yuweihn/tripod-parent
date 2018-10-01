@@ -57,22 +57,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-core</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-sequence</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-data</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j-web</artifactId>
+			<artifactId>assist4j</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
