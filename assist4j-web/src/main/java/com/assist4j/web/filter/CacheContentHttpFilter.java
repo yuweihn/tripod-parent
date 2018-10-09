@@ -17,13 +17,8 @@ import java.io.IOException;
 public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequestWrapper, ContentCachingResponseWrapper> {
 	private static final Logger log = LoggerFactory.getLogger(CacheContentHttpFilter.class);
 
-	private boolean logBody = false;
 	private int contentLimit = 100;
 
-
-	public void setLogBody(boolean logBody) {
-		this.logBody = logBody;
-	}
 
 	public void setContentLimit(int contentLimit) {
 		this.contentLimit = contentLimit;
@@ -48,10 +43,6 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 	}
 
 	private void printBody(ContentCachingRequestWrapper request) {
-		if (!logBody) {
-			return;
-		}
-
 		byte[] bytes = request.getContentAsByteArray();
 		if (bytes == null || bytes.length <= 0) {
 			return;
