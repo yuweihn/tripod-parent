@@ -40,6 +40,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	private String staticPath = DEFAULT_STATIC_PATH;
 	private String protocol = null;
 	private boolean allowCors = true;
+	private boolean allowPrintRequest = true;
 
 
 	public void setMethodParam(String methodParam) {
@@ -66,6 +67,11 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		this.allowCors = allowCors;
 	}
 
+	public void setAllowPrintRequest(boolean allowPrintRequest) {
+		this.allowPrintRequest = allowPrintRequest;
+	}
+
+
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -82,7 +88,9 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 		filterChain.doFilter(req, resp);
 
-		printRequest(req);
+		if (allowPrintRequest) {
+			printRequest(req);
+		}
 		afterFilter(req, resp);
 		long endTimeMillis = System.currentTimeMillis();
 		log.info("Status: {}. Time Cost: {} ms.", resp.getStatus(), endTimeMillis - startTimeMillis);
