@@ -39,6 +39,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	private String encoding = DEFAULT_ENCODING;
 	private String staticPath = DEFAULT_STATIC_PATH;
 	private String protocol = null;
+	private boolean allowCors = true;
 
 
 	public void setMethodParam(String methodParam) {
@@ -61,6 +62,10 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		this.protocol = protocol;
 	}
 
+	public void setAllowCors(boolean allowCors) {
+		this.allowCors = allowCors;
+	}
+
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -71,7 +76,9 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 		setCharacterEncoding(req, resp);
 		setContextPath(req);
-		setAccessControl(req, resp);
+		if (allowCors) {
+			setAccessControl(req, resp);
+		}
 
 		filterChain.doFilter(req, resp);
 
