@@ -72,6 +72,7 @@
 			<groupId>com.googlecode.rapid-framework</groupId>
 			<artifactId>rapid-core</artifactId>
 			<version>${rapid.version}</version>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.activation</groupId>
