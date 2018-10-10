@@ -6,7 +6,7 @@
 	<groupId>com.assist4j.boot</groupId>
 	<artifactId>assist4j-spring-boot-starter</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.23</version>
+	<version>1.0.24</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>The Project of Assist4j</description>
@@ -22,6 +22,7 @@
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
 		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
+		<maven.shade.plugin.version>3.1.0</maven.shade.plugin.version>
 		<maven.source.plugin.version>3.0.1</maven.source.plugin.version>
 		<mybatis.spring.version>1.3.1</mybatis.spring.version>
 		<rapid.version>4.0.5</rapid.version>
@@ -54,11 +55,6 @@
 			<artifactId>spring-context-support</artifactId>
 			<version>${spring.version}</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.assist4j</groupId>
-			<artifactId>assist4j</artifactId>
-			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -94,6 +90,48 @@
 					<artifactId>cxf-rt-ws-security</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-dao</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-data</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-http</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-sequence</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-session</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-web</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.assist4j</groupId>
+			<artifactId>assist4j-schedule</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -220,6 +258,28 @@
 						<goals>
 							<goal>sign</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>${maven.shade.plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<createSourcesJar>true</createSourcesJar>
+							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
+							<artifactSet>
+								<includes>
+									<include>com.assist4j:*</include>
+								</includes>
+							</artifactSet>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
