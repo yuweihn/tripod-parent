@@ -1,6 +1,7 @@
 package com.assist4j.dao.mybatis.provider;
 
 
+import com.assist4j.dao.mybatis.util.MapperUtil;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Table;
@@ -25,7 +26,7 @@ public class InsertSqlProvider {
 			throw new RuntimeException("Table name is not found.");
 		}
 		
-		Field[] allFields = entityClass.getDeclaredFields();
+		List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
 		return new SQL() {{
 			INSERT_INTO(table.name().trim());
 			for (Field field: allFields) {
@@ -61,7 +62,7 @@ public class InsertSqlProvider {
 			throw new RuntimeException("Table name is not found.");
 		}
 		
-		Field[] allFields = entityClass.getDeclaredFields();
+		List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
 		return new SQL() {{
 			INSERT_INTO(table.name().trim());
 			for (Field field: allFields) {
@@ -106,7 +107,7 @@ public class InsertSqlProvider {
 		}
 		
 		List<Field> persistFieldList = new ArrayList<Field>();
-		Field[] allFields = entityClass.getDeclaredFields();
+		List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
 		for (Field field: allFields) {
 			Column column = field.getAnnotation(Column.class);
 			if (column == null) {

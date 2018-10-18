@@ -1,6 +1,7 @@
 package com.assist4j.dao.mybatis.provider;
 
 
+import com.assist4j.dao.mybatis.util.MapperUtil;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Column;
@@ -8,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 
 
@@ -27,7 +29,7 @@ public class DeleteSqlProvider {
 			throw new RuntimeException("Table name is not found.");
 		}
 		
-		Field[] allFields = entityClass.getDeclaredFields();
+		List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
 		return new SQL() {{
 			DELETE_FROM(table.name().trim());
 			boolean whereSet = false;
@@ -65,7 +67,7 @@ public class DeleteSqlProvider {
 			throw new RuntimeException("Table name is not found.");
 		}
 
-		Field[] allFields = entityClass.getDeclaredFields();
+		List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
 		return new SQL() {{
 			DELETE_FROM(table.name().trim());
 			boolean whereSet = false;
