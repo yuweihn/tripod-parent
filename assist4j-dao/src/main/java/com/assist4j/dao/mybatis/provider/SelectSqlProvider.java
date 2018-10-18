@@ -1,12 +1,14 @@
 package com.assist4j.dao.mybatis.provider;
 
 
+import com.assist4j.dao.mybatis.util.MapperUtil;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,7 +26,7 @@ public class SelectSqlProvider {
 			throw new RuntimeException("Table name is not found.");
 		}
 
-		final Field[] allFields = entityClass.getDeclaredFields();
+		final List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
 		return new SQL() {{
 			boolean whereSet = false;
 			for (Field field: allFields) {
@@ -64,7 +66,7 @@ public class SelectSqlProvider {
 			throw new RuntimeException("Table name is not found.");
 		}
 
-		final Field[] allFields = entityClass.getDeclaredFields();
+		final List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
 		return new SQL() {{
 			boolean whereSet = false;
 			FROM(table.name().trim());
