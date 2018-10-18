@@ -9,21 +9,20 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 
 /**
  * @author yuwei
  */
 public class UpdateSqlProvider {
-	public <T>String updateByPrimaryKey(T t) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	public <T>String updateByPrimaryKey(final T t) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		Table table = entityClass.getAnnotation(Table.class);
+		final Table table = entityClass.getAnnotation(Table.class);
 		if (table == null || table.name() == null || "".equals(table.name().trim())) {
 			throw new RuntimeException("Table name is not found.");
 		}
-		
-		Field[] allFields = entityClass.getDeclaredFields();
+
+		final Field[] allFields = entityClass.getDeclaredFields();
 		return new SQL() {{
 			UPDATE(table.name().trim());
 			boolean whereSet = false;
@@ -61,14 +60,14 @@ public class UpdateSqlProvider {
 		}}.toString();
 	}
 
-	public <T>String updateByPrimaryKeySelective(T t) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public <T>String updateByPrimaryKeySelective(final T t) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		Table table = entityClass.getAnnotation(Table.class);
+		final Table table = entityClass.getAnnotation(Table.class);
 		if (table == null || table.name() == null || "".equals(table.name().trim())) {
 			throw new RuntimeException("Table name is not found.");
 		}
-		
-		Field[] allFields = entityClass.getDeclaredFields();
+
+		final Field[] allFields = entityClass.getDeclaredFields();
 		return new SQL() {{
 			UPDATE(table.name().trim());
 			boolean whereSet = false;

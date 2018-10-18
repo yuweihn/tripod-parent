@@ -17,14 +17,14 @@ public class SelectSqlProvider {
 
 	@SuppressWarnings("unchecked")
 	public <PK, T>String selectOneById(Map<String, Object> param) throws IllegalAccessException {
-		PK id = (PK) param.get("param1");
+		final PK id = (PK) param.get("param1");
 		Class<T> entityClass = (Class<T>) param.get("param2");
-		Table table = entityClass.getAnnotation(Table.class);
+		final Table table = entityClass.getAnnotation(Table.class);
 		if (table == null || table.name() == null || "".equals(table.name().trim())) {
 			throw new RuntimeException("Table name is not found.");
 		}
-		
-		Field[] allFields = entityClass.getDeclaredFields();
+
+		final Field[] allFields = entityClass.getDeclaredFields();
 		return new SQL() {{
 			boolean whereSet = false;
 			for (Field field: allFields) {
@@ -55,16 +55,16 @@ public class SelectSqlProvider {
 	
 	@SuppressWarnings("unchecked")
 	public <T>String selectListOrderBy(Map<String, Object> param) throws IllegalAccessException, ClassNotFoundException {
-		Map<String, Object> whereMap = (Map<String, Object>) param.get("param1");
-		String orderBy = (String) param.get("param2");
+		final Map<String, Object> whereMap = (Map<String, Object>) param.get("param1");
+		final String orderBy = (String) param.get("param2");
 		Class<T> entityClass = (Class<T>) param.get("param3");
-		
-		Table table = entityClass.getAnnotation(Table.class);
+
+		final Table table = entityClass.getAnnotation(Table.class);
 		if (table == null || table.name() == null || "".equals(table.name().trim())) {
 			throw new RuntimeException("Table name is not found.");
 		}
-		
-		Field[] allFields = entityClass.getDeclaredFields();
+
+		final Field[] allFields = entityClass.getDeclaredFields();
 		return new SQL() {{
 			boolean whereSet = false;
 			FROM(table.name().trim());

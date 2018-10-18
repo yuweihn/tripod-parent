@@ -20,12 +20,12 @@ import java.util.Map;
 public class InsertSqlProvider {
 	public <T>String insert(T t) {
 		Class<?> entityClass = t.getClass();
-		Table table = entityClass.getAnnotation(Table.class);
+		final Table table = entityClass.getAnnotation(Table.class);
 		if (table == null || table.name() == null || "".equals(table.name().trim())) {
 			throw new RuntimeException("Table name is not found.");
 		}
-		
-		Field[] allFields = entityClass.getDeclaredFields();
+
+		final Field[] allFields = entityClass.getDeclaredFields();
 		return new SQL() {{
 			INSERT_INTO(table.name().trim());
 			for (Field field: allFields) {
@@ -54,14 +54,14 @@ public class InsertSqlProvider {
 		}}.toString();
 	}
 	
-	public <T>String insertSelective(T t) throws IllegalAccessException {
+	public <T>String insertSelective(final T t) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		Table table = entityClass.getAnnotation(Table.class);
+		final Table table = entityClass.getAnnotation(Table.class);
 		if (table == null || table.name() == null || "".equals(table.name().trim())) {
 			throw new RuntimeException("Table name is not found.");
 		}
-		
-		Field[] allFields = entityClass.getDeclaredFields();
+
+		final Field[] allFields = entityClass.getDeclaredFields();
 		return new SQL() {{
 			INSERT_INTO(table.name().trim());
 			for (Field field: allFields) {

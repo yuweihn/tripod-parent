@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 
@@ -17,18 +16,18 @@ import java.util.Map;
  */
 public class DeleteSqlProvider {
 
-	public <T>String delete(T t) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	public <T>String delete(T t) throws IllegalAccessException {
 		if (t == null) {
 			return null;
 		}
 		
 		Class<?> entityClass = t.getClass();
-		Table table = entityClass.getAnnotation(Table.class);
+		final Table table = entityClass.getAnnotation(Table.class);
 		if (table == null || table.name() == null || "".equals(table.name().trim())) {
 			throw new RuntimeException("Table name is not found.");
 		}
 		
-		Field[] allFields = entityClass.getDeclaredFields();
+		final Field[] allFields = entityClass.getDeclaredFields();
 		return new SQL() {{
 			DELETE_FROM(table.name().trim());
 			boolean whereSet = false;
@@ -59,14 +58,14 @@ public class DeleteSqlProvider {
 	
 	@SuppressWarnings("unchecked")
 	public <PK, T>String deleteByKey(Map<String, Object> param) throws IllegalAccessException {
-		PK id = (PK) param.get("param1");
+		final PK id = (PK) param.get("param1");
 		Class<T> entityClass = (Class<T>) param.get("param2");
-		Table table = entityClass.getAnnotation(Table.class);
+		final Table table = entityClass.getAnnotation(Table.class);
 		if (table == null || table.name() == null || "".equals(table.name().trim())) {
 			throw new RuntimeException("Table name is not found.");
 		}
 
-		Field[] allFields = entityClass.getDeclaredFields();
+		final Field[] allFields = entityClass.getDeclaredFields();
 		return new SQL() {{
 			DELETE_FROM(table.name().trim());
 			boolean whereSet = false;
