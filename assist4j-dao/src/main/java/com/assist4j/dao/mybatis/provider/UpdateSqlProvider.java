@@ -16,7 +16,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author yuwei
  */
 public class UpdateSqlProvider {
-	public <T>String updateByPrimaryKey(T t) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	public <T>String updateByPrimaryKey(T t) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
 		Table table = entityClass.getAnnotation(Table.class);
 		if (table == null || table.name() == null || "".equals(table.name().trim())) {

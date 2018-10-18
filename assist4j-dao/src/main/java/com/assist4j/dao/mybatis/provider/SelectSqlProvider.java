@@ -54,7 +54,7 @@ public class SelectSqlProvider {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T>String selectListOrderBy(Map<String, Object> param) throws IllegalAccessException, ClassNotFoundException {
+	public <T>String selectListOrderBy(Map<String, Object> param) throws IllegalAccessException {
 		Map<String, Object> whereMap = (Map<String, Object>) param.get("param1");
 		String orderBy = (String) param.get("param2");
 		Class<T> entityClass = (Class<T>) param.get("param3");

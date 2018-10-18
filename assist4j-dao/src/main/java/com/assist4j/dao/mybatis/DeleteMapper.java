@@ -3,8 +3,8 @@ package com.assist4j.dao.mybatis;
 
 import java.io.Serializable;
 
+import com.assist4j.dao.mybatis.provider.DeleteSqlProvider;
 import org.apache.ibatis.annotations.DeleteProvider;
-import com.wei.mycat.demo.mybatis.provider.DeleteSqlProvider;
 
 
 /**

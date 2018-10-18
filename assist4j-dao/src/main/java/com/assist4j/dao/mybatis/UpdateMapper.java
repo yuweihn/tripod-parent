@@ -3,8 +3,8 @@ package com.assist4j.dao.mybatis;
 
 import java.io.Serializable;
 
+import com.assist4j.dao.mybatis.provider.UpdateSqlProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
-import com.wei.mycat.demo.mybatis.provider.UpdateSqlProvider;
 
 
 /**

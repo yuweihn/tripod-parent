@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 
@@ -17,7 +16,7 @@ import java.util.Map;
  */
 public class DeleteSqlProvider {
 
-	public <T>String delete(T t) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+	public <T>String delete(T t) throws IllegalAccessException {
 		if (t == null) {
 			return null;
 		}

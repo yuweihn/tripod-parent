@@ -1,9 +1,9 @@
 package com.assist4j.dao.mybatis;
 
 
+import com.assist4j.dao.mybatis.provider.InsertSqlProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Options;
-import com.wei.mycat.demo.mybatis.provider.InsertSqlProvider;
 
 import java.io.Serializable;
 import java.util.List;

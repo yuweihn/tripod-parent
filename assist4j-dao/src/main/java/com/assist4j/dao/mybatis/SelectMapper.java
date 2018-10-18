@@ -1,8 +1,8 @@
 package com.assist4j.dao.mybatis;
 
 
+import com.assist4j.dao.mybatis.provider.SelectSqlProvider;
 import org.apache.ibatis.annotations.SelectProvider;
-import com.wei.mycat.demo.mybatis.provider.SelectSqlProvider;
 
 import java.io.Serializable;
 import java.util.List;
