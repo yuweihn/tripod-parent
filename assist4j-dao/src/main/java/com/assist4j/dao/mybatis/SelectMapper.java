@@ -19,12 +19,11 @@ public interface SelectMapper<T extends Serializable, PK extends Serializable> {
 	
 	/**
 	 * @param where                   where中的key为表的字段，不是对象的属性
-	 * @param orderBy
 	 * @param clazz
 	 * @return
 	 */
 	@SelectProvider(type = SelectSqlProvider.class, method = "selectCount")
-	int selectCount(@Param("where") Map<String, Object> where, @Param("orderBy") String orderBy, @Param("clazz") Class<T> clazz);
+	int selectCount(@Param("where") Map<String, Object> where, @Param("clazz") Class<T> clazz);
 
 	/**
 	 * @param where                   where中的key为表的字段，不是对象的属性
