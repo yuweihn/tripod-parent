@@ -1,13 +1,9 @@
 package com.assist4j.dao.mybatis.provider;
 
 
-import com.assist4j.dao.mybatis.util.MapperUtil;
 import org.apache.ibatis.jdbc.SQL;
 
-import javax.persistence.Column;
 import javax.persistence.Id;
-import javax.persistence.Table;
-
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +12,7 @@ import java.util.Map;
 /**
  * @author yuwei
  */
-public class DeleteSqlProvider {
+public class DeleteSqlProvider extends AbstractProvider {
 
 	public <T>String delete(T t) throws IllegalAccessException {
 		if (t == null) {
@@ -24,31 +20,19 @@ public class DeleteSqlProvider {
 		}
 		
 		Class<?> entityClass = t.getClass();
-		Table table = entityClass.getAnnotation(Table.class);
-		if (table == null || table.name() == null || "".equals(table.name().trim())) {
-			throw new RuntimeException("Table name is not found.");
-		}
-		
-		List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
+		String tableName = getTableName(entityClass);
+
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			DELETE_FROM(table.name().trim());
+			DELETE_FROM(tableName);
 			boolean whereSet = false;
-			
-			for (Field field: allFields) {
-				Column column = field.getAnnotation(Column.class);
-				if (column == null) {
-					continue;
-				}
-				
-				String colName = column.name();
-				if (colName == null || "".equals(colName.trim())) {
-					continue;
-				}
-				colName = colName.trim();
+
+			for (FieldColumn fc: fcList) {
+				Field field = fc.getField();
 				
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
-					WHERE("`" + colName + "` = #{" + field.getName() + "}");
+					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
 					whereSet = true;
 				}
 			}
@@ -62,31 +46,19 @@ public class DeleteSqlProvider {
 	public <PK, T>String deleteByKey(Map<String, Object> param) throws IllegalAccessException {
 		PK id = (PK) param.get("param1");
 		Class<T> entityClass = (Class<T>) param.get("param2");
-		Table table = entityClass.getAnnotation(Table.class);
-		if (table == null || table.name() == null || "".equals(table.name().trim())) {
-			throw new RuntimeException("Table name is not found.");
-		}
+		String tableName = getTableName(entityClass);
 
-		List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			DELETE_FROM(table.name().trim());
+			DELETE_FROM(tableName);
 			boolean whereSet = false;
-			
-			for (Field field: allFields) {
-				Column column = field.getAnnotation(Column.class);
-				if (column == null) {
-					continue;
-				}
-				
-				String colName = column.name();
-				if (colName == null || "".equals(colName.trim())) {
-					continue;
-				}
-				colName = colName.trim();
+
+			for (FieldColumn fc: fcList) {
+				Field field = fc.getField();
 				
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
-					WHERE("`" + colName + "` = " + id);
+					WHERE("`" + fc.getColumnName() + "` = " + id);
 					whereSet = true;
 				}
 			}

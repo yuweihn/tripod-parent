@@ -1,10 +1,8 @@
 package com.assist4j.dao.mybatis.provider;
 
 
-import com.assist4j.dao.mybatis.util.MapperUtil;
 import org.apache.ibatis.jdbc.SQL;
 
-import javax.persistence.Table;
 import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -18,28 +16,16 @@ import java.util.Map;
 /**
  * @author yuwei
  */
-public class InsertSqlProvider {
+public class InsertSqlProvider extends AbstractProvider {
 	public <T>String insert(T t) {
 		Class<?> entityClass = t.getClass();
-		Table table = entityClass.getAnnotation(Table.class);
-		if (table == null || table.name() == null || "".equals(table.name().trim())) {
-			throw new RuntimeException("Table name is not found.");
-		}
-		
-		List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
+		String tableName = getTableName(entityClass);
+
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			INSERT_INTO(table.name().trim());
-			for (Field field: allFields) {
-				Column column = field.getAnnotation(Column.class);
-				if (column == null) {
-					continue;
-				}
-				
-				String colName = column.name();
-				if (colName == null || "".equals(colName.trim())) {
-					continue;
-				}
-				colName = colName.trim();
+			INSERT_INTO(tableName);
+			for (FieldColumn fc: fcList) {
+				Field field = fc.getField();
 				
 				/**
 				 * 如果使用数据库自增主键，此处生成的SQL中排除该字段
@@ -50,38 +36,26 @@ public class InsertSqlProvider {
 					continue;
 				}
 				
-				VALUES("`" + colName + "`", "#{" + field.getName() + "}");
+				VALUES("`" + fc.getColumnName() + "`", "#{" + field.getName() + "}");
 			}
 		}}.toString();
 	}
 	
 	public <T>String insertSelective(T t) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		Table table = entityClass.getAnnotation(Table.class);
-		if (table == null || table.name() == null || "".equals(table.name().trim())) {
-			throw new RuntimeException("Table name is not found.");
-		}
-		
-		List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
+		String tableName = getTableName(entityClass);
+
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			INSERT_INTO(table.name().trim());
-			for (Field field: allFields) {
+			INSERT_INTO(tableName);
+			for (FieldColumn fc: fcList) {
+				Field field = fc.getField();
+
 				field.setAccessible(true);
 				Object o = field.get(t);
 				if (o == null) {
 					continue;
 				}
-				
-				Column column = field.getAnnotation(Column.class);
-				if (column == null) {
-					continue;
-				}
-				
-				String colName = column.name();
-				if (colName == null || "".equals(colName.trim())) {
-					continue;
-				}
-				colName = colName.trim();
 				
 				/**
 				 * 如果使用数据库自增主键，此处生成的SQL中排除该字段
@@ -92,7 +66,7 @@ public class InsertSqlProvider {
 					continue;
 				}
 				
-				VALUES("`" + colName + "`", "#{" + field.getName() + "}");
+				VALUES("`" + fc.getColumnName() + "`", "#{" + field.getName() + "}");
 			}
 		}}.toString();
 	}
@@ -101,23 +75,12 @@ public class InsertSqlProvider {
 		List<T> list = param.get("param1");
 		T t = list.get(0);
 		Class<?> entityClass = t.getClass();
-		Table table = entityClass.getAnnotation(Table.class);
-		if (table == null || table.name() == null || "".equals(table.name().trim())) {
-			throw new RuntimeException("Table name is not found.");
-		}
-		
+		String tableName = getTableName(entityClass);
+
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		List<Field> persistFieldList = new ArrayList<Field>();
-		List<Field> allFields = MapperUtil.getAllFieldsList(entityClass);
-		for (Field field: allFields) {
-			Column column = field.getAnnotation(Column.class);
-			if (column == null) {
-				continue;
-			}
-			
-			String colName = column.name();
-			if (colName == null || "".equals(colName.trim())) {
-				continue;
-			}
+		for (FieldColumn fc: fcList) {
+			Field field = fc.getField();
 			
 			/**
 			 * 如果使用数据库自增主键，此处生成的SQL中排除该字段
@@ -132,7 +95,7 @@ public class InsertSqlProvider {
 		}
 		
 		StringBuilder builder = new StringBuilder("insert into ");
-		builder.append(table.name().trim()).append(" (");
+		builder.append(tableName).append(" (");
 		for (int i = 0; i < persistFieldList.size(); i++) {
 			Field field = persistFieldList.get(i);
 			Column col = field.getAnnotation(Column.class);
