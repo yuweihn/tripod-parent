@@ -92,12 +92,8 @@ public abstract class AbstractProvider {
 			}
 			currentClass = currentClass.getSuperclass();
 		}
-
+		
 		List<FieldColumn> list = new ArrayList<FieldColumn>();
-		if (allFields == null) {
-			return list;
-		}
-
 		for (Field field: allFields) {
 			Column column = field.getAnnotation(Column.class);
 			if (column == null) {
