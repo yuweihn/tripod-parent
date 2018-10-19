@@ -74,8 +74,14 @@ public class SelectSqlProvider extends AbstractProvider {
 		final Map<String, Object> whereMap = (Map<String, Object>) param.get("where");
 		final String orderBy = (String) param.get("orderBy");
 		Class<T> entityClass = (Class<T>) param.get("clazz");
-		Integer pageNo0 = (Integer) param.get("pageNo");
-		Integer pageSize0 = (Integer) param.get("pageSize");
+		Integer pageNo0 = null;
+		if (param.containsKey("pageNo")) {
+			pageNo0 = (Integer) param.get("pageNo");
+		}
+		Integer pageSize0 = null;
+		if (param.containsKey("pageSize")) {
+			pageSize0 = (Integer) param.get("pageSize");
+		}
 		final String tableName = getTableName(entityClass);
 
 		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
