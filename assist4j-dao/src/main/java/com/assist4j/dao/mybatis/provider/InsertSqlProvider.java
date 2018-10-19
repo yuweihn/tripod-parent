@@ -19,9 +19,9 @@ import java.util.Map;
 public class InsertSqlProvider extends AbstractProvider {
 	public <T>String insert(T t) {
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		final String tableName = getTableName(entityClass);
 
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			INSERT_INTO(tableName);
 			for (FieldColumn fc: fcList) {
@@ -41,11 +41,11 @@ public class InsertSqlProvider extends AbstractProvider {
 		}}.toString();
 	}
 	
-	public <T>String insertSelective(T t) throws IllegalAccessException {
+	public <T>String insertSelective(final T t) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		final String tableName = getTableName(entityClass);
 
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			INSERT_INTO(tableName);
 			for (FieldColumn fc: fcList) {

@@ -14,11 +14,11 @@ import java.util.List;
  * @author yuwei
  */
 public class UpdateSqlProvider extends AbstractProvider {
-	public <T>String updateByPrimaryKey(T t) throws IllegalAccessException {
+	public <T>String updateByPrimaryKey(final T t) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		final String tableName = getTableName(entityClass);
 
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			UPDATE(tableName);
 			boolean whereSet = false;
@@ -47,11 +47,11 @@ public class UpdateSqlProvider extends AbstractProvider {
 		}}.toString();
 	}
 
-	public <T>String updateByPrimaryKeySelective(T t) throws IllegalAccessException {
+	public <T>String updateByPrimaryKeySelective(final T t) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		final String tableName = getTableName(entityClass);
 
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			UPDATE(tableName);
 			boolean whereSet = false;

@@ -20,9 +20,9 @@ public class DeleteSqlProvider extends AbstractProvider {
 		}
 		
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		final String tableName = getTableName(entityClass);
 
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			DELETE_FROM(tableName);
 			boolean whereSet = false;
@@ -44,11 +44,11 @@ public class DeleteSqlProvider extends AbstractProvider {
 	
 	@SuppressWarnings("unchecked")
 	public <PK, T>String deleteByKey(Map<String, Object> param) throws IllegalAccessException {
-		PK id = (PK) param.get("param1");
+		final PK id = (PK) param.get("param1");
 		Class<T> entityClass = (Class<T>) param.get("param2");
-		String tableName = getTableName(entityClass);
+		final String tableName = getTableName(entityClass);
 
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			DELETE_FROM(tableName);
 			boolean whereSet = false;

@@ -16,11 +16,11 @@ public class SelectSqlProvider extends AbstractProvider {
 
 	@SuppressWarnings("unchecked")
 	public <PK, T>String selectOneById(Map<String, Object> param) throws IllegalAccessException {
-		PK id = (PK) param.get("param1");
+		final PK id = (PK) param.get("param1");
 		Class<T> entityClass = (Class<T>) param.get("param2");
-		String tableName = getTableName(entityClass);
-		
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		final String tableName = getTableName(entityClass);
+
+		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			boolean whereSet = false;
 			for (FieldColumn fc: fcList) {
@@ -42,12 +42,12 @@ public class SelectSqlProvider extends AbstractProvider {
 	
 	@SuppressWarnings("unchecked")
 	public <T>String selectListOrderBy(Map<String, Object> param) throws IllegalAccessException {
-		Map<String, Object> whereMap = (Map<String, Object>) param.get("param1");
-		String orderBy = (String) param.get("param2");
+		final Map<String, Object> whereMap = (Map<String, Object>) param.get("param1");
+		final String orderBy = (String) param.get("param2");
 		Class<T> entityClass = (Class<T>) param.get("param3");
-		String tableName = getTableName(entityClass);
+		final String tableName = getTableName(entityClass);
 
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			boolean whereSet = false;
 			FROM(tableName);
