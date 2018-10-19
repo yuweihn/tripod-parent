@@ -2,6 +2,7 @@ package com.assist4j.dao.mybatis;
 
 
 import com.assist4j.dao.mybatis.provider.SelectSqlProvider;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
 
 import java.io.Serializable;
@@ -22,7 +23,20 @@ public interface SelectMapper<T extends Serializable, PK extends Serializable> {
 	 * @param clazz
 	 * @return
 	 */
-	@SelectProvider(type = SelectSqlProvider.class, method = "selectListOrderBy")
-	List<T> selectListOrderBy(Map<String, Object> where, String orderBy, Class<T> clazz);
+	@SelectProvider(type = SelectSqlProvider.class, method = "selectCount")
+	int selectCount(@Param("where") Map<String, Object> where, @Param("orderBy") String orderBy, @Param("clazz") Class<T> clazz);
+
+	/**
+	 * @param where                   where中的key为表的字段，不是对象的属性
+	 * @param orderBy
+	 * @param clazz
+	 * @return
+	 */
+	@SelectProvider(type = SelectSqlProvider.class, method = "selectList")
+	List<T> selectList(@Param("where") Map<String, Object> where, @Param("orderBy") String orderBy, @Param("clazz") Class<T> clazz);
+
+	@SelectProvider(type = SelectSqlProvider.class, method = "selectList")
+	List<T> selectList(@Param("where") Map<String, Object> where, @Param("pageNo") int pageNo
+			, @Param("pageSize") int pageSize, @Param("orderBy") String orderBy, @Param("clazz") Class<T> clazz);
 }
 
