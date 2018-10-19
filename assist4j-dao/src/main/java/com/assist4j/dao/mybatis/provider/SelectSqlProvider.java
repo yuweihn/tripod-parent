@@ -26,7 +26,7 @@ public class SelectSqlProvider extends AbstractProvider {
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
 				SELECT(fc.getColumnName() + " as " + field.getName());
-				
+
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
 					WHERE(fc.getColumnName() + " = " + id);
@@ -41,38 +41,36 @@ public class SelectSqlProvider extends AbstractProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T>String selectCount(Map<String, Object> param) throws IllegalAccessException {
+	public <T>String selectCount(Map<String, Object> param) {
 		final Map<String, Object> whereMap = (Map<String, Object>) param.get("where");
 		Class<T> entityClass = (Class<T>) param.get("clazz");
 		final String tableName = getTableName(entityClass);
 
 		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			boolean whereSet = false;
 			FROM(tableName);
 			SELECT("count(1) as cnt");
-			for (FieldColumn fc: fcList) {
-				Object obj = whereMap.get(fc.getColumnName());
-				if (obj != null) {
-					//增加空字符串的判断
-					if (obj instanceof String) {
-						String str = (String) obj;
-						if (str != null) {
-							WHERE(fc.getColumnName() + " = " + str);
+			if (whereMap != null) {
+				for (FieldColumn fc : fcList) {
+					Object obj = whereMap.get(fc.getColumnName());
+					if (obj != null) {
+						//增加空字符串的判断
+						if (obj instanceof String) {
+							String str = (String) obj;
+							if (str != null) {
+								WHERE(fc.getColumnName() + " = " + str);
+							}
+						} else {
+							WHERE(fc.getColumnName() + " = " + obj);
 						}
-					} else {
-						WHERE(fc.getColumnName() + " = " + obj);
 					}
 				}
 			}
-			if (!whereSet) {
-				throw new IllegalAccessException("'where' is missed.");
-			}
 		}}.toString();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public <T>String selectList(Map<String, Object> param) throws IllegalAccessException {
+	public <T>String selectList(Map<String, Object> param) {
 		final Map<String, Object> whereMap = (Map<String, Object>) param.get("where");
 		final String orderBy = (String) param.get("orderBy");
 		Class<T> entityClass = (Class<T>) param.get("clazz");
@@ -82,27 +80,25 @@ public class SelectSqlProvider extends AbstractProvider {
 
 		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		StringBuilder sql = new StringBuilder(new SQL() {{
-			boolean whereSet = false;
 			FROM(tableName);
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
 				SELECT(fc.getColumnName() + " as " + field.getName());
 
-				Object obj = whereMap.get(fc.getColumnName());
-				if (obj != null) {
-					//增加空字符串的判断
-					if (obj instanceof String) {
-						String str = (String) obj;
-						if (str != null) {
-							WHERE(fc.getColumnName() + " = " + str);
+				if (whereMap != null) {
+					Object obj = whereMap.get(fc.getColumnName());
+					if (obj != null) {
+						//增加空字符串的判断
+						if (obj instanceof String) {
+							String str = (String) obj;
+							if (str != null) {
+								WHERE(fc.getColumnName() + " = " + str);
+							}
+						} else {
+							WHERE(fc.getColumnName() + " = " + obj);
 						}
-					} else {
-						WHERE(fc.getColumnName() + " = " + obj);
 					}
 				}
-			}
-			if (!whereSet) {
-				throw new IllegalAccessException("'where' is missed.");
 			}
 			if (orderBy != null && !"".equals(orderBy)) {
 				ORDER_BY(orderBy);
