@@ -39,24 +39,56 @@ public class SelectSqlProvider extends AbstractProvider {
 			}
 		}}.toString();
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public <T>String selectListOrderBy(Map<String, Object> param) throws IllegalAccessException {
-		final Map<String, Object> whereMap = (Map<String, Object>) param.get("param1");
-		final String orderBy = (String) param.get("param2");
-		Class<T> entityClass = (Class<T>) param.get("param3");
+	public <T>String selectCount(Map<String, Object> param) throws IllegalAccessException {
+		final Map<String, Object> whereMap = (Map<String, Object>) param.get("where");
+		Class<T> entityClass = (Class<T>) param.get("clazz");
 		final String tableName = getTableName(entityClass);
 
 		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			boolean whereSet = false;
 			FROM(tableName);
+			SELECT("count(1) as cnt");
+			for (FieldColumn fc: fcList) {
+				Object obj = whereMap.get(fc.getColumnName());
+				if (obj != null) {
+					//增加空字符串的判断
+					if (obj instanceof String) {
+						String str = (String) obj;
+						if (str != null) {
+							WHERE(fc.getColumnName() + " = " + str);
+						}
+					} else {
+						WHERE(fc.getColumnName() + " = " + obj);
+					}
+				}
+			}
+			if (!whereSet) {
+				throw new IllegalAccessException("'where' is missed.");
+			}
+		}}.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T>String selectList(Map<String, Object> param) throws IllegalAccessException {
+		final Map<String, Object> whereMap = (Map<String, Object>) param.get("where");
+		final String orderBy = (String) param.get("orderBy");
+		Class<T> entityClass = (Class<T>) param.get("clazz");
+		Integer pageNo0 = (Integer) param.get("pageNo");
+		Integer pageSize0 = (Integer) param.get("pageSize");
+		final String tableName = getTableName(entityClass);
+
+		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		StringBuilder sql = new StringBuilder(new SQL() {{
+			boolean whereSet = false;
+			FROM(tableName);
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
 				SELECT(fc.getColumnName() + " as " + field.getName());
-				
-				field.setAccessible(true);
-				Object obj = field.get(whereMap);
+
+				Object obj = whereMap.get(fc.getColumnName());
 				if (obj != null) {
 					//增加空字符串的判断
 					if (obj instanceof String) {
@@ -75,7 +107,15 @@ public class SelectSqlProvider extends AbstractProvider {
 			if (orderBy != null && !"".equals(orderBy)) {
 				ORDER_BY(orderBy);
 			}
-		}}.toString();
+		}}.toString());
+
+		if (pageNo0 != null && pageSize0 != null) {
+			int pageNo = pageNo0 <= 0 ? 1 : pageNo0;
+			int pageSize = pageSize0 <= 0 ? 10 : pageSize0;
+
+			sql.append(" limit ").append((pageNo - 1) * pageSize).append(", ").append(pageSize);
+		}
+		return sql.toString();
 	}
 }
 
