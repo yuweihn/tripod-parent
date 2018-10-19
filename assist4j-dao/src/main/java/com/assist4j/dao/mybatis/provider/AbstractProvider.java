@@ -18,8 +18,8 @@ public class AbstractProvider {
 	private static Map<String, String> TABLE_NAME_MAP = new ConcurrentHashMap<String, String>();
 	private static Map<String, String> SELECT_SQL_MAP = new ConcurrentHashMap<String, String>();
 
-	private Lock tnLock = new ReentrantLock();
-	private Lock sqlLock = new ReentrantLock();
+	private static Lock tnLock = new ReentrantLock();
+	private static Lock sqlLock = new ReentrantLock();
 
 	protected String getTableName(Class<?> clz) {
 		String className = clz.getName();
