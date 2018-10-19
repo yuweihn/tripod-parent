@@ -3,6 +3,8 @@ package com.assist4j.dao.mybatis.provider;
 
 import com.assist4j.dao.mybatis.util.MapperUtil;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -13,13 +15,15 @@ import javax.persistence.Table;
  * @author wei
  */
 public class AbstractProvider {
-	private String tableName;
-	private String selectSql;
+	private static Map<String, String> TABLE_NAME_MAP = new ConcurrentHashMap<String, String>();
+	private static Map<String, String> SELECT_SQL_MAP = new ConcurrentHashMap<String, String>();
 
 	private Lock tnLock = new ReentrantLock();
 	private Lock sqlLock = new ReentrantLock();
 
 	protected String getTableName(Class<?> clz) {
+		String className = clz.getName();
+		String tableName = TABLE_NAME_MAP.get(className);
 		if (tableName == null) {
 			try {
 				tnLock.tryLock();
@@ -29,6 +33,7 @@ public class AbstractProvider {
 						throw new RuntimeException("Table name is not found.");
 					}
 					tableName = table.name().trim();
+					TABLE_NAME_MAP.put(className, tableName);
 				}
 			} finally {
 				tnLock.unlock();
@@ -38,11 +43,14 @@ public class AbstractProvider {
 	}
 
 	protected String getSelectSql(Class<?> clz) {
+		String className = clz.getName();
+		String selectSql = SELECT_SQL_MAP.get(className);
 		if (selectSql == null) {
 			try {
 				sqlLock.tryLock();
 				if (selectSql == null) {
 					selectSql = MapperUtil.toSelectSql(clz);
+					SELECT_SQL_MAP.put(className, selectSql);
 				}
 			} finally {
 				sqlLock.unlock();
