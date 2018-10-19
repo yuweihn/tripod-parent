@@ -30,7 +30,7 @@ public abstract class MapperUtil {
 
 	public static String toSelectSql(Class<?> clz) {
 		StringBuilder builder = new StringBuilder("");
-		Field[] allFields = clz.getDeclaredFields();
+		List<Field> allFields = getAllFieldsList(clz);
 		for (Field field: allFields) {
 			Column column = field.getAnnotation(Column.class);
 			if (column == null) {
