@@ -35,7 +35,7 @@ public interface SelectMapper<T extends Serializable, PK extends Serializable> {
 	List<T> selectList(@Param("where") Map<String, Object> where, @Param("orderBy") String orderBy, @Param("clazz") Class<T> clazz);
 
 	@SelectProvider(type = SelectSqlProvider.class, method = "selectList")
-	List<T> selectList(@Param("where") Map<String, Object> where, @Param("pageNo") int pageNo
+	List<T> selectPageList(@Param("where") Map<String, Object> where, @Param("pageNo") int pageNo
 			, @Param("pageSize") int pageSize, @Param("orderBy") String orderBy, @Param("clazz") Class<T> clazz);
 }
 
