@@ -33,7 +33,7 @@ public abstract class CacheUtil {
 		if (StringUtils.isEmpty(allowedClzs) || vClz == null) {
 			throw new RuntimeException("error");
 		}
-
+		
 		boolean checked = false;
 		for (CacheClzEnum clzEnum: allowedClzs) {
 			if (clzEnum.getClz().isAssignableFrom(vClz)) {
@@ -41,12 +41,12 @@ public abstract class CacheUtil {
 				break;
 			}
 		}
-
+		
 		if (!checked) {
 			log.error("The type of value is {}, but only {} is/are supported.", vClz.getName(), toAllowedClazzStr(allowedClzs));
 			throw new RuntimeException("The type of value is not supported by cache.");
 		}
-
+		
 		if (CacheValue.class.isAssignableFrom(vClz)) {
 			try {
 				vClz.getDeclaredConstructor();
@@ -56,53 +56,53 @@ public abstract class CacheUtil {
 			}
 		}
 	}
-
-    public static<T>String objectToString(T value) {
-//        validCacheValue(value);
-
-        Class<?> vClz = value.getClass();
-        ValueData vd = new ValueData();
-        vd.setClassName(vClz.getName());
-
-        if (CacheValue.class.isAssignableFrom(vClz)) {
-            CacheValue<?> cv = (CacheValue<?>) value;
-            vd.setData(cv.encode());
-        } else {
-            vd.setData(JSONObject.toJSONString(value, SerializerFeature.WriteClassName));
-        }
-
+	
+	public static<T>String objectToString(T value) {
+//		validCacheValue(value);
+		
+		Class<?> vClz = value.getClass();
+		ValueData vd = new ValueData();
+		vd.setClassName(vClz.getName());
+		
+		if (CacheValue.class.isAssignableFrom(vClz)) {
+			CacheValue<?> cv = (CacheValue<?>) value;
+			vd.setData(cv.encode());
+		} else {
+			vd.setData(JSONObject.toJSONString(value, SerializerFeature.WriteClassName));
+		}
+		
 		ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
 		ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
-        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
-        return JSONObject.toJSONString(vd, SerializerFeature.WriteClassName);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static<T>T stringToObject(String str) {
-        if (StringUtils.isEmpty(str)) {
-            return (T) null;
-        }
-        ValueData vd = JSONObject.parseObject(str, ValueData.class);
-        try {
+		ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+		return JSONObject.toJSONString(vd, SerializerFeature.WriteClassName);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static<T>T stringToObject(String str) {
+		if (StringUtils.isEmpty(str)) {
+			return (T) null;
+		}
+		ValueData vd = JSONObject.parseObject(str, ValueData.class);
+		try {
 			ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
 			ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
 			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
-
-            Class<?> vClz = Class.forName(vd.getClassName());
-            if (CacheValue.class.isAssignableFrom(vClz)) {
-                Constructor<?> constructor = vClz.getDeclaredConstructor();
-                constructor.setAccessible(true);
-                CacheValue<?> cv = (CacheValue<?>) constructor.newInstance();
+			
+			Class<?> vClz = Class.forName(vd.getClassName());
+			if (CacheValue.class.isAssignableFrom(vClz)) {
+				Constructor<?> constructor = vClz.getDeclaredConstructor();
+				constructor.setAccessible(true);
+				CacheValue<?> cv = (CacheValue<?>) constructor.newInstance();
 				cv = cv.decode(vd.getData());
 				return (T) cv;
 			} else {
-                return (T) JSONObject.parseObject(vd.getData(), vClz);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+				return (T) JSONObject.parseObject(vd.getData(), vClz);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	private static final String toAllowedClazzStr(CacheClzEnum[] allowedClzs) {
 		StringBuilder builder = new StringBuilder("");
 		for (CacheClzEnum clzEnum: allowedClzs) {
