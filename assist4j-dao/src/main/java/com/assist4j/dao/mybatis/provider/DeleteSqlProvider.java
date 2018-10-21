@@ -15,10 +15,6 @@ import java.util.Map;
 public class DeleteSqlProvider extends AbstractProvider {
 
 	public <T>String delete(T t) throws IllegalAccessException {
-		if (t == null) {
-			return null;
-		}
-		
 		Class<?> entityClass = t.getClass();
 		String tableName = getTableName(entityClass);
 
@@ -44,8 +40,8 @@ public class DeleteSqlProvider extends AbstractProvider {
 	
 	@SuppressWarnings("unchecked")
 	public <PK, T>String deleteByKey(Map<String, Object> param) throws IllegalAccessException {
-		PK id = (PK) param.get("param1");
-		Class<T> entityClass = (Class<T>) param.get("param2");
+//		PK id = (PK) param.get("id");
+		Class<T> entityClass = (Class<T>) param.get("clz");
 		String tableName = getTableName(entityClass);
 
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
@@ -58,7 +54,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 				
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
-					WHERE("`" + fc.getColumnName() + "` = " + id);
+					WHERE("`" + fc.getColumnName() + "` = #{id}");
 					whereSet = true;
 				}
 			}

@@ -5,6 +5,7 @@ import java.io.Serializable;
 
 import com.assist4j.dao.mybatis.provider.DeleteSqlProvider;
 import org.apache.ibatis.annotations.DeleteProvider;
+import org.apache.ibatis.annotations.Param;
 
 
 /**
@@ -15,5 +16,5 @@ public interface DeleteMapper<T extends Serializable, PK extends Serializable> {
 	int delete(T t);
 
 	@DeleteProvider(type = DeleteSqlProvider.class, method = "deleteByKey")
-	int deleteByKey(PK id, Class<T> clz);
+	int deleteByKey(@Param("id") PK id, @Param("clz") Class<T> clz);
 }
