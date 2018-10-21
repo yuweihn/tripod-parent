@@ -52,19 +52,8 @@ public class SelectSqlProvider extends AbstractProvider {
 			SELECT("count(1) as cnt");
 			if (whereMap != null) {
 				for (FieldColumn fc : fcList) {
-					Object obj = whereMap.get(fc.getColumnName());
-					if (obj != null) {
-						//增加空字符串的判断
-						if (obj instanceof String) {
-							String str = (String) obj;
-							if (str != null) {
-//								WHERE(fc.getColumnName() + " = " + str);
-								WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
-							}
-						} else {
-//							WHERE(fc.getColumnName() + " = " + obj);
-							WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
-						}
+					if (whereMap.containsKey(fc.getColumnName())) {
+						WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
 					}
 				}
 			}
@@ -94,19 +83,8 @@ public class SelectSqlProvider extends AbstractProvider {
 				SELECT(fc.getColumnName() + " as " + field.getName());
 
 				if (whereMap != null) {
-					Object obj = whereMap.get(fc.getColumnName());
-					if (obj != null) {
-						//增加空字符串的判断
-						if (obj instanceof String) {
-							String str = (String) obj;
-							if (str != null) {
-//								WHERE(fc.getColumnName() + " = " + str);
-								WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
-							}
-						} else {
-//							WHERE(fc.getColumnName() + " = " + obj);
-							WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
-						}
+					if (whereMap.containsKey(fc.getColumnName())) {
+						WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
 					}
 				}
 			}
