@@ -16,8 +16,8 @@ public class SelectSqlProvider extends AbstractProvider {
 
 	@SuppressWarnings("unchecked")
 	public <PK, T>String selectOneById(Map<String, Object> param) throws IllegalAccessException {
-		final PK id = (PK) param.get("param1");
-		Class<T> entityClass = (Class<T>) param.get("param2");
+//		PK id = (PK) param.get("id");
+		Class<T> entityClass = (Class<T>) param.get("clz");
 		final String tableName = getTableName(entityClass);
 
 		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
@@ -29,7 +29,7 @@ public class SelectSqlProvider extends AbstractProvider {
 
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
-					WHERE(fc.getColumnName() + " = " + id);
+					WHERE(fc.getColumnName() + " = #{id}");
 					whereSet = true;
 				}
 			}
@@ -58,10 +58,12 @@ public class SelectSqlProvider extends AbstractProvider {
 						if (obj instanceof String) {
 							String str = (String) obj;
 							if (str != null) {
-								WHERE(fc.getColumnName() + " = " + str);
+//								WHERE(fc.getColumnName() + " = " + str);
+								WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
 							}
 						} else {
-							WHERE(fc.getColumnName() + " = " + obj);
+//							WHERE(fc.getColumnName() + " = " + obj);
+							WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
 						}
 					}
 				}
@@ -98,10 +100,12 @@ public class SelectSqlProvider extends AbstractProvider {
 						if (obj instanceof String) {
 							String str = (String) obj;
 							if (str != null) {
-								WHERE(fc.getColumnName() + " = " + str);
+//								WHERE(fc.getColumnName() + " = " + str);
+								WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
 							}
 						} else {
-							WHERE(fc.getColumnName() + " = " + obj);
+//							WHERE(fc.getColumnName() + " = " + obj);
+							WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
 						}
 					}
 				}

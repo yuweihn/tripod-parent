@@ -15,8 +15,8 @@ import java.util.Map;
  */
 public interface SelectMapper<T extends Serializable, PK extends Serializable> {
 	@SelectProvider(type = SelectSqlProvider.class, method = "selectOneById")
-	T selectOneById(PK id, Class<T> clazz);
-	
+	T selectOneById(@Param("id") PK id, @Param("clz") Class<T> clz);
+
 	/**
 	 * @param where                   where中的key为表的字段，不是对象的属性
 	 * @param clazz

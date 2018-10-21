@@ -15,10 +15,6 @@ import java.util.Map;
 public class DeleteSqlProvider extends AbstractProvider {
 
 	public <T>String delete(T t) throws IllegalAccessException {
-		if (t == null) {
-			return null;
-		}
-		
 		Class<?> entityClass = t.getClass();
 		final String tableName = getTableName(entityClass);
 
@@ -29,7 +25,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
-				
+
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
 					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
@@ -41,11 +37,11 @@ public class DeleteSqlProvider extends AbstractProvider {
 			}
 		}}.toString();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <PK, T>String deleteByKey(Map<String, Object> param) throws IllegalAccessException {
-		final PK id = (PK) param.get("param1");
-		Class<T> entityClass = (Class<T>) param.get("param2");
+//		PK id = (PK) param.get("id");
+		Class<T> entityClass = (Class<T>) param.get("clz");
 		final String tableName = getTableName(entityClass);
 
 		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
@@ -55,10 +51,10 @@ public class DeleteSqlProvider extends AbstractProvider {
 
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
-				
+
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
-					WHERE("`" + fc.getColumnName() + "` = " + id);
+					WHERE("`" + fc.getColumnName() + "` = #{id}");
 					whereSet = true;
 				}
 			}
