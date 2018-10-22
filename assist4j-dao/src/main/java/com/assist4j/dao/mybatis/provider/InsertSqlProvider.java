@@ -32,7 +32,7 @@ public class InsertSqlProvider extends AbstractProvider {
 				 */
 				Id idAnn = field.getAnnotation(Id.class);
 				GeneratedValue genAnn = field.getAnnotation(GeneratedValue.class);
-				if (idAnn != null && (genAnn == null || genAnn.strategy() == GenerationType.AUTO)) {
+				if (idAnn != null && genAnn != null && genAnn.strategy() == GenerationType.IDENTITY) {
 					continue;
 				}
 				
@@ -62,7 +62,7 @@ public class InsertSqlProvider extends AbstractProvider {
 				 */
 				Id idAnn = field.getAnnotation(Id.class);
 				GeneratedValue genAnn = field.getAnnotation(GeneratedValue.class);
-				if (idAnn != null && (genAnn == null || genAnn.strategy() == GenerationType.AUTO)) {
+				if (idAnn != null && genAnn != null && genAnn.strategy() == GenerationType.IDENTITY) {
 					continue;
 				}
 				
@@ -87,7 +87,7 @@ public class InsertSqlProvider extends AbstractProvider {
 			 */
 			Id idAnn = field.getAnnotation(Id.class);
 			GeneratedValue genAnn = field.getAnnotation(GeneratedValue.class);
-			if (idAnn != null && (genAnn == null || genAnn.strategy() == GenerationType.AUTO)) {
+			if (idAnn != null && genAnn != null && genAnn.strategy() == GenerationType.IDENTITY) {
 				continue;
 			}
 			
