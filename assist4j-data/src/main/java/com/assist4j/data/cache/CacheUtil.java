@@ -8,7 +8,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -30,10 +29,10 @@ public abstract class CacheUtil {
 		Assert.notNull(value, "[value] is required.");
 		CacheClzEnum[] allowedClzs = CacheClzEnum.values();
 		Class<?> vClz = value.getClass();
-		if (StringUtils.isEmpty(allowedClzs) || vClz == null) {
+		if (allowedClzs == null || allowedClzs.length <= 0 || vClz == null) {
 			throw new RuntimeException("error");
 		}
-		
+
 		boolean checked = false;
 		for (CacheClzEnum clzEnum: allowedClzs) {
 			if (clzEnum.getClz().isAssignableFrom(vClz)) {
@@ -41,12 +40,12 @@ public abstract class CacheUtil {
 				break;
 			}
 		}
-		
+
 		if (!checked) {
 			log.error("The type of value is {}, but only {} is/are supported.", vClz.getName(), toAllowedClazzStr(allowedClzs));
 			throw new RuntimeException("The type of value is not supported by cache.");
 		}
-		
+
 		if (CacheValue.class.isAssignableFrom(vClz)) {
 			try {
 				vClz.getDeclaredConstructor();
@@ -56,30 +55,30 @@ public abstract class CacheUtil {
 			}
 		}
 	}
-	
+
 	public static<T>String objectToString(T value) {
 //		validCacheValue(value);
-		
+
 		Class<?> vClz = value.getClass();
 		ValueData vd = new ValueData();
 		vd.setClassName(vClz.getName());
-		
+
 		if (CacheValue.class.isAssignableFrom(vClz)) {
 			CacheValue<?> cv = (CacheValue<?>) value;
 			vd.setData(cv.encode());
 		} else {
 			vd.setData(JSONObject.toJSONString(value, SerializerFeature.WriteClassName));
 		}
-		
+
 		ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
 		ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
 		ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 		return JSONObject.toJSONString(vd, SerializerFeature.WriteClassName);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static<T>T stringToObject(String str) {
-		if (StringUtils.isEmpty(str)) {
+		if (str == null || "".equals(str.trim())) {
 			return (T) null;
 		}
 		ValueData vd = JSONObject.parseObject(str, ValueData.class);
@@ -87,7 +86,7 @@ public abstract class CacheUtil {
 			ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
 			ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
 			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
-			
+
 			Class<?> vClz = Class.forName(vd.getClassName());
 			if (CacheValue.class.isAssignableFrom(vClz)) {
 				Constructor<?> constructor = vClz.getDeclaredConstructor();
@@ -102,7 +101,7 @@ public abstract class CacheUtil {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	private static final String toAllowedClazzStr(CacheClzEnum[] allowedClzs) {
 		StringBuilder builder = new StringBuilder("");
 		for (CacheClzEnum clzEnum: allowedClzs) {
