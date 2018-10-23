@@ -88,7 +88,7 @@ public class SelectSqlProvider extends AbstractProvider {
 					}
 				}
 			}
-			if (orderBy != null && !"".equals(orderBy)) {
+			if (orderBy != null && !"".equals(orderBy.trim())) {
 				ORDER_BY(orderBy);
 			}
 		}}.toString());
