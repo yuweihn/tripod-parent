@@ -8,7 +8,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -30,7 +29,7 @@ public abstract class CacheUtil {
 		Assert.notNull(value, "[value] is required.");
 		CacheClzEnum[] allowedClzs = CacheClzEnum.values();
 		Class<?> vClz = value.getClass();
-		if (StringUtils.isEmpty(allowedClzs) || vClz == null) {
+		if (allowedClzs == null || allowedClzs.length <= 0 || vClz == null) {
 			throw new RuntimeException("error");
 		}
 
@@ -79,7 +78,7 @@ public abstract class CacheUtil {
 
 	@SuppressWarnings("unchecked")
 	public static<T>T stringToObject(String str) {
-		if (StringUtils.isEmpty(str)) {
+		if (str == null || "".equals(str.trim())) {
 			return (T) null;
 		}
 		ValueData vd = JSONObject.parseObject(str, ValueData.class);
