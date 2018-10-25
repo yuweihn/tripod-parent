@@ -53,14 +53,14 @@ public abstract class ImageFileUtil extends FileUtil {
 	/**
 	 * 按比例压缩图片
 	 */
-	public static byte[] compress(byte[] imgData, double proportion) {
+	public static byte[] compress(byte[] imgData, double ratio) {
 		ByteArrayInputStream inputStream = null;
 		try {
 			inputStream = new ByteArrayInputStream(imgData);
 			BufferedImage oldImage = ImageIO.read(inputStream);
 			int oldWidth = oldImage.getWidth(null);
 			int oldHeight = oldImage.getHeight(null);
-			return compress0(oldImage, (int) (oldWidth * proportion), (int) (oldHeight * proportion), getImageType(imgData));
+			return compress0(oldImage, (int) (oldWidth * ratio), (int) (oldHeight * ratio), getImageType(imgData));
 		} catch (IOException e) {
 			log.error("", e);
 			return null;
