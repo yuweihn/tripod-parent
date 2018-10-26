@@ -188,9 +188,9 @@ public abstract class MonitorUtil {
 			int kmtidx = line.indexOf("KernelModeTime");
 			int wocidx = line.indexOf("WriteOperationCount");
 			// Caption,CommandLine,KernelModeTime,ReadOperationCount,ThreadCount,UserModeTime,WriteOperationCount
-			long idletime = 0;
-			long kneltime = 0;
-			long usertime = 0;
+			long idleTime = 0;
+			long knelTime = 0;
+			long userTime = 0;
 			while ((line = input.readLine()) != null) {
 				if (line.length() < wocidx) {
 					continue;
@@ -204,16 +204,16 @@ public abstract class MonitorUtil {
 				}
 				// log.info("line="+line);
 				if (caption.equals("System Idle Process") || caption.equals("System")) {
-					idletime += Long.valueOf(substring(line, kmtidx, rocidx - 1).trim()).longValue();
-					idletime += Long.valueOf(substring(line, umtidx, wocidx - 1).trim()).longValue();
+					idleTime += Long.valueOf(substring(line, kmtidx, rocidx - 1).trim()).longValue();
+					idleTime += Long.valueOf(substring(line, umtidx, wocidx - 1).trim()).longValue();
 					continue;
 				}
 
-				kneltime += Long.valueOf(substring(line, kmtidx, rocidx - 1).trim()).longValue();
-				usertime += Long.valueOf(substring(line, umtidx, wocidx - 1).trim()).longValue();
+				knelTime += Long.valueOf(substring(line, kmtidx, rocidx - 1).trim()).longValue();
+				userTime += Long.valueOf(substring(line, umtidx, wocidx - 1).trim()).longValue();
 			}
-			retn[0] = idletime;
-			retn[1] = kneltime + usertime;
+			retn[0] = idleTime;
+			retn[1] = knelTime + userTime;
 			return retn;
 		} catch (Exception ex) {
 			ex.printStackTrace();
