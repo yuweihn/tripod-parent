@@ -61,9 +61,9 @@ public abstract class MonitorUtil {
 			Thread.sleep(sleep);
 			long[] c1 = readCpuForWindows(Runtime.getRuntime().exec(procCmd));
 			if (c0 != null && c1 != null) {
-				long idletime = c1[0] - c0[0];
-				long busytime = c1[1] - c0[1];
-				double cpuRate = MathUtil.div(busytime, busytime + idletime);
+				long idleTime = c1[0] - c0[0];
+				long busyTime = c1[1] - c0[1];
+				double cpuRate = MathUtil.div(busyTime, busyTime + idleTime);
 				if (cpuRate > 1) {
 					cpuRate = 1;
 				} else if (cpuRate < 0) {
