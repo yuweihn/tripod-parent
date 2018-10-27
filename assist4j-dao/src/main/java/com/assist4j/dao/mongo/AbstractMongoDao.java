@@ -12,7 +12,7 @@ import java.util.List;
 
 
 /**
- * Created by yuwei on 2015/12/5.
+ * @author yuwei
  */
 public abstract class AbstractMongoDao<T extends Serializable, PK extends Serializable> implements Dao<T, PK> {
 	private Class<T> entityClass;
