@@ -1,4 +1,4 @@
-package com.assist4j.dao.mybatis.where;
+package com.assist4j.dao.mybatis.criterion;
 
 
 import java.io.Serializable;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author yuwei
  */
-public class Where implements Serializable {
+public class Criteria implements Serializable {
 	/**
 	 *
 	 */
@@ -20,14 +20,14 @@ public class Where implements Serializable {
 	private Integer pageSize;
 	private String orderBy;
 
-	private Where() {
+	private Criteria() {
 
 	}
-	public static Where create() {
-		return new Where();
+	public static Criteria create() {
+		return new Criteria();
 	}
 
-	public Where add(String key, Operator operator, Object val) {
+	public Criteria add(String key, Operator operator, Object val) {
 		if (kvList == null) {
 			kvList = new ArrayList<KeyVal>();
 		}
@@ -39,7 +39,7 @@ public class Where implements Serializable {
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	public Where setKvList(List<KeyVal> kvList) {
+	public Criteria setKvList(List<KeyVal> kvList) {
 		this.kvList = kvList;
 		return this;
 	}
@@ -48,7 +48,7 @@ public class Where implements Serializable {
 		return kvList;
 	}
 
-	public Where setPageNo(Integer pageNo) {
+	public Criteria setPageNo(Integer pageNo) {
 		this.pageNo = pageNo;
 		return this;
 	}
@@ -57,7 +57,7 @@ public class Where implements Serializable {
 		return pageNo;
 	}
 
-	public Where setPageSize(Integer pageSize) {
+	public Criteria setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
 		return this;
 	}
@@ -66,7 +66,7 @@ public class Where implements Serializable {
 		return pageSize;
 	}
 
-	public Where setOrderBy(String orderBy) {
+	public Criteria setOrderBy(String orderBy) {
 		this.orderBy = orderBy;
 		return this;
 	}
