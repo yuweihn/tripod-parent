@@ -39,11 +39,6 @@ public class Criteria implements Serializable {
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	public Criteria setKvList(List<KeyVal> kvList) {
-		this.kvList = kvList;
-		return this;
-	}
-
 	public List<KeyVal> getKvList() {
 		return kvList;
 	}
