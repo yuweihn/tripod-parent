@@ -14,7 +14,9 @@ public enum Operator {
 	lt(" < "),
 	lte(" <= "),
 	ne(" != "),
-	like(" like ");
+	like(" like "),
+	isNull(" is null "),
+	isNotNull(" is not null ");
 
 	private String code;
 

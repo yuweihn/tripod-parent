@@ -20,12 +20,29 @@ public class Criterion implements Serializable {
 	private Operator operator;
 	private Object value;
 
+	public Criterion(String key, Operator operator) {
+		this(key, operator, null);
+	}
 	public Criterion(String key, Operator operator, Object value) {
 		this.key = key;
 		this.operator = operator;
 		this.value = value;
 	}
 
+	@Override
+	public String toString() {
+		if (key == null || "".equals(key) || operator == null) {
+			return null;
+		}
+
+		if (value == null) {
+			return key + " " + operator.getCode() + " ";
+		} else if (value instanceof Number) {
+				return key + " " + operator.getCode() + " " + value + " ";
+		} else {
+			return key + " " + operator.getCode() + " '" + value + "' ";
+		}
+	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public void setKey(String key) {
