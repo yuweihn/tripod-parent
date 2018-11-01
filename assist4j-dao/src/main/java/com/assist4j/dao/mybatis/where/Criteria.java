@@ -27,33 +27,20 @@ public class Criteria implements Serializable {
 	}
 
 	public Criteria add(Connector connector, Criterion criterion) {
+		sql.append(" ").append(connector.getCode()).append(" ");
 		return this;
 	}
 
 	public Criteria add(Connector connector, Criteria criteria) {
+		String criteriaSql = criteria.toSql();
+		if (criteriaSql != null && !"".equals(criteriaSql.trim())) {
+			sql.append(" (").append(criteriaSql).append(") ");
+		}
 		return this;
 	}
 
 	public String toSql() {
-		if (criterion == null) {
-			return "";
-		}
-
-		String thisSql = criterion.toSql();
-		if (thisSql == null) {
-			return "";
-		}
-
-		if (connector == null || another == null) {
-			return thisSql;
-		}
-
-		StringBuilder builder = new StringBuilder("");
-		builder.append(thisSql).append(" ")
-				.append(connector.getCode()).append(" ")
-				.append(" (").append(another.toSql()).append(") ");
-
-		return builder.toString();
+		return sql.toString();
 	}
 }
 
