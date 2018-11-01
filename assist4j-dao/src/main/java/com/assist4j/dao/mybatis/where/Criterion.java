@@ -1,4 +1,4 @@
-package com.assist4j.dao.mybatis.criterion;
+package com.assist4j.dao.mybatis.where;
 
 
 import java.io.Serializable;
