@@ -29,6 +29,9 @@ public class Criterion implements Serializable {
 		this.value = value;
 	}
 
+	/**
+	 * 拼装成sql，数字型不加单引号，其它类型要加单引号
+	 */
 	public String toSql() {
 		if (key == null || "".equals(key.trim()) || operator == null) {
 			return null;
