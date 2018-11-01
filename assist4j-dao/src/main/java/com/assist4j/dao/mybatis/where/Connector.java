@@ -8,8 +8,8 @@ package com.assist4j.dao.mybatis.where;
  * @author yuwei
  */
 public enum Connector {
-	and(" and "),
-	or(" or ");
+	and("and"),
+	or("or");
 
 	private String code;
 

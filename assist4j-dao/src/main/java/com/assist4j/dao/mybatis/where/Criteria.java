@@ -42,7 +42,7 @@ public class Criteria implements Serializable {
 		StringBuilder builder = new StringBuilder("");
 		builder.append(thisSql).append(" ")
 				.append(connector.getCode()).append(" ")
-				.append("(").append(another.toSql()).append(")");
+				.append(" (").append(another.toSql()).append(") ");
 
 		return builder.toString();
 	}

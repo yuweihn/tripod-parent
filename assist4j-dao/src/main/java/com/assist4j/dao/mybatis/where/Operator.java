@@ -8,15 +8,15 @@ package com.assist4j.dao.mybatis.where;
  * @author yuwei
  */
 public enum Operator {
-	gt(" > "),
-	gte(" >= "),
-	eq(" = "),
-	lt(" < "),
-	lte(" <= "),
-	ne(" != "),
-	like(" like "),
-	isNull(" is null "),
-	isNotNull(" is not null ");
+	gt(">"),
+	gte(">="),
+	eq("="),
+	lt("<"),
+	lte("<="),
+	ne("!="),
+	like("like"),
+	isNull("is null"),
+	isNotNull("is not null");
 
 	private String code;
 
