@@ -112,7 +112,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		StringBuilder builder = new StringBuilder("");
 		builder.append("  select count(1) as cnt ")
 				.append(" from ").append(tableName).append("  ")
-				.append(assembleWhere(criteria));
+				.append(criteria.toString());
 
 		return builder.toString();
 	}
@@ -135,7 +135,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		StringBuilder builder = new StringBuilder("");
 		builder.append("  select ").append(getSelectSql(entityClass))
 				.append(" from ").append(tableName).append("  ")
-				.append(assembleWhere(criteria));
+				.append(criteria.toString());
 
 		if (orderBy != null && !"".equals(orderBy.trim())) {
 			builder.append(" ").append(orderBy).append(" ");
@@ -148,14 +148,6 @@ public class SelectSqlProvider extends AbstractProvider {
 			builder.append(" limit ").append((pageNo - 1) * pageSize).append(", ").append(pageSize);
 		}
 		return builder.toString();
-	}
-
-	private String assembleWhere(Criteria criteria) {
-		if (criteria == null) {
-			return "";
-		}
-
-		return "";
 	}
 }
 
