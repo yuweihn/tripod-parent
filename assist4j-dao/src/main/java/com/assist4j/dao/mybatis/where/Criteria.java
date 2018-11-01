@@ -19,6 +19,8 @@ public class Criteria implements Serializable {
 		String criterionSql = criterion.toSql();
 		if (criterionSql != null && !"".equals(criterionSql.trim())) {
 			sql.append(criterionSql);
+		} else {
+			throw new RuntimeException("Invalid criterion.");
 		}
 	}
 
