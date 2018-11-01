@@ -1,6 +1,7 @@
 package com.assist4j.dao.mybatis.provider;
 
 
+import com.assist4j.dao.mybatis.where.Criteria;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Id;
@@ -49,7 +50,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			FROM(tableName);
-			SELECT("count(1) as cnt");
+			SELECT("count(1) as cnt ");
 			if (whereMap != null) {
 				for (FieldColumn fc : fcList) {
 					if (whereMap.containsKey(fc.getColumnName())) {
@@ -100,6 +101,61 @@ public class SelectSqlProvider extends AbstractProvider {
 			sql.append(" limit ").append((pageNo - 1) * pageSize).append(", ").append(pageSize);
 		}
 		return sql.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T>String findCount(Map<String, Object> param) {
+		Criteria criteria = (Criteria) param.get("criteria");
+		Class<T> entityClass = (Class<T>) param.get("clazz");
+		String tableName = getTableName(entityClass);
+
+		StringBuilder builder = new StringBuilder("");
+		builder.append("  select count(1) as cnt ")
+				.append(" from ").append(tableName).append("  ")
+				.append(assembleWhere(criteria));
+
+		return builder.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T>String findList(Map<String, Object> param) {
+		Criteria criteria = (Criteria) param.get("criteria");
+		String orderBy = (String) param.get("orderBy");
+		Class<T> entityClass = (Class<T>) param.get("clazz");
+		Integer pageNo0 = null;
+		if (param.containsKey("pageNo")) {
+			pageNo0 = (Integer) param.get("pageNo");
+		}
+		Integer pageSize0 = null;
+		if (param.containsKey("pageSize")) {
+			pageSize0 = (Integer) param.get("pageSize");
+		}
+		String tableName = getTableName(entityClass);
+
+		StringBuilder builder = new StringBuilder("");
+		builder.append("  select ").append(getSelectSql(entityClass))
+				.append(" from ").append(tableName).append("  ")
+				.append(assembleWhere(criteria));
+
+		if (orderBy != null && !"".equals(orderBy.trim())) {
+			builder.append(" ").append(orderBy).append(" ");
+		}
+
+		if (pageNo0 != null && pageSize0 != null) {
+			int pageNo = pageNo0 <= 0 ? 1 : pageNo0;
+			int pageSize = pageSize0 <= 0 ? 10 : pageSize0;
+
+			builder.append(" limit ").append((pageNo - 1) * pageSize).append(", ").append(pageSize);
+		}
+		return builder.toString();
+	}
+
+	private String assembleWhere(Criteria criteria) {
+		if (criteria == null) {
+			return "";
+		}
+
+		return "";
 	}
 }
 
