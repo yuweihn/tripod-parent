@@ -4,21 +4,16 @@ package com.assist4j.dao.mybatis.criterion;
 
 
 /**
- * 操作符
+ * 连接符
  * @author yuwei
  */
-public enum Operator {
-	gt(" > "),
-	gte(" >= "),
-	eq(" = "),
-	lt(" < "),
-	lte(" <= "),
-	ne(" != "),
-	like(" like ");
+public enum Connector {
+	and(" and "),
+	or(" or ");
 
 	private String code;
 
-	Operator(String code) {
+	Connector(String code) {
 		this.code = code;
 	}
 
