@@ -114,7 +114,7 @@ public class SelectSqlProvider extends AbstractProvider {
 				.append(" from ").append(tableName).append("  ");
 		if (criteria != null) {
 			String criteriaSql = criteria.toSql();
-			if (criteriaSql != null && !"".equals(criteriaSql)) {
+			if (criteriaSql != null && !"".equals(criteriaSql.trim())) {
 				builder.append(" where ").append(criteriaSql).append(" ");
 			}
 		}
@@ -142,7 +142,7 @@ public class SelectSqlProvider extends AbstractProvider {
 				.append(" from ").append(tableName).append("  ");
 		if (criteria != null) {
 			String criteriaSql = criteria.toSql();
-			if (criteriaSql != null && !"".equals(criteriaSql)) {
+			if (criteriaSql != null && !"".equals(criteriaSql.trim())) {
 				builder.append(" where ").append(criteriaSql).append(" ");
 			}
 		}
