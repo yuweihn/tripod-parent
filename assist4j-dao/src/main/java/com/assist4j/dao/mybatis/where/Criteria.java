@@ -32,4 +32,21 @@ public class Criteria implements Serializable {
 		this.first = first;
 		return this;
 	}
+	public Criterion getFirst() {
+		return first;
+	}
+	public Criteria setConnector(Connector connector) {
+		this.connector = connector;
+		return this;
+	}
+	public Connector getConnector() {
+		return connector;
+	}
+	public Criteria setSecond(Criterion second) {
+		this.second = second;
+		return this;
+	}
+	public Criterion getSecond() {
+		return second;
+	}
 }
