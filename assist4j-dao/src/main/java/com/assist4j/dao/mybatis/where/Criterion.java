@@ -31,7 +31,7 @@ public class Criterion implements Serializable {
 
 	@Override
 	public String toString() {
-		if (key == null || "".equals(key) || operator == null) {
+		if (key == null || "".equals(key.trim()) || operator == null) {
 			return null;
 		}
 
