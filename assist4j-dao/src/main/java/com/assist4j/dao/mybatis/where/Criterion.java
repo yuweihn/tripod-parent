@@ -38,7 +38,7 @@ public class Criterion implements Serializable {
 		if (value == null) {
 			return key + " " + operator.getCode() + " ";
 		} else if (value instanceof Number) {
-				return key + " " + operator.getCode() + " " + value + " ";
+			return key + " " + operator.getCode() + " " + value + " ";
 		} else {
 			return key + " " + operator.getCode() + " '" + value + "' ";
 		}
