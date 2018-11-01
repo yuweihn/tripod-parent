@@ -2,8 +2,6 @@ package com.assist4j.dao.mybatis.criterion;
 
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -15,28 +13,33 @@ public class Criteria implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private List<Criterion> criterionList;
+	/**
+	 * key为表的字段，不是对象的属性
+	 */
+	private String key;
+	private Operator operator;
+	private Object value;
 
-	private Criteria() {
+	private Criteria and;
+	private Criteria or;
 
+	public Criteria(String key, Operator operator, Object value) {
+		this.key = key;
+		this.operator = operator;
+		this.value = value;
 	}
-	public static Criteria create() {
-		return new Criteria();
-	}
 
-	public Criteria add(String key, Operator operator, Object val) {
-		if (criterionList == null) {
-			criterionList = new ArrayList<Criterion>();
-		}
-		criterionList.add(new Criterion(key, operator, val));
+	public Criteria and(Criteria and) {
+		this.and = and;
+		return this;
+	}
+	public Criteria or(Criteria or) {
+		this.or = or;
 		return this;
 	}
 
 
 
-
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	public List<Criterion> getCriterionList() {
-		return criterionList;
-	}
+
 }
