@@ -29,8 +29,7 @@ public class Criterion implements Serializable {
 		this.value = value;
 	}
 
-	@Override
-	public String toString() {
+	public String toSql() {
 		if (key == null || "".equals(key.trim()) || operator == null) {
 			return null;
 		}

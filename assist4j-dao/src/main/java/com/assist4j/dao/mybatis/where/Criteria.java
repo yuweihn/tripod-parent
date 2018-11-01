@@ -25,8 +25,10 @@ public class Criteria implements Serializable {
 		return new Criteria();
 	}
 
-	@Override
-	public String toString() {
+	public String toSql() {
+		if (first == null && second == null) {
+			return "";
+		}
 
 		return "";
 	}
