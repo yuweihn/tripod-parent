@@ -13,16 +13,25 @@ public class Criteria implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Criterion criterion;
-	private Criteria another;
-	private Connector connector;
+	private StringBuilder sql = new StringBuilder("");
 
-	private Criteria() {
-
+	private Criteria(Criterion criterion) {
+		String criterionSql = criterion.toSql();
+		if (criterionSql != null && !"".equals(criterionSql.trim())) {
+			sql.append(criterionSql);
+		}
 	}
 
-	public static Criteria create() {
-		return new Criteria();
+	public static Criteria create(Criterion criterion) {
+		return new Criteria(criterion);
+	}
+
+	public Criteria add(Connector connector, Criterion criterion) {
+		return this;
+	}
+
+	public Criteria add(Connector connector, Criteria criteria) {
+		return this;
 	}
 
 	public String toSql() {
@@ -45,30 +54,6 @@ public class Criteria implements Serializable {
 				.append(" (").append(another.toSql()).append(") ");
 
 		return builder.toString();
-	}
-
-
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	public Criteria setCriterion(Criterion criterion) {
-		this.criterion = criterion;
-		return this;
-	}
-	public Criterion getCriterion() {
-		return criterion;
-	}
-	public Criteria setConnector(Connector connector) {
-		this.connector = connector;
-		return this;
-	}
-	public Connector getConnector() {
-		return connector;
-	}
-	public Criteria setAnother(Criteria another) {
-		this.another = another;
-		return this;
-	}
-	public Criteria getAnother() {
-		return another;
 	}
 }
 
