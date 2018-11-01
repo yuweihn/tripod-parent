@@ -15,10 +15,7 @@ public class Criteria implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private List<KeyVal> kvList;
-	private Integer pageNo;
-	private Integer pageSize;
-	private String orderBy;
+	private List<Criterion> criterionList;
 
 	private Criteria() {
 
@@ -28,10 +25,10 @@ public class Criteria implements Serializable {
 	}
 
 	public Criteria add(String key, Operator operator, Object val) {
-		if (kvList == null) {
-			kvList = new ArrayList<KeyVal>();
+		if (criterionList == null) {
+			criterionList = new ArrayList<Criterion>();
 		}
-		kvList.add(new KeyVal(key, operator, val));
+		criterionList.add(new Criterion(key, operator, val));
 		return this;
 	}
 
@@ -39,34 +36,7 @@ public class Criteria implements Serializable {
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	public List<KeyVal> getKvList() {
-		return kvList;
-	}
-
-	public Criteria setPageNo(Integer pageNo) {
-		this.pageNo = pageNo;
-		return this;
-	}
-
-	public Integer getPageNo() {
-		return pageNo;
-	}
-
-	public Criteria setPageSize(Integer pageSize) {
-		this.pageSize = pageSize;
-		return this;
-	}
-
-	public Integer getPageSize() {
-		return pageSize;
-	}
-
-	public Criteria setOrderBy(String orderBy) {
-		this.orderBy = orderBy;
-		return this;
-	}
-
-	public String getOrderBy() {
-		return orderBy;
+	public List<Criterion> getCriterionList() {
+		return criterionList;
 	}
 }

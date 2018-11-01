@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * @author yuwei
  */
-public class KeyVal implements Serializable {
+public class Criterion implements Serializable {
 	/**
 	 *
 	 */
@@ -20,7 +20,7 @@ public class KeyVal implements Serializable {
 	private Operator operator;
 	private Object value;
 
-	public KeyVal(String key, Operator operator, Object value) {
+	public Criterion(String key, Operator operator, Object value) {
 		this.key = key;
 		this.operator = operator;
 		this.value = value;
