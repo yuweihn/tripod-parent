@@ -113,7 +113,10 @@ public class SelectSqlProvider extends AbstractProvider {
 		builder.append("  select count(1) as cnt ")
 				.append(" from ").append(tableName).append("  ");
 		if (criteria != null) {
-			builder.append(criteria.toSql());
+			String criteriaSql = criteria.toSql();
+			if (criteriaSql != null && !"".equals(criteriaSql)) {
+				builder.append(" where ").append(criteriaSql).append(" ");
+			}
 		}
 
 		return builder.toString();
@@ -138,7 +141,10 @@ public class SelectSqlProvider extends AbstractProvider {
 		builder.append("  select ").append(getSelectSql(entityClass))
 				.append(" from ").append(tableName).append("  ");
 		if (criteria != null) {
-			builder.append(criteria.toSql());
+			String criteriaSql = criteria.toSql();
+			if (criteriaSql != null && !"".equals(criteriaSql)) {
+				builder.append(" where ").append(criteriaSql).append(" ");
+			}
 		}
 
 		if (orderBy != null && !"".equals(orderBy.trim())) {
