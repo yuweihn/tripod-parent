@@ -28,7 +28,7 @@ public class Criteria implements Serializable {
 		return new Criteria(criterion);
 	}
 
-	public Criteria add(Connector connector, Criterion criterion) {
+	private Criteria add(Connector connector, Criterion criterion) {
 		String criterionSql = criterion.toSql();
 		if (criterionSql != null && !"".equals(criterionSql.trim())) {
 			sql.append(" ")
@@ -39,8 +39,14 @@ public class Criteria implements Serializable {
 		}
 		return this;
 	}
+	public Criteria and(Criterion criterion) {
+		return add(Connector.and, criterion);
+	}
+	public Criteria or(Criterion criterion) {
+		return add(Connector.or, criterion);
+	}
 
-	public Criteria add(Connector connector, Criteria criteria) {
+	private Criteria add(Connector connector, Criteria criteria) {
 		String criteriaSql = criteria.toSql();
 		if (criteriaSql != null && !"".equals(criteriaSql.trim())) {
 			sql.insert(0, "(")
@@ -51,6 +57,12 @@ public class Criteria implements Serializable {
 				.append(") ");
 		}
 		return this;
+	}
+	public Criteria and(Criteria criteria) {
+		return add(Connector.and, criteria);
+	}
+	public Criteria or(Criteria criteria) {
+		return add(Connector.or, criteria);
 	}
 
 	public String toSql() {
