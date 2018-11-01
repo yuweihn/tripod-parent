@@ -142,7 +142,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		}
 
 		if (orderBy != null && !"".equals(orderBy.trim())) {
-			builder.append(" ").append(orderBy).append(" ");
+			builder.append(" order by ").append(orderBy).append(" ");
 		}
 
 		if (pageNo0 != null && pageSize0 != null) {
