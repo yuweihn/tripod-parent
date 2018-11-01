@@ -31,6 +31,7 @@ public class Criterion implements Serializable {
 
 	/**
 	 * 拼装成sql，数字型不加单引号，其它类型要加单引号
+	 * eg. user_name = 'zhangsan'
 	 */
 	public String toSql() {
 		if (key == null || "".equals(key.trim()) || operator == null) {
