@@ -13,9 +13,9 @@ public class Criteria implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private Criterion first;
+	private Criterion criterion;
+	private Criteria another;
 	private Connector connector;
-	private Criterion second;
 
 	private Criteria() {
 
@@ -26,21 +26,35 @@ public class Criteria implements Serializable {
 	}
 
 	public String toSql() {
-		if (first == null && second == null) {
+		if (criterion == null) {
 			return "";
 		}
 
-		return "";
+		String thisSql = criterion.toSql();
+		if (thisSql == null) {
+			return "";
+		}
+
+		if (connector == null || another == null) {
+			return thisSql;
+		}
+
+		StringBuilder builder = new StringBuilder("");
+		builder.append(thisSql).append(" ")
+				.append(connector.getCode()).append(" ")
+				.append("(").append(another.toSql()).append(")");
+
+		return builder.toString();
 	}
 
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	public Criteria setFirst(Criterion first) {
-		this.first = first;
+	public Criteria setCriterion(Criterion criterion) {
+		this.criterion = criterion;
 		return this;
 	}
-	public Criterion getFirst() {
-		return first;
+	public Criterion getCriterion() {
+		return criterion;
 	}
 	public Criteria setConnector(Connector connector) {
 		this.connector = connector;
@@ -49,11 +63,12 @@ public class Criteria implements Serializable {
 	public Connector getConnector() {
 		return connector;
 	}
-	public Criteria setSecond(Criterion second) {
-		this.second = second;
+	public Criteria setAnother(Criteria another) {
+		this.another = another;
 		return this;
 	}
-	public Criterion getSecond() {
-		return second;
+	public Criteria getAnother() {
+		return another;
 	}
 }
+
