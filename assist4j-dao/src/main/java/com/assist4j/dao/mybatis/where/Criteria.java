@@ -37,7 +37,7 @@ public class Criteria implements Serializable {
 	public Criteria add(Connector connector, Criteria criteria) {
 		String criteriaSql = criteria.toSql();
 		if (criteriaSql != null && !"".equals(criteriaSql.trim())) {
-			sql.append(" ").append(connector.getCode()).append(" (").append(criteriaSql).append(") ");
+			sql.insert(0, "(").append(") ").append(connector.getCode()).append(" (").append(criteriaSql).append(") ");
 		}
 		return this;
 	}
