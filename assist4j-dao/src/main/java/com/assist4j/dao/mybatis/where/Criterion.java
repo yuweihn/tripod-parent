@@ -2,25 +2,22 @@ package com.assist4j.dao.mybatis.where;
 
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
 
 
 /**
  * @author yuwei
  */
-public class Criterion implements Serializable {
+class Criterion implements Serializable {
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * yyyy-MM-dd HH:mm:ss.SSS
-	 */
-	private static final String PATTERN_DATE_TIME = "yyyy-MM-dd HH:mm:ss.SSS";
 
-
+	private Map<String, Object> params = null;
+	private String paramKey;
 
 	/**
 	 * key为表的字段，不是对象的属性
@@ -29,19 +26,18 @@ public class Criterion implements Serializable {
 	private Operator operator;
 	private Object value;
 
-	public Criterion(String key, Operator operator) {
-		this(key, operator, null);
-	}
-	public Criterion(String key, Operator operator, Object value) {
+	public Criterion(String key, Operator operator, Object value, Map<String, Object> params) {
 		this.key = key;
 		this.operator = operator;
 		this.value = value;
+
+		if (this.value != null) {
+			this.paramKey = key + Md5Util.getMd5(operator.getCode()) + UUID.randomUUID().toString().replace("-", "");
+			params.put(this.paramKey, this.value);
+		}
+		this.params = params;
 	}
 
-	/**
-	 * 拼装成sql，数字型不加单引号，其它类型要加单引号
-	 * eg. user_name = 'zhangsan'
-	 */
 	public String toSql() {
 		if (key == null || "".equals(key.trim()) || operator == null) {
 			return null;
@@ -50,15 +46,7 @@ public class Criterion implements Serializable {
 			return key + " " + operator.getCode() + " ";
 		}
 
-		Object val = value;
-		if ((val instanceof Number) || (val instanceof Boolean)) {
-			return key + " " + operator.getCode() + " " + val + " ";
-		}
-
-		if (val instanceof Date) {
-			val = new SimpleDateFormat(PATTERN_DATE_TIME).format((Date) val);
-		}
-		return key + " " + operator.getCode() + " '" + val + "' ";
+		return key + " " + operator.getCode() + " #{criteria.params." + this.paramKey + "} ";
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
