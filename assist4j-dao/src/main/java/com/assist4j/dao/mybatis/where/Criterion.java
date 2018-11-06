@@ -2,6 +2,8 @@ package com.assist4j.dao.mybatis.where;
 
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -12,6 +14,13 @@ public class Criterion implements Serializable {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * yyyy-MM-dd HH:mm:ss.SSS
+	 */
+	private static final String PATTERN_DATE_TIME = "yyyy-MM-dd HH:mm:ss.SSS";
+
+
 
 	/**
 	 * key为表的字段，不是对象的属性
@@ -37,14 +46,19 @@ public class Criterion implements Serializable {
 		if (key == null || "".equals(key.trim()) || operator == null) {
 			return null;
 		}
-
 		if (value == null) {
 			return key + " " + operator.getCode() + " ";
-		} else if (value instanceof Number) {
-			return key + " " + operator.getCode() + " " + value + " ";
-		} else {
-			return key + " " + operator.getCode() + " '" + value + "' ";
 		}
+
+		Object val = value;
+		if ((val instanceof Number) || (val instanceof Boolean)) {
+			return key + " " + operator.getCode() + " " + val + " ";
+		}
+
+		if (val instanceof Date) {
+			val = new SimpleDateFormat(PATTERN_DATE_TIME).format((Date) val);
+		}
+		return key + " " + operator.getCode() + " '" + val + "' ";
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////

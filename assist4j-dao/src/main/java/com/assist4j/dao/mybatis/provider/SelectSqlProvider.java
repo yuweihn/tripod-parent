@@ -20,14 +20,14 @@ public class SelectSqlProvider extends AbstractProvider {
 //		PK id = (PK) param.get("id");
 		Class<T> entityClass = (Class<T>) param.get("clz");
 		final String tableName = getTableName(entityClass);
-		
+
 		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			boolean whereSet = false;
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
 				SELECT(fc.getColumnName() + " as " + field.getName());
-				
+
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
 					WHERE(fc.getColumnName() + " = #{id}");
@@ -60,7 +60,7 @@ public class SelectSqlProvider extends AbstractProvider {
 			}
 		}}.toString();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <T>String selectList(Map<String, Object> param) {
 		final Map<String, Object> whereMap = (Map<String, Object>) param.get("where");
@@ -90,7 +90,7 @@ public class SelectSqlProvider extends AbstractProvider {
 				}
 			}
 			if (orderBy != null && !"".equals(orderBy.trim())) {
-				ORDER_BY(orderBy);
+				ORDER_BY(" #{orderBy} ");
 			}
 		}}.toString());
 
@@ -148,7 +148,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		}
 
 		if (orderBy != null && !"".equals(orderBy.trim())) {
-			builder.append(" order by ").append(orderBy).append(" ");
+			builder.append(" order by #{orderBy} ");
 		}
 
 		if (pageNo0 != null && pageSize0 != null) {
