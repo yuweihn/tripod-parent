@@ -49,11 +49,12 @@ public class Criterion implements Serializable {
 		if (value == null) {
 			return key + " " + operator.getCode() + " ";
 		}
-		if ((value instanceof Number) || (value instanceof Boolean)) {
-			return key + " " + operator.getCode() + " " + value + " ";
-		}
 
 		Object val = value;
+		if ((val instanceof Number) || (val instanceof Boolean)) {
+			return key + " " + operator.getCode() + " " + val + " ";
+		}
+
 		if (val instanceof Date) {
 			val = new SimpleDateFormat(PATTERN_DATE_TIME).format((Date) val);
 		}

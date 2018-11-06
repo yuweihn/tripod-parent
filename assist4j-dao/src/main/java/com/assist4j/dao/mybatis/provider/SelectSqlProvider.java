@@ -90,7 +90,7 @@ public class SelectSqlProvider extends AbstractProvider {
 				}
 			}
 			if (orderBy != null && !"".equals(orderBy.trim())) {
-				ORDER_BY(orderBy);
+				ORDER_BY(" #{orderBy} ");
 			}
 		}}.toString());
 
@@ -148,7 +148,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		}
 
 		if (orderBy != null && !"".equals(orderBy.trim())) {
-			builder.append(" order by ").append(orderBy).append(" ");
+			builder.append(" order by #{orderBy} ");
 		}
 
 		if (pageNo0 != null && pageSize0 != null) {
