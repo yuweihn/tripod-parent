@@ -1,6 +1,7 @@
 package com.assist4j.dao.mybatis;
 
 
+import com.assist4j.dao.mybatis.order.OrderBy;
 import com.assist4j.dao.mybatis.provider.SelectSqlProvider;
 import com.assist4j.dao.mybatis.where.Criteria;
 import org.apache.ibatis.annotations.Param;
@@ -33,11 +34,11 @@ public interface SelectMapper<T extends Serializable, PK extends Serializable> {
 	 * @return
 	 */
 	@SelectProvider(type = SelectSqlProvider.class, method = "selectList")
-	List<T> selectList(@Param("where") Map<String, Object> where, @Param("orderBy") String orderBy, @Param("clazz") Class<T> clazz);
+	List<T> selectList(@Param("where") Map<String, Object> where, @Param("orderBy") OrderBy orderBy, @Param("clazz") Class<T> clazz);
 
 	@SelectProvider(type = SelectSqlProvider.class, method = "selectList")
 	List<T> selectPageList(@Param("where") Map<String, Object> where, @Param("pageNo") int pageNo
-            , @Param("pageSize") int pageSize, @Param("orderBy") String orderBy, @Param("clazz") Class<T> clazz);
+            , @Param("pageSize") int pageSize, @Param("orderBy") OrderBy orderBy, @Param("clazz") Class<T> clazz);
 
 
 
@@ -45,10 +46,10 @@ public interface SelectMapper<T extends Serializable, PK extends Serializable> {
 	int findCount(@Param("criteria") Criteria criteria, @Param("clazz") Class<T> clazz);
 
 	@SelectProvider(type = SelectSqlProvider.class, method = "findList")
-	List<T> findList(@Param("criteria") Criteria criteria, @Param("orderBy") String orderBy, @Param("clazz") Class<T> clazz);
+	List<T> findList(@Param("criteria") Criteria criteria, @Param("orderBy") OrderBy orderBy, @Param("clazz") Class<T> clazz);
 
 	@SelectProvider(type = SelectSqlProvider.class, method = "findList")
 	List<T> findPageList(@Param("criteria") Criteria criteria, @Param("pageNo") int pageNo
-            , @Param("pageSize") int pageSize, @Param("orderBy") String orderBy, @Param("clazz") Class<T> clazz);
+            , @Param("pageSize") int pageSize, @Param("orderBy") OrderBy orderBy, @Param("clazz") Class<T> clazz);
 }
 

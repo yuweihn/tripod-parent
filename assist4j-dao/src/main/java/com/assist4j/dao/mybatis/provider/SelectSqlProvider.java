@@ -1,6 +1,7 @@
 package com.assist4j.dao.mybatis.provider;
 
 
+import com.assist4j.dao.mybatis.order.OrderBy;
 import com.assist4j.dao.mybatis.where.Criteria;
 import org.apache.ibatis.jdbc.SQL;
 
@@ -20,14 +21,14 @@ public class SelectSqlProvider extends AbstractProvider {
 //		PK id = (PK) param.get("id");
 		Class<T> entityClass = (Class<T>) param.get("clz");
 		final String tableName = getTableName(entityClass);
-
+		
 		final List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			boolean whereSet = false;
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
 				SELECT(fc.getColumnName() + " as " + field.getName());
-
+				
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
 					WHERE(fc.getColumnName() + " = #{id}");
@@ -52,7 +53,7 @@ public class SelectSqlProvider extends AbstractProvider {
 			FROM(tableName);
 			SELECT("count(1) as cnt ");
 			if (whereMap != null) {
-				for (FieldColumn fc : fcList) {
+				for (FieldColumn fc: fcList) {
 					if (whereMap.containsKey(fc.getColumnName())) {
 						WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
 					}
@@ -60,11 +61,11 @@ public class SelectSqlProvider extends AbstractProvider {
 			}
 		}}.toString();
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	public <T>String selectList(Map<String, Object> param) {
 		final Map<String, Object> whereMap = (Map<String, Object>) param.get("where");
-		final String orderBy = (String) param.get("orderBy");
+		final OrderBy orderBy = (OrderBy) param.get("orderBy");
 		Class<T> entityClass = (Class<T>) param.get("clazz");
 		Integer pageNo0 = null;
 		if (param.containsKey("pageNo")) {
@@ -89,8 +90,11 @@ public class SelectSqlProvider extends AbstractProvider {
 					}
 				}
 			}
-			if (orderBy != null && !"".equals(orderBy.trim())) {
-				ORDER_BY(" #{orderBy} ");
+			if (orderBy != null) {
+				String orderBySql = orderBy.toSql();
+				if (orderBySql != null && !"".equals(orderBySql.trim())) {
+					ORDER_BY(orderBySql.trim());
+				}
 			}
 		}}.toString());
 
@@ -125,7 +129,7 @@ public class SelectSqlProvider extends AbstractProvider {
 	@SuppressWarnings("unchecked")
 	public <T>String findList(Map<String, Object> param) {
 		Criteria criteria = (Criteria) param.get("criteria");
-		String orderBy = (String) param.get("orderBy");
+		OrderBy orderBy = (OrderBy) param.get("orderBy");
 		Class<T> entityClass = (Class<T>) param.get("clazz");
 		Integer pageNo0 = null;
 		if (param.containsKey("pageNo")) {
@@ -147,8 +151,11 @@ public class SelectSqlProvider extends AbstractProvider {
 			}
 		}
 
-		if (orderBy != null && !"".equals(orderBy.trim())) {
-			builder.append(" order by #{orderBy} ");
+		if (orderBy != null) {
+			String orderBySql = orderBy.toSql();
+			if (orderBySql != null && !"".equals(orderBySql.trim())) {
+				builder.append(" order by ").append(orderBySql.trim()).append(" ");
+			}
 		}
 
 		if (pageNo0 != null && pageSize0 != null) {
