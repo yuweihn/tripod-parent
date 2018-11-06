@@ -52,7 +52,7 @@ public class SelectSqlProvider extends AbstractProvider {
 			FROM(tableName);
 			SELECT("count(1) as cnt ");
 			if (whereMap != null) {
-				for (FieldColumn fc : fcList) {
+				for (FieldColumn fc: fcList) {
 					if (whereMap.containsKey(fc.getColumnName())) {
 						WHERE(fc.getColumnName() + " = #{[where]." + fc.getColumnName() + " }");
 					}
