@@ -16,11 +16,12 @@ public class Criteria implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private StringBuilder sql = new StringBuilder("");
-	private Map<String, Object> params = new HashMap<String, Object>();
+	private StringBuilder sql;
+	private Map<String, Object> params;
 
 	private Criteria() {
-
+		sql = new StringBuilder("");
+		params = new HashMap<String, Object>();
 	}
 
 	public static Criteria create(String key, Operator operator) {
