@@ -111,4 +111,3 @@ public class Criteria implements Serializable {
         return params;
     }
 }
-
