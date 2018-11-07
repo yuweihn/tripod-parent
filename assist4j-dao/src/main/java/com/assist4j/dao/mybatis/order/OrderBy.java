@@ -2,10 +2,7 @@ package com.assist4j.dao.mybatis.order;
 
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -17,12 +14,12 @@ public class OrderBy implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private List<ColumnOrderedPair> columnOrderedPairList;
+	private List<String> colSqlList;
 	private Map<String, Object> params;
 
 
 	private OrderBy() {
-		columnOrderedPairList = new ArrayList<ColumnOrderedPair>();
+		colSqlList = new ArrayList<String>();
 		params = new HashMap<String, Object>();
 	}
 
@@ -37,32 +34,39 @@ public class OrderBy implements Serializable {
 		return add(column, null);
 	}
 	public OrderBy add(String column, Ordered ordered) {
-		columnOrderedPairList.add(new ColumnOrderedPair(column, ordered, params));
+		colSqlList.add(createColumnOrderedSql(column, ordered));
 		return this;
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	public List<ColumnOrderedPair> getColumnOrderedPairList() {
-		return columnOrderedPairList;
+	private String createColumnOrderedSql(String column, Ordered ordered) {
+		String columnParamKey = column + UUID.randomUUID().toString().replace("-", "");
+		this.params.put(columnParamKey, column);
+
+		if (ordered == null) {
+			return " #{orderBy.params." + columnParamKey + "} ";
+		} else {
+			return " #{orderBy.params." + columnParamKey + "} " + ordered.getCode();
+		}
 	}
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	public Map<String, Object> getParams() {
 		return params;
 	}
 
 	public String toSql() {
-		if (columnOrderedPairList == null || columnOrderedPairList.size() <= 0) {
+		if (colSqlList == null || colSqlList.size() <= 0) {
 			return null;
 		}
 
 		StringBuilder builder = new StringBuilder("");
-		for (int i = 0, size = columnOrderedPairList.size(); i < size; i++) {
-			ColumnOrderedPair cop = columnOrderedPairList.get(i);
+		for (int i = 0, size = colSqlList.size(); i < size; i++) {
+			String colSql = colSqlList.get(i);
 			if (i > 0) {
 				builder.append(", ");
 			}
 
-			builder.append(cop.toSql());
+			builder.append(colSql);
 		}
 		return builder.toString();
 	}
