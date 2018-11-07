@@ -4,6 +4,7 @@ package com.assist4j.dao.mybatis.where;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 
 /**
@@ -27,19 +28,33 @@ public class Criteria implements Serializable {
 	}
 	public static Criteria create(String key, Operator operator, Object value) {
 		Criteria criteria = new Criteria();
-		Criterion criterion = new Criterion(key, operator, value, criteria.params);
-		String criterionSql = criterion.toSql();
+        String criterionSql = createCriterionSql(key, operator, value, criteria.params);
 		if (criterionSql != null && !"".equals(criterionSql.trim())) {
 			criteria.sql.append(criterionSql);
-		} else {
-			throw new RuntimeException("Invalid criterion.");
+            return criteria;
 		}
 
-		return criteria;
+        throw new RuntimeException("Invalid criterion.");
+	}
+	private static String createCriterionSql(String key, Operator operator, Object value, Map<String, Object> params) {
+        if (key == null || "".equals(key.trim()) || operator == null) {
+            return null;
+        }
+
+	    String paramKey = null;
+        if (value != null) {
+            paramKey = key + Md5Util.getMd5(operator.getCode()) + UUID.randomUUID().toString().replace("-", "");
+            params.put(paramKey, value);
+        }
+
+        if (paramKey == null) {
+            return key + " " + operator.getCode() + " ";
+        } else {
+            return key + " " + operator.getCode() + " #{criteria.params." + paramKey + "} ";
+        }
 	}
 
-	private Criteria add(Connector connector, Criterion criterion) {
-		String criterionSql = criterion.toSql();
+	private Criteria add(Connector connector, String criterionSql) {
 		if (criterionSql != null && !"".equals(criterionSql.trim())) {
 			sql.append(" ")
 				.append(connector.getCode())
@@ -53,15 +68,15 @@ public class Criteria implements Serializable {
 		return and(key, operator, null);
 	}
 	public Criteria and(String key, Operator operator, Object value) {
-		Criterion criterion = new Criterion(key, operator, value, this.params);
-		return add(Connector.and, criterion);
+        String criterionSql = createCriterionSql(key, operator, value, this.params);
+		return add(Connector.and, criterionSql);
 	}
 	public Criteria or(String key, Operator operator) {
 		return or(key, operator, null);
 	}
 	public Criteria or(String key, Operator operator, Object value) {
-		Criterion criterion = new Criterion(key, operator, value, this.params);
-		return add(Connector.or, criterion);
+        String criterionSql = createCriterionSql(key, operator, value, this.params);
+		return add(Connector.or, criterionSql);
 	}
 
 	private Criteria add(Connector connector, Criteria criteria) {
