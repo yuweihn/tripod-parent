@@ -3,6 +3,7 @@ package com.assist4j.core;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
@@ -274,5 +275,22 @@ public abstract class BeanUtil {
 		set.removeAll(list2);
 		list.removeAll(set);
 		return list;
+	}
+
+	/**
+	 * Gets all fields of the given class and its parents (if any).
+	 * @return
+	 */
+	public static List<Field> getAllFieldsList(Class<?> clz) {
+		final List<Field> allFields = new ArrayList<Field>();
+		Class<?> currentClass = clz;
+		while (currentClass != null) {
+			final Field[] declaredFields = currentClass.getDeclaredFields();
+			for (Field field : declaredFields) {
+				allFields.add(field);
+			}
+			currentClass = currentClass.getSuperclass();
+		}
+		return allFields;
 	}
 }

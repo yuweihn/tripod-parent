@@ -28,7 +28,10 @@ import java.io.IOException;
 public class SingleDataSourceMybatisConf {
 	@ConditionalOnMissingBean(name = "mapperLocations")
 	@Bean(name = "mapperLocations")
-	public Resource[] mapperLocations(@Value("${mybatis.mapper.locationPattern}") String locationPattern) throws IOException {
+	public Resource[] mapperLocations(@Value("${mybatis.mapper.locationPattern:}") String locationPattern) throws IOException {
+		if (locationPattern == null || "".equals(locationPattern)) {
+			return new Resource[0];
+		}
 		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 		Resource[] resources = resolver.getResources(locationPattern);
 		return resources;
@@ -45,7 +48,9 @@ public class SingleDataSourceMybatisConf {
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
 		SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource);
-		sessionFactoryBean.setMapperLocations(mapperLocations);
+		if (mapperLocations != null && mapperLocations.length > 0) {
+			sessionFactoryBean.setMapperLocations(mapperLocations);
+		}
 		return sessionFactoryBean;
 	}
 
