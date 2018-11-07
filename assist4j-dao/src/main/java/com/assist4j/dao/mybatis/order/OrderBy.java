@@ -29,6 +29,12 @@ public class OrderBy implements Serializable {
 	public static OrderBy create() {
 		return new OrderBy();
 	}
+	public static OrderBy create(String column) {
+		return create().add(column);
+	}
+	public static OrderBy create(String column, Ordered ordered) {
+		return create().add(column, ordered);
+	}
 
 	public OrderBy add(String column) {
 		return add(column, null);
