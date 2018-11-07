@@ -26,14 +26,11 @@ public class OrderBy implements Serializable {
 		params = new HashMap<String, Object>();
 	}
 
-	public static OrderBy create() {
-		return new OrderBy();
-	}
 	public static OrderBy create(String column) {
-		return create().add(column);
+		return new OrderBy().add(column);
 	}
 	public static OrderBy create(String column, Ordered ordered) {
-		return create().add(column, ordered);
+		return new OrderBy().add(column, ordered);
 	}
 
 	public OrderBy add(String column) {
