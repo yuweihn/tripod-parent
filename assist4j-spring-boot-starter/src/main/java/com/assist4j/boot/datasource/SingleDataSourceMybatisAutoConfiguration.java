@@ -125,7 +125,7 @@ public class SingleDataSourceMybatisAutoConfiguration {
 	@Bean
 	public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("basePackage") String basePackage) {
 		MapperScannerConfigurer configurer = new MapperScannerConfigurer();
-		configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
+//		configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
 		configurer.setSqlSessionTemplateBeanName("sqlSessionTemplate");
 		configurer.setBasePackage(basePackage);
 		return configurer;
