@@ -17,6 +17,7 @@ import javax.persistence.Table;
 public abstract class AbstractProvider {
 	private static Map<String, String> TABLE_NAME_MAP = new ConcurrentHashMap<String, String>();
 	private static Map<String, String> SELECT_SQL_MAP = new ConcurrentHashMap<String, String>();
+	private static Map<String, String> SELECT_SQL_WITH_TABLE_ALIAS_MAP = new ConcurrentHashMap<String, String>();
 	private static Map<String, List<FieldColumn>> PERSIST_FIELD_MAP = new ConcurrentHashMap<String, List<FieldColumn>>();
 
 
@@ -60,6 +61,31 @@ public abstract class AbstractProvider {
 			}
 			selectSql = builder.toString();
 			SELECT_SQL_MAP.put(className, selectSql);
+		}
+		return selectSql;
+	}
+
+	/**
+	 * eg：a.id as id, a.user_name as userName, a.create_time as createTime
+	 * @param clz
+	 * @param tableAlias
+	 * @return
+	 */
+	protected String getSelectSql(Class<?> clz, String tableAlias) {
+		String className = clz.getName();
+		String selectSql = SELECT_SQL_WITH_TABLE_ALIAS_MAP.get(className);
+		if (selectSql == null) {
+			StringBuilder builder = new StringBuilder("");
+			List<FieldColumn> fcList = getPersistFieldList(clz);
+			for (int i = 0, size = fcList.size(); i < size; i++) {
+				FieldColumn fc = fcList.get(i);
+				if (i > 0) {
+					builder.append(", ");
+				}
+				builder.append(tableAlias).append(".").append(fc.getColumnName()).append(" as ").append(fc.getField().getName());
+			}
+			selectSql = builder.toString();
+			SELECT_SQL_WITH_TABLE_ALIAS_MAP.put(className, selectSql);
 		}
 		return selectSql;
 	}
