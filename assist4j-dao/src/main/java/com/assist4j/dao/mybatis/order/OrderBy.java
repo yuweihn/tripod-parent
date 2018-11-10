@@ -16,11 +16,13 @@ public class OrderBy implements Serializable {
 
 	private List<String> colSqlList;
 	private Map<String, Object> params;
+	private int oindex;
 
 
 	private OrderBy() {
 		colSqlList = new ArrayList<String>();
 		params = new HashMap<String, Object>();
+		oindex = 0;
 	}
 
 	public static OrderBy create(String column) {
@@ -39,13 +41,13 @@ public class OrderBy implements Serializable {
 	}
 
 	private String createColumnOrderedSql(String column, Ordered ordered) {
-		String columnParamKey = column + UUID.randomUUID().toString().replace("-", "");
-		this.params.put(columnParamKey, column);
+		String paramKey = "o" + (++oindex);
+		this.params.put(paramKey, column);
 
 		if (ordered == null) {
-			return " #{orderBy.params." + columnParamKey + "} ";
+			return " #{orderBy.params." + paramKey + "} ";
 		} else {
-			return " #{orderBy.params." + columnParamKey + "} " + ordered.getCode();
+			return " #{orderBy.params." + paramKey + "} " + ordered.getCode();
 		}
 	}
 
