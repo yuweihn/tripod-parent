@@ -81,7 +81,7 @@ public class Criteria implements Serializable {
 	}
 
 	private Criteria add(Connector connector, Criteria criteria) {
-		this.putAllParams(criteria.getParams());
+		params.putAll(criteria.getParams());
 		String criteriaSql = criteria.toSql();
 		if (criteriaSql != null && !"".equals(criteriaSql.trim())) {
 			sql.insert(0, "(")
@@ -104,9 +104,6 @@ public class Criteria implements Serializable {
 		return sql.toString();
 	}
 
-	public void putAllParams(Map<String, Object> params) {
-		this.params.putAll(params);
-	}
 	public Map<String, Object> getParams() {
 		return params;
 	}
