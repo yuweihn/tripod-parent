@@ -30,16 +30,12 @@ public class Criteria implements Serializable {
 	public static Criteria create(String key, Operator operator, Object value) {
 		Criteria criteria = new Criteria();
 		String criterionSql = createCriterionSql(key, operator, value, criteria.params);
-		if (criterionSql != null && !"".equals(criterionSql.trim())) {
-			criteria.sql.append(criterionSql);
-			return criteria;
-		}
-
-		throw new RuntimeException("Invalid criterion.");
+		criteria.sql.append(criterionSql);
+		return criteria;
 	}
-	private static String createCriterionSql(String key, Operator operator, Object value, Map<String, Object> params) {
+	private static String createCriterionSql(String key, Operator operator, Object value, Map<String, Object> params) throws IllegalArgumentException {
 		if (key == null || "".equals(key.trim()) || operator == null) {
-			return null;
+			throw new RuntimeException("Invalid argument.");
 		}
 
 		String paramKey = null;
