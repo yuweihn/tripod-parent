@@ -35,7 +35,7 @@ public class Criteria implements Serializable {
 	}
 	private static String createCriterionSql(String key, Operator operator, Object value, Map<String, Object> params) throws IllegalArgumentException {
 		if (key == null || "".equals(key.trim()) || operator == null) {
-			throw new RuntimeException("Invalid argument.");
+			throw new IllegalArgumentException("Invalid argument.");
 		}
 
 		String paramKey = null;
