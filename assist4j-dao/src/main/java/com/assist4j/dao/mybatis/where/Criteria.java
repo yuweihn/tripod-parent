@@ -4,7 +4,7 @@ package com.assist4j.dao.mybatis.where;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -18,10 +18,12 @@ public class Criteria implements Serializable {
 
 	private StringBuilder sql;
 	private Map<String, Object> params;
+	private AtomicInteger paramCounter;
 
 	private Criteria() {
 		sql = new StringBuilder("");
 		params = new HashMap<String, Object>();
+		paramCounter = new AtomicInteger(0);
 	}
 
 	public static Criteria create(String key, Operator operator) {
@@ -29,24 +31,21 @@ public class Criteria implements Serializable {
 	}
 	public static Criteria create(String key, Operator operator, Object value) {
 		Criteria criteria = new Criteria();
-		String criterionSql = createCriterionSql(key, operator, value, criteria.params);
+		String criterionSql = createCriterionSql(key, operator, value, criteria.params, criteria.paramCounter);
 		criteria.sql.append(criterionSql);
 		return criteria;
 	}
-	private static String createCriterionSql(String key, Operator operator, Object value, Map<String, Object> params) throws IllegalArgumentException {
+	private static String createCriterionSql(String key, Operator operator, Object value
+			, Map<String, Object> params, AtomicInteger paramCounter) throws IllegalArgumentException {
 		if (key == null || "".equals(key.trim()) || operator == null) {
 			throw new IllegalArgumentException("Invalid argument.");
 		}
 
-		String paramKey = null;
-		if (value != null) {
-			paramKey = key + Md5Util.getMd5(operator.getCode()) + UUID.randomUUID().toString().replace("-", "");
-			params.put(paramKey, value);
-		}
-
-		if (paramKey == null) {
+		if (value == null) {
 			return key + " " + operator.getCode() + " ";
 		} else {
+			String paramKey = "p" + paramCounter.incrementAndGet();
+			params.put(paramKey, value);
 			return key + " " + operator.getCode() + " #{criteria.params." + paramKey + "} ";
 		}
 	}
@@ -65,14 +64,14 @@ public class Criteria implements Serializable {
 		return and(key, operator, null);
 	}
 	public Criteria and(String key, Operator operator, Object value) {
-		String criterionSql = createCriterionSql(key, operator, value, this.params);
+		String criterionSql = createCriterionSql(key, operator, value, this.params, this.paramCounter);
 		return add(Connector.and, criterionSql);
 	}
 	public Criteria or(String key, Operator operator) {
 		return or(key, operator, null);
 	}
 	public Criteria or(String key, Operator operator, Object value) {
-		String criterionSql = createCriterionSql(key, operator, value, this.params);
+		String criterionSql = createCriterionSql(key, operator, value, this.params, this.paramCounter);
 		return add(Connector.or, criterionSql);
 	}
 
