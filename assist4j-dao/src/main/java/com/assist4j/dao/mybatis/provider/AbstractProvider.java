@@ -51,11 +51,12 @@ public abstract class AbstractProvider {
 		if (selectSql == null) {
 			StringBuilder builder = new StringBuilder("");
 			List<FieldColumn> fcList = getPersistFieldList(clz);
-			for (FieldColumn fc: fcList) {
-				builder.append(",").append(fc.getColumnName()).append(" as ").append(fc.getField().getName());
-			}
-			if (builder.length() > 0) {
-				builder.deleteCharAt(0);
+			for (int i = 0, size = fcList.size(); i < size; i++) {
+				FieldColumn fc = fcList.get(i);
+				if (i > 0) {
+					builder.append(", ");
+				}
+				builder.append(fc.getColumnName()).append(" as ").append(fc.getField().getName());
 			}
 			selectSql = builder.toString();
 			SELECT_SQL_MAP.put(className, selectSql);
