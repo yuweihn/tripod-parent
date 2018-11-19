@@ -8,6 +8,8 @@ import java.util.Set;
 
 import com.assist4j.data.cache.*;
 import com.assist4j.data.cache.redis.RedisCache;
+import com.assist4j.data.cache.serialize.DefaultSerialize;
+import com.assist4j.data.cache.serialize.Serialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,16 +23,29 @@ public class JedisClusterCache implements RedisCache {
 	private static final Logger log = LoggerFactory.getLogger(JedisClusterCache.class);
 	private static final String UTF_8 = "utf-8";
 	private BinaryJedisCluster jedisCluster;
+	private Serialize serialize;
+
+
+	public JedisClusterCache() {
+		this(new DefaultSerialize());
+	}
+	public JedisClusterCache(Serialize serialize) {
+		this.serialize = serialize;
+	}
 
 
 	public void setJedisCluster(BinaryJedisCluster jedisCluster) {
 		this.jedisCluster = jedisCluster;
 	}
 
+	public void setSerialize(Serialize serialize) {
+		this.serialize = serialize;
+	}
+
 
 	@Override
 	public <T>void publish(String channel, T value) {
-		String v = CacheUtil.objectToString(value);
+		String v = serialize.encode(value);
 		Charset charset = Charset.forName(UTF_8);
 		jedisCluster.publish(channel.getBytes(charset), v.getBytes(charset));
 	}
@@ -40,7 +55,7 @@ public class JedisClusterCache implements RedisCache {
 		jedisCluster.subscribe(new JedisPubSub() {
 			@Override
 			public void onMessage(String channel, String message) {
-				T t = CacheUtil.stringToObject(message);
+				T t = serialize.decode(message);
 				handler.handle(channel, t);
 			}
 		}, channel);
@@ -52,7 +67,7 @@ public class JedisClusterCache implements RedisCache {
 	}
 
 	private <T>boolean put0(String key, T value) {
-		String v = CacheUtil.objectToString(value);
+		String v = serialize.encode(value);
 		Charset charset = Charset.forName(UTF_8);
 		jedisCluster.set(key, v.getBytes(charset));
 		return true;
@@ -93,7 +108,7 @@ public class JedisClusterCache implements RedisCache {
 		Charset charset = Charset.forName(UTF_8);
 		String str = new String(bytes, charset);
 		try {
-			return CacheUtil.stringToObject(str);
+			return serialize.decode(str);
 		} catch(Exception e) {
 			log.error("数据异常！！！key: {}, message: {}", key, e.getMessage());
 			remove(key);
@@ -112,7 +127,7 @@ public class JedisClusterCache implements RedisCache {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
-		String v = CacheUtil.objectToString(value);
+		String v = serialize.encode(value);
 		Charset charset = Charset.forName(UTF_8);
 		jedisCluster.hset(key, field, v.getBytes(charset));
 		jedisCluster.expire(key, (int) expiredTime);
@@ -133,7 +148,7 @@ public class JedisClusterCache implements RedisCache {
 		Charset charset = Charset.forName(UTF_8);
 		String str = new String(bytes, charset);
 		try {
-			return CacheUtil.stringToObject(str);
+			return serialize.decode(str);
 		} catch(Exception e) {
 			log.error("数据异常！！！key: {}, field: {}, message: {}", key, field, e.getMessage());
 			hdel(key, field);
