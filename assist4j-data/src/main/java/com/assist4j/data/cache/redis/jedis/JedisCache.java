@@ -3,6 +3,8 @@ package com.assist4j.data.cache.redis.jedis;
 
 import com.assist4j.data.cache.*;
 import com.assist4j.data.cache.redis.RedisCache;
+import com.assist4j.data.cache.serialize.DefaultSerialize;
+import com.assist4j.data.cache.serialize.Serialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -27,13 +29,24 @@ public class JedisCache implements RedisCache {
 	private static final Logger log = LoggerFactory.getLogger(JedisCache.class);
 	private static final String CHARSET = "utf-8";
 	private RedisTemplate<String, Object> redisTemplate;
+	private Serialize serialize;
+
+
+	public JedisCache() {
+		this(new DefaultSerialize());
+	}
+	public JedisCache(Serialize serialize) {
+		this.serialize = serialize;
+	}
 
 
 	public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
 		this.redisTemplate = redisTemplate;
 	}
 
-
+	public void setSerialize(Serialize serialize) {
+		this.serialize = serialize;
+	}
 
 	private static byte[] encode(final String str) {
 		try {
@@ -54,7 +67,7 @@ public class JedisCache implements RedisCache {
 	}
 	@Override
 	public <T>void publish(final String channel, final T value) {
-		final String v = CacheUtil.objectToString(value);
+		final String v = serialize.encode(value);
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
@@ -83,7 +96,7 @@ public class JedisCache implements RedisCache {
 							msg = decode(message.getBody());
 						}
 
-						T t = CacheUtil.stringToObject(msg);
+						T t = serialize.decode(msg);
 						handler.handle(channel, t);
 					}
 				}, encode(channel));
@@ -99,7 +112,7 @@ public class JedisCache implements RedisCache {
 	}
 
 	private <T>boolean put0(String key, T value) {
-		String v = CacheUtil.objectToString(value);
+		String v = serialize.encode(value);
 		redisTemplate.opsForValue().set(key, v);
 		return true;
 	}
@@ -133,7 +146,7 @@ public class JedisCache implements RedisCache {
 			return null;
 		}
 		try {
-			return CacheUtil.stringToObject(str);
+			return serialize.decode(str);
 		} catch(Exception e) {
 			log.error("数据异常！！！key: {}, message: {}", key, e.getMessage());
 			remove(key);
@@ -152,7 +165,7 @@ public class JedisCache implements RedisCache {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
-		String v = CacheUtil.objectToString(value);
+		String v = serialize.encode(value);
 		redisTemplate.opsForHash().put(key, field, v);
 		redisTemplate.expire(key, expiredTime, TimeUnit.SECONDS);
 	}
@@ -178,7 +191,7 @@ public class JedisCache implements RedisCache {
 			return null;
 		}
 		try {
-			return CacheUtil.stringToObject(str);
+			return serialize.decode(str);
 		} catch (Exception e) {
 			log.error("数据异常！！！key: {}, field: {}, message: {}", key, field, e.getMessage());
 			hdel(key, field);

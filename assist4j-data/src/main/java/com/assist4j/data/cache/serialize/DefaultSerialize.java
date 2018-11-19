@@ -1,23 +1,72 @@
-package com.assist4j.data.cache;
+package com.assist4j.data.cache.serialize;
 
 
-import java.lang.reflect.Constructor;
-
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.assist4j.data.cache.CacheClzEnum;
+import com.assist4j.data.cache.CacheValue;
+import com.assist4j.data.cache.ValueData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import com.alibaba.fastjson.JSONObject;
+import java.lang.reflect.Constructor;
 
 
 /**
  * @author yuwei
  */
-public abstract class CacheUtil {
-	private static final Logger log = LoggerFactory.getLogger(CacheUtil.class);
+public class DefaultSerialize implements Serialize {
+	private static final Logger log = LoggerFactory.getLogger(DefaultSerialize.class);
 
+
+	@Override
+	public <T> String encode(T t) {
+//		validCacheValue(value);
+
+		Class<?> vClz = t.getClass();
+		ValueData vd = new ValueData();
+		vd.setClassName(vClz.getName());
+
+		if (CacheValue.class.isAssignableFrom(vClz)) {
+			CacheValue<?> cv = (CacheValue<?>) t;
+			vd.setData(cv.encode());
+		} else {
+			vd.setData(JSONObject.toJSONString(t, SerializerFeature.WriteClassName));
+		}
+
+		ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
+		ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
+		ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+		return JSONObject.toJSONString(vd, SerializerFeature.WriteClassName);
+	}
+
+	@Override
+	public <T> T decode(String str) {
+		if (str == null || "".equals(str.trim())) {
+			return (T) null;
+		}
+		ValueData vd = JSONObject.parseObject(str, ValueData.class);
+		try {
+			ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
+			ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
+			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+
+			Class<?> vClz = Class.forName(vd.getClassName());
+			if (CacheValue.class.isAssignableFrom(vClz)) {
+				Constructor<?> constructor = vClz.getDeclaredConstructor();
+				constructor.setAccessible(true);
+				CacheValue<?> cv = (CacheValue<?>) constructor.newInstance();
+				cv = cv.decode(vd.getData());
+				return (T) cv;
+			} else {
+				return (T) JSONObject.parseObject(vd.getData(), vClz);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	/**
 	 * 检查数据类型：
@@ -53,52 +102,6 @@ public abstract class CacheUtil {
 				log.error("Non-argument constructor is required.");
 				throw new RuntimeException("Non-argument constructor is required.");
 			}
-		}
-	}
-
-	public static<T>String objectToString(T value) {
-//		validCacheValue(value);
-
-		Class<?> vClz = value.getClass();
-		ValueData vd = new ValueData();
-		vd.setClassName(vClz.getName());
-
-		if (CacheValue.class.isAssignableFrom(vClz)) {
-			CacheValue<?> cv = (CacheValue<?>) value;
-			vd.setData(cv.encode());
-		} else {
-			vd.setData(JSONObject.toJSONString(value, SerializerFeature.WriteClassName));
-		}
-
-		ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
-		ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
-		ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
-		return JSONObject.toJSONString(vd, SerializerFeature.WriteClassName);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static<T>T stringToObject(String str) {
-		if (str == null || "".equals(str.trim())) {
-			return (T) null;
-		}
-		ValueData vd = JSONObject.parseObject(str, ValueData.class);
-		try {
-			ParserConfig.getGlobalInstance().addAccept(vd.getClassName());
-			ParserConfig.getGlobalInstance().addAccept(ValueData.class.getClass().getName());
-			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
-
-			Class<?> vClz = Class.forName(vd.getClassName());
-			if (CacheValue.class.isAssignableFrom(vClz)) {
-				Constructor<?> constructor = vClz.getDeclaredConstructor();
-				constructor.setAccessible(true);
-				CacheValue<?> cv = (CacheValue<?>) constructor.newInstance();
-				cv = cv.decode(vd.getData());
-				return (T) cv;
-			} else {
-				return (T) JSONObject.parseObject(vd.getData(), vClz);
-			}
-		} catch (Exception e) {
-			throw new RuntimeException(e);
 		}
 	}
 
