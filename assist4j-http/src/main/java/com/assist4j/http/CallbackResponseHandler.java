@@ -155,7 +155,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
-			if(out != null) {
+			if (out != null) {
 				try {
 					out.close();
 				} catch (IOException e) {
