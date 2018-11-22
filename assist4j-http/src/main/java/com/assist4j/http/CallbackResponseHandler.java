@@ -4,6 +4,7 @@ package com.assist4j.http;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -129,6 +130,16 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			 * 返回字节数组类型
 			 **/
 			body = read(entity.getContent());
+		} else if (Decoder.class.isAssignableFrom(bodyClass)) {
+			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+			try {
+				Constructor<?> constructor = bodyClass.getDeclaredConstructor();
+				constructor.setAccessible(true);
+				Decoder decoder = (Decoder) constructor.newInstance();
+				body = decoder.decode(txt);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		} else {
 			/**
 			 * 返回指定的其它类型
