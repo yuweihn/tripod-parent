@@ -25,6 +25,7 @@ import com.sun.management.OperatingSystemMXBean;
 /**
  * @author yuwei
  */
+@SuppressWarnings("restriction")
 public abstract class MonitorUtil {
 	private static final int FAULT_LENGTH = 10;
 	private static final String OS_NAME = System.getProperty("os.name");
