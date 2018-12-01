@@ -57,9 +57,9 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		this.charset = charset;
 		return this;
 	}
-
-
-
+	
+	
+	
 	@Override
 	public HttpResponse<? extends Object> handleResponse(org.apache.http.HttpResponse response) throws IOException {
 		StatusLine statusLine = response.getStatusLine();
@@ -135,7 +135,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			try {
 				Constructor<?> constructor = bodyClass.getDeclaredConstructor();
 				constructor.setAccessible(true);
-				Decoder decoder = (Decoder) constructor.newInstance();
+				Decoder<?> decoder = (Decoder<?>) constructor.newInstance();
 				body = decoder.decode(txt);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
