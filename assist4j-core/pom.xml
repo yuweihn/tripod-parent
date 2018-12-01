@@ -23,6 +23,7 @@
 		<javax.mail.version>1.4.7</javax.mail.version>
 		<jdk.version>1.8</jdk.version>
 		<jms.spec.version>1.1.1</jms.spec.version>
+		<guava.version>18.0</guava.version>
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
 		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
@@ -134,6 +135,12 @@
 			<artifactId>javase</artifactId>
 			<version>${zxing.version}</version>
 			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
 		</dependency>
 	</dependencies>
 
