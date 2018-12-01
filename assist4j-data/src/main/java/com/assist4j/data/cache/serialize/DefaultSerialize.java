@@ -42,6 +42,7 @@ public class DefaultSerialize implements Serialize {
 		return JSONObject.toJSONString(vd, SerializerFeature.WriteClassName);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T decode(String str) {
 		if (str == null || "".equals(str.trim())) {
