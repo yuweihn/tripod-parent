@@ -20,22 +20,27 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author wei
  */
-public abstract class GuavaUtil {
+public class GuavaUtil {
 	private static final Logger log = LoggerFactory.getLogger(GuavaUtil.class);
-	
+
+
 	/**
-	 * 缓存时间(单位：秒)
+	 * 默认缓存时间(单位：秒)
 	 */
-	private static final long GUAVA_CACHE_TIME = 300;
-	
+	private static final long DEFAULT_DURATION = 300L;
+
 	/**
 	 * 缓存操作对象
 	 */
-	private static LoadingCache<String, String> GLOBAL_CACHE = null;
-	
-	static {
+	private LoadingCache<String, String> LOADING_CACHE = null;
+
+
+	public GuavaUtil() {
+		this(DEFAULT_DURATION);
+	}
+	public GuavaUtil(long duration) {
 		try {
-			GLOBAL_CACHE = loadCache(new CacheLoader<String, String>() {
+			LOADING_CACHE = loadCache(duration, new CacheLoader<String, String>() {
 				@Override
 				public String load(String key) throws Exception {
 					if (log.isDebugEnabled()) {
@@ -45,12 +50,13 @@ public abstract class GuavaUtil {
 				}
 			});
 		} catch (Exception e) {
-			log.error("初始化Guava Cache出错", e);
+			throw new RuntimeException(e);
 		}
 	}
-	
-	private static <K, V> LoadingCache<K, V> loadCache(CacheLoader<K, V> cacheLoader) throws Exception {
-		LoadingCache<K, V> cache = CacheBuilder.newBuilder().expireAfterAccess(GUAVA_CACHE_TIME, TimeUnit.SECONDS)
+
+
+	private static <K, V> LoadingCache<K, V> loadCache(long duration, CacheLoader<K, V> cacheLoader) throws Exception {
+		LoadingCache<K, V> cache = CacheBuilder.newBuilder().expireAfterAccess(duration, TimeUnit.SECONDS)
 				.removalListener(new RemovalListener<K, V>() {
 					@Override
 					public void onRemoval(RemovalNotification<K, V> rn) {
@@ -61,10 +67,10 @@ public abstract class GuavaUtil {
 				}).recordStats().build(cacheLoader);
 		return cache;
 	}
-	
-	public static boolean put(String key, String value) {
+
+	public boolean put(String key, String value) {
 		try {
-			GLOBAL_CACHE.put(key, value);
+			LOADING_CACHE.put(key, value);
 			if (log.isDebugEnabled()) {
 				log.debug("缓存命中率：{}，新值平均加载时间：{}", getHitRate(), getAverageLoadPenalty());
 			}
@@ -74,10 +80,10 @@ public abstract class GuavaUtil {
 			return false;
 		}
 	}
-	
-	public static boolean putAll(Map<String, String> map) {
+
+	public boolean putAll(Map<String, String> map) {
 		try {
-			GLOBAL_CACHE.putAll(map);
+			LOADING_CACHE.putAll(map);
 			if (log.isDebugEnabled()) {
 				log.debug("缓存命中率：{}，新值平均加载时间：{}", getHitRate(), getAverageLoadPenalty());
 			}
@@ -87,11 +93,11 @@ public abstract class GuavaUtil {
 			return false;
 		}
 	}
-	
-	public static String get(String key) {
+
+	public String get(String key) {
 		String val = null;
 		try {
-			val = GLOBAL_CACHE.get(key);
+			val = LOADING_CACHE.get(key);
 			if (log.isDebugEnabled()) {
 				log.debug("缓存命中率：{}，新值平均加载时间：{}", getHitRate(), getAverageLoadPenalty());
 			}
@@ -100,10 +106,10 @@ public abstract class GuavaUtil {
 		}
 		return val;
 	}
-	
-	public static boolean remove(String key) {
+
+	public boolean remove(String key) {
 		try {
-			GLOBAL_CACHE.invalidate(key);
+			LOADING_CACHE.invalidate(key);
 			if (log.isDebugEnabled()) {
 				log.debug("缓存命中率：{}，新值平均加载时间：{}", getHitRate(), getAverageLoadPenalty());
 			}
@@ -113,13 +119,13 @@ public abstract class GuavaUtil {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 批量移除缓存
 	 */
-	public static boolean removeAll(Iterable<String> keys) {
+	public boolean removeAll(Iterable<String> keys) {
 		try {
-			GLOBAL_CACHE.invalidateAll(keys);
+			LOADING_CACHE.invalidateAll(keys);
 			if (log.isDebugEnabled()) {
 				log.debug("缓存命中率：{}，新值平均加载时间：{}", getHitRate(), getAverageLoadPenalty());
 			}
@@ -129,13 +135,13 @@ public abstract class GuavaUtil {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 清空所有缓存
 	 */
-	public static boolean removeAll() {
+	public boolean removeAll() {
 		try {
-			GLOBAL_CACHE.invalidateAll();
+			LOADING_CACHE.invalidateAll();
 			if (log.isDebugEnabled()) {
 				log.debug("缓存命中率：{}，新值平均加载时间：{}", getHitRate(), getAverageLoadPenalty());
 			}
@@ -145,14 +151,14 @@ public abstract class GuavaUtil {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * 获取缓存项数量
 	 */
-	public static long size() {
+	public long size() {
 		long size = 0;
 		try {
-			size = GLOBAL_CACHE.size();
+			size = LOADING_CACHE.size();
 			if (log.isDebugEnabled()) {
 				log.debug("缓存命中率：{}，新值平均加载时间：{}", getHitRate(), getAverageLoadPenalty());
 			}
@@ -161,14 +167,14 @@ public abstract class GuavaUtil {
 		}
 		return size;
 	}
-	
+
 	/**
 	 * 获取所有缓存项的键
 	 */
-	public static List<String> keys() {
+	public List<String> keys() {
 		List<String> list = new ArrayList<String>();
 		try {
-			ConcurrentMap<String, String> map = GLOBAL_CACHE.asMap();
+			ConcurrentMap<String, String> map = LOADING_CACHE.asMap();
 			for (Map.Entry<String, String> item : map.entrySet()) {
 				list.add(item.getKey());
 			}
@@ -180,25 +186,25 @@ public abstract class GuavaUtil {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * 缓存命中率
 	 */
-	public static double getHitRate() {
-		return GLOBAL_CACHE.stats().hitRate();
+	public double getHitRate() {
+		return LOADING_CACHE.stats().hitRate();
 	}
-	
+
 	/**
 	 * 加载新值的平均时间，单位为纳秒
 	 */
-	public static double getAverageLoadPenalty() {
-		return GLOBAL_CACHE.stats().averageLoadPenalty();
+	public double getAverageLoadPenalty() {
+		return LOADING_CACHE.stats().averageLoadPenalty();
 	}
-	
+
 	/**
 	 * 缓存项被回收的总数，不包括显式清除
 	 */
-	public static long getEvictionCount() {
-		return GLOBAL_CACHE.stats().evictionCount();
+	public long getEvictionCount() {
+		return LOADING_CACHE.stats().evictionCount();
 	}
 }
