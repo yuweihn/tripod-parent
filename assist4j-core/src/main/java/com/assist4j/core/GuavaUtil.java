@@ -125,6 +125,19 @@ public class GuavaUtil {
 		return val;
 	}
 
+	public String getIfPresent(String key) {
+		String val = null;
+		try {
+			val = LOADING_CACHE.getIfPresent(key);
+			if (log.isDebugEnabled()) {
+				log.debug("缓存命中率：{}，新值平均加载时间：{}", getHitRate(), getAverageLoadPenalty());
+			}
+		} catch (Exception e) {
+			log.error("获取缓存值出错", e);
+		}
+		return val;
+	}
+
 	public boolean remove(String key) {
 		try {
 			LOADING_CACHE.invalidate(key);
