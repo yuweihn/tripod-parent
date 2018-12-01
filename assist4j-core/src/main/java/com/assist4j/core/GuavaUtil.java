@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -52,6 +54,22 @@ public class GuavaUtil {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static GuavaUtil DEFAULT_INSTANCE = null;
+	private static Lock LOCK = new ReentrantLock();
+	public static GuavaUtil getDefaultInstance() {
+		if (DEFAULT_INSTANCE == null) {
+			try {
+				LOCK.lock();
+				if (DEFAULT_INSTANCE == null) {
+					DEFAULT_INSTANCE = new GuavaUtil();
+				}
+			} finally {
+				LOCK.unlock();
+			}
+		}
+		return DEFAULT_INSTANCE;
 	}
 
 
