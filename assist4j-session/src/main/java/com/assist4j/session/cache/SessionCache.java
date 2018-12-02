@@ -1,6 +1,9 @@
 package com.assist4j.session.cache;
 
 
+
+
+
 /**
  * @author yuwei
  */
@@ -28,5 +31,5 @@ public interface SessionCache {
 	/**
 	 * session同步完成之后的操作
 	 */
-	void afterCompletion(String sessionId);
+	default void afterCompletion(String sessionId) {}
 }

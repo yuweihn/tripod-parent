@@ -24,7 +24,8 @@ public class UpdateSqlProvider extends AbstractProvider {
 			boolean whereSet = false;
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
-				
+				field.setAccessible(true);
+
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
 					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
@@ -57,8 +58,8 @@ public class UpdateSqlProvider extends AbstractProvider {
 			boolean whereSet = false;
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
-
 				field.setAccessible(true);
+
 				Object o = field.get(t);
 				if (o == null) {
 					continue;

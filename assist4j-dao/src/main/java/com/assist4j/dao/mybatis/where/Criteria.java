@@ -4,7 +4,6 @@ package com.assist4j.dao.mybatis.where;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 
 /**
@@ -18,10 +17,12 @@ public class Criteria implements Serializable {
 
 	private StringBuilder sql;
 	private Map<String, Object> params;
+	private int pindex;
 
 	private Criteria() {
 		sql = new StringBuilder("");
 		params = new HashMap<String, Object>();
+		pindex = 0;
 	}
 
 	public static Criteria create(String key, Operator operator) {
@@ -29,28 +30,21 @@ public class Criteria implements Serializable {
 	}
 	public static Criteria create(String key, Operator operator, Object value) {
 		Criteria criteria = new Criteria();
-		String criterionSql = createCriterionSql(key, operator, value, criteria.params);
-		if (criterionSql != null && !"".equals(criterionSql.trim())) {
-			criteria.sql.append(criterionSql);
-			return criteria;
-		}
-
-		throw new RuntimeException("Invalid criterion.");
+		String criterionSql = createCriterionSql(key, operator, value, criteria.params, criteria.hashCode(), ++criteria.pindex);
+		criteria.sql.append(criterionSql);
+		return criteria;
 	}
-	private static String createCriterionSql(String key, Operator operator, Object value, Map<String, Object> params) {
+	private static String createCriterionSql(String key, Operator operator, Object value, Map<String, Object> params
+			, int hashCode, int pindex) throws IllegalArgumentException {
 		if (key == null || "".equals(key.trim()) || operator == null) {
-			return null;
+			throw new IllegalArgumentException("Invalid argument.");
 		}
 
-		String paramKey = null;
-		if (value != null) {
-			paramKey = key + Md5Util.getMd5(operator.getCode()) + UUID.randomUUID().toString().replace("-", "");
-			params.put(paramKey, value);
-		}
-
-		if (paramKey == null) {
+		if (value == null) {
 			return key + " " + operator.getCode() + " ";
 		} else {
+			String paramKey = "p" + hashCode +  "" + pindex;
+			params.put(paramKey, value);
 			return key + " " + operator.getCode() + " #{criteria.params." + paramKey + "} ";
 		}
 	}
@@ -69,19 +63,19 @@ public class Criteria implements Serializable {
 		return and(key, operator, null);
 	}
 	public Criteria and(String key, Operator operator, Object value) {
-		String criterionSql = createCriterionSql(key, operator, value, this.params);
+		String criterionSql = createCriterionSql(key, operator, value, this.params, this.hashCode(), ++this.pindex);
 		return add(Connector.and, criterionSql);
 	}
 	public Criteria or(String key, Operator operator) {
 		return or(key, operator, null);
 	}
 	public Criteria or(String key, Operator operator, Object value) {
-		String criterionSql = createCriterionSql(key, operator, value, this.params);
+		String criterionSql = createCriterionSql(key, operator, value, this.params, this.hashCode(), ++this.pindex);
 		return add(Connector.or, criterionSql);
 	}
 
 	private Criteria add(Connector connector, Criteria criteria) {
-		this.putAllParams(criteria.getParams());
+		params.putAll(criteria.getParams());
 		String criteriaSql = criteria.toSql();
 		if (criteriaSql != null && !"".equals(criteriaSql.trim())) {
 			sql.insert(0, "(")
@@ -104,9 +98,6 @@ public class Criteria implements Serializable {
 		return sql.toString();
 	}
 
-	public void putAllParams(Map<String, Object> params) {
-		this.params.putAll(params);
-	}
 	public Map<String, Object> getParams() {
 		return params;
 	}

@@ -7,7 +7,7 @@ package com.assist4j.data.cache;
  * {"className": "", "data": ""}
  * 如：
  * {"className": "java.lang.String", "data": "测试数据"}
- * {"className": "com.assist4j.session.CacheSessionAttribute","data": "{\"lastAccessTime\":1481378170858,\"createTime\":1481378170856,\"attribute\":[\"{\\\"value\\\":\\\"2\\\",\\\"key\\\":\\\"sessionUserId\\\",\\\"valueClassName\\\":\\\"java.lang.Long\\\"}\"],\"newBuild\":true}"}
+ * {"className": "com.assist4j.session.SessionAttribute","data": "{\"lastAccessTime\":1481378170858,\"createTime\":1481378170856,\"attribute\":[\"{\\\"value\\\":\\\"2\\\",\\\"key\\\":\\\"sessionUserId\\\",\\\"valueClassName\\\":\\\"java.lang.Long\\\"}\"],\"newBuild\":true}"}
  */
 public class ValueData {
 	private String data;

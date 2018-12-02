@@ -6,7 +6,7 @@
 	<groupId>com.assist4j</groupId>
 	<artifactId>assist4j-core</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1.15</version>
+	<version>1.1.16</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>The Project of Assist4j</description>
@@ -23,6 +23,7 @@
 		<javax.mail.version>1.4.7</javax.mail.version>
 		<jdk.version>1.8</jdk.version>
 		<jms.spec.version>1.1.1</jms.spec.version>
+		<guava.version>18.0</guava.version>
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
 		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
@@ -133,6 +134,13 @@
 			<groupId>com.google.zxing</groupId>
 			<artifactId>javase</artifactId>
 			<version>${zxing.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
