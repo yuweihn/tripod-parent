@@ -66,11 +66,11 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 		if (cacheSession == null) {
 			return;
 		}
-		String sessionId = cacheSession.sync();
-		if (sessionId == null || "".equals(sessionId)) {
+		String fullSessionId = cacheSession.sync();
+		if (fullSessionId == null || "".equals(fullSessionId)) {
 			return;
 		}
-		cache.afterCompletion(sessionId);
+		cache.afterCompletion(fullSessionId);
 	}
 
 	/**
@@ -80,9 +80,9 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	 */
 	private HttpSession doGetSession(boolean create) {
 		if (cacheSession == null) {
-			String sessionId = CookiesUtil.findValueByKey(request, cache.getCookieSessionName());
-			if (sessionId != null) {
-				cacheSession = buildCacheHttpSession(sessionId, false);
+			String sid = CookiesUtil.findValueByKey(request, cache.getCookieSessionName());
+			if (sid != null) {
+				cacheSession = buildCacheHttpSession(sid, false);
 			} else {
 				cacheSession = buildCacheHttpSession(create);
 			}
@@ -107,15 +107,15 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 
 	/**
 	 * 根据指定的id构造一个新的会话实例。
-	 * @param sessionId 会话id.
+	 * @param sid 会话id.
 	 * @param cookie 是否更新cookie值。true更新，false不更新。
 	 * @return 会话实例。
 	 */
-	private CacheHttpSession buildCacheHttpSession(String sessionId, boolean cookie) {
-		CacheHttpSession session = new CacheHttpSession(sessionId, cache);
+	private CacheHttpSession buildCacheHttpSession(String sid, boolean cookie) {
+		CacheHttpSession session = new CacheHttpSession(sid, cache);
 
 		if (cookie) {
-			CookiesUtil.addCookie(request, response, cache.getCookieSessionName(), sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
+			CookiesUtil.addCookie(request, response, cache.getCookieSessionName(), sid, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 		}
 
 		return session;
@@ -127,7 +127,7 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	 * @return 会话实例。
 	 */
 	private CacheHttpSession buildCacheHttpSession(boolean create) {
-		String sessionId = UUID.randomUUID().toString().replace("-", "");
-		return create ? buildCacheHttpSession(sessionId, true) : null;
+		String sid = UUID.randomUUID().toString().replace("-", "");
+		return create ? buildCacheHttpSession(sid, true) : null;
 	}
 }
