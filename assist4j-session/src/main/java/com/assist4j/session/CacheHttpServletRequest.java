@@ -28,15 +28,26 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	private HttpServletRequest request;
 	private HttpServletResponse response;
 
+	/**
+	 * 如果未指定sessionId，则由系统自动生成，否则使用指定的sessionId
+	 */
+	private String sessionId;
+
 
 	/**
 	 * 构造一个HttpServletRequest的包装器。
 	 */
 	public CacheHttpServletRequest(HttpServletRequest request, HttpServletResponse response, SessionCache cache) {
+		this(request, response, cache, null);
+	}
+	public CacheHttpServletRequest(HttpServletRequest request, HttpServletResponse response, SessionCache cache, String sessionId) {
 		super(request);
 		this.request = request;
 		this.response = response;
 		this.cache = cache;
+		if (sessionId != null && !"".equals(sessionId.trim())) {
+			this.sessionId = sessionId.trim();
+		}
 	}
 
 
@@ -80,11 +91,15 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	 */
 	private HttpSession doGetSession(boolean create) {
 		if (cacheSession == null) {
-			String sid = CookiesUtil.findValueByKey(request, cache.getCookieSessionName());
-			if (sid != null) {
-				cacheSession = buildCacheHttpSession(sid, false);
+			if (sessionId != null) {
+				cacheSession = createSession(sessionId, create);
 			} else {
-				cacheSession = buildCacheHttpSession(create);
+				String sid = CookiesUtil.findValueByKey(request, cache.getCookieSessionName());
+				if (sid != null) {
+					cacheSession = createSession(sid, false);
+				} else {
+					cacheSession = createSession(create);
+				}
 			}
 		}
 
@@ -94,7 +109,11 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 			 */
 			if (cacheSession.isInvalid()) {
 				cacheSession.removeSessionFromCache();
-				cacheSession = buildCacheHttpSession(create);
+				if (sessionId != null) {
+					cacheSession = createSession(sessionId, create);
+				} else {
+					cacheSession = createSession(create);
+				}
 			}
 
 			if (cacheSession != null) {
@@ -111,7 +130,7 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	 * @param cookie 是否更新cookie值。true更新，false不更新。
 	 * @return 会话实例。
 	 */
-	private CacheHttpSession buildCacheHttpSession(String sid, boolean cookie) {
+	private CacheHttpSession createSession(String sid, boolean cookie) {
 		CacheHttpSession session = new CacheHttpSession(sid, cache);
 
 		if (cookie) {
@@ -126,8 +145,8 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	 * @param create false方法调用返回null.
 	 * @return 会话实例。
 	 */
-	private CacheHttpSession buildCacheHttpSession(boolean create) {
+	private CacheHttpSession createSession(boolean create) {
 		String sid = UUID.randomUUID().toString().replace("-", "");
-		return create ? buildCacheHttpSession(sid, true) : null;
+		return create ? createSession(sid, true) : null;
 	}
 }
