@@ -92,13 +92,13 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	private HttpSession doGetSession(boolean create) {
 		if (cacheSession == null) {
 			if (sessionId != null) {
-				cacheSession = createSession(sessionId, false);
+				cacheSession = new CacheHttpSession(sessionId, cache);
 			} else {
 				String sid = CookiesUtil.findValueByKey(request, cache.getCookieSessionName());
 				if (sid != null) {
-					cacheSession = createSession(sid, false);
-				} else {
-					cacheSession = createSession(create);
+					cacheSession = new CacheHttpSession(sid, cache);
+				} else if (create) {
+					cacheSession = new CacheHttpSession(generateSessionId(), cache);
 				}
 			}
 		}
@@ -110,9 +110,9 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 			if (cacheSession.isInvalid()) {
 				cacheSession.removeSessionFromCache();
 				if (sessionId != null) {
-					cacheSession = createSession(sessionId, false);
-				} else {
-					cacheSession = createSession(create);
+					cacheSession = new CacheHttpSession(sessionId, cache);
+				} else if (create) {
+					cacheSession = new CacheHttpSession(generateSessionId(), cache);
 				}
 			}
 
@@ -124,29 +124,19 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 		return cacheSession;
 	}
 
-	/**
-	 * 根据指定的id构造一个新的会话实例。
-	 * @param sid 会话id.
-	 * @param cookie 是否更新cookie值。true更新，false不更新。
-	 * @return 会话实例。
-	 */
-	private CacheHttpSession createSession(String sid, boolean cookie) {
-		CacheHttpSession session = new CacheHttpSession(sid, cache);
-
-		if (cookie) {
-			CookiesUtil.addCookie(request, response, cache.getCookieSessionName(), sid, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
+	private String generateSessionId() {
+		String sid = UUID.randomUUID().toString().replace("-", "");
+		if (sid == null || "".equals(sid)) {
+			throw new RuntimeException("生成SessionId失败！！！");
 		}
-
-		return session;
+		addCookie(sid);
+		return sid;
 	}
 
 	/**
-	 * 以UUID的方式构造一个会话实例。如果create为false则返回null.
-	 * @param create false方法调用返回null.
-	 * @return 会话实例。
+	 * 更新cookie值
 	 */
-	private CacheHttpSession createSession(boolean create) {
-		String sid = UUID.randomUUID().toString().replace("-", "");
-		return create ? createSession(sid, true) : null;
+	private void addCookie(String sessionId) {
+		CookiesUtil.addCookie(request, response, cache.getCookieSessionName(), sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 	}
 }
