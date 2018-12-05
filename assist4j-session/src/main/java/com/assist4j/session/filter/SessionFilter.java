@@ -47,7 +47,7 @@ public class SessionFilter implements Filter {
 
 		chain.doFilter(cacheRequest, httpResponse);
 		cacheRequest.sync();
-		after(httpRequest, httpResponse);
+		after(cacheRequest, httpResponse);
 	}
 
 	protected String getSessionId(ServletRequest request, ServletResponse response) {
