@@ -41,15 +41,25 @@ public class SessionFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
+		before(httpRequest, httpResponse);
 		CacheHttpServletRequest cacheRequest = new CacheHttpServletRequest(httpRequest, httpResponse, cache
 				, getSessionId(httpRequest, httpResponse));
 
 		chain.doFilter(cacheRequest, httpResponse);
 		cacheRequest.sync();
+		after(httpRequest, httpResponse);
 	}
 
 	protected String getSessionId(ServletRequest request, ServletResponse response) {
 		return null;
+	}
+
+	protected void before(ServletRequest request, ServletResponse response) {
+
+	}
+
+	protected void after(ServletRequest request, ServletResponse response) {
+
 	}
 
 	@Override
