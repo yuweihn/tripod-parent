@@ -92,7 +92,7 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	private HttpSession doGetSession(boolean create) {
 		if (cacheSession == null) {
 			if (sessionId != null) {
-				cacheSession = createSession(sessionId, create);
+				cacheSession = createSession(sessionId, false);
 			} else {
 				String sid = CookiesUtil.findValueByKey(request, cache.getCookieSessionName());
 				if (sid != null) {
@@ -110,7 +110,7 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 			if (cacheSession.isInvalid()) {
 				cacheSession.removeSessionFromCache();
 				if (sessionId != null) {
-					cacheSession = createSession(sessionId, create);
+					cacheSession = createSession(sessionId, false);
 				} else {
 					cacheSession = createSession(create);
 				}
