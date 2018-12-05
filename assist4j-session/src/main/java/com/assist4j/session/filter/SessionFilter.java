@@ -20,7 +20,7 @@ import com.assist4j.session.cache.SessionCache;
  * @author yuwei
  */
 public class SessionFilter implements Filter {
-	private SessionCache cache;
+	protected SessionCache cache;
 
 
 	/**
