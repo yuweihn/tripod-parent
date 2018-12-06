@@ -50,15 +50,15 @@ public class SessionFilter implements Filter {
 		after(cacheRequest, httpResponse);
 	}
 
-	protected String getSessionId(ServletRequest request, ServletResponse response) {
+	protected String getSessionId(HttpServletRequest request, HttpServletResponse response) {
 		return null;
 	}
 
-	protected void before(ServletRequest request, ServletResponse response) {
+	protected void before(HttpServletRequest request, HttpServletResponse response) {
 
 	}
 
-	protected void after(ServletRequest request, ServletResponse response) {
+	protected void after(HttpServletRequest request, HttpServletResponse response) {
 
 	}
 
