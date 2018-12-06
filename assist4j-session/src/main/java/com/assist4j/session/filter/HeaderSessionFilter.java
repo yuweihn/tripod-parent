@@ -26,9 +26,7 @@ public class HeaderSessionFilter extends SessionFilter {
 		this.key = key;
 	}
 
-
-
-
+	@Override
 	protected String getSessionId(HttpServletRequest request, HttpServletResponse response) {
 		if (key == null || "".equals(key)) {
 			throw new IllegalArgumentException("Parameter[key] is not initialized.");
