@@ -44,7 +44,7 @@ public class HeaderSessionFilter extends SessionFilter {
 			throw new IllegalArgumentException("Required header part '" + key + "' is not present.");
 		}
 		if (responseHeader) {
-			response.setHeader(key, request.getHeader(key));
+			response.setHeader(key, sessionId);
 		}
 		return sessionId;
 	}
