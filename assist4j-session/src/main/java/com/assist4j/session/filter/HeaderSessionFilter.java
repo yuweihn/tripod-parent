@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HeaderSessionFilter extends SessionFilter {
 	private String key;
+	private boolean responseHeader;
 
 
 	public HeaderSessionFilter(SessionCache cache) {
@@ -26,6 +27,12 @@ public class HeaderSessionFilter extends SessionFilter {
 		this.key = key;
 	}
 
+	public void setResponseHeader(boolean responseHeader) {
+		this.responseHeader = responseHeader;
+	}
+
+
+
 	@Override
 	protected String getSessionId(HttpServletRequest request, HttpServletResponse response) {
 		if (key == null || "".equals(key)) {
@@ -35,6 +42,9 @@ public class HeaderSessionFilter extends SessionFilter {
 		String sessionId = request.getHeader(key);
 		if (sessionId == null || "".equals(sessionId.trim())) {
 			throw new IllegalArgumentException("Required header part '" + key + "' is not present.");
+		}
+		if (responseHeader) {
+			response.setHeader(key, request.getHeader(key));
 		}
 		return sessionId;
 	}
