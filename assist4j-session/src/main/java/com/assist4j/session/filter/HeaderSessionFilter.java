@@ -36,12 +36,12 @@ public class HeaderSessionFilter extends SessionFilter {
     @Override
     protected String getSessionId(HttpServletRequest request, HttpServletResponse response) {
         if (key == null || "".equals(key)) {
-            throw new IllegalArgumentException("Parameter[key] is not initialized.");
+            return null;
         }
 
         String sessionId = request.getHeader(key);
         if (sessionId == null || "".equals(sessionId.trim())) {
-            throw new IllegalArgumentException("Required header part '" + key + "' is not present.");
+            return null;
         }
         if (responseHeader) {
             response.setHeader(key, sessionId);
