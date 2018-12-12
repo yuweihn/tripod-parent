@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
  * @author yuwei
  */
 public class HeaderSessionFilter extends SessionFilter {
-    private String key;
-    private boolean responseHeader;
+    protected String key;
+    protected boolean responseHeader;
 
 
     public HeaderSessionFilter(SessionCache cache) {
