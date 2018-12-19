@@ -41,6 +41,13 @@ public class SessionFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+		PathPattern exclusivePattern = InitParameter.getInstance().getExclusivePattern();
+		if (exclusivePattern != null && exclusivePattern.matches(httpRequest)) {
+			chain.doFilter(request, response);
+			return;
+		}
+
 		before(httpRequest, httpResponse);
 		CacheHttpServletRequest cacheRequest = new CacheHttpServletRequest(httpRequest, httpResponse, cache
 				, getSessionId(httpRequest, httpResponse));
@@ -64,7 +71,12 @@ public class SessionFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig config) {
+		InitParameter initParameter = InitParameter.getInstance();
 
+		String exclusive = config.getInitParameter("exclusive");
+		if (exclusive != null && !"".equals(exclusive.trim())) {
+			initParameter.setExclusivePattern(exclusive.split(","));
+		}
 	}
 
 	@Override
