@@ -68,6 +68,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 这里返回存入cache的key值
 	 * @return id值。
 	 */
+	@Override
 	public String getId() {
 		return fullSessionId;
 	}
@@ -76,6 +77,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 获取此Session的创建时间。
 	 * @return 创建时间。
 	 */
+	@Override
 	public long getCreationTime() {
 		return sessionAttribute.getCreateTime().getTime();
 	}
@@ -84,6 +86,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 获取最后访问时间。
 	 * @return 最后访问时间。
 	 */
+	@Override
 	public long getLastAccessedTime() {
 		return sessionAttribute.getLastAccessTime().getTime();
 	}
@@ -107,6 +110,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 设定Session的最长不活动时限(分钟），如果此时限没有活动的Session将被删除。
 	 * @param maxInactiveInterval 最长活动时限。
 	 */
+	@Override
 	public void setMaxInactiveInterval(int maxInactiveInterval) {
 		this.maxInactiveInterval = maxInactiveInterval;
 	}
@@ -115,6 +119,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 获取最长不活动时限(分钟）。
 	 * @return 最长活动时限。
 	 */
+	@Override
 	public int getMaxInactiveInterval() {
 		return maxInactiveInterval;
 	}
@@ -124,6 +129,7 @@ public class CacheHttpSession implements HttpSession {
 	 * @param attributeName 属性名称。
 	 * @return 属性值。
 	 */
+	@Override
 	public Object getAttribute(String attributeName) {
 		checkSessionInvalid();
 		return sessionAttribute.getAttribute(attributeName);
@@ -134,6 +140,7 @@ public class CacheHttpSession implements HttpSession {
 	 * @param attributeName 属性名称。
 	 * @param attributeValue 属性值。
 	 */
+	@Override
 	public void setAttribute(String attributeName, Object attributeValue) {
 		checkSessionInvalid();
 		if (attributeValue instanceof RepeatKey) {
@@ -151,6 +158,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 移除已有的属性。
 	 * @param attributeName 属性名称。
 	 */
+	@Override
 	public void removeAttribute(String attributeName) {
 		checkSessionInvalid();
 		sessionAttribute.removeAttribute(attributeName);
@@ -159,6 +167,7 @@ public class CacheHttpSession implements HttpSession {
 	/**
 	 * Session过期。
 	 */
+	@Override
 	public void invalidate() {
 		setInvalid(true);
 	}
@@ -192,6 +201,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 判断此Session是否为新的。
 	 * @return true 为新的，false为非新的。
 	 */
+	@Override
 	public boolean isNew() {
 		checkSessionInvalid();
 		return sessionAttribute.isNewBuild();
