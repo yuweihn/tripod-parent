@@ -15,8 +15,7 @@ public class ValueSplit {
 	 */
 	private boolean flag;
 	/**
-	 * 分拆value值时每个子串的最大长度，单位(字节，B)
-	 * 默认1k
+	 * 分拆value值时每个子串的最大长度
 	 */
 	private int maxLength;
 
