@@ -20,7 +20,23 @@ import com.assist4j.session.cache.SessionCache;
  * @author yuwei
  */
 public class SessionFilter implements Filter {
+	/**
+	 * 需要排除的URI
+	 */
+	private static final String EXCLUSIVE = "exclusive";
+	/**
+	 * 是否分拆value值
+	 */
+	private static final String SPLIT = "split";
+	/**
+	 * 分拆value值时每个子串的最大长度，单位(字节，B)
+	 */
+	private static final String MAX_LENGTH = "maxLength";
+
+
 	protected SessionCache cache;
+
+
 
 
 	/**
@@ -73,10 +89,21 @@ public class SessionFilter implements Filter {
 	public void init(FilterConfig config) {
 		InitParameter initParameter = InitParameter.getInstance();
 
-		String exclusive = config.getInitParameter("exclusive");
+		String exclusive = config.getInitParameter(EXCLUSIVE);
 		if (exclusive != null && !"".equals(exclusive.trim())) {
 			initParameter.setExclusivePattern(exclusive.split(","));
 		}
+
+		ValueSplit vs = new ValueSplit();
+		String split = config.getInitParameter(SPLIT);
+		if (split != null) {
+			vs.setFlag("1".equals(split) || "true".equalsIgnoreCase(split));
+		}
+		String maxLength = config.getInitParameter(MAX_LENGTH);
+		if (maxLength != null) {
+			vs.setMaxLength(Integer.parseInt(maxLength));
+		}
+		initParameter.setValueSplit(vs);
 	}
 
 	@Override
