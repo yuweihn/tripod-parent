@@ -8,6 +8,7 @@ package com.assist4j.session.filter;
  */
 public class InitParameter {
 	private PathPattern exclusivePattern;
+	private ValueSplit valueSplit;
 
 
 	private InitParameter() {
@@ -26,5 +27,13 @@ public class InitParameter {
 	}
 	public PathPattern getExclusivePattern() {
 		return exclusivePattern;
+	}
+
+	public void setValueSplit(ValueSplit valueSplit) {
+		this.valueSplit = valueSplit;
+	}
+
+	public ValueSplit getValueSplit() {
+		return valueSplit;
 	}
 }

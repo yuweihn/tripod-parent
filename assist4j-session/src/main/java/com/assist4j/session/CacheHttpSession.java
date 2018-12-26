@@ -7,6 +7,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
 import com.assist4j.session.cache.SessionCache;
+import com.assist4j.session.filter.InitParameter;
+import com.assist4j.session.filter.ValueSplit;
 
 
 /**
@@ -372,20 +374,83 @@ public class CacheHttpSession implements HttpSession {
 
 
 		public boolean put0(String key, String value) {
-			return target.put(key, value, maxInactiveInterval * 60);
+			long timeSec = maxInactiveInterval * 60;
+			ValueSplit valueSplit = InitParameter.getInstance().getValueSplit();
+			if (valueSplit == null || !valueSplit.getFlag()) {
+				return target.put(key, value, timeSec);
+			} else {
+				List<String> valList = split(value, valueSplit.getMaxLength());
+				boolean b = target.put(key, "" + valList.size(), timeSec);
+				for (int i = 0; i < valList.size(); i++) {
+					b &= target.put(key + "." + i, valList.get(i), timeSec + 60);
+				}
+				return b;
+			}
 		}
 
 		public String get0(String key) {
-			Object obj = target.get(key);
-			if (obj instanceof String) {
-				return (String) obj;
+			ValueSplit valueSplit = InitParameter.getInstance().getValueSplit();
+			if (valueSplit == null || !valueSplit.getFlag()) {
+				return target.get(key);
+			} else {
+				String val = target.get(key);
+				Integer size = null;
+				try {
+					size = Integer.parseInt(val);
+				} catch (Exception e) {
+					remove0(key);
+				}
+				if (size == null || size <= 0) {
+					return null;
+				}
+
+				StringBuilder builder = new StringBuilder("");
+				for (int i = 0; i < size; i++) {
+					String subVal = target.get(key + "." + i);
+					builder.append(subVal);
+				}
+				return builder.toString();
 			}
-			target.remove(key);
-			return null;
 		}
 
 		public void remove0(String key) {
-			target.remove(key);
+			ValueSplit valueSplit = InitParameter.getInstance().getValueSplit();
+			if (valueSplit == null || !valueSplit.getFlag()) {
+				target.remove(key);
+			} else {
+				String val = target.get(key);
+				Integer size = null;
+				try {
+					size = Integer.parseInt(val);
+				} catch (Exception e) {
+				}
+
+				target.remove(key);
+				if (size == null || size <= 0) {
+					return;
+				}
+				for (int i = 0; i < size; i++) {
+					target.remove(key + "." + i);
+				}
+			}
+		}
+
+		private List<String> split(String value, int maxLength) {
+			List<String> list = new ArrayList<String>();
+			if (value.length() <= maxLength) {
+				list.add(value);
+				return list;
+			}
+
+			StringBuilder builder = new StringBuilder(value);
+			while (builder.length() > maxLength) {
+				list.add(builder.substring(0, maxLength));
+				builder.delete(0, maxLength);
+			}
+			if (builder.length() > 0) {
+				list.add(builder.toString());
+			}
+			return list;
 		}
 	}
 }
