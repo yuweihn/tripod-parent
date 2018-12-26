@@ -10,7 +10,7 @@
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>The Project of Assist4j</description>
-    <url>http://assist4j.com</url>
+    <url>https://assist4j.com</url>
 
     <properties>
         <project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
