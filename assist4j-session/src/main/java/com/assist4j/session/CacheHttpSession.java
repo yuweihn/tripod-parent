@@ -379,24 +379,22 @@ public class CacheHttpSession implements HttpSession {
 			if (valueSplit == null || !valueSplit.getFlag()) {
 				return target.put(key, value, timeSec);
 			} else {
+				int oldSize = parseValueSize(key);
+
 				List<String> valList = split(value, valueSplit.getMaxLength());
-				boolean b = target.put(key, "" + valList.size(), timeSec);
-				for (int i = 0; i < valList.size(); i++) {
+				int newSize = valList.size();
+				boolean b = target.put(key, "" + newSize, timeSec);
+				for (int i = 0; i < newSize; i++) {
 					b &= target.put(key + "." + i, valList.get(i), timeSec + 60);
 				}
+
+				for (int i = newSize; i < oldSize; i++) {
+					target.remove(key + "." + i);
+				}
+
 				return b;
 			}
 		}
-
-		private int parseValueSize(String key) {
-            String val = target.get(key);
-            int size = 0;
-            try {
-                size = Integer.parseInt(val);
-            } catch (Exception e) {
-            }
-            return size;
-        }
 
 		public String get0(String key) {
 			ValueSplit valueSplit = InitParameter.getInstance().getValueSplit();
@@ -436,9 +434,19 @@ public class CacheHttpSession implements HttpSession {
 			}
 		}
 
+		private int parseValueSize(String key) {
+			String val = target.get(key);
+			int size = 0;
+			try {
+				size = Integer.parseInt(val);
+			} catch (Exception e) {
+			}
+			return size;
+		}
+
 		private List<String> split(String value, int maxLength) {
 			List<String> list = new ArrayList<String>();
-			if (value.length() <= maxLength) {
+			if (maxLength <= 0 || value.length() <= maxLength) {
 				list.add(value);
 				return list;
 			}
