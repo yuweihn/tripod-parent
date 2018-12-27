@@ -388,19 +388,24 @@ public class CacheHttpSession implements HttpSession {
 			}
 		}
 
+		private int parseValueSize(String key) {
+            String val = target.get(key);
+            int size = 0;
+            try {
+                size = Integer.parseInt(val);
+            } catch (Exception e) {
+            }
+            return size;
+        }
+
 		public String get0(String key) {
 			ValueSplit valueSplit = InitParameter.getInstance().getValueSplit();
 			if (valueSplit == null || !valueSplit.getFlag()) {
 				return target.get(key);
 			} else {
-				String val = target.get(key);
-				Integer size = null;
-				try {
-					size = Integer.parseInt(val);
-				} catch (Exception e) {
-					remove0(key);
-				}
-				if (size == null || size <= 0) {
+                int size = parseValueSize(key);
+				if (size <= 0) {
+                    remove0(key);
 					return null;
 				}
 
@@ -418,17 +423,13 @@ public class CacheHttpSession implements HttpSession {
 			if (valueSplit == null || !valueSplit.getFlag()) {
 				target.remove(key);
 			} else {
-				String val = target.get(key);
-				Integer size = null;
-				try {
-					size = Integer.parseInt(val);
-				} catch (Exception e) {
-				}
-
-				target.remove(key);
-				if (size == null || size <= 0) {
+                int size = parseValueSize(key);
+				if (size <= 0) {
+                    target.remove(key);
 					return;
 				}
+
+                target.remove(key);
 				for (int i = 0; i < size; i++) {
 					target.remove(key + "." + i);
 				}
