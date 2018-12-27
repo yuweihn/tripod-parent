@@ -194,7 +194,7 @@ public class CacheHttpSession implements HttpSession {
 				long now = Calendar.getInstance().getTimeInMillis();
 				setInvalid((now - lastAccessTime) > invalidMillis);
 			}
-			
+
 			return invalid;
 		}
 	}
@@ -219,7 +219,7 @@ public class CacheHttpSession implements HttpSession {
 		if (!(obj instanceof CacheHttpSession)) {
 			return false;
 		}
-		
+
 		CacheHttpSession other = (CacheHttpSession) obj;
 		if (id == null && other.id == null) {
 			return true;
@@ -284,7 +284,7 @@ public class CacheHttpSession implements HttpSession {
 		if (sessionAttribute != null) {
 			return;
 		}
-		
+
 		sessionAttribute = SessionAttribute.decode(proxyCache.get0(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
@@ -334,7 +334,7 @@ public class CacheHttpSession implements HttpSession {
 			return iterator.next();
 		}
 	}
-	
+
 
 	@Override
 	public ServletContext getServletContext() {
@@ -358,12 +358,12 @@ public class CacheHttpSession implements HttpSession {
 
 	@Override
 	public void putValue(String name, Object value) {
-		
+
 	}
 
 	@Override
 	public void removeValue(String name) {
-		
+
 	}
 
 	private class ProxySessionCache {
@@ -388,19 +388,24 @@ public class CacheHttpSession implements HttpSession {
 			}
 		}
 
+		private int parseValueSize(String key) {
+			String val = target.get(key);
+			int size = 0;
+			try {
+				size = Integer.parseInt(val);
+			} catch (Exception e) {
+			}
+			return size;
+		}
+
 		public String get0(String key) {
 			ValueSplit valueSplit = InitParameter.getInstance().getValueSplit();
 			if (valueSplit == null || !valueSplit.getFlag()) {
 				return target.get(key);
 			} else {
-				String val = target.get(key);
-				Integer size = null;
-				try {
-					size = Integer.parseInt(val);
-				} catch (Exception e) {
+				int size = parseValueSize(key);
+				if (size <= 0) {
 					remove0(key);
-				}
-				if (size == null || size <= 0) {
 					return null;
 				}
 
@@ -418,17 +423,13 @@ public class CacheHttpSession implements HttpSession {
 			if (valueSplit == null || !valueSplit.getFlag()) {
 				target.remove(key);
 			} else {
-				String val = target.get(key);
-				Integer size = null;
-				try {
-					size = Integer.parseInt(val);
-				} catch (Exception e) {
+				int size = parseValueSize(key);
+				if (size <= 0) {
+					target.remove(key);
+					return;
 				}
 
 				target.remove(key);
-				if (size == null || size <= 0) {
-					return;
-				}
 				for (int i = 0; i < size; i++) {
 					target.remove(key + "." + i);
 				}
