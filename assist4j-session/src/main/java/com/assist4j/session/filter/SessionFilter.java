@@ -29,7 +29,7 @@ public class SessionFilter implements Filter {
 	 */
 	private static final String SPLIT = "split";
 	/**
-	 * 分拆value值时每个子串的最大长度，单位(字节，B)
+	 * 分拆value值时每个子串的最大长度
 	 */
 	private static final String MAX_LENGTH = "maxLength";
 
