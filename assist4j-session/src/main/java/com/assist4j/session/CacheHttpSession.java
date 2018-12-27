@@ -60,8 +60,8 @@ public class CacheHttpSession implements HttpSession {
 			this.maxInactiveInterval = SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL;
 		}
 		this.proxyCache = new ProxySessionCache(cache);
-		this.sessionIdKeyPre = cache.getCacheSessionKey().trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
-		this.fullSessionId = cache.getCacheSessionKey().trim() + "." + this.id;
+		this.sessionIdKeyPre = SessionConstant.SESSION_ID_PRE + cache.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
+		this.fullSessionId = SessionConstant.SESSION_ID_PRE + cache.getApplicationName() + "." + this.id;
 		init();
 	}
 

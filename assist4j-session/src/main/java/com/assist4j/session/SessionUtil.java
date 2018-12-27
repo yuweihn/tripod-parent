@@ -39,7 +39,7 @@ public abstract class SessionUtil {
 	}
 
 	public static<T> String getSessionIdByRepeatKey(SessionCache cache, T repeatKey) {
-		String sessionIdKey = cache.getCacheSessionKey().trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT + "." + repeatKey.toString();
+		String sessionIdKey = SessionConstant.SESSION_ID_PRE + cache.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT + "." + repeatKey.toString();
 		return cache.get(sessionIdKey);
 	}
 }

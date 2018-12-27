@@ -94,7 +94,7 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 			if (sessionId != null) {
 				cacheSession = new CacheHttpSession(sessionId, cache);
 			} else {
-				String sid = CookiesUtil.findValueByKey(request, cache.getCookieSessionName());
+				String sid = CookiesUtil.findValueByKey(request, cache.getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX);
 				if (sid != null) {
 					cacheSession = new CacheHttpSession(sid, cache);
 				} else if (create) {
@@ -137,6 +137,6 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	 * 更新cookie值
 	 */
 	private void addCookie(String sessionId) {
-		CookiesUtil.addCookie(request, response, cache.getCookieSessionName(), sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
+		CookiesUtil.addCookie(request, response, cache.getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX, sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 	}
 }
