@@ -1,8 +1,7 @@
 package com.assist4j.session.cache;
 
 
-
-
+import com.assist4j.session.SessionConstant;
 
 /**
  * @author yuwei
@@ -18,7 +17,9 @@ public interface SessionCache {
 	/**
 	 * session有效期(分钟)
 	 */
-	int getMaxInactiveInterval();
+	default int getMaxInactiveInterval() {
+		return SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL;
+	}
 
 	String getApplicationName();
 	
