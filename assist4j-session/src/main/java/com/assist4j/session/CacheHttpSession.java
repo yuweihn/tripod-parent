@@ -403,7 +403,7 @@ public class CacheHttpSession implements HttpSession {
 			} else {
                 int size = parseValueSize(key);
 				if (size <= 0) {
-                    remove0(key);
+					target.remove(key);
 					return null;
 				}
 
@@ -435,13 +435,14 @@ public class CacheHttpSession implements HttpSession {
 		}
 
 		private int parseValueSize(String key) {
-			String val = target.get(key);
-			int size = 0;
 			try {
+				String val = target.get(key);
+				int size = 0;
 				size = Integer.parseInt(val);
+				return size;
 			} catch (Exception e) {
+				return 0;
 			}
-			return size;
 		}
 
 		private List<String> split(String value, int maxLength) {
