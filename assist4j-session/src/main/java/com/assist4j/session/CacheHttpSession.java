@@ -60,8 +60,8 @@ public class CacheHttpSession implements HttpSession {
 			this.maxInactiveInterval = SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL;
 		}
 		this.proxyCache = new ProxySessionCache(cache);
-		this.sessionIdKeyPre = cache.getCacheSessionKey().trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
-		this.fullSessionId = cache.getCacheSessionKey().trim() + "." + this.id;
+		this.sessionIdKeyPre = SessionConstant.SESSION_ID_PRE + cache.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
+		this.fullSessionId = SessionConstant.SESSION_ID_PRE + cache.getApplicationName() + "." + this.id;
 		init();
 	}
 
@@ -194,7 +194,7 @@ public class CacheHttpSession implements HttpSession {
 				long now = Calendar.getInstance().getTimeInMillis();
 				setInvalid((now - lastAccessTime) > invalidMillis);
 			}
-
+			
 			return invalid;
 		}
 	}
@@ -219,7 +219,7 @@ public class CacheHttpSession implements HttpSession {
 		if (!(obj instanceof CacheHttpSession)) {
 			return false;
 		}
-
+		
 		CacheHttpSession other = (CacheHttpSession) obj;
 		if (id == null && other.id == null) {
 			return true;
@@ -284,7 +284,7 @@ public class CacheHttpSession implements HttpSession {
 		if (sessionAttribute != null) {
 			return;
 		}
-
+		
 		sessionAttribute = SessionAttribute.decode(proxyCache.get0(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
@@ -334,7 +334,7 @@ public class CacheHttpSession implements HttpSession {
 			return iterator.next();
 		}
 	}
-
+	
 
 	@Override
 	public ServletContext getServletContext() {
@@ -358,12 +358,12 @@ public class CacheHttpSession implements HttpSession {
 
 	@Override
 	public void putValue(String name, Object value) {
-
+		
 	}
 
 	@Override
 	public void removeValue(String name) {
-
+		
 	}
 
 	private class ProxySessionCache {
@@ -401,9 +401,9 @@ public class CacheHttpSession implements HttpSession {
 			if (valueSplit == null || !valueSplit.getFlag()) {
 				return target.get(key);
 			} else {
-				int size = parseValueSize(key);
+                int size = parseValueSize(key);
 				if (size <= 0) {
-					remove0(key);
+                    remove0(key);
 					return null;
 				}
 
@@ -421,13 +421,13 @@ public class CacheHttpSession implements HttpSession {
 			if (valueSplit == null || !valueSplit.getFlag()) {
 				target.remove(key);
 			} else {
-				int size = parseValueSize(key);
+                int size = parseValueSize(key);
 				if (size <= 0) {
-					target.remove(key);
+                    target.remove(key);
 					return;
 				}
 
-				target.remove(key);
+                target.remove(key);
 				for (int i = 0; i < size; i++) {
 					target.remove(key + "." + i);
 				}
