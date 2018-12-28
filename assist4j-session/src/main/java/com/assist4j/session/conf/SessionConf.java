@@ -5,6 +5,9 @@ import com.assist4j.session.SessionConstant;
 import com.assist4j.session.cache.SessionCache;
 import org.springframework.util.Assert;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 
 /**
  * @author yuwei
@@ -69,18 +72,11 @@ public class SessionConf {
 
 	public void setApplicationName(String applicationName) {
 		Assert.notNull(applicationName, "[applicationName] is required.");
-		this.applicationName = applicationName;
+		String regEx="[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+		Matcher m = Pattern.compile(regEx).matcher(applicationName);
+		this.applicationName = m.replaceAll("").trim();
 	}
 	public String getApplicationName() {
-		Assert.notNull(applicationName, "[applicationName] is required.");
-		return applicationName;
-	}
-
-	/**
-	 * 过滤特殊字符
-	 * @return
-	 */
-	public String getFilteredApplicationName() {
 		Assert.notNull(applicationName, "[applicationName] is required.");
 		return applicationName;
 	}
