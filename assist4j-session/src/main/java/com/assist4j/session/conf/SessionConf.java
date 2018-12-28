@@ -75,4 +75,13 @@ public class SessionConf {
 		Assert.notNull(applicationName, "[applicationName] is required.");
 		return applicationName;
 	}
+
+	/**
+	 * 过滤特殊字符
+	 * @return
+	 */
+	public String getFilteredApplicationName() {
+		Assert.notNull(applicationName, "[applicationName] is required.");
+		return applicationName;
+	}
 }

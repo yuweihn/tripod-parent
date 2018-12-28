@@ -47,8 +47,8 @@ public class CacheHttpSession implements HttpSession {
 	public CacheHttpSession(String id) {
 		SessionConf sessionConf = SessionConf.getInstance();
 		this.id = id;
-		this.sessionIdKeyPre = SessionConstant.SESSION_ID_PRE + sessionConf.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
-		this.fullSessionId = SessionConstant.SESSION_ID_PRE + sessionConf.getApplicationName() + "." + this.id;
+		this.sessionIdKeyPre = SessionConstant.SESSION_ID_PRE + sessionConf.getFilteredApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
+		this.fullSessionId = SessionConstant.SESSION_ID_PRE + sessionConf.getFilteredApplicationName() + "." + this.id;
 		init();
 	}
 
