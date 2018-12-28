@@ -3,7 +3,7 @@ package com.assist4j.session;
 
 import java.util.Date;
 import com.assist4j.session.cache.SessionCache;
-import com.assist4j.session.filter.SessionConf;
+import com.assist4j.session.conf.SessionConf;
 
 
 /**

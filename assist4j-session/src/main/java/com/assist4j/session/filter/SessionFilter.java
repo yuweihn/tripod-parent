@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.assist4j.session.CacheHttpServletRequest;
 import com.assist4j.session.cache.SessionCache;
+import com.assist4j.session.conf.PathPattern;
+import com.assist4j.session.conf.SessionConf;
+import com.assist4j.session.conf.ValueSplit;
 
 
 /**

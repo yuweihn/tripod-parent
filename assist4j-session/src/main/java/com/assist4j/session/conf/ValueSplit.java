@@ -1,4 +1,4 @@
-package com.assist4j.session.filter;
+package com.assist4j.session.conf;
 
 
 

@@ -1,8 +1,8 @@
 package com.assist4j.session.cache;
 
 
-import com.assist4j.session.filter.SessionConf;
-import com.assist4j.session.filter.ValueSplit;
+import com.assist4j.session.conf.SessionConf;
+import com.assist4j.session.conf.ValueSplit;
 
 import java.util.ArrayList;
 import java.util.List;

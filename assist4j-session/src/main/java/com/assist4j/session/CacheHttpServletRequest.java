@@ -8,8 +8,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.assist4j.session.cache.SessionCache;
-import com.assist4j.session.filter.SessionConf;
+import com.assist4j.session.conf.SessionConf;
 
 
 /**

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
 import com.assist4j.session.cache.ProxySessionCache;
-import com.assist4j.session.filter.SessionConf;
+import com.assist4j.session.conf.SessionConf;
 
 
 /**
