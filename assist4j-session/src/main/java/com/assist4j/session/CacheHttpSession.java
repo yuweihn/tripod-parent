@@ -19,10 +19,6 @@ import com.assist4j.session.conf.ValueSplit;
 public class CacheHttpSession implements HttpSession {
 	private String id;
 	/**
-	 * 缓存引擎
-	 */
-	private ProxySessionCache proxyCache;
-	/**
 	 * session是否已失效
 	 */
 	private boolean invalid = false;
@@ -51,7 +47,6 @@ public class CacheHttpSession implements HttpSession {
 	public CacheHttpSession(String id) {
 		SessionConf sessionConf = SessionConf.getInstance();
 		this.id = id;
-		this.proxyCache = new ProxySessionCache(sessionConf.getCache());
 		this.sessionIdKeyPre = SessionConstant.SESSION_ID_PRE + sessionConf.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
 		this.fullSessionId = SessionConstant.SESSION_ID_PRE + sessionConf.getApplicationName() + "." + this.id;
 		init();
@@ -222,9 +217,9 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	public void removeSessionFromCache(){
-		proxyCache.remove(fullSessionId);
+		ProxySessionCache.remove(fullSessionId);
 		if (sessionIdKey != null) {
-			proxyCache.remove(sessionIdKey);
+			ProxySessionCache.remove(sessionIdKey);
 		}
 	}
 
@@ -238,7 +233,7 @@ public class CacheHttpSession implements HttpSession {
 			return fullSessionId;
 		}
 
-		proxyCache.put(fullSessionId, SessionAttribute.encode(sessionAttribute));
+		ProxySessionCache.put(fullSessionId, SessionAttribute.encode(sessionAttribute));
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -246,11 +241,11 @@ public class CacheHttpSession implements HttpSession {
 			/**
 			 * 把当前账号之前登录的session清除掉，防止重复登录
 			 */
-			String sessionId = proxyCache.get(sessionIdKey);
+			String sessionId = ProxySessionCache.get(sessionIdKey);
 			if (sessionId != null && !sessionId.equals(fullSessionId)) {
-				proxyCache.remove(sessionId);
+				ProxySessionCache.remove(sessionId);
 			}
-			proxyCache.put(sessionIdKey, fullSessionId);
+			ProxySessionCache.put(sessionIdKey, fullSessionId);
 		}
 		return fullSessionId;
 	}
@@ -277,7 +272,7 @@ public class CacheHttpSession implements HttpSession {
 			return;
 		}
 		
-		sessionAttribute = SessionAttribute.decode(proxyCache.get(fullSessionId));
+		sessionAttribute = SessionAttribute.decode(ProxySessionCache.get(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new SessionAttribute();
@@ -359,95 +354,90 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 
-	private class ProxySessionCache {
-		private SessionCache target;
-		public ProxySessionCache(SessionCache target) {
-			this.target = target;
-		}
-
-
-		public boolean put(String key, String value) {
+	private static class ProxySessionCache {
+		public static boolean put(String key, String value) {
 			SessionConf sessionConf = SessionConf.getInstance();
+			SessionCache cache = sessionConf.getCache();
 
 			long timeSec = sessionConf.getMaxInactiveInterval() * 60;
 			ValueSplit valueSplit = sessionConf.getValueSplit();
 			if (valueSplit == null || !valueSplit.getFlag()) {
-				return target.put(key, value, timeSec);
+				return cache.put(key, value, timeSec);
 			} else {
 				int oldSize = parseValueSize(key);
 
 				List<String> valList = split(value, valueSplit.getMaxLength());
 				int newSize = valList.size();
-				boolean b = target.put(key, "" + newSize, timeSec);
+				boolean b = cache.put(key, "" + newSize, timeSec);
 				for (int i = 0; i < newSize; i++) {
-					b &= target.put(key + "." + i, valList.get(i), timeSec + 60);
+					b &= cache.put(key + "." + i, valList.get(i), timeSec + 60);
 				}
 
 				for (int i = newSize; i < oldSize; i++) {
-					target.remove(key + "." + i);
+					cache.remove(key + "." + i);
 				}
 
 				return b;
 			}
 		}
 
-		public String get(String key) {
+		public static String get(String key) {
 			SessionConf sessionConf = SessionConf.getInstance();
+			SessionCache cache = sessionConf.getCache();
 
 			ValueSplit valueSplit = sessionConf.getValueSplit();
 			if (valueSplit == null || !valueSplit.getFlag()) {
-				return target.get(key);
+				return cache.get(key);
 			} else {
 				int size = parseValueSize(key);
 				if (size <= 0) {
-					target.remove(key);
+					cache.remove(key);
 					return null;
 				}
 
 				StringBuilder builder = new StringBuilder("");
 				for (int i = 0; i < size; i++) {
-					String subVal = target.get(key + "." + i);
+					String subVal = cache.get(key + "." + i);
 					builder.append(subVal);
 				}
 				return builder.toString();
 			}
 		}
 
-		public void remove(String key) {
-			SessionConf sessionConf = SessionConf.getInstance();
-
-			ValueSplit valueSplit = sessionConf.getValueSplit();
-			if (valueSplit == null || !valueSplit.getFlag()) {
-				target.remove(key);
-			} else {
-				int size = parseValueSize(key);
-				if (size <= 0) {
-					target.remove(key);
-					return;
-				}
-
-				target.remove(key);
-				for (int i = 0; i < size; i++) {
-					target.remove(key + "." + i);
-				}
-			}
-		}
-
-		private int parseValueSize(String key) {
+		public static void remove(String key) {
 			SessionConf sessionConf = SessionConf.getInstance();
 			SessionCache cache = sessionConf.getCache();
 
-			try {
-				String val = cache.get(key);
-				int size = 0;
-				size = Integer.parseInt(val);
-				return size;
-			} catch (Exception e) {
-				return 0;
+			ValueSplit valueSplit = sessionConf.getValueSplit();
+			if (valueSplit == null || !valueSplit.getFlag()) {
+				cache.remove(key);
+			} else {
+				int size = parseValueSize(key);
+				if (size <= 0) {
+					cache.remove(key);
+					return;
+				}
+
+				cache.remove(key);
+				for (int i = 0; i < size; i++) {
+					cache.remove(key + "." + i);
+				}
 			}
 		}
 
-		private List<String> split(String value, int maxLength) {
+		private static int parseValueSize(String key) {
+			SessionCache cache = SessionConf.getInstance().getCache();
+
+			int size = 0;
+			try {
+				String val = cache.get(key);
+				size = Integer.parseInt(val);
+			} catch (Exception e) {
+			}
+			return size;
+		}
+
+		private static List<String> split(String value, int maxLength) {
 			List<String> list = new ArrayList<String>();
 			if (maxLength <= 0 || value.length() <= maxLength) {
 				list.add(value);
