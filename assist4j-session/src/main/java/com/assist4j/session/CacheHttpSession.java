@@ -96,21 +96,16 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	/**
-	 * 设定Session的最长不活动时限(分钟），如果此时限没有活动的Session将被删除。
-	 * @param maxInactiveInterval 最长活动时限。
+	 * @param interval           秒
 	 */
 	@Override
-	public void setMaxInactiveInterval(int maxInactiveInterval) {
-		SessionConf.getInstance().setMaxInactiveInterval(maxInactiveInterval);
+	public void setMaxInactiveInterval(int interval) {
+		SessionConf.getInstance().setMaxInactiveInterval(interval / 60);
 	}
 
-	/**
-	 * 获取最长不活动时限(分钟）。
-	 * @return 最长活动时限。
-	 */
 	@Override
 	public int getMaxInactiveInterval() {
-		return SessionConf.getInstance().getMaxInactiveInterval();
+		return SessionConf.getInstance().getMaxInactiveInterval() * 60;
 	}
 
 	/**
@@ -173,15 +168,16 @@ public class CacheHttpSession implements HttpSession {
 		if (invalid) {
 			return invalid;
 		} else {
-			if (getMaxInactiveInterval() <= 0) {
+			int mii = SessionConf.getInstance().getMaxInactiveInterval();
+			if (mii <= 0) {
 				setInvalid(false);
 			} else {
-				long invalidMillis = getMaxInactiveInterval() * 60 * 1000;
+				long invalidMillis = mii * 60 * 1000;
 				long lastAccessTime = getLastAccessedTime();
 				long now = Calendar.getInstance().getTimeInMillis();
 				setInvalid((now - lastAccessTime) > invalidMillis);
 			}
-			
+
 			return invalid;
 		}
 	}
@@ -206,7 +202,7 @@ public class CacheHttpSession implements HttpSession {
 		if (!(obj instanceof CacheHttpSession)) {
 			return false;
 		}
-		
+
 		CacheHttpSession other = (CacheHttpSession) obj;
 		if (id == null && other.id == null) {
 			return true;
@@ -271,7 +267,7 @@ public class CacheHttpSession implements HttpSession {
 		if (sessionAttribute != null) {
 			return;
 		}
-		
+
 		sessionAttribute = SessionAttribute.decode(ProxySessionCache.get(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
@@ -321,7 +317,7 @@ public class CacheHttpSession implements HttpSession {
 			return iterator.next();
 		}
 	}
-	
+
 
 	@Override
 	public ServletContext getServletContext() {
@@ -345,12 +341,12 @@ public class CacheHttpSession implements HttpSession {
 
 	@Override
 	public void putValue(String name, Object value) {
-		
+
 	}
 
 	@Override
 	public void removeValue(String name) {
-		
+
 	}
 
 
