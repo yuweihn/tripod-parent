@@ -173,10 +173,11 @@ public class CacheHttpSession implements HttpSession {
 		if (invalid) {
 			return invalid;
 		} else {
-			if (getMaxInactiveInterval() <= 0) {
+			int mii = SessionConf.getInstance().getMaxInactiveInterval();
+			if (mii <= 0) {
 				setInvalid(false);
 			} else {
-				long invalidMillis = getMaxInactiveInterval() * 60 * 1000;
+				long invalidMillis = mii * 60 * 1000;
 				long lastAccessTime = getLastAccessedTime();
 				long now = Calendar.getInstance().getTimeInMillis();
 				setInvalid((now - lastAccessTime) > invalidMillis);
