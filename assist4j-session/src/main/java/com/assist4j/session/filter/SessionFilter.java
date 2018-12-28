@@ -58,7 +58,7 @@ public class SessionFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-		PathPattern exclusivePattern = InitParameter.getInstance().getExclusivePattern();
+		PathPattern exclusivePattern = ParamHolder.getInstance().getExclusivePattern();
 		if (exclusivePattern != null && exclusivePattern.matches(httpRequest)) {
 			chain.doFilter(request, response);
 			return;
@@ -87,11 +87,11 @@ public class SessionFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig config) {
-		InitParameter initParameter = InitParameter.getInstance();
+		ParamHolder paramHolder = ParamHolder.getInstance();
 
 		String exclusive = config.getInitParameter(EXCLUSIVE);
 		if (exclusive != null && !"".equals(exclusive.trim())) {
-			initParameter.setExclusivePattern(exclusive.split(","));
+			paramHolder.setExclusivePattern(exclusive.split(","));
 		}
 
 		ValueSplit vs = new ValueSplit();
@@ -103,7 +103,7 @@ public class SessionFilter implements Filter {
 		if (maxLength != null) {
 			vs.setMaxLength(Integer.parseInt(maxLength));
 		}
-		initParameter.setValueSplit(vs);
+		paramHolder.setValueSplit(vs);
 	}
 
 	@Override

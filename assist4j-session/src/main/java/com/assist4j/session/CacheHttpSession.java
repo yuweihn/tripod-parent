@@ -7,7 +7,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
 import com.assist4j.session.cache.SessionCache;
-import com.assist4j.session.filter.InitParameter;
+import com.assist4j.session.filter.ParamHolder;
 import com.assist4j.session.filter.ValueSplit;
 
 
@@ -375,7 +375,7 @@ public class CacheHttpSession implements HttpSession {
 
 		public boolean put0(String key, String value) {
 			long timeSec = maxInactiveInterval * 60;
-			ValueSplit valueSplit = InitParameter.getInstance().getValueSplit();
+			ValueSplit valueSplit = ParamHolder.getInstance().getValueSplit();
 			if (valueSplit == null || !valueSplit.getFlag()) {
 				return target.put(key, value, timeSec);
 			} else {
@@ -397,7 +397,7 @@ public class CacheHttpSession implements HttpSession {
 		}
 
 		public String get0(String key) {
-			ValueSplit valueSplit = InitParameter.getInstance().getValueSplit();
+			ValueSplit valueSplit = ParamHolder.getInstance().getValueSplit();
 			if (valueSplit == null || !valueSplit.getFlag()) {
 				return target.get(key);
 			} else {
@@ -417,7 +417,7 @@ public class CacheHttpSession implements HttpSession {
 		}
 
 		public void remove0(String key) {
-			ValueSplit valueSplit = InitParameter.getInstance().getValueSplit();
+			ValueSplit valueSplit = ParamHolder.getInstance().getValueSplit();
 			if (valueSplit == null || !valueSplit.getFlag()) {
 				target.remove(key);
 			} else {
