@@ -96,21 +96,16 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	/**
-	 * 设定Session的最长不活动时限(分钟），如果此时限没有活动的Session将被删除。
-	 * @param maxInactiveInterval 最长活动时限。
+	 * @param interval           秒
 	 */
 	@Override
-	public void setMaxInactiveInterval(int maxInactiveInterval) {
-		SessionConf.getInstance().setMaxInactiveInterval(maxInactiveInterval);
+	public void setMaxInactiveInterval(int interval) {
+		SessionConf.getInstance().setMaxInactiveInterval(interval / 60);
 	}
 
-	/**
-	 * 获取最长不活动时限(分钟）。
-	 * @return 最长活动时限。
-	 */
 	@Override
 	public int getMaxInactiveInterval() {
-		return SessionConf.getInstance().getMaxInactiveInterval();
+		return SessionConf.getInstance().getMaxInactiveInterval() * 60;
 	}
 
 	/**
