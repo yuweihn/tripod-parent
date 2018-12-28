@@ -5,9 +5,8 @@ For example:
 ------------------------------------------------------------------------------------------------------------------
 	@Bean(name = "sessionCache")
 	public SessionCache sessionCache(@Qualifier("redisCache") Cache cache
-			, @Value("${cache.session.key}") String cacheSessionKey
 			, @Value("${cache.session.maxInactiveInterval}") int maxInactiveInterval
-			, @Value("${cache.session.cookieSessionName}") String cookieSessionName) {
+			, @Value("${cache.session.applicationName}") String applicationName) {
 		return new SessionCache() {
 			@Override
 			public boolean put(String key, String value, long expiredTime) {
@@ -30,13 +29,8 @@ For example:
 			}
 
 			@Override
-			public String getCacheSessionKey() {
-				return cacheSessionKey;
-			}
-
-			@Override
-			public String getCookieSessionName() {
-				return cookieSessionName;
+			public String getApplicationName() {
+				return applicationName;
 			}
 
 			@Override
@@ -47,14 +41,17 @@ For example:
 	}
 
 	@Bean
-	public FilterRegistrationBean<SessionFilter> cacheSessionFilterRegistrationBean(@Qualifier("sessionCache") SessionCache sessionCache
-			, @Value("${cache.session.key}") String cacheSessionKey
-			, @Value("${cache.session.maxInactiveInterval}") int maxInactiveInterval
-			, @Value("${cache.session.cookieSessionName}") String cookieSessionName) {
-		FilterRegistrationBean<SessionFilter> bean = new FilterRegistrationBean<SessionFilter>();
-		SessionFilter filter = new SessionFilter(sessionCache);
+	public FilterRegistrationBean cacheSessionFilterRegistrationBean(@Qualifier("sessionCache") SessionCache sessionCache
+			, @Value("${cache.session.headerKey}") String headerKey
+			, @Value("${cache.session.split:false}") boolean split
+			, @Value("${cache.session.maxValueLength:1024}") int maxValueLength) {
+		FilterRegistrationBean bean = new FilterRegistrationBean();
+		HeaderSessionFilter filter = new HeaderSessionFilter(sessionCache);
+		filter.setKey(headerKey);
 		bean.setFilter(filter);
 		bean.setUrlPatterns(Arrays.asList("/*"));
+		bean.addInitParameter("split", String.valueOf(split));
+		bean.addInitParameter("maxLength", String.valueOf(maxValueLength));
 		return bean;
 	}
 ------------------------------------------------------------------------------------------------------------------
