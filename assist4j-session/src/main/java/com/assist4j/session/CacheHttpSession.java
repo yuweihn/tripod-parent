@@ -6,9 +6,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
-import com.assist4j.session.cache.SessionCache;
-import com.assist4j.session.filter.ParamHolder;
-import com.assist4j.session.filter.ValueSplit;
+import com.assist4j.session.cache.ProxySessionCache;
+import com.assist4j.session.filter.SessionConf;
 
 
 /**
@@ -18,14 +17,6 @@ import com.assist4j.session.filter.ValueSplit;
 @SuppressWarnings("deprecation")
 public class CacheHttpSession implements HttpSession {
 	private String id;
-	/**
-	 * 缓存引擎
-	 */
-	private ProxySessionCache proxyCache;
-	/**
-	 * session失效时间(分钟)
-	 */
-	private int maxInactiveInterval;
 	/**
 	 * session是否已失效
 	 */
@@ -51,17 +42,12 @@ public class CacheHttpSession implements HttpSession {
 	/**
 	 * 初始化时必须指定一个id字符串和缓存引擎实现。
 	 * @param id id字符串。
-	 * @param cache 缓存引擎。
 	 */
-	public CacheHttpSession(String id, SessionCache cache) {
+	public CacheHttpSession(String id) {
+		SessionConf sessionConf = SessionConf.getInstance();
 		this.id = id;
-		this.maxInactiveInterval = cache.getMaxInactiveInterval();
-		if (this.maxInactiveInterval <= 0) {
-			this.maxInactiveInterval = SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL;
-		}
-		this.proxyCache = new ProxySessionCache(cache);
-		this.sessionIdKeyPre = SessionConstant.SESSION_ID_PRE + cache.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
-		this.fullSessionId = SessionConstant.SESSION_ID_PRE + cache.getApplicationName() + "." + this.id;
+		this.sessionIdKeyPre = SessionConstant.SESSION_ID_PRE + sessionConf.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
+		this.fullSessionId = SessionConstant.SESSION_ID_PRE + sessionConf.getApplicationName() + "." + this.id;
 		init();
 	}
 
@@ -114,7 +100,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void setMaxInactiveInterval(int maxInactiveInterval) {
-		this.maxInactiveInterval = maxInactiveInterval;
+		SessionConf.getInstance().setMaxInactiveInterval(maxInactiveInterval);
 	}
 
 	/**
@@ -123,7 +109,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public int getMaxInactiveInterval() {
-		return maxInactiveInterval;
+		return SessionConf.getInstance().getMaxInactiveInterval();
 	}
 
 	/**
@@ -230,9 +216,9 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	public void removeSessionFromCache(){
-		proxyCache.remove0(fullSessionId);
+		ProxySessionCache.remove(fullSessionId);
 		if (sessionIdKey != null) {
-			proxyCache.remove0(sessionIdKey);
+			ProxySessionCache.remove(sessionIdKey);
 		}
 	}
 
@@ -246,7 +232,7 @@ public class CacheHttpSession implements HttpSession {
 			return fullSessionId;
 		}
 
-		proxyCache.put0(fullSessionId, SessionAttribute.encode(sessionAttribute));
+		ProxySessionCache.put(fullSessionId, SessionAttribute.encode(sessionAttribute));
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -254,11 +240,11 @@ public class CacheHttpSession implements HttpSession {
 			/**
 			 * 把当前账号之前登录的session清除掉，防止重复登录
 			 */
-			String sessionId = proxyCache.get0(sessionIdKey);
+			String sessionId = ProxySessionCache.get(sessionIdKey);
 			if (sessionId != null && !sessionId.equals(fullSessionId)) {
-				proxyCache.remove0(sessionId);
+				ProxySessionCache.remove(sessionId);
 			}
-			proxyCache.put0(sessionIdKey, fullSessionId);
+			ProxySessionCache.put(sessionIdKey, fullSessionId);
 		}
 		return fullSessionId;
 	}
@@ -285,7 +271,7 @@ public class CacheHttpSession implements HttpSession {
 			return;
 		}
 		
-		sessionAttribute = SessionAttribute.decode(proxyCache.get0(fullSessionId));
+		sessionAttribute = SessionAttribute.decode(ProxySessionCache.get(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new SessionAttribute();
@@ -364,103 +350,5 @@ public class CacheHttpSession implements HttpSession {
 	@Override
 	public void removeValue(String name) {
 		
-	}
-
-	private class ProxySessionCache {
-		private SessionCache target;
-		public ProxySessionCache(SessionCache target) {
-			this.target = target;
-		}
-
-
-		public boolean put0(String key, String value) {
-			long timeSec = maxInactiveInterval * 60;
-			ValueSplit valueSplit = ParamHolder.getInstance().getValueSplit();
-			if (valueSplit == null || !valueSplit.getFlag()) {
-				return target.put(key, value, timeSec);
-			} else {
-				int oldSize = parseValueSize(key);
-
-				List<String> valList = split(value, valueSplit.getMaxLength());
-				int newSize = valList.size();
-				boolean b = target.put(key, "" + newSize, timeSec);
-				for (int i = 0; i < newSize; i++) {
-					b &= target.put(key + "." + i, valList.get(i), timeSec + 60);
-				}
-
-				for (int i = newSize; i < oldSize; i++) {
-					target.remove(key + "." + i);
-				}
-
-				return b;
-			}
-		}
-
-		public String get0(String key) {
-			ValueSplit valueSplit = ParamHolder.getInstance().getValueSplit();
-			if (valueSplit == null || !valueSplit.getFlag()) {
-				return target.get(key);
-			} else {
-                int size = parseValueSize(key);
-				if (size <= 0) {
-					target.remove(key);
-					return null;
-				}
-
-				StringBuilder builder = new StringBuilder("");
-				for (int i = 0; i < size; i++) {
-					String subVal = target.get(key + "." + i);
-					builder.append(subVal);
-				}
-				return builder.toString();
-			}
-		}
-
-		public void remove0(String key) {
-			ValueSplit valueSplit = ParamHolder.getInstance().getValueSplit();
-			if (valueSplit == null || !valueSplit.getFlag()) {
-				target.remove(key);
-			} else {
-                int size = parseValueSize(key);
-				if (size <= 0) {
-                    target.remove(key);
-					return;
-				}
-
-                target.remove(key);
-				for (int i = 0; i < size; i++) {
-					target.remove(key + "." + i);
-				}
-			}
-		}
-
-		private int parseValueSize(String key) {
-			try {
-				String val = target.get(key);
-				int size = 0;
-				size = Integer.parseInt(val);
-				return size;
-			} catch (Exception e) {
-				return 0;
-			}
-		}
-
-		private List<String> split(String value, int maxLength) {
-			List<String> list = new ArrayList<String>();
-			if (maxLength <= 0 || value.length() <= maxLength) {
-				list.add(value);
-				return list;
-			}
-
-			StringBuilder builder = new StringBuilder(value);
-			while (builder.length() > maxLength) {
-				list.add(builder.substring(0, maxLength));
-				builder.delete(0, maxLength);
-			}
-			if (builder.length() > 0) {
-				list.add(builder.toString());
-			}
-			return list;
-		}
 	}
 }

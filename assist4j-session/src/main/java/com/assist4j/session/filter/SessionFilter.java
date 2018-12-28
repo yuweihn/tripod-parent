@@ -34,7 +34,6 @@ public class SessionFilter implements Filter {
 	private static final String MAX_LENGTH = "maxLength";
 
 
-	protected SessionCache cache;
 
 
 
@@ -43,14 +42,14 @@ public class SessionFilter implements Filter {
 	 * @param cache                           缓存引擎
 	 */
 	public SessionFilter(SessionCache cache) {
-		this.cache = cache;
+		setCache(cache);
 	}
 	public SessionFilter() {
 
 	}
 
 	public void setCache(SessionCache cache) {
-		this.cache = cache;
+		SessionConf.getInstance().setCache(cache);
 	}
 
 	@Override
@@ -58,14 +57,14 @@ public class SessionFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-		PathPattern exclusivePattern = ParamHolder.getInstance().getExclusivePattern();
+		PathPattern exclusivePattern = SessionConf.getInstance().getExclusivePattern();
 		if (exclusivePattern != null && exclusivePattern.matches(httpRequest)) {
 			chain.doFilter(request, response);
 			return;
 		}
 
 		before(httpRequest, httpResponse);
-		CacheHttpServletRequest cacheRequest = new CacheHttpServletRequest(httpRequest, httpResponse, cache
+		CacheHttpServletRequest cacheRequest = new CacheHttpServletRequest(httpRequest, httpResponse
 				, getSessionId(httpRequest, httpResponse));
 
 		chain.doFilter(cacheRequest, httpResponse);
@@ -87,11 +86,11 @@ public class SessionFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig config) {
-		ParamHolder paramHolder = ParamHolder.getInstance();
+		SessionConf sessionConf = SessionConf.getInstance();
 
 		String exclusive = config.getInitParameter(EXCLUSIVE);
 		if (exclusive != null && !"".equals(exclusive.trim())) {
-			paramHolder.setExclusivePattern(exclusive.split(","));
+			sessionConf.setExclusivePattern(exclusive.split(","));
 		}
 
 		ValueSplit vs = new ValueSplit();
@@ -103,7 +102,7 @@ public class SessionFilter implements Filter {
 		if (maxLength != null) {
 			vs.setMaxLength(Integer.parseInt(maxLength));
 		}
-		paramHolder.setValueSplit(vs);
+		sessionConf.setValueSplit(vs);
 	}
 
 	@Override

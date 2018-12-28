@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.assist4j.session.cache.SessionCache;
+import com.assist4j.session.filter.SessionConf;
 
 
 /**
@@ -22,7 +23,6 @@ import com.assist4j.session.cache.SessionCache;
  * @author yuwei
  */
 public class CacheHttpServletRequest extends HttpServletRequestWrapper {
-	private SessionCache cache;
 	private CacheHttpSession cacheSession;
 
 	private HttpServletRequest request;
@@ -37,14 +37,13 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	/**
 	 * 构造一个HttpServletRequest的包装器。
 	 */
-	public CacheHttpServletRequest(HttpServletRequest request, HttpServletResponse response, SessionCache cache) {
-		this(request, response, cache, null);
+	public CacheHttpServletRequest(HttpServletRequest request, HttpServletResponse response) {
+		this(request, response, null);
 	}
-	public CacheHttpServletRequest(HttpServletRequest request, HttpServletResponse response, SessionCache cache, String sessionId) {
+	public CacheHttpServletRequest(HttpServletRequest request, HttpServletResponse response, String sessionId) {
 		super(request);
 		this.request = request;
 		this.response = response;
-		this.cache = cache;
 		if (sessionId != null && !"".equals(sessionId.trim())) {
 			this.sessionId = sessionId.trim();
 		}
@@ -81,7 +80,7 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 		if (fullSessionId == null || "".equals(fullSessionId)) {
 			return;
 		}
-		cache.afterCompletion(fullSessionId);
+		SessionConf.getInstance().getCache().afterCompletion(fullSessionId);
 	}
 
 	/**
@@ -92,13 +91,14 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	private HttpSession doGetSession(boolean create) {
 		if (cacheSession == null) {
 			if (sessionId != null) {
-				cacheSession = new CacheHttpSession(sessionId, cache);
+				cacheSession = new CacheHttpSession(sessionId);
 			} else {
-				String sid = CookiesUtil.findValueByKey(request, cache.getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX);
+				String sid = CookiesUtil.findValueByKey(request
+						, SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX);
 				if (sid != null) {
-					cacheSession = new CacheHttpSession(sid, cache);
+					cacheSession = new CacheHttpSession(sid);
 				} else if (create) {
-					cacheSession = new CacheHttpSession(generateSessionId(), cache);
+					cacheSession = new CacheHttpSession(generateSessionId());
 				}
 			}
 		}
@@ -110,9 +110,9 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 			if (cacheSession.isInvalid()) {
 				cacheSession.removeSessionFromCache();
 				if (sessionId != null) {
-					cacheSession = new CacheHttpSession(sessionId, cache);
+					cacheSession = new CacheHttpSession(sessionId);
 				} else if (create) {
-					cacheSession = new CacheHttpSession(generateSessionId(), cache);
+					cacheSession = new CacheHttpSession(generateSessionId());
 				}
 			}
 
@@ -137,6 +137,6 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	 * 更新cookie值
 	 */
 	private void addCookie(String sessionId) {
-		CookiesUtil.addCookie(request, response, cache.getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX, sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
+		CookiesUtil.addCookie(request, response, SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX, sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 	}
 }
