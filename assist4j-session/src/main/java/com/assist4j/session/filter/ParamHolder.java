@@ -6,19 +6,19 @@ package com.assist4j.session.filter;
 /**
  * @author yuwei
  */
-public class InitParameter {
+public class ParamHolder {
 	private PathPattern exclusivePattern;
 	private ValueSplit valueSplit;
 
 
-	private InitParameter() {
+	private ParamHolder() {
 
 	}
 	private static class Holder {
-		private static final InitParameter instance = new InitParameter();
+		private static final ParamHolder instance = new ParamHolder();
 	}
 
-	public static InitParameter getInstance() {
+	public static ParamHolder getInstance() {
 		return Holder.instance;
 	}
 
