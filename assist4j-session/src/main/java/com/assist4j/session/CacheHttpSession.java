@@ -6,8 +6,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
-import com.assist4j.session.cache.ProxySessionCache;
+import com.assist4j.session.cache.SessionCache;
 import com.assist4j.session.conf.SessionConf;
+import com.assist4j.session.conf.ValueSplit;
 
 
 /**
@@ -17,6 +18,10 @@ import com.assist4j.session.conf.SessionConf;
 @SuppressWarnings("deprecation")
 public class CacheHttpSession implements HttpSession {
 	private String id;
+	/**
+	 * 缓存引擎
+	 */
+	private ProxySessionCache proxyCache;
 	/**
 	 * session是否已失效
 	 */
@@ -46,6 +51,7 @@ public class CacheHttpSession implements HttpSession {
 	public CacheHttpSession(String id) {
 		SessionConf sessionConf = SessionConf.getInstance();
 		this.id = id;
+		this.proxyCache = new ProxySessionCache(sessionConf.getCache());
 		this.sessionIdKeyPre = SessionConstant.SESSION_ID_PRE + sessionConf.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
 		this.fullSessionId = SessionConstant.SESSION_ID_PRE + sessionConf.getApplicationName() + "." + this.id;
 		init();
@@ -216,9 +222,9 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	public void removeSessionFromCache(){
-		ProxySessionCache.remove(fullSessionId);
+		proxyCache.remove(fullSessionId);
 		if (sessionIdKey != null) {
-			ProxySessionCache.remove(sessionIdKey);
+			proxyCache.remove(sessionIdKey);
 		}
 	}
 
@@ -232,7 +238,7 @@ public class CacheHttpSession implements HttpSession {
 			return fullSessionId;
 		}
 
-		ProxySessionCache.put(fullSessionId, SessionAttribute.encode(sessionAttribute));
+		proxyCache.put(fullSessionId, SessionAttribute.encode(sessionAttribute));
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -240,11 +246,11 @@ public class CacheHttpSession implements HttpSession {
 			/**
 			 * 把当前账号之前登录的session清除掉，防止重复登录
 			 */
-			String sessionId = ProxySessionCache.get(sessionIdKey);
+			String sessionId = proxyCache.get(sessionIdKey);
 			if (sessionId != null && !sessionId.equals(fullSessionId)) {
-				ProxySessionCache.remove(sessionId);
+				proxyCache.remove(sessionId);
 			}
-			ProxySessionCache.put(sessionIdKey, fullSessionId);
+			proxyCache.put(sessionIdKey, fullSessionId);
 		}
 		return fullSessionId;
 	}
@@ -271,7 +277,7 @@ public class CacheHttpSession implements HttpSession {
 			return;
 		}
 		
-		sessionAttribute = SessionAttribute.decode(ProxySessionCache.get(fullSessionId));
+		sessionAttribute = SessionAttribute.decode(proxyCache.get(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new SessionAttribute();
@@ -350,5 +356,113 @@ public class CacheHttpSession implements HttpSession {
 	@Override
 	public void removeValue(String name) {
 		
+	}
+
+
+	private class ProxySessionCache {
+		private SessionCache target;
+		public ProxySessionCache(SessionCache target) {
+			this.target = target;
+		}
+
+
+		public boolean put(String key, String value) {
+			SessionConf sessionConf = SessionConf.getInstance();
+
+			long timeSec = sessionConf.getMaxInactiveInterval() * 60;
+			ValueSplit valueSplit = sessionConf.getValueSplit();
+			if (valueSplit == null || !valueSplit.getFlag()) {
+				return target.put(key, value, timeSec);
+			} else {
+				int oldSize = parseValueSize(key);
+
+				List<String> valList = split(value, valueSplit.getMaxLength());
+				int newSize = valList.size();
+				boolean b = target.put(key, "" + newSize, timeSec);
+				for (int i = 0; i < newSize; i++) {
+					b &= target.put(key + "." + i, valList.get(i), timeSec + 60);
+				}
+
+				for (int i = newSize; i < oldSize; i++) {
+					target.remove(key + "." + i);
+				}
+
+				return b;
+			}
+		}
+
+		public String get(String key) {
+			SessionConf sessionConf = SessionConf.getInstance();
+
+			ValueSplit valueSplit = sessionConf.getValueSplit();
+			if (valueSplit == null || !valueSplit.getFlag()) {
+				return target.get(key);
+			} else {
+				int size = parseValueSize(key);
+				if (size <= 0) {
+					target.remove(key);
+					return null;
+				}
+
+				StringBuilder builder = new StringBuilder("");
+				for (int i = 0; i < size; i++) {
+					String subVal = target.get(key + "." + i);
+					builder.append(subVal);
+				}
+				return builder.toString();
+			}
+		}
+
+		public void remove(String key) {
+			SessionConf sessionConf = SessionConf.getInstance();
+
+			ValueSplit valueSplit = sessionConf.getValueSplit();
+			if (valueSplit == null || !valueSplit.getFlag()) {
+				target.remove(key);
+			} else {
+				int size = parseValueSize(key);
+				if (size <= 0) {
+					target.remove(key);
+					return;
+				}
+
+				target.remove(key);
+				for (int i = 0; i < size; i++) {
+					target.remove(key + "." + i);
+				}
+			}
+		}
+
+		private int parseValueSize(String key) {
+			SessionConf sessionConf = SessionConf.getInstance();
+			SessionCache cache = sessionConf.getCache();
+
+			try {
+				String val = cache.get(key);
+				int size = 0;
+				size = Integer.parseInt(val);
+				return size;
+			} catch (Exception e) {
+				return 0;
+			}
+		}
+
+		private List<String> split(String value, int maxLength) {
+			List<String> list = new ArrayList<String>();
+			if (maxLength <= 0 || value.length() <= maxLength) {
+				list.add(value);
+				return list;
+			}
+
+			StringBuilder builder = new StringBuilder(value);
+			while (builder.length() > maxLength) {
+				list.add(builder.substring(0, maxLength));
+				builder.delete(0, maxLength);
+			}
+			if (builder.length() > 0) {
+				list.add(builder.toString());
+			}
+			return list;
+		}
 	}
 }
