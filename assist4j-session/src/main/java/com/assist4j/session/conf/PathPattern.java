@@ -26,7 +26,10 @@ public class PathPattern {
 
     public PathPattern(String... urlPatterns) {
         for (String urlPattern: urlPatterns) {
-            addUrlPattern(urlPattern);
+            if (urlPattern == null) {
+                continue;
+            }
+            addUrlPattern(urlPattern.trim());
         }
     }
 
