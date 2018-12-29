@@ -50,6 +50,7 @@ For example:
 		filter.setKey(headerKey);
 		bean.setFilter(filter);
 		bean.setUrlPatterns(Arrays.asList("/*"));
+		bean.addInitParameter("exclusive", "/, /user/*");
 		bean.addInitParameter("split", String.valueOf(split));
 		bean.addInitParameter("maxLength", String.valueOf(maxValueLength));
 		return bean;
