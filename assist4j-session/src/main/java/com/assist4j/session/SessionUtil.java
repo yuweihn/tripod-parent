@@ -42,8 +42,8 @@ public abstract class SessionUtil {
 	}
 
 	public static<T> String getSessionIdByRepeatKey(T repeatKey) {
-		SessionCache cache = SessionConf.getInstance().getCache();
-		String sessionIdKey = SessionConstant.SESSION_ID_PRE + cache.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT + "." + repeatKey.toString();
-		return cache.get(sessionIdKey);
+		SessionConf conf = SessionConf.getInstance();
+		String sessionIdKey = SessionConstant.SESSION_ID_PRE + conf.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT + "." + repeatKey.toString();
+		return conf.getCache().get(sessionIdKey);
 	}
 }

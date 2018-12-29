@@ -16,15 +16,6 @@ public interface SessionCache {
 	void remove(String key);
 
 	/**
-	 * session有效期(分钟)
-	 */
-	default int getMaxInactiveInterval() {
-		return 0;
-	}
-
-	String getApplicationName();
-	
-	/**
 	 * session同步完成之后的操作
 	 */
 	default void afterCompletion(String sessionId) {}

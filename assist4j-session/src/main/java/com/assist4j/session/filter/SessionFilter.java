@@ -27,14 +27,6 @@ public class SessionFilter implements Filter {
 	 * 需要排除的URI
 	 */
 	private static final String EXCLUSIVE = "exclusive";
-	/**
-	 * 是否分拆value值
-	 */
-	private static final String SPLIT = "split";
-	/**
-	 * 分拆value值时每个子串的最大长度
-	 */
-	private static final String MAX_LENGTH = "maxLength";
 
 
 
@@ -54,6 +46,24 @@ public class SessionFilter implements Filter {
 	public void setCache(SessionCache cache) {
 		SessionConf.getInstance().setCache(cache);
 	}
+	/**
+	 * 设置session失效时间(分钟)
+	 */
+	public void setMaxInactiveInterval(int maxInactiveInterval) {
+		SessionConf.getInstance().setMaxInactiveInterval(maxInactiveInterval);
+	}
+	public void setApplicationName(String applicationName) {
+		SessionConf.getInstance().setApplicationName(applicationName);
+	}
+	public void setValueSplit(boolean split) {
+		SessionConf.getInstance().setValueSplit(new ValueSplit(split));
+	}
+	public void setValueSplit(boolean split, int maxLength) {
+		SessionConf.getInstance().setValueSplit(new ValueSplit(split, maxLength));
+	}
+
+
+
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -96,16 +106,7 @@ public class SessionFilter implements Filter {
 			sessionConf.setExclusivePattern(exclusive.split(","));
 		}
 
-		ValueSplit vs = new ValueSplit();
-		String split = config.getInitParameter(SPLIT);
-		if (split != null) {
-			vs.setFlag("1".equals(split) || "true".equalsIgnoreCase(split));
-		}
-		String maxLength = config.getInitParameter(MAX_LENGTH);
-		if (maxLength != null) {
-			vs.setMaxLength(Integer.parseInt(maxLength));
-		}
-		sessionConf.setValueSplit(vs);
+		sessionConf.check();
 	}
 
 	@Override

@@ -51,8 +51,6 @@ public class SessionConf {
 	public void setCache(SessionCache cache) {
 		Assert.notNull(cache, "[cache] is required.");
 		this.cache = cache;
-		setMaxInactiveInterval(cache.getMaxInactiveInterval());
-		setApplicationName(cache.getApplicationName());
 	}
 	public SessionCache getCache() {
 		Assert.notNull(cache, "[cache] is required.");
@@ -60,14 +58,14 @@ public class SessionConf {
 	}
 
 	public void setMaxInactiveInterval(int maxInactiveInterval) {
-		if (maxInactiveInterval <= 0) {
-			this.maxInactiveInterval = SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL;
-		} else {
-			this.maxInactiveInterval = maxInactiveInterval;
-		}
+        this.maxInactiveInterval = maxInactiveInterval;
 	}
 	public int getMaxInactiveInterval() {
-		return maxInactiveInterval;
+        if (maxInactiveInterval <= 0) {
+            return SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL;
+        } else {
+            return this.maxInactiveInterval;
+        }
 	}
 
 	public void setApplicationName(String applicationName) {
@@ -80,4 +78,10 @@ public class SessionConf {
 		Assert.notNull(applicationName, "[applicationName] is required.");
 		return applicationName;
 	}
+
+
+	public void check() {
+        Assert.notNull(cache, "[cache] is required.");
+        Assert.notNull(applicationName, "[applicationName] is required.");
+    }
 }
