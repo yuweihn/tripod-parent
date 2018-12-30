@@ -1,9 +1,8 @@
 package com.assist4j.session;
 
 
-import java.util.Date;
-import com.assist4j.session.cache.SessionCache;
 import com.assist4j.session.conf.SessionConf;
+import java.util.Date;
 
 
 /**
@@ -20,8 +19,7 @@ public abstract class SessionUtil {
 		if (sessionId == null) {
 			return null;
 		}
-		SessionCache cache = SessionConf.getInstance().getCache();
-		SessionAttribute attribute = SessionAttribute.decode(cache.get(sessionId));
+		SessionAttribute attribute = SessionAttribute.decode(ProxySessionCache.get(sessionId));
 		return attribute == null ? null : attribute.getCreateTime();
 	}
 
@@ -33,8 +31,7 @@ public abstract class SessionUtil {
 		if (sessionId == null) {
 			return null;
 		}
-		SessionCache cache = SessionConf.getInstance().getCache();
-		SessionAttribute attribute = SessionAttribute.decode(cache.get(sessionId));
+		SessionAttribute attribute = SessionAttribute.decode(ProxySessionCache.get(sessionId));
 		if (attribute == null) {
 			return null;
 		}
@@ -44,6 +41,6 @@ public abstract class SessionUtil {
 	public static<T> String getSessionIdByRepeatKey(T repeatKey) {
 		SessionConf conf = SessionConf.getInstance();
 		String sessionIdKey = SessionConstant.SESSION_ID_PRE + conf.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT + "." + repeatKey.toString();
-		return conf.getCache().get(sessionIdKey);
+		return ProxySessionCache.get(sessionIdKey);
 	}
 }
