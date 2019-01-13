@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -22,6 +24,28 @@ public abstract class AbstractProvider {
 
 
 	/**
+	 * 驼峰转下划线
+	 * @param str
+	 * @return
+	 */
+	private static String toUnderline(String str) {
+		Pattern pattern = Pattern.compile("[A-Z]");
+		Matcher matcher = pattern.matcher(str);
+		StringBuffer buf = new StringBuffer(str);
+		if (!matcher.find()) {
+			return buf.toString();
+		}
+		buf = new StringBuffer();
+		matcher.appendReplacement(buf, "_" + matcher.group(0).toLowerCase());
+		matcher.appendTail(buf);
+		String res = toUnderline(buf.toString());
+		if (res.startsWith("_")) {
+			res = res.substring(1);
+		}
+		return res;
+	}
+
+	/**
 	 * 根据持久化类获取对应的关系表表名。
 	 * @param clz
 	 * @return
@@ -32,9 +56,13 @@ public abstract class AbstractProvider {
 		if (tableName == null) {
 			Table table = clz.getAnnotation(Table.class);
 			if (table == null || table.name() == null || "".equals(table.name().trim())) {
-				throw new RuntimeException("Table name is not found.");
+				tableName = toUnderline(clz.getSimpleName());
+				if (table == null || table.name() == null || "".equals(table.name().trim())) {
+					throw new RuntimeException("Table name is not found.");
+				}
+			} else {
+				tableName = table.name().trim();
 			}
-			tableName = table.name().trim();
 			TABLE_NAME_MAP.put(className, tableName);
 		}
 		return tableName;
