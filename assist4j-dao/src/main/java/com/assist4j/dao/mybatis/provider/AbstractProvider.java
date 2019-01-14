@@ -157,6 +157,9 @@ public abstract class AbstractProvider {
 
 			String colName = column.name();
 			if (colName == null || "".equals(colName.trim())) {
+				colName = toUnderline(field.getName());
+			}
+			if (colName == null || "".equals(colName.trim())) {
 				continue;
 			}
 			list.add(new FieldColumn(colName.trim(), field));
