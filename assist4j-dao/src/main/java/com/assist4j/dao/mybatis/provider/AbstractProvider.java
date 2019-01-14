@@ -55,13 +55,13 @@ public abstract class AbstractProvider {
 		String tableName = TABLE_NAME_MAP.get(className);
 		if (tableName == null) {
 			Table table = clz.getAnnotation(Table.class);
-			if (table == null || table.name() == null || "".equals(table.name().trim())) {
+			if (table != null && table.name() != null && !"".equals(table.name().trim())) {
+				tableName = table.name().trim();
+			} else {
 				tableName = toUnderline(clz.getSimpleName());
-				if (table == null || table.name() == null || "".equals(table.name().trim())) {
+				if (tableName == null || "".equals(tableName)) {
 					throw new RuntimeException("Table name is not found.");
 				}
-			} else {
-				tableName = table.name().trim();
 			}
 			TABLE_NAME_MAP.put(className, tableName);
 		}
