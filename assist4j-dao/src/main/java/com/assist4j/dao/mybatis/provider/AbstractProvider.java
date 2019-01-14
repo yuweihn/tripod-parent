@@ -74,7 +74,7 @@ public abstract class AbstractProvider {
 	 * @param clz
 	 * @return
 	 */
-	protected String getSelectSql(Class<?> clz) {
+	protected String getAllColumnSql(Class<?> clz) {
 		String className = clz.getName();
 		String selectSql = SELECT_SQL_MAP.get(className);
 		if (selectSql == null) {
@@ -99,7 +99,7 @@ public abstract class AbstractProvider {
 	 * @param tableAlias
 	 * @return
 	 */
-	protected String getSelectSql(Class<?> clz, String tableAlias) {
+	protected String getAllColumnSql(Class<?> clz, String tableAlias) {
 		String className = clz.getName();
 		String selectSql = SELECT_SQL_WITH_TABLE_ALIAS_MAP.get(className);
 		if (selectSql == null) {

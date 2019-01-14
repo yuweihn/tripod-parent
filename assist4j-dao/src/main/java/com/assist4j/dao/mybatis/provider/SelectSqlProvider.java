@@ -142,7 +142,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		String tableName = getTableName(entityClass);
 
 		StringBuilder builder = new StringBuilder("");
-		builder.append("  select ").append(getSelectSql(entityClass))
+		builder.append("  select ").append(getAllColumnSql(entityClass))
 				.append(" from ").append(tableName).append("  ");
 		if (criteria != null) {
 			String criteriaSql = criteria.toSql();
