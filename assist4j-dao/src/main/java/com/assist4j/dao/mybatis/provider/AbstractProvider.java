@@ -18,8 +18,8 @@ import javax.persistence.Table;
  */
 public abstract class AbstractProvider {
 	private static Map<String, String> TABLE_NAME_MAP = new ConcurrentHashMap<String, String>();
-    private static Map<String, String> SELECT_SQL_MAP = new ConcurrentHashMap<String, String>();
-    private static Map<String, String> SELECT_SQL_WITH_TABLE_ALIAS_MAP = new ConcurrentHashMap<String, String>();
+	private static Map<String, String> SELECT_SQL_MAP = new ConcurrentHashMap<String, String>();
+	private static Map<String, String> SELECT_SQL_WITH_TABLE_ALIAS_MAP = new ConcurrentHashMap<String, String>();
 	private static Map<String, List<FieldColumn>> PERSIST_FIELD_MAP = new ConcurrentHashMap<String, List<FieldColumn>>();
 
 
@@ -147,7 +147,7 @@ public abstract class AbstractProvider {
 			}
 			currentClass = currentClass.getSuperclass();
 		}
-		
+
 		List<FieldColumn> list = new ArrayList<FieldColumn>();
 		for (Field field: allFields) {
 			Column column = field.getAnnotation(Column.class);
@@ -156,6 +156,9 @@ public abstract class AbstractProvider {
 			}
 
 			String colName = column.name();
+			if (colName == null || "".equals(colName.trim())) {
+				colName = toUnderline(field.getName());
+			}
 			if (colName == null || "".equals(colName.trim())) {
 				continue;
 			}
