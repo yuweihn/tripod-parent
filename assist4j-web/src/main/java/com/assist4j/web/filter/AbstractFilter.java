@@ -149,11 +149,12 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		}
 		String method = request.getMethod().toLowerCase();
 		Map<String, String[]> params = request.getParameterMap();
+		String contentType = request.getContentType();
 
 		if (params == null || params.isEmpty()) {
-			log.info("ip: {}, method: {}, url: {}", ip, method, url);
+			log.info("ip: {}, method: {}, url: {}, contentType: {}", ip, method, url, contentType);
 		} else {
-			log.info("ip: {}, method: {}, url: {}, params: {}", ip, method, url, params);
+			log.info("ip: {}, method: {}, url: {}, contentType: {}, params: {}", ip, method, url, contentType, params);
 		}
 	}
 
