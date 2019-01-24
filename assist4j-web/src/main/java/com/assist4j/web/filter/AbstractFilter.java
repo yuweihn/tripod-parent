@@ -19,10 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -151,10 +148,43 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		Map<String, String[]> params = request.getParameterMap();
 		String contentType = request.getContentType();
 
-		if (params == null || params.isEmpty()) {
-			log.info("ip: {}, method: {}, url: {}, contentType: {}", ip, method, url, contentType);
-		} else {
-			log.info("ip: {}, method: {}, url: {}, contentType: {}, params: {}", ip, method, url, contentType, params);
+		RequestLog rLog = new RequestLog();
+		rLog.put("ip", ip);
+		rLog.put("method", method);
+		rLog.put("url", url);
+		rLog.put("contentType", contentType);
+		if (params != null && !params.isEmpty()) {
+			rLog.put("params", params);
+		}
+		rLog.print();
+	}
+	private static final class RequestLog {
+		private Map<String, Object> map = new LinkedHashMap<String, Object>();
+
+		public void put(String key, Object val) {
+			map.put(key, val);
+		}
+		public void print() {
+			StringBuilder format = new StringBuilder("");
+			List<Object> args = new ArrayList<Object>();
+
+			Iterator<Map.Entry<String, Object>> itr = map.entrySet().iterator();
+			int i = 0;
+			while (itr.hasNext()) {
+				Map.Entry<String, Object> entry = itr.next();
+				String key = entry.getKey();
+				Object val = entry.getValue();
+				if (val == null) {
+					continue;
+				}
+				if (i > 0) {
+					format.append(", ");
+				}
+				format.append(key).append(": {}");
+				args.add(val);
+				i++;
+			}
+			log.info(format.toString(), args.toArray());
 		}
 	}
 
