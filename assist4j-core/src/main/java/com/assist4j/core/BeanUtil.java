@@ -293,4 +293,46 @@ public abstract class BeanUtil {
 		}
 		return allFields;
 	}
+
+	/**
+	 * 下划线转驼峰
+	 * @param str
+	 * @return
+	 */
+	public static String toCamel(String str) {
+		Pattern pattern = Pattern.compile("_(\\w)");
+		Matcher matcher = pattern.matcher(str);
+		StringBuffer buf = new StringBuffer(str);
+		if (!matcher.find()) {
+			return buf.toString();
+		}
+		buf = new StringBuffer();
+		matcher.appendReplacement(buf, matcher.group(1).toUpperCase());
+		matcher.appendTail(buf);
+		String res = toCamel(buf.toString());
+		res = res.substring(0, 1).toUpperCase() + res.substring(1);
+		return res;
+	}
+
+	/**
+	 * 驼峰转下划线
+	 * @param str
+	 * @return
+	 */
+	public static String toUnderline(String str) {
+		Pattern pattern = Pattern.compile("[A-Z]");
+		Matcher matcher = pattern.matcher(str);
+		StringBuffer buf = new StringBuffer(str);
+		if (!matcher.find()) {
+			return buf.toString();
+		}
+		buf = new StringBuffer();
+		matcher.appendReplacement(buf, "_" + matcher.group(0).toLowerCase());
+		matcher.appendTail(buf);
+		String res = toUnderline(buf.toString());
+		if (res.startsWith("_")) {
+			res = res.substring(1);
+		}
+		return res;
+	}
 }

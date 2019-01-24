@@ -6,6 +6,8 @@ import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -60,6 +62,21 @@ public class IdWorker {
 
 	public static IdWorker create() {
 		return new IdWorker();
+	}
+	private static IdWorker DEFAULT_INSTANCE = null;
+	private static Lock LOCK = new ReentrantLock();
+	public static IdWorker getDefaultInstance() {
+		if (DEFAULT_INSTANCE == null) {
+			try {
+				LOCK.lock();
+				if (DEFAULT_INSTANCE == null) {
+					DEFAULT_INSTANCE = new IdWorker();
+				}
+			} finally {
+				LOCK.unlock();
+			}
+		}
+		return DEFAULT_INSTANCE;
 	}
 
 

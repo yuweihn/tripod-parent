@@ -15,14 +15,10 @@ public class OrderBy implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private List<String> colSqlList;
-	private Map<String, Object> params;
-	private int oindex;
 
 
 	private OrderBy() {
 		colSqlList = new ArrayList<String>();
-		params = new HashMap<String, Object>();
-		oindex = 0;
 	}
 
 	public static OrderBy create(String column) {
@@ -41,21 +37,10 @@ public class OrderBy implements Serializable {
 	}
 
 	private String createColumnOrderedSql(String column, Ordered ordered) {
-		String paramKey = "o" + (++oindex);
-		this.params.put(paramKey, column);
-
-		if (ordered == null) {
-			return " #{orderBy.params." + paramKey + "} ";
-		} else {
-			return " #{orderBy.params." + paramKey + "} " + ordered.getCode();
-		}
+		return column + " " + (ordered == null ? "" : ordered.getCode());
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	public Map<String, Object> getParams() {
-		return params;
-	}
-
 	public String toSql() {
 		if (colSqlList == null || colSqlList.size() <= 0) {
 			return null;

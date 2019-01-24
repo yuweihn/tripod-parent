@@ -35,7 +35,7 @@ public class SessionAttribute implements Serializable {
 	private Set<AttributeData> attributes;
 
 
-	public boolean isEmpty(){
+	public boolean isEmpty() {
 		return attributes == null || attributes.size() <= 0;
 	}
 

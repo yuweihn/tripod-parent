@@ -16,19 +16,6 @@ public interface SessionCache {
 	void remove(String key);
 
 	/**
-	 * session有效期(分钟)
-	 */
-	int getMaxInactiveInterval();
-	/**
-	 * 缓存中session对象的key的前缀
-	 */
-	String getCacheSessionKey();
-	/**
-	 * Cookie中保存sessionId的属性名称
-	 */
-	String getCookieSessionName();
-	
-	/**
 	 * session同步完成之后的操作
 	 */
 	default void afterCompletion(String sessionId) {}

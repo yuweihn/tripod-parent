@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -75,6 +76,12 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+		PathPattern exclusivePattern = InitParameter.getInstance().getExclusivePattern();
+		if (exclusivePattern != null && exclusivePattern.matches(request)) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
 		long startTimeMillis = System.currentTimeMillis();
 		R req = wrap(adjustMethod(request));
 		T resp = wrap(response);
@@ -142,11 +149,12 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		}
 		String method = request.getMethod().toLowerCase();
 		Map<String, String[]> params = request.getParameterMap();
+		String contentType = request.getContentType();
 
 		if (params == null || params.isEmpty()) {
-			log.info("ip: {}, method: {}, url: {}", ip, method, url);
+			log.info("ip: {}, method: {}, url: {}, contentType: {}", ip, method, url, contentType);
 		} else {
-			log.info("ip: {}, method: {}, url: {}, params: {}", ip, method, url, params);
+			log.info("ip: {}, method: {}, url: {}, contentType: {}, params: {}", ip, method, url, contentType, params);
 		}
 	}
 
@@ -211,5 +219,17 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 	protected void afterFilter(R request, T response) throws IOException {
 
+	}
+
+	@Override
+	public void initFilterBean() throws ServletException {
+		super.initFilterBean();
+		FilterConfig config = this.getFilterConfig();
+		InitParameter initParameter = InitParameter.getInstance();
+
+		String exclusive = config.getInitParameter("exclusive");
+		if (exclusive != null && !"".equals(exclusive.trim())) {
+			initParameter.setExclusivePattern(exclusive.split(","));
+		}
 	}
 }

@@ -6,7 +6,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
-import com.assist4j.session.cache.SessionCache;
+import com.assist4j.session.conf.SessionConf;
 
 
 /**
@@ -16,14 +16,6 @@ import com.assist4j.session.cache.SessionCache;
 @SuppressWarnings("deprecation")
 public class CacheHttpSession implements HttpSession {
 	private String id;
-	/**
-	 * 缓存引擎
-	 */
-	private ProxySessionCache proxyCache;
-	/**
-	 * session失效时间(分钟)
-	 */
-	private int maxInactiveInterval;
 	/**
 	 * session是否已失效
 	 */
@@ -49,17 +41,12 @@ public class CacheHttpSession implements HttpSession {
 	/**
 	 * 初始化时必须指定一个id字符串和缓存引擎实现。
 	 * @param id id字符串。
-	 * @param cache 缓存引擎。
 	 */
-	public CacheHttpSession(String id, SessionCache cache) {
+	public CacheHttpSession(String id) {
+		SessionConf sessionConf = SessionConf.getInstance();
 		this.id = id;
-		this.maxInactiveInterval = cache.getMaxInactiveInterval();
-		if (this.maxInactiveInterval <= 0) {
-			this.maxInactiveInterval = SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL;
-		}
-		this.proxyCache = new ProxySessionCache(cache);
-		this.sessionIdKeyPre = cache.getCacheSessionKey().trim() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
-		this.fullSessionId = cache.getCacheSessionKey().trim() + "." + this.id;
+		this.sessionIdKeyPre = SessionConstant.SESSION_ID_PRE + sessionConf.getApplicationName() + "." + SessionConstant.SESSION_ID_KEY_CURRENT;
+		this.fullSessionId = SessionConstant.SESSION_ID_PRE + sessionConf.getApplicationName() + "." + this.id;
 		init();
 	}
 
@@ -68,6 +55,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 这里返回存入cache的key值
 	 * @return id值。
 	 */
+	@Override
 	public String getId() {
 		return fullSessionId;
 	}
@@ -76,6 +64,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 获取此Session的创建时间。
 	 * @return 创建时间。
 	 */
+	@Override
 	public long getCreationTime() {
 		return sessionAttribute.getCreateTime().getTime();
 	}
@@ -84,6 +73,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 获取最后访问时间。
 	 * @return 最后访问时间。
 	 */
+	@Override
 	public long getLastAccessedTime() {
 		return sessionAttribute.getLastAccessTime().getTime();
 	}
@@ -104,19 +94,16 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	/**
-	 * 设定Session的最长不活动时限(分钟），如果此时限没有活动的Session将被删除。
-	 * @param maxInactiveInterval 最长活动时限。
+	 * @param interval           秒
 	 */
-	public void setMaxInactiveInterval(int maxInactiveInterval) {
-		this.maxInactiveInterval = maxInactiveInterval;
+	@Override
+	public void setMaxInactiveInterval(int interval) {
+		SessionConf.getInstance().setMaxInactiveInterval(interval / 60);
 	}
 
-	/**
-	 * 获取最长不活动时限(分钟）。
-	 * @return 最长活动时限。
-	 */
+	@Override
 	public int getMaxInactiveInterval() {
-		return maxInactiveInterval;
+		return SessionConf.getInstance().getMaxInactiveInterval() * 60;
 	}
 
 	/**
@@ -124,6 +111,7 @@ public class CacheHttpSession implements HttpSession {
 	 * @param attributeName 属性名称。
 	 * @return 属性值。
 	 */
+	@Override
 	public Object getAttribute(String attributeName) {
 		checkSessionInvalid();
 		return sessionAttribute.getAttribute(attributeName);
@@ -134,6 +122,7 @@ public class CacheHttpSession implements HttpSession {
 	 * @param attributeName 属性名称。
 	 * @param attributeValue 属性值。
 	 */
+	@Override
 	public void setAttribute(String attributeName, Object attributeValue) {
 		checkSessionInvalid();
 		if (attributeValue instanceof RepeatKey) {
@@ -151,6 +140,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 移除已有的属性。
 	 * @param attributeName 属性名称。
 	 */
+	@Override
 	public void removeAttribute(String attributeName) {
 		checkSessionInvalid();
 		sessionAttribute.removeAttribute(attributeName);
@@ -159,6 +149,7 @@ public class CacheHttpSession implements HttpSession {
 	/**
 	 * Session过期。
 	 */
+	@Override
 	public void invalidate() {
 		setInvalid(true);
 	}
@@ -175,15 +166,16 @@ public class CacheHttpSession implements HttpSession {
 		if (invalid) {
 			return invalid;
 		} else {
-			if (getMaxInactiveInterval() <= 0) {
+			int mii = SessionConf.getInstance().getMaxInactiveInterval();
+			if (mii <= 0) {
 				setInvalid(false);
 			} else {
-				long invalidMillis = getMaxInactiveInterval() * 60 * 1000;
+				long invalidMillis = mii * 60 * 1000;
 				long lastAccessTime = getLastAccessedTime();
 				long now = Calendar.getInstance().getTimeInMillis();
 				setInvalid((now - lastAccessTime) > invalidMillis);
 			}
-			
+
 			return invalid;
 		}
 	}
@@ -192,6 +184,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 判断此Session是否为新的。
 	 * @return true 为新的，false为非新的。
 	 */
+	@Override
 	public boolean isNew() {
 		checkSessionInvalid();
 		return sessionAttribute.isNewBuild();
@@ -207,7 +200,7 @@ public class CacheHttpSession implements HttpSession {
 		if (!(obj instanceof CacheHttpSession)) {
 			return false;
 		}
-		
+
 		CacheHttpSession other = (CacheHttpSession) obj;
 		if (id == null && other.id == null) {
 			return true;
@@ -218,9 +211,9 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	public void removeSessionFromCache(){
-		proxyCache.remove0(fullSessionId);
+		ProxySessionCache.remove(fullSessionId);
 		if (sessionIdKey != null) {
-			proxyCache.remove0(sessionIdKey);
+			ProxySessionCache.remove(sessionIdKey);
 		}
 	}
 
@@ -234,7 +227,7 @@ public class CacheHttpSession implements HttpSession {
 			return fullSessionId;
 		}
 
-		proxyCache.put0(fullSessionId, SessionAttribute.encode(sessionAttribute));
+		ProxySessionCache.put(fullSessionId, SessionAttribute.encode(sessionAttribute));
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -242,11 +235,11 @@ public class CacheHttpSession implements HttpSession {
 			/**
 			 * 把当前账号之前登录的session清除掉，防止重复登录
 			 */
-			String sessionId = proxyCache.get0(sessionIdKey);
+			String sessionId = ProxySessionCache.get(sessionIdKey);
 			if (sessionId != null && !sessionId.equals(fullSessionId)) {
-				proxyCache.remove0(sessionId);
+				ProxySessionCache.remove(sessionId);
 			}
-			proxyCache.put0(sessionIdKey, fullSessionId);
+			ProxySessionCache.put(sessionIdKey, fullSessionId);
 		}
 		return fullSessionId;
 	}
@@ -272,8 +265,8 @@ public class CacheHttpSession implements HttpSession {
 		if (sessionAttribute != null) {
 			return;
 		}
-		
-		sessionAttribute = SessionAttribute.decode(proxyCache.get0(fullSessionId));
+
+		sessionAttribute = SessionAttribute.decode(ProxySessionCache.get(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new SessionAttribute();
@@ -322,7 +315,7 @@ public class CacheHttpSession implements HttpSession {
 			return iterator.next();
 		}
 	}
-	
+
 
 	@Override
 	public ServletContext getServletContext() {
@@ -346,36 +339,11 @@ public class CacheHttpSession implements HttpSession {
 
 	@Override
 	public void putValue(String name, Object value) {
-		
+
 	}
 
 	@Override
 	public void removeValue(String name) {
-		
-	}
 
-	private class ProxySessionCache {
-		private SessionCache target;
-		public ProxySessionCache(SessionCache target) {
-			this.target = target;
-		}
-
-
-		public boolean put0(String key, String value) {
-			return target.put(key, value, maxInactiveInterval * 60);
-		}
-
-		public String get0(String key) {
-			Object obj = target.get(key);
-			if (obj instanceof String) {
-				return (String) obj;
-			}
-			target.remove(key);
-			return null;
-		}
-
-		public void remove0(String key) {
-			target.remove(key);
-		}
 	}
 }

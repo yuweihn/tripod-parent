@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.assist4j.session.cache.SessionCache;
+import com.assist4j.session.conf.SessionConf;
 
 
 /**
@@ -22,21 +22,30 @@ import com.assist4j.session.cache.SessionCache;
  * @author yuwei
  */
 public class CacheHttpServletRequest extends HttpServletRequestWrapper {
-	private SessionCache cache;
 	private CacheHttpSession cacheSession;
 
 	private HttpServletRequest request;
 	private HttpServletResponse response;
-	
-	
+
+	/**
+	 * 如果未指定sessionId，则由系统自动生成，否则使用指定的sessionId
+	 */
+	private String sessionId;
+
+
 	/**
 	 * 构造一个HttpServletRequest的包装器。
 	 */
-	public CacheHttpServletRequest(HttpServletRequest request, HttpServletResponse response, SessionCache cache) {
+	public CacheHttpServletRequest(HttpServletRequest request, HttpServletResponse response) {
+		this(request, response, null);
+	}
+	public CacheHttpServletRequest(HttpServletRequest request, HttpServletResponse response, String sessionId) {
 		super(request);
 		this.request = request;
 		this.response = response;
-		this.cache = cache;
+		if (sessionId != null && !"".equals(sessionId.trim())) {
+			this.sessionId = sessionId.trim();
+		}
 	}
 
 
@@ -66,11 +75,11 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 		if (cacheSession == null) {
 			return;
 		}
-		String sessionId = cacheSession.sync();
-		if (sessionId == null || "".equals(sessionId)) {
+		String fullSessionId = cacheSession.sync();
+		if (fullSessionId == null || "".equals(fullSessionId)) {
 			return;
 		}
-		cache.afterCompletion(sessionId);
+		SessionConf.getInstance().getCache().afterCompletion(fullSessionId);
 	}
 
 	/**
@@ -80,11 +89,16 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	 */
 	private HttpSession doGetSession(boolean create) {
 		if (cacheSession == null) {
-			String sessionId = CookiesUtil.findValueByKey(request, cache.getCookieSessionName());
 			if (sessionId != null) {
-				cacheSession = buildCacheHttpSession(sessionId, false);
+				cacheSession = new CacheHttpSession(sessionId);
 			} else {
-				cacheSession = buildCacheHttpSession(create);
+				String sid = CookiesUtil.findValueByKey(request
+						, SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX);
+				if (sid != null) {
+					cacheSession = new CacheHttpSession(sid);
+				} else if (create) {
+					cacheSession = new CacheHttpSession(generateSessionId());
+				}
 			}
 		}
 
@@ -94,7 +108,11 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 			 */
 			if (cacheSession.isInvalid()) {
 				cacheSession.removeSessionFromCache();
-				cacheSession = buildCacheHttpSession(create);
+				if (sessionId != null) {
+					cacheSession = new CacheHttpSession(sessionId);
+				} else if (create) {
+					cacheSession = new CacheHttpSession(generateSessionId());
+				}
 			}
 
 			if (cacheSession != null) {
@@ -105,29 +123,19 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 		return cacheSession;
 	}
 
-	/**
-	 * 根据指定的id构造一个新的会话实例。
-	 * @param sessionId 会话id.
-	 * @param cookie 是否更新cookie值。true更新，false不更新。
-	 * @return 会话实例。
-	 */
-	private CacheHttpSession buildCacheHttpSession(String sessionId, boolean cookie) {
-		CacheHttpSession session = new CacheHttpSession(sessionId, cache);
-
-		if (cookie) {
-			CookiesUtil.addCookie(request, response, cache.getCookieSessionName(), sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
+	private String generateSessionId() {
+		String sid = UUID.randomUUID().toString().replace("-", "");
+		if (sid == null || "".equals(sid)) {
+			throw new RuntimeException("生成SessionId失败！！！");
 		}
-
-		return session;
+		addCookie(sid);
+		return sid;
 	}
 
 	/**
-	 * 以UUID的方式构造一个会话实例。如果create为false则返回null.
-	 * @param create false方法调用返回null.
-	 * @return 会话实例。
+	 * 更新cookie值
 	 */
-	private CacheHttpSession buildCacheHttpSession(boolean create) {
-		String sessionId = UUID.randomUUID().toString().replace("-", "");
-		return create ? buildCacheHttpSession(sessionId, true) : null;
+	private void addCookie(String sessionId) {
+		CookiesUtil.addCookie(request, response, SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX, sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 	}
 }

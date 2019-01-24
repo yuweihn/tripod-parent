@@ -64,10 +64,11 @@ public class AttributeData {
 	public String encode() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("key", key);
-		map.put("value", JSONObject.toJSONString(value));
+		map.put("value", JSONObject.toJSONString(value, SerializerFeature.WriteClassName));
 		map.put("valueClassName", valueClassName);
 
 		ParserConfig.getGlobalInstance().addAccept(valueClassName);
+		ParserConfig.getGlobalInstance().addAccept(this.getClass().getName());
 		ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 		return JSONObject.toJSONString(map, SerializerFeature.WriteClassName);
 	}
@@ -82,6 +83,7 @@ public class AttributeData {
 		this.valueClassName = _valueClassName;
 
 		ParserConfig.getGlobalInstance().addAccept(this.valueClassName);
+		ParserConfig.getGlobalInstance().addAccept(this.getClass().getName());
 		ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 
 		try {
