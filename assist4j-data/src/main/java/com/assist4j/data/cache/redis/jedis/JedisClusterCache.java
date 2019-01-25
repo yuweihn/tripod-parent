@@ -2,7 +2,6 @@ package com.assist4j.data.cache.redis.jedis;
 
 
 import java.nio.charset.Charset;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 
@@ -66,22 +65,16 @@ public class JedisClusterCache implements RedisCache {
 		return jedisCluster.exists(key);
 	}
 
-	private <T>boolean put0(String key, T value) {
-		String v = serialize.encode(value);
-		Charset charset = Charset.forName(UTF_8);
-		jedisCluster.set(key, v.getBytes(charset));
-		return true;
-	}
-
 	@Override
 	public <T>boolean put(String key, T value, long expiredTime) {
 		if (expiredTime <= 0) {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
-		Calendar c = Calendar.getInstance();
-		c.add(Calendar.SECOND, (int) expiredTime);
-		return put(key, value, c.getTime());
+		String v = serialize.encode(value);
+		Charset charset = Charset.forName(UTF_8);
+		String res = jedisCluster.setex(key, (int) expiredTime, v.getBytes(charset));
+		return "OK".equalsIgnoreCase(res);
 	}
 
 	@Override
@@ -90,12 +83,7 @@ public class JedisClusterCache implements RedisCache {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
-		boolean b = put0(key, value);
-		if (!b) {
-			return false;
-		}
-		jedisCluster.pexpireAt(key, expiredTime.getTime());
-		return true;
+		return put(key, value, expiredTime.getTime() / 1000);
 	}
 
 	@Override
@@ -163,18 +151,20 @@ public class JedisClusterCache implements RedisCache {
 
 	@Override
 	public boolean lock(String key, String owner, long expiredTime) {
-		String res = jedisCluster.setex(key, (int) expiredTime, owner);
-		return "1".equals(res);
+		String res = jedisCluster.set(key, owner, "NX", "EX", (int) expiredTime);
+		return "OK".equals(res);
 	}
 
 	@Override
 	public boolean unlock(String key, String owner) {
 		String val = get(key);
-		if (val == null || val.equals(owner)) {
+		if (val == null) {
+			return true;
+		}
+		if (val.equals(owner)) {
 			Long reply = jedisCluster.del(key);
 			return reply != null && reply > 0;
-		} else {
-			return false;
 		}
+		return false;
 	}
 }
