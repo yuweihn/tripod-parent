@@ -37,8 +37,8 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 	}
 
 	@Override
-	protected void printRequest(ContentCachingRequestWrapper request) {
-		super.printRequest(request);
+	protected void logRequest(ContentCachingRequestWrapper request) {
+		super.logRequest(request);
 		printBody(request);
 	}
 

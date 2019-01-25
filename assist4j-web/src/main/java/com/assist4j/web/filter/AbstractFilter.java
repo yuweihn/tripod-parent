@@ -38,7 +38,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	private String staticPath = DEFAULT_STATIC_PATH;
 	private String protocol = null;
 	private boolean allowCors = true;
-	private boolean allowPrintRequest = true;
+	private boolean allowLogRequest = true;
 
 
 	public void setMethodParam(String methodParam) {
@@ -65,8 +65,8 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		this.allowCors = allowCors;
 	}
 
-	public void setAllowPrintRequest(boolean allowPrintRequest) {
-		this.allowPrintRequest = allowPrintRequest;
+	public void setAllowLogRequest(boolean allowLogRequest) {
+		this.allowLogRequest = allowLogRequest;
 	}
 
 
@@ -92,8 +92,8 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 		filterChain.doFilter(req, resp);
 
-		if (allowPrintRequest) {
-			printRequest(req);
+		if (allowLogRequest) {
+			logRequest(req);
 		}
 		afterFilter(req, resp);
 		long endTimeMillis = System.currentTimeMillis();
@@ -136,7 +136,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	/**
 	 * 打印请求参数
 	 */
-	protected void printRequest(R request) {
+	protected void logRequest(R request) {
 		String url = request.getRequestURL().toString();
 		try {
 			url = URLDecoder.decode(url, Constant.ENCODING_UTF_8);
