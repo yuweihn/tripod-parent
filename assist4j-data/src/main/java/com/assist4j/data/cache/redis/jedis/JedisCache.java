@@ -7,15 +7,20 @@ import com.assist4j.data.cache.serialize.DefaultSerialize;
 import com.assist4j.data.cache.serialize.Serialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.scripting.support.ResourceScriptSource;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -198,31 +203,21 @@ public class JedisCache implements RedisCache {
 
 	@Override
 	public boolean lock(String key, String owner, long expiredTime) {
-		Boolean b = redisTemplate.execute(new RedisCallback<Boolean>() {
-			@SuppressWarnings({ "unchecked", "rawtypes" })
-			@Override
-			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-				RedisSerializer keySerializer = redisTemplate.getKeySerializer();
-				byte[] bkey = keySerializer.serialize(key);
-
-				RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
-				byte[] bvalue = valueSerializer.serialize(owner);
-				return connection.setEx(bkey, expiredTime, bvalue);
-			}
-		});
-		return b != null && b;
+		RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLock.lua")));
+		String result = redisTemplate.execute(redisScript, valueSerializer, redisTemplate.getStringSerializer()
+				, Collections.singletonList(key), owner, expiredTime);
+		return "1".equals(result);
 	}
 
 	@Override
 	public boolean unlock(String key, String owner) {
-		String val = (String) redisTemplate.opsForValue().get(key);
-		if (val == null) {
-			return true;
-		}
-		if (val.equals(owner)) {
-			Boolean b = redisTemplate.delete(key);
-			return b != null && b;
-		}
-		return false;
+		RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
+		String result = redisTemplate.execute(redisScript, valueSerializer, redisTemplate.getStringSerializer()
+				, Collections.singletonList(key), owner);
+		return "1".equals(result);
 	}
 }
