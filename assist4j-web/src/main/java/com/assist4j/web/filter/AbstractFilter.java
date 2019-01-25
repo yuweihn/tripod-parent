@@ -137,55 +137,34 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	 * 打印请求参数
 	 */
 	protected void printRequest(R request) {
-		String ip = ActionUtil.getRequestIP();
 		String url = request.getRequestURL().toString();
 		try {
 			url = URLDecoder.decode(url, Constant.ENCODING_UTF_8);
 		} catch (UnsupportedEncodingException e) {
 			log.error("", e);
 		}
-		String method = request.getMethod().toLowerCase();
-		Map<String, String[]> params = request.getParameterMap();
 		String contentType = request.getContentType();
+		Map<String, String[]> params = request.getParameterMap();
 
-		RequestLog rLog = new RequestLog();
-		rLog.put("ip", ip);
-		rLog.put("method", method);
-		rLog.put("url", url);
-		rLog.put("contentType", contentType);
+		StringBuilder format = new StringBuilder("");
+		List<Object> args = new ArrayList<Object>();
+
+		format.append("ip: {}");
+		args.add(ActionUtil.getRequestIP());
+		format.append(", method: {}");
+		args.add(request.getMethod().toLowerCase());
+		format.append(", url: {}");
+		args.add(url);
+		if (contentType != null) {
+			format.append(", contentType: {}");
+			args.add(contentType);
+		}
 		if (params != null && !params.isEmpty()) {
-			rLog.put("params", params);
+			format.append(", params: {}");
+			args.add(params);
 		}
-		rLog.print();
-	}
-	private static final class RequestLog {
-		private Map<String, Object> map = new LinkedHashMap<String, Object>();
 
-		public void put(String key, Object val) {
-			map.put(key, val);
-		}
-		public void print() {
-			StringBuilder format = new StringBuilder("");
-			List<Object> args = new ArrayList<Object>();
-
-			Iterator<Map.Entry<String, Object>> itr = map.entrySet().iterator();
-			int i = 0;
-			while (itr.hasNext()) {
-				Map.Entry<String, Object> entry = itr.next();
-				String key = entry.getKey();
-				Object val = entry.getValue();
-				if (val == null) {
-					continue;
-				}
-				if (i > 0) {
-					format.append(", ");
-				}
-				format.append(key).append(": {}");
-				args.add(val);
-				i++;
-			}
-			log.info(format.toString(), args.toArray());
-		}
+		log.info(format.toString(), args.toArray());
 	}
 
 	/**
