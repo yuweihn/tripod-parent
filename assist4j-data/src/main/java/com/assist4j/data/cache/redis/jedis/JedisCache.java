@@ -111,21 +111,15 @@ public class JedisCache implements RedisCache {
 		return object != null;
 	}
 
-	private <T>boolean put0(String key, T value) {
-		String v = serialize.encode(value);
-		redisTemplate.opsForValue().set(key, v);
-		return true;
-	}
-
 	@Override
 	public <T>boolean put(String key, T value, long expiredTime) {
 		if (expiredTime <= 0) {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
-		boolean b = put0(key, value);
-		b = b && redisTemplate.expire(key, expiredTime, TimeUnit.SECONDS);
-		return b;
+		String v = serialize.encode(value);
+		redisTemplate.opsForValue().set(key, v, expiredTime, TimeUnit.SECONDS);
+		return true;
 	}
 
 	@Override
@@ -134,9 +128,7 @@ public class JedisCache implements RedisCache {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
-		boolean b = put0(key, value);
-		b = b && redisTemplate.expireAt(key, expiredTime);
-		return b;
+		return put(key, value, expiredTime.getTime() / 1000);
 	}
 
 	@Override
@@ -224,11 +216,13 @@ public class JedisCache implements RedisCache {
 	@Override
 	public boolean unlock(String key, String owner) {
 		String val = (String) redisTemplate.opsForValue().get(key);
-		if (val == null || val.equals(owner)) {
+		if (val == null) {
+			return true;
+		}
+		if (val.equals(owner)) {
 			Boolean b = redisTemplate.delete(key);
 			return b != null && b;
-		} else {
-			return false;
 		}
+		return false;
 	}
 }
