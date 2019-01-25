@@ -2,8 +2,7 @@ package com.assist4j.data.cache.redis.jedis;
 
 
 import java.nio.charset.Charset;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 import com.assist4j.data.cache.*;
 import com.assist4j.data.cache.redis.RedisCache;
@@ -12,6 +11,9 @@ import com.assist4j.data.cache.serialize.Serialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
 import redis.clients.jedis.JedisPubSub;
 
 
@@ -157,14 +159,12 @@ public class JedisClusterCache implements RedisCache {
 
     @Override
     public boolean unlock(String key, String owner) {
-        String val = get(key);
-		if (val == null) {
-			return true;
-		}
-        if (val.equals(owner)) {
-            Long reply = jedisCluster.del(key);
-            return reply != null && reply > 0;
-        }
-		return false;
+		List<String> args = new ArrayList<String>();
+		args.add(owner);
+
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
+		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), args);
+		return "1".equals(result);
     }
 }
