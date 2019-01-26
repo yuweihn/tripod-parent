@@ -153,18 +153,18 @@ public class JedisClusterCache implements RedisCache {
 
 	@Override
 	public boolean lock(String key, String owner, long expiredTime) {
-		String res = jedisCluster.set(key, owner, "NX", "EX", (int) expiredTime);
+		String v = serialize.encode(owner);
+		String res = jedisCluster.set(key, v, "NX", "EX", (int) expiredTime);
 		return "OK".equals(res);
 	}
 
 	@Override
 	public boolean unlock(String key, String owner) {
-		List<String> args = new ArrayList<String>();
-		args.add(owner);
-
-		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		String v = serialize.encode(owner);
+		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
+		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
-		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), args);
-		return "1".equals(result);
+		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Collections.singletonList(v));
+		return result != null && "1".equals(result.toString());
 	}
 }
