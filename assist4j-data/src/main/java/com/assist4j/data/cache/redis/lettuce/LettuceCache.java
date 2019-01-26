@@ -2,10 +2,7 @@ package com.assist4j.data.cache.redis.lettuce;
 
 
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.assist4j.data.cache.*;
@@ -23,7 +20,6 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.scripting.support.ResourceScriptSource;
 
 
@@ -205,21 +201,21 @@ public class LettuceCache implements RedisCache {
 
 	@Override
 	public boolean lock(String key, String owner, long expiredTime) {
-		RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
-		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		String v = serialize.encode(owner);
+		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
+		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLock.lua")));
-		String result = redisTemplate.execute(redisScript, valueSerializer, redisTemplate.getStringSerializer()
-				, Collections.singletonList(key), owner, expiredTime);
-		return "1".equals(result);
+		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
+		return result != null && "1".equals(result.toString());
 	}
 
 	@Override
 	public boolean unlock(String key, String owner) {
-		RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
-		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		String v = serialize.encode(owner);
+		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
+		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
-		String result = redisTemplate.execute(redisScript, valueSerializer, redisTemplate.getStringSerializer()
-				, Collections.singletonList(key), owner);
-		return "1".equals(result);
+		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v);
+		return result != null && "1".equals(result.toString());
 	}
 }
