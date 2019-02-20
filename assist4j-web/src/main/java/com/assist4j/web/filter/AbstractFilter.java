@@ -19,10 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -41,7 +38,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	private String staticPath = DEFAULT_STATIC_PATH;
 	private String protocol = null;
 	private boolean allowCors = true;
-	private boolean allowPrintRequest = true;
+	private boolean allowLogRequest = true;
 
 
 	public void setMethodParam(String methodParam) {
@@ -68,8 +65,8 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		this.allowCors = allowCors;
 	}
 
-	public void setAllowPrintRequest(boolean allowPrintRequest) {
-		this.allowPrintRequest = allowPrintRequest;
+	public void setAllowLogRequest(boolean allowLogRequest) {
+		this.allowLogRequest = allowLogRequest;
 	}
 
 
@@ -95,8 +92,8 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 		filterChain.doFilter(req, resp);
 
-		if (allowPrintRequest) {
-			printRequest(req);
+		if (allowLogRequest) {
+			logRequest(req);
 		}
 		afterFilter(req, resp);
 		long endTimeMillis = System.currentTimeMillis();
@@ -139,23 +136,35 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	/**
 	 * 打印请求参数
 	 */
-	protected void printRequest(R request) {
-		String ip = ActionUtil.getRequestIP();
+	protected void logRequest(R request) {
 		String url = request.getRequestURL().toString();
 		try {
 			url = URLDecoder.decode(url, Constant.ENCODING_UTF_8);
 		} catch (UnsupportedEncodingException e) {
 			log.error("", e);
 		}
-		String method = request.getMethod().toLowerCase();
-		Map<String, String[]> params = request.getParameterMap();
 		String contentType = request.getContentType();
+		Map<String, String[]> params = request.getParameterMap();
 
-		if (params == null || params.isEmpty()) {
-			log.info("ip: {}, method: {}, url: {}, contentType: {}", ip, method, url, contentType);
-		} else {
-			log.info("ip: {}, method: {}, url: {}, contentType: {}, params: {}", ip, method, url, contentType, params);
+		StringBuilder format = new StringBuilder("");
+		List<Object> args = new ArrayList<Object>();
+
+		format.append("ip: {}");
+		args.add(ActionUtil.getRequestIP());
+		format.append(", method: {}");
+		args.add(request.getMethod().toLowerCase());
+		format.append(", url: {}");
+		args.add(url);
+		if (contentType != null) {
+			format.append(", contentType: {}");
+			args.add(contentType);
 		}
+		if (params != null && !params.isEmpty()) {
+			format.append(", params: {}");
+			args.add(params);
+		}
+
+		log.info(format.toString(), args.toArray());
 	}
 
 	/**

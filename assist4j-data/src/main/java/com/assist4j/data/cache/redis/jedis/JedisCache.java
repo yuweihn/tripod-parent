@@ -7,15 +7,18 @@ import com.assist4j.data.cache.serialize.DefaultSerialize;
 import com.assist4j.data.cache.serialize.Serialize;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.scripting.support.ResourceScriptSource;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -111,21 +114,15 @@ public class JedisCache implements RedisCache {
 		return object != null;
 	}
 
-	private <T>boolean put0(String key, T value) {
-		String v = serialize.encode(value);
-		redisTemplate.opsForValue().set(key, v);
-		return true;
-	}
-
 	@Override
 	public <T>boolean put(String key, T value, long expiredTime) {
 		if (expiredTime <= 0) {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
-		boolean b = put0(key, value);
-		b = b && redisTemplate.expire(key, expiredTime, TimeUnit.SECONDS);
-		return b;
+		String v = serialize.encode(value);
+		redisTemplate.opsForValue().set(key, v, expiredTime, TimeUnit.SECONDS);
+		return true;
 	}
 
 	@Override
@@ -134,9 +131,7 @@ public class JedisCache implements RedisCache {
 			throw new RuntimeException("Invalid expiredTime.");
 		}
 
-		boolean b = put0(key, value);
-		b = b && redisTemplate.expireAt(key, expiredTime);
-		return b;
+		return put(key, value, expiredTime.getTime() / 1000);
 	}
 
 	@Override
@@ -206,29 +201,21 @@ public class JedisCache implements RedisCache {
 
 	@Override
 	public boolean lock(String key, String owner, long expiredTime) {
-		Boolean b = redisTemplate.execute(new RedisCallback<Boolean>() {
-			@SuppressWarnings({ "unchecked", "rawtypes" })
-			@Override
-			public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
-				RedisSerializer keySerializer = redisTemplate.getKeySerializer();
-				byte[] bkey = keySerializer.serialize(key);
-
-				RedisSerializer valueSerializer = redisTemplate.getValueSerializer();
-				byte[] bvalue = valueSerializer.serialize(owner);
-				return connection.setEx(bkey, expiredTime, bvalue);
-			}
-		});
-		return b != null && b;
+		String v = serialize.encode(owner);
+		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
+		redisScript.setResultType(Long.class);
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLock.lua")));
+		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
+		return result != null && "1".equals(result.toString());
 	}
 
 	@Override
 	public boolean unlock(String key, String owner) {
-		String val = (String) redisTemplate.opsForValue().get(key);
-		if (val == null || val.equals(owner)) {
-			Boolean b = redisTemplate.delete(key);
-			return b != null && b;
-		} else {
-			return false;
-		}
+		String v = serialize.encode(owner);
+		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
+		redisScript.setResultType(Long.class);
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
+		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v);
+		return result != null && "1".equals(result.toString());
 	}
 }
