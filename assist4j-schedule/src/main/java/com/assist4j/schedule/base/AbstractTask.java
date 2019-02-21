@@ -26,7 +26,7 @@ public abstract class AbstractTask {
 		destroy();
 		log.info("{} - end...", this.getClass().getName());
 		long timeCost = System.currentTimeMillis() - startTime;
-		log.info("Total-time-cost:{}s", timeCost / 1000);
+		log.info("Total-time-cost:{}s", timeCost / 1000.0);
 	}
 
 	protected void init() {
