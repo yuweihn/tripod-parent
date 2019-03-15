@@ -6,7 +6,6 @@ import com.assist4j.core.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -42,22 +41,18 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 
 	public void setMethodParam(String methodParam) {
-		Assert.hasText(methodParam, "'methodParam' is required.");
 		this.methodParam = methodParam;
 	}
 
 	public void setEncoding(String encoding) {
-		Assert.hasText(encoding, "'encoding' is required.");
 		this.encoding = encoding;
 	}
 
 	public void setStaticPath(String staticPath) {
-		Assert.hasText(staticPath, "'staticPath' is required.");
 		this.staticPath = staticPath;
 	}
 
 	public void setScheme(String scheme) {
-		Assert.hasText(scheme, "'scheme' is required.");
 		this.scheme = scheme;
 	}
 
