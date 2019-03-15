@@ -36,7 +36,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	private String methodParam = DEFAULT_METHOD_PARAM;
 	private String encoding = DEFAULT_ENCODING;
 	private String staticPath = DEFAULT_STATIC_PATH;
-	private String protocol = null;
+	private String scheme = null;
 	private boolean allowCors = true;
 	private boolean allowLogRequest = true;
 
@@ -56,9 +56,9 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		this.staticPath = staticPath;
 	}
 
-	public void setProtocol(String protocol) {
-		Assert.hasText(protocol, "'protocol' is required.");
-		this.protocol = protocol;
+	public void setScheme(String scheme) {
+		Assert.hasText(scheme, "'scheme' is required.");
+		this.scheme = scheme;
 	}
 
 	public void setAllowCors(boolean allowCors) {
@@ -183,7 +183,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	 * 将站点域名和static资源地址存入context
 	 **/
 	protected void setContextPath(R request) {
-		ActionUtil.addContextPath(request, protocol);
+		ActionUtil.addContextPath(request, scheme);
 		ActionUtil.addStaticPath(request, staticPath);
 	}
 
