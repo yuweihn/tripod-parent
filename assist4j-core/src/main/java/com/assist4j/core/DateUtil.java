@@ -107,7 +107,7 @@ public abstract class DateUtil {
 
 
 	/**
-	 * 获取当年年份
+	 * 获取当前年份
 	 * @return
 	 */
 	public static int getCurYear() {
