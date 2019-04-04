@@ -3,6 +3,7 @@ package com.assist4j.web.filter;
 
 import com.assist4j.core.ActionUtil;
 import com.assist4j.core.Constant;
+import com.assist4j.core.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -141,25 +142,18 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		String contentType = request.getContentType();
 		Map<String, String[]> params = request.getParameterMap();
 
-		StringBuilder format = new StringBuilder("");
-		List<Object> args = new ArrayList<Object>();
-
-		format.append("ip: {}");
-		args.add(ActionUtil.getRequestIP());
-		format.append(", method: {}");
-		args.add(request.getMethod().toLowerCase());
-		format.append(", url: {}");
-		args.add(url);
+		LinkedHashMap<String, Object> logMap = new LinkedHashMap<String, Object>();
+		logMap.put("ip", ActionUtil.getRequestIP());
+		logMap.put("method", request.getMethod().toLowerCase());
+		logMap.put("url", url);
 		if (contentType != null) {
-			format.append(", contentType: {}");
-			args.add(contentType);
+			logMap.put("contentType", contentType);
 		}
 		if (params != null && !params.isEmpty()) {
-			format.append(", params: {}");
-			args.add(params);
+			logMap.put("params", params);
 		}
 
-		log.info(format.toString(), args.toArray());
+		log.info(JsonUtil.toJson(logMap));
 	}
 
 	/**
