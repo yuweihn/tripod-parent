@@ -142,18 +142,36 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		String contentType = request.getContentType();
 		Map<String, String[]> params = request.getParameterMap();
 
-		LinkedHashMap<String, Object> logMap = new LinkedHashMap<String, Object>();
-		logMap.put("ip", ActionUtil.getRequestIP());
-		logMap.put("method", request.getMethod().toLowerCase());
-		logMap.put("url", url);
+		LinkedHashMap<String, Object> baseLogMap = new LinkedHashMap<String, Object>();
+		baseLogMap.put("ip", ActionUtil.getRequestIP());
+		baseLogMap.put("method", request.getMethod().toLowerCase());
+		baseLogMap.put("url", url);
 		if (contentType != null) {
-			logMap.put("contentType", contentType);
+			baseLogMap.put("contentType", contentType);
 		}
 		if (params != null && !params.isEmpty()) {
-			logMap.put("params", params);
+			baseLogMap.put("params", params);
 		}
 
-		log.info(JsonUtil.toJson(logMap));
+		LinkedHashMap<String, Object> firstLogMap = addLogFirst();
+		LinkedHashMap<String, Object> lastLogMap = addLogLast();
+		LinkedHashMap<String, Object> allLogMap = new LinkedHashMap<String, Object>();
+		if (firstLogMap != null) {
+			allLogMap.putAll(firstLogMap);
+		}
+		allLogMap.putAll(baseLogMap);
+		if (lastLogMap != null) {
+			allLogMap.putAll(lastLogMap);
+		}
+
+		log.info(JsonUtil.toJson(allLogMap));
+	}
+
+	protected LinkedHashMap<String, Object> addLogFirst() {
+		return null;
+	}
+	protected LinkedHashMap<String, Object> addLogLast() {
+		return null;
 	}
 
 	/**
