@@ -3,7 +3,6 @@ package com.assist4j.web.filter;
 
 import com.assist4j.core.ActionUtil;
 import com.assist4j.core.Constant;
-import com.assist4j.core.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -164,7 +163,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 			allLogMap.putAll(lastLogMap);
 		}
 
-		log.info(JsonUtil.toJson(allLogMap));
+		log.info(allLogMap.toString());
 	}
 
 	protected LinkedHashMap<String, Object> addLogFirst() {
