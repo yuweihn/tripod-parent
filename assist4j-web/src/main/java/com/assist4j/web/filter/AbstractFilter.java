@@ -61,13 +61,13 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		this.allowCors = allowCors;
 	}
 
-    public void setAllowLogRequest(boolean allowLogRequest) {
-        this.allowLogRequest = allowLogRequest;
-    }
+	public void setAllowLogRequest(boolean allowLogRequest) {
+		this.allowLogRequest = allowLogRequest;
+	}
 
 
 
-    @Override
+	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		PathPattern exclusivePattern = InitParameter.getInstance().getExclusivePattern();
 		if (exclusivePattern != null && exclusivePattern.matches(request)) {
@@ -89,7 +89,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		filterChain.doFilter(req, resp);
 
 		if (allowLogRequest) {
-            logRequest(req);
+			logRequest(req);
 		}
 		afterFilter(req, resp);
 		long endTimeMillis = System.currentTimeMillis();
@@ -170,6 +170,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	protected LinkedHashMap<String, Object> addLogFirst() {
 		return null;
 	}
+
 	protected LinkedHashMap<String, Object> addLogLast() {
 		return null;
 	}
