@@ -248,5 +248,10 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		public void setContentType(String contentType) {
 			this.contentType = contentType;
 		}
+
+		@Override
+		public String toString() {
+			return JSONObject.toJSONString(this);
+		}
 	}
 }
