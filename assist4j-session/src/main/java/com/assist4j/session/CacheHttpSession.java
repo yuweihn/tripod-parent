@@ -113,8 +113,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public Object getAttribute(String attributeName) {
-		checkSessionInvalid();
-		return sessionAttribute.getAttribute(attributeName);
+		return invalid ? null : sessionAttribute.getAttribute(attributeName);
 	}
 
 	/**
@@ -124,7 +123,9 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void setAttribute(String attributeName, Object attributeValue) {
-		checkSessionInvalid();
+		if (invalid) {
+			return;
+		}
 		if (attributeValue instanceof RepeatKey) {
 			RepeatKey rlk = (RepeatKey) attributeValue;
 			sessionAttribute.putAttribute(attributeName, rlk.getValue());
@@ -142,7 +143,9 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void removeAttribute(String attributeName) {
-		checkSessionInvalid();
+		if (invalid) {
+			return;
+		}
 		sessionAttribute.removeAttribute(attributeName);
 	}
 
@@ -175,7 +178,7 @@ public class CacheHttpSession implements HttpSession {
 				long now = Calendar.getInstance().getTimeInMillis();
 				setInvalid((now - lastAccessTime) > invalidMillis);
 			}
-			
+
 			return invalid;
 		}
 	}
@@ -186,7 +189,9 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public boolean isNew() {
-		checkSessionInvalid();
+		if (invalid) {
+			return false;
+		}
 		return sessionAttribute.isNewBuild();
 	}
 
@@ -200,7 +205,7 @@ public class CacheHttpSession implements HttpSession {
 		if (!(obj instanceof CacheHttpSession)) {
 			return false;
 		}
-		
+
 		CacheHttpSession other = (CacheHttpSession) obj;
 		if (id == null && other.id == null) {
 			return true;
@@ -265,7 +270,7 @@ public class CacheHttpSession implements HttpSession {
 		if (sessionAttribute != null) {
 			return;
 		}
-		
+
 		sessionAttribute = SessionAttribute.decode(ProxySessionCache.get(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
@@ -278,18 +283,6 @@ public class CacheHttpSession implements HttpSession {
 			sessionAttribute.setNewBuild(false);
 		}
 	}
-
-
-	/**
-	 * 判断当前Session是否已经失效.
-	 * @throws IllegalStateException Session已经失效的异常.
-	 */
-	private void checkSessionInvalid() throws IllegalStateException {
-		if (invalid) {
-			throw new IllegalStateException("Session is invalid.");
-		}
-	}
-
 
 	@Override
 	public Enumeration<String> getAttributeNames() {
@@ -315,7 +308,7 @@ public class CacheHttpSession implements HttpSession {
 			return iterator.next();
 		}
 	}
-	
+
 
 	@Override
 	public ServletContext getServletContext() {
@@ -339,11 +332,11 @@ public class CacheHttpSession implements HttpSession {
 
 	@Override
 	public void putValue(String name, Object value) {
-		
+
 	}
 
 	@Override
 	public void removeValue(String name) {
-		
+
 	}
 }
