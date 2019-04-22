@@ -88,38 +88,49 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	 * @return 会话实例。
 	 */
 	private HttpSession doGetSession(boolean create) {
+		if (sessionId != null) {
+			return doGetSessionWithId(sessionId);
+		} else {
+			return doGetSessionWithCookie(create);
+		}
+	}
+	private HttpSession doGetSessionWithId(String sid) {
 		if (cacheSession == null) {
-			if (sessionId != null) {
-				cacheSession = new CacheHttpSession(sessionId);
-			} else {
-				String sid = CookiesUtil.findValueByKey(request
-						, SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX);
-				if (sid != null) {
-					cacheSession = new CacheHttpSession(sid);
-				} else if (create) {
-					cacheSession = new CacheHttpSession(generateSessionId());
-				}
+			cacheSession = new CacheHttpSession(sid);
+		}
+
+		if (cacheSession.isInvalid()) {
+			cacheSession.removeSessionFromCache();
+			cacheSession = new CacheHttpSession(sid);
+		}
+
+		cacheSession.access();
+		return cacheSession;
+	}
+	private HttpSession doGetSessionWithCookie(boolean create) {
+		if (cacheSession == null) {
+			String sid = CookiesUtil.findValueByKey(request
+					, SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX);
+			if (sid != null) {
+				cacheSession = new CacheHttpSession(sid);
+			} else if (create) {
+				cacheSession = new CacheHttpSession(generateSessionId());
+			}
+		}
+
+		/**
+		 * 判断现有session是否已失效，是则新建
+		 */
+		if (cacheSession != null && cacheSession.isInvalid()) {
+			cacheSession.removeSessionFromCache();
+			if (create) {
+				cacheSession = new CacheHttpSession(generateSessionId());
 			}
 		}
 
 		if (cacheSession != null) {
-			/**
-			 * 判断现有session是否已失效，是则新建
-			 */
-			if (cacheSession.isInvalid()) {
-				cacheSession.removeSessionFromCache();
-				if (sessionId != null) {
-					cacheSession = new CacheHttpSession(sessionId);
-				} else if (create) {
-					cacheSession = new CacheHttpSession(generateSessionId());
-				}
-			}
-
-			if (cacheSession != null) {
-				cacheSession.access();
-			}
+			cacheSession.access();
 		}
-
 		return cacheSession;
 	}
 
@@ -135,9 +146,9 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	/**
 	 * 更新cookie值
 	 */
-	private void addCookie(String sessionId) {
+	private void addCookie(String sid) {
 		CookiesUtil.addCookie(request, response
 				, SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX
-				, sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
+				, sid, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 	}
 }
