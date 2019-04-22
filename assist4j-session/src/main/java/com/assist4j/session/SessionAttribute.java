@@ -198,7 +198,7 @@ public class SessionAttribute implements Serializable {
 			}
 			attr.attributes = _attributes;
 		}
-		attr.repeatKey = (String)repeatKeyObj;
+		attr.repeatKey = (String) repeatKeyObj;
 		attr.repeatValue = repeatValueObj;
 		return attr;
 	}
