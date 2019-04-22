@@ -113,7 +113,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public Object getAttribute(String attributeName) {
-		return invalid ? null : sessionAttribute.getAttribute(attributeName);
+		return this.invalid ? null : sessionAttribute.getAttribute(attributeName);
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void setAttribute(String attributeName, Object attributeValue) {
-		if (invalid) {
+		if (this.invalid) {
 			return;
 		}
 		if (attributeValue instanceof RepeatKey) {
@@ -143,7 +143,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void removeAttribute(String attributeName) {
-		if (invalid) {
+		if (this.invalid) {
 			return;
 		}
 		sessionAttribute.removeAttribute(attributeName);
@@ -182,7 +182,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public boolean isNew() {
-		if (invalid) {
+		if (this.invalid) {
 			return false;
 		}
 		return sessionAttribute.isNewBuild();
