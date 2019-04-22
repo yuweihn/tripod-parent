@@ -209,7 +209,7 @@ public class CacheHttpSession implements HttpSession {
 		CacheHttpSession other = (CacheHttpSession) obj;
 		if (id == null && other.id == null) {
 			return true;
-		} if (id != null && other.id != null) {
+		} else if (id != null && other.id != null) {
 			return id.equals(other.id);
 		}
 		return false;
