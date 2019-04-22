@@ -136,6 +136,8 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 	 * 更新cookie值
 	 */
 	private void addCookie(String sessionId) {
-		CookiesUtil.addCookie(request, response, SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX, sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
+		CookiesUtil.addCookie(request, response
+				, SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX
+				, sessionId, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 	}
 }
