@@ -113,7 +113,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public Object getAttribute(String attributeName) {
-		return invalid ? null : sessionAttribute.getAttribute(attributeName);
+		return this.invalid ? null : sessionAttribute.getAttribute(attributeName);
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void setAttribute(String attributeName, Object attributeValue) {
-		if (invalid) {
+		if (this.invalid) {
 			return;
 		}
 		if (attributeValue instanceof RepeatKey) {
@@ -143,7 +143,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void removeAttribute(String attributeName) {
-		if (invalid) {
+		if (this.invalid) {
 			return;
 		}
 		sessionAttribute.removeAttribute(attributeName);
@@ -154,11 +154,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void invalidate() {
-		setInvalid(true);
-	}
-
-	private void setInvalid(boolean invalid) {
-		this.invalid = invalid;
+		this.invalid = true;
 	}
 
 	/**
@@ -166,21 +162,18 @@ public class CacheHttpSession implements HttpSession {
 	 * @return true超过，false没有超过。
 	 */
 	public boolean isInvalid() {
-		if (invalid) {
-			return invalid;
-		} else {
+		if (!this.invalid) {
 			int mii = SessionConf.getInstance().getMaxInactiveInterval();
 			if (mii <= 0) {
-				setInvalid(false);
+				this.invalid = false;
 			} else {
 				long invalidMillis = mii * 60 * 1000;
 				long lastAccessTime = getLastAccessedTime();
 				long now = Calendar.getInstance().getTimeInMillis();
-				setInvalid((now - lastAccessTime) > invalidMillis);
+				this.invalid = (now - lastAccessTime) > invalidMillis;
 			}
-
-			return invalid;
 		}
+		return this.invalid;
 	}
 
 	/**
@@ -189,7 +182,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public boolean isNew() {
-		if (invalid) {
+		if (this.invalid) {
 			return false;
 		}
 		return sessionAttribute.isNewBuild();
