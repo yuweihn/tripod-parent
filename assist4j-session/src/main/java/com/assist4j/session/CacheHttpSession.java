@@ -215,7 +215,7 @@ public class CacheHttpSession implements HttpSession {
 		return false;
 	}
 
-	public void removeSessionFromCache(){
+	public void removeSessionFromCache() {
 		ProxySessionCache.remove(fullSessionId);
 		if (sessionIdKey != null) {
 			ProxySessionCache.remove(sessionIdKey);
