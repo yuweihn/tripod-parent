@@ -15,7 +15,7 @@ public abstract class AbstractThreadPoolPageTask<T> extends AbstractThreadPoolTa
 	@Override
 	protected void executeInThreadPool(ExecutorService executor) {
 		int times = 0;
-		int maxTimex = getMaxTimes();
+		int maxTimes = getMaxTimes();
 
 		while (true) {
 			List<T> taskList = queryTaskList();
@@ -24,7 +24,7 @@ public abstract class AbstractThreadPoolPageTask<T> extends AbstractThreadPoolTa
 			}
 			executeInThreadPool(executor, taskList);
 
-			boolean stop = maxTimex != DEFAULT_MAX_TIMES && ++times > maxTimex;
+			boolean stop = maxTimes != DEFAULT_MAX_TIMES && ++times > maxTimes;
 			if (stop) {
 				break;
 			}
