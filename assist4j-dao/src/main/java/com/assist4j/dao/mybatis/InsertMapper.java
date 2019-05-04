@@ -23,5 +23,5 @@ public interface InsertMapper<T extends Serializable, PK extends Serializable> {
 
 	@Options(useGeneratedKeys = true)
 	@InsertProvider(type = InsertSqlProvider.class, method = "batchInsert")
-	void batchInsert(List<T> list);
+	int batchInsert(List<T> list);
 }
