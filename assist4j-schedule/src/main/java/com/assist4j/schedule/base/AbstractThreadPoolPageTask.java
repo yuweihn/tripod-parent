@@ -18,16 +18,16 @@ public abstract class AbstractThreadPoolPageTask<T> extends AbstractThreadPoolTa
 		int maxTimes = getMaxTimes();
 
 		while (true) {
+			boolean stop = maxTimes != DEFAULT_MAX_TIMES && ++times > maxTimes;
+			if (stop) {
+				break;
+			}
+
 			List<T> taskList = queryTaskList();
 			if (taskList == null || taskList.size() <= 0) {
 				break;
 			}
 			executeInThreadPool(executor, taskList);
-
-			boolean stop = maxTimes != DEFAULT_MAX_TIMES && ++times > maxTimes;
-			if (stop) {
-				break;
-			}
 		}
 	}
 
