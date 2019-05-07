@@ -51,7 +51,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 			futureList.add(executor.submit(new Callable<Result>() {
 				@Override
 				public Result call() throws Exception {
-					return new Result(task, handleTask(task));
+					return new Result(task, processTask(task));
 				}
 			}));
 		}
@@ -86,7 +86,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 	/**
 	 * 处理单条任务
 	 */
-	protected abstract boolean handleTask(T task);
+	protected abstract boolean processTask(T task);
 
 
 
