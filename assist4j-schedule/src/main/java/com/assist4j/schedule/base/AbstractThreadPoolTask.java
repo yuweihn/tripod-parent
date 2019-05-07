@@ -36,7 +36,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 	}
 
 	protected void executeInThreadPool(ExecutorService executor) {
-		List<T> taskList = queryTaskList();
+		List<T> taskList = findTaskList();
 		executeInThreadPool(executor, taskList);
 	}
 
@@ -82,7 +82,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 	/**
 	 * 查询需要处理的任务集合
 	 */
-	protected abstract List<T> queryTaskList();
+	protected abstract List<T> findTaskList();
 	/**
 	 * 处理单条任务
 	 */

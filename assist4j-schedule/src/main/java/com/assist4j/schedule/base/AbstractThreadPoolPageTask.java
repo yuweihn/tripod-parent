@@ -23,7 +23,7 @@ public abstract class AbstractThreadPoolPageTask<T> extends AbstractThreadPoolTa
 				break;
 			}
 
-			List<T> taskList = queryTaskList();
+			List<T> taskList = findTaskList();
 			if (taskList == null || taskList.size() <= 0) {
 				break;
 			}
