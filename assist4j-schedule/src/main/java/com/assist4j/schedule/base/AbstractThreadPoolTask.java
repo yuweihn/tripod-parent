@@ -51,7 +51,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 		}
 
 		List<Future<Result>> futureList = new ArrayList<Future<Result>>();
-		taskList.forEach(task -> futureList.add(executor.submit(() -> new Result(task, handleTask(task)))));
+		taskList.forEach(task -> futureList.add(executor.submit(() -> new Result(task, processTask(task)))));
 
 		/**
          * 收集执行结果，用于处理失败的记录。
@@ -83,7 +83,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 	/**
 	 * 处理单条任务
 	 */
-	protected abstract boolean handleTask(T task);
+	protected abstract boolean processTask(T task);
 
 
 
