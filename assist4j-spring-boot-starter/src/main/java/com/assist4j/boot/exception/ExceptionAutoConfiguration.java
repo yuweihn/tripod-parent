@@ -23,7 +23,7 @@ public class ExceptionAutoConfiguration {
 
     @ConditionalOnMissingBean(name = "exceptionHandler")
     @Bean(name = "exceptionHandler")
-    public HandlerExceptionResolver handlerExceptionResolver(@Value("${error.page:}") String errorPage) {
+    public HandlerExceptionResolver handlerExceptionResolver(@Value("${assist4j.error.page:}") String errorPage) {
         Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
         errorMsgMap.put(MaxUploadSizeExceededException.class, "上传文件太大");
 
