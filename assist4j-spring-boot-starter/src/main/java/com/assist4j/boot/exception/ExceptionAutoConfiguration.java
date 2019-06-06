@@ -9,7 +9,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.util.HashMap;
@@ -29,7 +28,6 @@ public class ExceptionAutoConfiguration {
     public HandlerExceptionResolver handlerExceptionResolver(@Value("${assist4j.boot.exception.error-page:}") String errorPage
             , @Qualifier("exceptionClassAndMessage") ExceptionClassAndMessage exceptionClassAndMessage) {
         Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
-        errorMsgMap.put(MaxUploadSizeExceededException.class, "上传文件太大");
 
         Map<String, String> classMessageMap = null;
         if (exceptionClassAndMessage != null && (classMessageMap = exceptionClassAndMessage.getClassMessageMap()) != null) {
