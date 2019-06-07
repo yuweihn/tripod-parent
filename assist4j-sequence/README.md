@@ -50,7 +50,7 @@ For example:
             private Map<String, String> sequence = new HashMap<String, String>();
             
             @Override
-            public Map<String, String> getSequence() {
+            public Map<String, String> getSequenceMap() {
                 return sequence;
             }
         };
