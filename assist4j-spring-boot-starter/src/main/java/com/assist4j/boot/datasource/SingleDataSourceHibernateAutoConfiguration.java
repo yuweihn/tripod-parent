@@ -103,14 +103,14 @@ public class SingleDataSourceHibernateAutoConfiguration {
 
 	@ConditionalOnMissingBean(name = "sequenceBeanHolder")
 	@Bean(name = "sequenceBeanHolder")
-	@ConfigurationProperties(prefix = "spring", ignoreUnknownFields = true)
+	@ConfigurationProperties(prefix = "assist4j", ignoreUnknownFields = true)
 	public SequenceBeanHolder sequenceBeanHolder() {
 		return new SequenceBeanHolder() {
-			private Map<String, String> beanSeqNameMap = new HashMap<String, String>();
+			private Map<String, String> sequence = new HashMap<String, String>();
 
 			@Override
 			public Map<String, String> getBeanSeqNameMap() {
-				return beanSeqNameMap;
+				return sequence;
 			}
 		};
 	}
