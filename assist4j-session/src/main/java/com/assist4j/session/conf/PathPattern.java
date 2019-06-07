@@ -1,16 +1,16 @@
 package com.assist4j.session.conf;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 
 /**
  * @author yuwei
  */
 public class PathPattern {
+    private static final String EXTENSION_MAPPING_PATTERN = "*.";
     private static final String PATTERN_MATCH_ALL = "/*";
 
 
@@ -22,6 +22,10 @@ public class PathPattern {
      * 前置匹配
      */
     private final List<String> startsWithMatches = new ArrayList<String>();
+    /**
+     * 后缀匹配
+     */
+    private final List<String>  endsWithMatches = new ArrayList<String>();
 
 
     public PathPattern(String... urlPatterns) {
@@ -34,7 +38,9 @@ public class PathPattern {
     }
 
     private void addUrlPattern(String urlPattern) {
-        if (urlPattern.equals(PATTERN_MATCH_ALL)) {
+        if (urlPattern.startsWith(EXTENSION_MAPPING_PATTERN)) {
+            this.endsWithMatches.add(urlPattern.substring(1));
+        } else if (urlPattern.equals(PATTERN_MATCH_ALL)) {
             this.startsWithMatches.add("");
         } else if (urlPattern.endsWith(PATTERN_MATCH_ALL)) {
             this.startsWithMatches.add(urlPattern.substring(0, urlPattern.length() - 1));
@@ -57,6 +63,11 @@ public class PathPattern {
         }
         if (!requestPath.startsWith("/")) {
             return false;
+        }
+        for (String pattern: this.endsWithMatches) {
+            if (requestPath.endsWith(pattern)) {
+                return true;
+            }
         }
         for (String pattern: this.startsWithMatches) {
             if (requestPath.startsWith(pattern)) {

@@ -3,10 +3,10 @@ package com.assist4j.web.filter;
 
 import com.assist4j.core.ActionUtil;
 import com.assist4j.core.Constant;
+import com.assist4j.core.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -36,29 +36,25 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	private String methodParam = DEFAULT_METHOD_PARAM;
 	private String encoding = DEFAULT_ENCODING;
 	private String staticPath = DEFAULT_STATIC_PATH;
-	private String protocol = null;
+	private String scheme = null;
 	private boolean allowCors = true;
 	private boolean allowLogRequest = true;
 
 
 	public void setMethodParam(String methodParam) {
-		Assert.hasText(methodParam, "'methodParam' is required.");
 		this.methodParam = methodParam;
 	}
 
 	public void setEncoding(String encoding) {
-		Assert.hasText(encoding, "'encoding' is required.");
 		this.encoding = encoding;
 	}
 
 	public void setStaticPath(String staticPath) {
-		Assert.hasText(staticPath, "'staticPath' is required.");
 		this.staticPath = staticPath;
 	}
 
-	public void setProtocol(String protocol) {
-		Assert.hasText(protocol, "'protocol' is required.");
-		this.protocol = protocol;
+	public void setScheme(String scheme) {
+		this.scheme = scheme;
 	}
 
 	public void setAllowCors(boolean allowCors) {
@@ -146,25 +142,37 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		String contentType = request.getContentType();
 		Map<String, String[]> params = request.getParameterMap();
 
-		StringBuilder format = new StringBuilder("");
-		List<Object> args = new ArrayList<Object>();
-
-		format.append("ip: {}");
-		args.add(ActionUtil.getRequestIP());
-		format.append(", method: {}");
-		args.add(request.getMethod().toLowerCase());
-		format.append(", url: {}");
-		args.add(url);
+		LinkedHashMap<String, Object> baseLogMap = new LinkedHashMap<String, Object>();
+		baseLogMap.put("ip", ActionUtil.getRequestIP());
+		baseLogMap.put("method", request.getMethod().toLowerCase());
+		baseLogMap.put("url", url);
 		if (contentType != null) {
-			format.append(", contentType: {}");
-			args.add(contentType);
+			baseLogMap.put("contentType", contentType);
 		}
 		if (params != null && !params.isEmpty()) {
-			format.append(", params: {}");
-			args.add(params);
+			baseLogMap.put("params", params);
 		}
 
-		log.info(format.toString(), args.toArray());
+		LinkedHashMap<String, Object> firstLogMap = addLogFirst();
+		LinkedHashMap<String, Object> lastLogMap = addLogLast();
+		LinkedHashMap<String, Object> allLogMap = new LinkedHashMap<String, Object>();
+		if (firstLogMap != null) {
+			allLogMap.putAll(firstLogMap);
+		}
+		allLogMap.putAll(baseLogMap);
+		if (lastLogMap != null) {
+			allLogMap.putAll(lastLogMap);
+		}
+
+		log.info(JsonUtil.toJson(allLogMap));
+	}
+
+	protected LinkedHashMap<String, Object> addLogFirst() {
+		return null;
+	}
+
+	protected LinkedHashMap<String, Object> addLogLast() {
+		return null;
 	}
 
 	/**
@@ -183,7 +191,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	 * 将站点域名和static资源地址存入context
 	 **/
 	protected void setContextPath(R request) {
-		ActionUtil.addContextPath(request, protocol);
+		ActionUtil.addContextPath(request, scheme);
 		ActionUtil.addStaticPath(request, staticPath);
 	}
 

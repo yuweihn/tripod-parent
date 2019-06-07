@@ -5,10 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.http.Cookie;
 
@@ -247,6 +244,11 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		}
 		public void setContentType(String contentType) {
 			this.contentType = contentType;
+		}
+
+		@Override
+		public String toString() {
+			return JSONObject.toJSONString(this);
 		}
 	}
 }

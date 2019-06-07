@@ -113,8 +113,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public Object getAttribute(String attributeName) {
-		checkSessionInvalid();
-		return sessionAttribute.getAttribute(attributeName);
+		return this.invalid ? null : sessionAttribute.getAttribute(attributeName);
 	}
 
 	/**
@@ -124,7 +123,9 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void setAttribute(String attributeName, Object attributeValue) {
-		checkSessionInvalid();
+		if (this.invalid) {
+			return;
+		}
 		if (attributeValue instanceof RepeatKey) {
 			RepeatKey rlk = (RepeatKey) attributeValue;
 			sessionAttribute.putAttribute(attributeName, rlk.getValue());
@@ -142,7 +143,9 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void removeAttribute(String attributeName) {
-		checkSessionInvalid();
+		if (this.invalid) {
+			return;
+		}
 		sessionAttribute.removeAttribute(attributeName);
 	}
 
@@ -151,11 +154,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void invalidate() {
-		setInvalid(true);
-	}
-
-	private void setInvalid(boolean invalid) {
-		this.invalid = invalid;
+		this.invalid = true;
 	}
 
 	/**
@@ -163,21 +162,18 @@ public class CacheHttpSession implements HttpSession {
 	 * @return true超过，false没有超过。
 	 */
 	public boolean isInvalid() {
-		if (invalid) {
-			return invalid;
-		} else {
+		if (!this.invalid) {
 			int mii = SessionConf.getInstance().getMaxInactiveInterval();
 			if (mii <= 0) {
-				setInvalid(false);
+				this.invalid = false;
 			} else {
 				long invalidMillis = mii * 60 * 1000;
 				long lastAccessTime = getLastAccessedTime();
 				long now = Calendar.getInstance().getTimeInMillis();
-				setInvalid((now - lastAccessTime) > invalidMillis);
+				this.invalid = (now - lastAccessTime) > invalidMillis;
 			}
-
-			return invalid;
 		}
+		return this.invalid;
 	}
 
 	/**
@@ -186,7 +182,9 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public boolean isNew() {
-		checkSessionInvalid();
+		if (this.invalid) {
+			return false;
+		}
 		return sessionAttribute.isNewBuild();
 	}
 
@@ -204,13 +202,13 @@ public class CacheHttpSession implements HttpSession {
 		CacheHttpSession other = (CacheHttpSession) obj;
 		if (id == null && other.id == null) {
 			return true;
-		} if (id != null && other.id != null) {
+		} else if (id != null && other.id != null) {
 			return id.equals(other.id);
 		}
 		return false;
 	}
 
-	public void removeSessionFromCache(){
+	public void removeSessionFromCache() {
 		ProxySessionCache.remove(fullSessionId);
 		if (sessionIdKey != null) {
 			ProxySessionCache.remove(sessionIdKey);
@@ -278,18 +276,6 @@ public class CacheHttpSession implements HttpSession {
 			sessionAttribute.setNewBuild(false);
 		}
 	}
-
-
-	/**
-	 * 判断当前Session是否已经失效.
-	 * @throws IllegalStateException Session已经失效的异常.
-	 */
-	private void checkSessionInvalid() throws IllegalStateException {
-		if (invalid) {
-			throw new IllegalStateException("Session is invalid.");
-		}
-	}
-
 
 	@Override
 	public Enumeration<String> getAttributeNames() {

@@ -1,6 +1,7 @@
 package com.assist4j.http.response;
 
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.http.Header;
 import javax.servlet.http.Cookie;
 import java.util.List;
@@ -45,5 +46,10 @@ public class ErrorHttpResponse<B> implements HttpResponse<B> {
 	@Override
 	public String getContentType() {
 		return null;
+	}
+
+	@Override
+	public String toString() {
+		return JSONObject.toJSONString(this);
 	}
 }
