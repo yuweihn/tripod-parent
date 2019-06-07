@@ -187,7 +187,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 
 	private void registerBeans() {
 		SequenceBeanHolder sequenceBeanHolder = beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
-		Map<String, String> beanSeqMap = sequenceBeanHolder.getBeanSeqNameMap();
+		Map<String, String> beanSeqMap = sequenceBeanHolder.getSequence();
 		if (beanSeqMap == null || beanSeqMap.isEmpty()) {
 			return;
 		}
