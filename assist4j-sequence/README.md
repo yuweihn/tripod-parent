@@ -12,8 +12,8 @@ For example:
 		primary      key(segment, name)
 	) engine=innodb default charset=utf8;
 ------------------------------------------------------------------------------------------------------------------
-	spring:
-	  beanSeqNameMap:
+	assist4j:
+	  sequence:
 	    seqAppKeySecret: seq_app_key_secret
 	    seqFeedback: seq_feedback
 	    seqFeedbackPic: seq_feedback_pic
@@ -44,14 +44,14 @@ For example:
 	}
 
 	@Bean(name = "sequenceBeanHolder")
-    @ConfigurationProperties(prefix = "spring", ignoreUnknownFields = true)
+    @ConfigurationProperties(prefix = "assist4j", ignoreUnknownFields = true)
     public SequenceBeanHolder sequenceBeanHolder() {
         return new SequenceBeanHolder() {
-            private Map<String, String> beanSeqNameMap = new HashMap<String, String>();
+            private Map<String, String> sequence = new HashMap<String, String>();
             
             @Override
             public Map<String, String> getBeanSeqNameMap() {
-                return beanSeqNameMap;
+                return sequence;
             }
         };
     }
