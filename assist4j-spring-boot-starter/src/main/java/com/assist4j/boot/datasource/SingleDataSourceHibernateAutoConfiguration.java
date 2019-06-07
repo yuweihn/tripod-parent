@@ -109,7 +109,7 @@ public class SingleDataSourceHibernateAutoConfiguration {
 			private Map<String, String> sequence = new HashMap<String, String>();
 
 			@Override
-			public Map<String, String> getBeanSeqNameMap() {
+			public Map<String, String> getSequence() {
 				return sequence;
 			}
 		};
