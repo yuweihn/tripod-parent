@@ -28,7 +28,7 @@ import java.io.IOException;
 public class SingleDataSourceMybatisConf {
 	@ConditionalOnMissingBean(name = "mapperLocations")
 	@Bean(name = "mapperLocations")
-	public Resource[] mapperLocations(@Value("${mybatis.mapper.locationPattern:}") String locationPattern) throws IOException {
+	public Resource[] mapperLocations(@Value("${assist4j.mybatis.mapper.locationPattern:}") String locationPattern) throws IOException {
 		if (locationPattern == null || "".equals(locationPattern)) {
 			return new Resource[0];
 		}
