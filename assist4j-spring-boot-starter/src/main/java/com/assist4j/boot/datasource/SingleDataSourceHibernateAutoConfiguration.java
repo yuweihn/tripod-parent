@@ -82,13 +82,13 @@ public class SingleDataSourceHibernateAutoConfiguration {
 	@ConditionalOnMissingBean(name = "sequenceDao")
 	@Bean(name = "sequenceDao", initMethod = "init", destroyMethod = "destroy")
 	public SequenceDao sequenceDao(@Qualifier("dataSource") DataSource dataSource
-			, @Value("${global.sequence.innerStep:100}") int innerStep
-			, @Value("${global.sequence.retryTimes:5}") int retryTimes
-			, @Value("${global.sequence.segmentCount:1}") int segmentCount
-			, @Value("${global.sequence.maxSkipCount:5}") int maxSkipCount
-			, @Value("${global.sequence.maxWaitMillis:5000}") long maxWaitMillis
-			, @Value("${global.sequence.ruleClassName:}") String ruleClassName
-			, @Value("${global.sequence.tableName:sequence}") String tableName) {
+			, @Value("${assist4j.sequence-setting.innerStep:100}") int innerStep
+			, @Value("${assist4j.sequence-setting.retryTimes:5}") int retryTimes
+			, @Value("${assist4j.sequence-setting.segmentCount:1}") int segmentCount
+			, @Value("${assist4j.sequence-setting.maxSkipCount:5}") int maxSkipCount
+			, @Value("${assist4j.sequence-setting.maxWaitMillis:5000}") long maxWaitMillis
+			, @Value("${assist4j.sequence-setting.ruleClassName:}") String ruleClassName
+			, @Value("${assist4j.sequence-setting.tableName:sequence}") String tableName) {
 		SegmentSequenceDao sequenceDao = new SegmentSequenceDao();
 		sequenceDao.setDataSource(dataSource);
 		sequenceDao.setInnerStep(innerStep);
