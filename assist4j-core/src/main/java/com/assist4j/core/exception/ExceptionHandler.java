@@ -60,23 +60,18 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 	}
 
 	private String showMessage(Exception ex) {
+		Class<? extends Exception> aClz = ex.getClass();
 		String msg = ex.getMessage();
+		String defaultMsg = errorMsgMap == null ? null : errorMsgMap.get(aClz);
+
 		if (msg != null && !"".equals(msg)) {
 			return msg;
 		}
 
-		if (errorMsgMap != null) {
-			msg = errorMsgMap.get(ex.getClass());
-		}
-		if (msg != null && !"".equals(msg)) {
-			return msg;
+		if (defaultMsg != null && !"".equals(defaultMsg)) {
+			return defaultMsg;
 		}
 
-		msg = ex.getMessage();
-		if (msg != null && !"".equals(msg)) {
-			return msg;
-		}
-
-		return ex.getClass().getName();
+		return aClz.getName();
 	}
 }
