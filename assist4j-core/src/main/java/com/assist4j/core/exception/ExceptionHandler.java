@@ -60,7 +60,11 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 	}
 
 	private String showMessage(Exception ex) {
-		String msg = null;
+		String msg = ex.getMessage();
+		if (msg != null && !"".equals(msg)) {
+			return msg;
+		}
+
 		if (errorMsgMap != null) {
 			msg = errorMsgMap.get(ex.getClass());
 		}
