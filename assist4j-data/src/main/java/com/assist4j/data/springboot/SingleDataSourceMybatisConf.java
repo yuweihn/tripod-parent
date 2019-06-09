@@ -39,7 +39,7 @@ public class SingleDataSourceMybatisConf {
 
 	@ConditionalOnMissingBean(name = "basePackage")
 	@Bean(name = "basePackage")
-	public String basePackage(@Value("${mybatis.basePackage:}") String basePackage) {
+	public String basePackage(@Value("${assist4j.mybatis.basePackage:}") String basePackage) {
 		return basePackage;
 	}
 
