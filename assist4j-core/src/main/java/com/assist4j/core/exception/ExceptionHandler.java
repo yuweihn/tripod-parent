@@ -47,7 +47,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 
 	private ModelAndView createJsonView(Exception ex) {
 		FastJsonJsonView view = new FastJsonJsonView();
-		Map<String, Object> attributes = JsonUtil.objectToMap(new Response<Void>(Response.CODE_FAILURE, showMessage(ex)));
+		Map<String, Object> attributes = JsonUtil.objectToMap(new Response<Void>(Response.CODE_FAILURE, showMessage(ex), null));
 		view.setAttributesMap(attributes);
 		return new ModelAndView(view);
 	}
@@ -65,11 +65,11 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 		String defaultMsg = errorMsgMap == null ? null : errorMsgMap.get(aClz);
 
 		if (msg != null && !"".equals(msg)) {
-			return msg;
+			return aClz.getName() + ": " + msg;
 		}
 
 		if (defaultMsg != null && !"".equals(defaultMsg)) {
-			return defaultMsg;
+			return aClz.getName() + ": " + defaultMsg;
 		}
 
 		return aClz.getName();
