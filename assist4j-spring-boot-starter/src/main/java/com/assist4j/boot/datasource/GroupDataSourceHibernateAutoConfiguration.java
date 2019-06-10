@@ -78,7 +78,7 @@ public class GroupDataSourceHibernateAutoConfiguration {
 	@ConditionalOnMissingBean(name = "dsClusterList")
 	@Bean(name = "dsClusterList")
 	public List<DataSourceCluster> dsClusterList(@Qualifier("ds-master") DataSource dataSourceMaster
-			, @Value("${ds.cluster.master.key}") String masterKey) {
+			, @Value("${assist4j.ds.cluster.master.key}") String masterKey) {
 		List<DataSourceCluster> dsClusterList = new ArrayList<DataSourceCluster>();
 		DataSourceCluster dsCluster = new DataSourceCluster();
 		dsCluster.setKey(masterKey);
