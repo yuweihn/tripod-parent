@@ -14,11 +14,11 @@ import org.springframework.context.annotation.Bean;
  */
 public class SmtpConf {
 	@Bean(name = "defaultEmailSender")
-	public EmailSender<Mail> defaultSender(@Value("${smtp.server}") String server
-			, @Value("${smtp.ssl.port}") int sslPort
-			, @Value("${smtp.auth}") boolean auth
-			, @Value("${smtp.user}") String user
-			, @Value("${smtp.password}") String password) {
+	public EmailSender<Mail> defaultSender(@Value("${assist4j.smtp.server}") String server
+			, @Value("${assist4j.smtp.ssl.port}") int sslPort
+			, @Value("${assist4j.smtp.auth}") boolean auth
+			, @Value("${assist4j.smtp.user}") String user
+			, @Value("${assist4j.smtp.password}") String password) {
 		DefaultEmailSender defaultSender = new DefaultEmailSender();
 		defaultSender.setServer(server);
 		defaultSender.setSslPort(sslPort);
