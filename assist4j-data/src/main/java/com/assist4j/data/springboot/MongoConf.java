@@ -22,22 +22,22 @@ import java.util.List;
 public class MongoConf {
 
 	@Bean(name = "mongoSeeds")
-	public List<ServerAddress> mongoSeeds(@Value("${mongo.host}") String host
-			, @Value("${mongo.port}") int port) {
+	public List<ServerAddress> mongoSeeds(@Value("${assist4j.mongo.host}") String host
+			, @Value("${assist4j.mongo.port}") int port) {
 		List<ServerAddress> seeds = new ArrayList<ServerAddress>();
 		seeds.add(new ServerAddress(host, port));
 		return seeds;
 	}
 
 	@Bean(name = "mongoCredential")
-	public MongoCredential mongoCredentialList(@Value("${mongo.user.name}") String userName
-			, @Value("${mongo.password}") String password
-			, @Value("${mongo.auth.dbname}") String authDbName) {
+	public MongoCredential mongoCredentialList(@Value("${assist4j.mongo.user.name}") String userName
+			, @Value("${assist4j.mongo.password}") String password
+			, @Value("${assist4j.mongo.auth.dbname}") String authDbName) {
 		return MongoCredential.createScramSha1Credential(userName, authDbName, password.toCharArray());
 	}
 
 	@Bean(name = "mongo")
-	public MongoClientFactory mongoClientFactory(@Value("${mongo.need.auth}") boolean needAuth
+	public MongoClientFactory mongoClientFactory(@Value("${assist4j.mongo.need.auth}") boolean needAuth
 			, @Qualifier("mongoSeeds") List<ServerAddress> seeds
 			, @Qualifier("mongoCredential") MongoCredential credential) {
 		MongoClientFactory mongoClientFactory = new MongoClientFactory(needAuth, seeds, credential);
@@ -45,7 +45,7 @@ public class MongoConf {
 	}
 
 	@Bean(name = "mongoDbFactory")
-	public MongoDbFactory mongoDbFactory(@Value("${mongo.db}") String databaseName
+	public MongoDbFactory mongoDbFactory(@Value("${assist4j.mongo.db}") String databaseName
 			, @Qualifier("mongo") MongoClient mongoClient) {
 		return new SimpleMongoDbFactory(mongoClient, databaseName);
 	}
