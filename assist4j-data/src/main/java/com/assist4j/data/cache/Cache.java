@@ -54,7 +54,7 @@ public interface Cache {
 	 * @param key
 	 * @param field
 	 * @param value
-	 * @param expiredTime 过期时间(s)。
+	 * @param expiredTime key的过期时间(s)。
 	 * @param <T>
 	 */
 	<T>void hset(String key, String field, T value, long expiredTime);
