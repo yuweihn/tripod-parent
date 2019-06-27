@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,13 +22,13 @@ import java.util.Set;
 public class ExceptionAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(HandlerExceptionResolver.class)
-    public HandlerExceptionResolver handlerExceptionResolver(@Value("${assist4j.boot.exception.error-page:}") String errorPage
+    @ConditionalOnMissingBean(ExceptionHandler.class)
+    public ExceptionHandler exceptionHandler(@Value("${assist4j.boot.exception.error-page:}") String errorPage
             , ClassMessagePair classMessagePair) {
         Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
 
-        Map<String, String> classMessageMap = null;
-        if (classMessagePair != null && (classMessageMap = classMessagePair.getClassMessageMap()) != null) {
+        Map<String, String> classMessageMap = classMessagePair.getClassMessageMap();
+        if (classMessageMap != null) {
             Set<Map.Entry<String, String>> entrySet = classMessageMap.entrySet();
             for (Map.Entry<String, String> entry: entrySet) {
                 try {
