@@ -18,7 +18,6 @@ import javax.mail.internet.MimeMultipart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.assist4j.core.Response;
 import com.assist4j.core.Constant;
 
 
@@ -38,7 +37,7 @@ public class DefaultEmailSender implements EmailSender<Mail> {
 
 
 	@Override
-	public Response<Void> send(Mail mail) {
+	public boolean send(Mail mail) {
 		Properties props = System.getProperties();
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
@@ -85,11 +84,10 @@ public class DefaultEmailSender implements EmailSender<Mail> {
 
 			msg.setContent(mp);
 			Transport.send(msg);
-			return new Response<Void>(Response.CODE_SUCCESS, "ok");
+			return true;
 		} catch (Exception e) {
 			log.error("[Error=={}, Receiver=={}]", e.getMessage(), mail.getReceiverEmail());
-			log.error("", e);
-			return new Response<Void>(Response.CODE_FAILURE, e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 

@@ -1,7 +1,6 @@
 package com.assist4j.core.mail;
 
 
-import com.assist4j.core.Response;
 
 
 /**
@@ -9,5 +8,5 @@ import com.assist4j.core.Response;
  * @author yuwei
  */
 public interface EmailSender<T> {
-	Response<Void> send(T mail);
+	boolean send(T mail);
 }

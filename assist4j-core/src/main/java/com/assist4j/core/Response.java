@@ -17,7 +17,7 @@ public class Response<T> implements Serializable {
 	private T data;
 
 	public Response() {
-		this(CODE_FAILURE, "");
+
 	}
 	public Response(String code, String msg) {
 		this(code, msg, null);
@@ -28,16 +28,8 @@ public class Response<T> implements Serializable {
 		this.data = data;
 	}
 
-	/**
-	 * 操作成功
-	 */
-	public static final String CODE_SUCCESS = "0000";
-	/**
-	 * 操作失败
-	 */
-	public static final String CODE_FAILURE = "9999";
-
-	public String toJson() {
+	@Override
+	public String toString() {
 		return JsonUtil.toJson(this);
 	}
 
