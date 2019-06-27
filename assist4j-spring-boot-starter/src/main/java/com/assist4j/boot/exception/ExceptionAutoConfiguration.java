@@ -2,7 +2,6 @@ package com.assist4j.boot.exception;
 
 
 import com.assist4j.core.exception.ExceptionHandler;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,11 +25,11 @@ public class ExceptionAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(HandlerExceptionResolver.class)
     public HandlerExceptionResolver handlerExceptionResolver(@Value("${assist4j.boot.exception.error-page:}") String errorPage
-            , @Qualifier("exceptionClassAndMessage") ExceptionClassAndMessage exceptionClassAndMessage) {
+            , ClassMessagePair classMessagePair) {
         Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
 
         Map<String, String> classMessageMap = null;
-        if (exceptionClassAndMessage != null && (classMessageMap = exceptionClassAndMessage.getClassMessageMap()) != null) {
+        if (classMessagePair != null && (classMessageMap = classMessagePair.getClassMessageMap()) != null) {
             Set<Map.Entry<String, String>> entrySet = classMessageMap.entrySet();
             for (Map.Entry<String, String> entry: entrySet) {
                 try {
@@ -46,11 +45,11 @@ public class ExceptionAutoConfiguration {
         return exceptionHandler;
     }
 
-    @ConditionalOnMissingBean(name = "exceptionClassAndMessage")
-    @Bean(name = "exceptionClassAndMessage")
+    @Bean
+    @ConditionalOnMissingBean(ClassMessagePair.class)
     @ConfigurationProperties(prefix = "assist4j.boot.exception", ignoreUnknownFields = true)
-    public ExceptionClassAndMessage exceptionClassAndMessage() {
-        return new ExceptionClassAndMessage() {
+    public ClassMessagePair classMessagePair() {
+        return new ClassMessagePair() {
             private Map<String, String> classMessageMap = new HashMap<String, String>();
 
             @Override
@@ -58,9 +57,5 @@ public class ExceptionAutoConfiguration {
                 return classMessageMap;
             }
         };
-    }
-
-    private interface ExceptionClassAndMessage {
-        Map<String, String> getClassMessageMap();
     }
 }
