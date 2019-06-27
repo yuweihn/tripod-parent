@@ -23,8 +23,8 @@ import java.util.Set;
 @ConditionalOnProperty(name = "assist4j.boot.exception.enabled")
 public class ExceptionAutoConfiguration {
 
-    @ConditionalOnMissingBean(name = "exceptionHandler")
-    @Bean(name = "exceptionHandler")
+    @Bean
+    @ConditionalOnMissingBean(HandlerExceptionResolver.class)
     public HandlerExceptionResolver handlerExceptionResolver(@Value("${assist4j.boot.exception.error-page:}") String errorPage
             , @Qualifier("exceptionClassAndMessage") ExceptionClassAndMessage exceptionClassAndMessage) {
         Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
@@ -39,7 +39,6 @@ public class ExceptionAutoConfiguration {
                 }
             }
         }
-
 
         ExceptionHandler exceptionHandler = new ExceptionHandler();
         exceptionHandler.setErrorPage(errorPage);
