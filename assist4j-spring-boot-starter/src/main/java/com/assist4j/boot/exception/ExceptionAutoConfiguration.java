@@ -2,7 +2,7 @@ package com.assist4j.boot.exception;
 
 
 import com.assist4j.core.exception.ExceptionHandler;
-import org.springframework.beans.factory.annotation.Value;
+import com.assist4j.core.exception.ExceptionViewResolver;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -23,8 +23,7 @@ public class ExceptionAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(ExceptionHandler.class)
-    public ExceptionHandler exceptionHandler(@Value("${assist4j.boot.exception.error-page:}") String errorPage
-            , ClassMessagePair classMessagePair) {
+    public ExceptionHandler exceptionHandler(ClassMessagePair classMessagePair, ExceptionViewResolver viewResolver) {
         Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
 
         Map<String, String> classMessageMap = classMessagePair.getClassMessageMap();
@@ -39,7 +38,7 @@ public class ExceptionAutoConfiguration {
         }
 
         ExceptionHandler exceptionHandler = new ExceptionHandler();
-        exceptionHandler.setErrorPage(errorPage);
+        exceptionHandler.setViewResolver(viewResolver);
         exceptionHandler.setErrorMsgMap(errorMsgMap);
         return exceptionHandler;
     }
