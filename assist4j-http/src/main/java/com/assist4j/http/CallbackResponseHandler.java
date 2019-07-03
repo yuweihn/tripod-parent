@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 
+import com.alibaba.fastjson.TypeReference;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -30,21 +31,27 @@ import com.alibaba.fastjson.JSONObject;
  * @author yuwei
  */
 public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? extends Object>> {
-	private Class<?> bodyClass;
+	private Class<?> typeClass;
+	private TypeReference<?> typeReference;
 	private HttpClientContext context;
 	private String charset;
 
 
 	private CallbackResponseHandler() {
-		this.bodyClass = String.class;
+		this.typeClass = String.class;
 	}
 
 	public static CallbackResponseHandler create() {
 		return new CallbackResponseHandler();
 	}
 
-	public CallbackResponseHandler initBodyClass(Class<?> bodyClass) {
-		this.bodyClass = bodyClass;
+	public CallbackResponseHandler initResponseType(Class<?> typeClass) {
+		this.typeClass = typeClass;
+		return this;
+	}
+
+	public CallbackResponseHandler initResponseType(TypeReference<?> typeReference) {
+		this.typeReference = typeReference;
 		return this;
 	}
 
@@ -120,22 +127,25 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 
 		String errorMessage = statusLine.toString();
 		Object body = null;
-		if (bodyClass == null || String.class.isAssignableFrom(bodyClass)) {
+		if (typeReference != null) {
+			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+			body = JSONObject.parseObject(txt, typeReference);
+		} else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
 			/**
 			 * 返回字符串类型
 			 **/
 			body = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-		} else if (byte[].class.isAssignableFrom(bodyClass)) {
+		} else if (byte[].class.isAssignableFrom(typeClass)) {
 			/**
 			 * 返回字节数组类型
 			 **/
 			body = read(entity.getContent());
-		} else if (Decoder.class.isAssignableFrom(bodyClass)) {
+		} else if (Decoder.class.isAssignableFrom(typeClass)) {
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 			try {
-				Constructor<?> constructor = bodyClass.getDeclaredConstructor();
+				Constructor<?> constructor = typeClass.getDeclaredConstructor();
 				constructor.setAccessible(true);
-				Decoder decoder = (Decoder) constructor.newInstance();
+				Decoder<?> decoder = (Decoder<?>) constructor.newInstance();
 				body = decoder.decode(txt);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
@@ -145,10 +155,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			 * 返回指定的其它类型
 			 **/
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-			try {
-				body = JSONObject.parseObject(txt, bodyClass);
-			} catch (Exception e) {
-			}
+			body = JSONObject.parseObject(txt, typeClass);
 		}
 		return createBasicHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
 	}
