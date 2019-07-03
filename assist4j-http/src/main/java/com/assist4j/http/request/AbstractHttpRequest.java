@@ -4,6 +4,7 @@ package com.assist4j.http.request;
 import java.util.List;
 import javax.servlet.http.Cookie;
 
+import com.alibaba.fastjson.TypeReference;
 import com.assist4j.http.CallbackResponseHandler;
 import com.assist4j.http.DefaultHttpDelete;
 import com.assist4j.http.HttpContextAdaptor;
@@ -42,7 +43,8 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 	private HttpUriRequest httpUriRequest;
 	private String url;
 	private HttpMethod method;
-	private Class<?> responseBodyClass;
+	private Class<?> responseTypeClass;
+	private TypeReference<?> responseTypeReference;
 	private List<Cookie> cookieList;
 	private List<Header> headerList;
 	private LayeredConnectionSocketFactory sslSocketFactory;
@@ -58,7 +60,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 
 
 	protected AbstractHttpRequest() {
-		this.responseBodyClass = String.class;
+		this.responseTypeClass = String.class;
 	}
 
 	protected void setHttpUriRequest(HttpUriRequest httpUriRequest) {
@@ -85,8 +87,14 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initResponseBodyClass(Class<?> responseBodyClass) {
-		this.responseBodyClass = responseBodyClass;
+	public T initResponseType(Class<?> responseTypeClass) {
+		this.responseTypeClass = responseTypeClass;
+		return (T) this;
+	}
+
+	@SuppressWarnings("unchecked")
+	public T initResponseType(TypeReference<?> typeReference) {
+		this.responseTypeReference = typeReference;
 		return (T) this;
 	}
 
@@ -257,7 +265,8 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 
 		CloseableHttpClient client = builder.build();
 		CallbackResponseHandler handler = CallbackResponseHandler.create()
-																.initBodyClass(responseBodyClass)
+																.initResponseType(responseTypeClass)
+																.initResponseType(responseTypeReference)
 																.initContext(context)
 																.initCharset(charset);
 		try {
