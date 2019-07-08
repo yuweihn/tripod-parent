@@ -225,10 +225,10 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 			response.setHeader("Access-Control-Allow-Methods", StringUtils.collectionToCommaDelimitedString(allowedMethods));
 		}
 		if (!response.containsHeader("Access-Control-Allow-Headers")) {
-			response.setHeader("Access-Control-Allow-Headers", getAllowHeaders(request));
+			response.setHeader("Access-Control-Allow-Headers", getAllowedHeaders(request));
 		}
 	}
-	private String getAllowHeaders(HttpServletRequest request) {
+	private String getAllowedHeaders(HttpServletRequest request) {
 		Enumeration<String> headerNames = request.getHeaderNames();
 		StringBuilder builder = new StringBuilder("");
 		if (headerNames == null) {
@@ -238,9 +238,9 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		while (headerNames.hasMoreElements()) {
 			String headerName = headerNames.nextElement();
 			if (ACCESS_CONTROL_REQUEST_HEADERS.equalsIgnoreCase(headerName)) {
-				String allowHeaderStr = request.getHeader(headerName);
-				if (allowHeaderStr != null && !"".equals(allowHeaderStr.trim())) {
-					builder.append(allowHeaderStr).append(",");
+				String headerVal = request.getHeader(headerName);
+				if (headerVal != null && !"".equals(headerVal.trim())) {
+					builder.append(headerVal).append(",");
 				}
 			} else {
 				builder.append(headerName).append(",");
