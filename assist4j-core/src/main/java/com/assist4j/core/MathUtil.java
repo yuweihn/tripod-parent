@@ -131,4 +131,30 @@ public abstract class MathUtil {
 		distance = div(distance, 1.0, 3);
 		return distance;
 	}
+
+	/**
+	 * 取下一个素数
+	 */
+	public static int findNextPrime(int n) {
+		if (n < 2) {
+			return 2;
+		}
+
+		int next = n + 1;
+		do {
+			int sqrt = (int) Math.sqrt(next);
+			int i = 2;
+			for (; i <= sqrt; i++) {
+				if (next % i == 0) {
+					break;
+				}
+			}
+
+			if (i > sqrt) {
+				return next;
+			} else {
+				next++;
+			}
+		} while (true);
+	}
 }
