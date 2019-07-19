@@ -33,14 +33,14 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 	private HttpFormRequest() {
 		super();
 		fieldList = new ArrayList<FormField>();
-		initMethod(HttpMethod.GET);
+		method(HttpMethod.GET);
 	}
 	public static HttpFormRequest create() {
 		return new HttpFormRequest();
 	}
 
 
-	public HttpFormRequest initFieldList(Map<String, ? extends Object> map) {
+	public HttpFormRequest fieldList(Map<String, ? extends Object> map) {
 		if (map == null || map.isEmpty()) {
 			return this;
 		}
@@ -54,9 +54,9 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 			}
 			fieldList.add(new FormField(key, value));
 		}
-		return initFieldList(fieldList);
+		return fieldList(fieldList);
 	}
-	public HttpFormRequest initFieldList(List<FormField> fieldList) {
+	public HttpFormRequest fieldList(List<FormField> fieldList) {
 		this.fieldList.clear();
 		this.fieldList.addAll(fieldList);
 		return this;

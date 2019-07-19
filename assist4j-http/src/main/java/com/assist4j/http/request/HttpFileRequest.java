@@ -29,7 +29,7 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 		super();
 		fileFieldList = new ArrayList<FileField>();
 		formFieldList = new ArrayList<FormField>();
-		initMethod(HttpMethod.POST);
+		method(HttpMethod.POST);
 	}
 	public static HttpFileRequest create() {
 		return new HttpFileRequest();
@@ -55,7 +55,7 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 		return this;
 	}
 
-	public HttpFileRequest initFormFieldList(Map<String, ? extends Object> map) {
+	public HttpFileRequest formFieldList(Map<String, ? extends Object> map) {
 		if (map == null || map.isEmpty()) {
 			return this;
 		}
@@ -69,9 +69,9 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 			}
 			formFieldList.add(new FormField(key, value));
 		}
-		return initFormFieldList(formFieldList);
+		return formFieldList(formFieldList);
 	}
-	public HttpFileRequest initFormFieldList(List<FormField> formFieldList) {
+	public HttpFileRequest formFieldList(List<FormField> formFieldList) {
 		this.formFieldList.clear();
 		this.formFieldList.addAll(formFieldList);
 		return this;
