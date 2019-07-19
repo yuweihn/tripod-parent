@@ -42,22 +42,22 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		return new CallbackResponseHandler();
 	}
 
-	public CallbackResponseHandler initResponseType(Class<?> typeClass) {
+	public CallbackResponseHandler responseType(Class<?> typeClass) {
 		this.typeClass = typeClass;
 		return this;
 	}
 
-	public CallbackResponseHandler initResponseType(TypeReference<?> typeReference) {
+	public CallbackResponseHandler responseType(TypeReference<?> typeReference) {
 		this.typeReference = typeReference;
 		return this;
 	}
 
-	public CallbackResponseHandler initContext(HttpClientContext context) {
+	public CallbackResponseHandler context(HttpClientContext context) {
 		this.context = context;
 		return this;
 	}
 
-	public CallbackResponseHandler initCharset(String charset) {
+	public CallbackResponseHandler charset(String charset) {
 		this.charset = charset;
 		return this;
 	}

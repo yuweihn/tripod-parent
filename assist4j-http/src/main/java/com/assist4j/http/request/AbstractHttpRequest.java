@@ -69,7 +69,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 
 
 	@SuppressWarnings("unchecked")
-	public T initUrl(String url) {
+	public T url(String url) {
 		this.url = url;
 		return (T) this;
 	}
@@ -78,7 +78,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initMethod(HttpMethod method) {
+	public T method(HttpMethod method) {
 		this.method = method;
 		return (T) this;
 	}
@@ -87,85 +87,85 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initResponseType(Class<?> responseTypeClass) {
+	public T responseType(Class<?> responseTypeClass) {
 		this.responseTypeClass = responseTypeClass;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initResponseType(TypeReference<?> typeReference) {
+	public T responseType(TypeReference<?> typeReference) {
 		this.responseTypeReference = typeReference;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initCookieList(List<Cookie> cookieList) {
+	public T cookieList(List<Cookie> cookieList) {
 		this.cookieList = cookieList;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initHeaderList(List<Header> headerList) {
+	public T headerList(List<Header> headerList) {
 		this.headerList = headerList;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initSslSocketFactory(LayeredConnectionSocketFactory sslSocketFactory) {
+	public T sslSocketFactory(LayeredConnectionSocketFactory sslSocketFactory) {
 		this.sslSocketFactory = sslSocketFactory;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initConnectionKeepAliveStrategy(ConnectionKeepAliveStrategy keepAliveStrategy) {
+	public T connectionKeepAliveStrategy(ConnectionKeepAliveStrategy keepAliveStrategy) {
 		this.keepAliveStrategy = keepAliveStrategy;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initRequestConfig(RequestConfig requestConfig) {
+	public T requestConfig(RequestConfig requestConfig) {
 		this.requestConfig = requestConfig;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initRetryHandler(HttpRequestRetryHandler retryHandler) {
+	public T retryHandler(HttpRequestRetryHandler retryHandler) {
 		this.retryHandler = retryHandler;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initRedirectStrategy(RedirectStrategy redirectStrategy) {
+	public T redirectStrategy(RedirectStrategy redirectStrategy) {
 		this.redirectStrategy = redirectStrategy;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initFirstRequestInterceptorList(List<HttpRequestInterceptor> firstRequestInterceptorList) {
+	public T firstRequestInterceptorList(List<HttpRequestInterceptor> firstRequestInterceptorList) {
 		this.firstRequestInterceptorList = firstRequestInterceptorList;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initLastRequestInterceptorList(List<HttpRequestInterceptor> lastRequestInterceptorList) {
+	public T lastRequestInterceptorList(List<HttpRequestInterceptor> lastRequestInterceptorList) {
 		this.lastRequestInterceptorList = lastRequestInterceptorList;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initFirstResponseInterceptorList(List<HttpResponseInterceptor> firstResponseInterceptorList) {
+	public T firstResponseInterceptorList(List<HttpResponseInterceptor> firstResponseInterceptorList) {
 		this.firstResponseInterceptorList = firstResponseInterceptorList;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initLastResponseInterceptorList(List<HttpResponseInterceptor> lastResponseInterceptorList) {
+	public T lastResponseInterceptorList(List<HttpResponseInterceptor> lastResponseInterceptorList) {
 		this.lastResponseInterceptorList = lastResponseInterceptorList;
 		return (T) this;
 	}
 
 	@SuppressWarnings("unchecked")
-	public T initCharset(String charset) {
+	public T charset(String charset) {
 		this.charset = charset;
 		return (T) this;
 	}
@@ -265,10 +265,10 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 
 		CloseableHttpClient client = builder.build();
 		CallbackResponseHandler handler = CallbackResponseHandler.create()
-																.initResponseType(responseTypeClass)
-																.initResponseType(responseTypeReference)
-																.initContext(context)
-																.initCharset(charset);
+																.responseType(responseTypeClass)
+																.responseType(responseTypeReference)
+																.context(context)
+																.charset(charset);
 		try {
 			return (HttpResponse<B>) client.execute(httpUriRequest, handler, context);
 		} catch (Exception e) {

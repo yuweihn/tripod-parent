@@ -20,19 +20,19 @@ public class HttpBodyRequest extends AbstractHttpRequest<HttpBodyRequest> {
 
 	private HttpBodyRequest() {
 		super();
-		initContentType(ContentType.TEXT_PLAIN);
-		initMethod(HttpMethod.POST);
+		contentType(ContentType.TEXT_PLAIN);
+		method(HttpMethod.POST);
 	}
 	public static HttpBodyRequest create() {
 		return new HttpBodyRequest();
 	}
 
 
-	public HttpBodyRequest initContent(String content) {
+	public HttpBodyRequest content(String content) {
 		this.content = content;
 		return this;
 	}
-	public HttpBodyRequest initContentType(ContentType contentType) {
+	public HttpBodyRequest contentType(ContentType contentType) {
 		this.contentType = contentType;
 		return this;
 	}
