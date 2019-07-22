@@ -170,7 +170,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		this.beanFactory = (DefaultListableBeanFactory)beanFactory;
+		this.beanFactory = (DefaultListableBeanFactory) beanFactory;
 	}
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
