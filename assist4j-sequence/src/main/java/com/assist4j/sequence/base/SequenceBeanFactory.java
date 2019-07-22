@@ -59,7 +59,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		this(sequenceClass.getName(), sequenceBeanHolderBeanName);
 	}
 	public SequenceBeanFactory(String sequenceClassName, String sequenceBeanHolderBeanName) {
-		this(sequenceClassName, null,null, sequenceBeanHolderBeanName);
+		this(sequenceClassName, null, null, sequenceBeanHolderBeanName);
 	}
 	public SequenceBeanFactory(String sequenceClassName, String fieldSeqName, String fieldMinValue, String sequenceBeanHolderBeanName) {
 		this(sequenceClassName, null, null, fieldSeqName, fieldMinValue, sequenceBeanHolderBeanName, null, null);
