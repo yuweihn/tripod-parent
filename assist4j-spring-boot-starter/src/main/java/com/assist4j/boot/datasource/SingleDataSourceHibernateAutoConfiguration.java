@@ -35,7 +35,7 @@ public class SingleDataSourceHibernateAutoConfiguration {
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
 	public DruidDataSource druidDataSourceMaster(@Value("${jdbc.driver.class}") String driverClassName
 			, @Value("${jdbc.url}") String url
-			, @Value("${jdbc.username}") String userName
+			, @Value("${jdbc.userName}") String userName
 			, @Value("${jdbc.password}") String password
 			, @Value("${jdbc.default.read.only:false}") boolean defaultReadOnly
 			, @Value("${jdbc.filters:stat}") String filters
