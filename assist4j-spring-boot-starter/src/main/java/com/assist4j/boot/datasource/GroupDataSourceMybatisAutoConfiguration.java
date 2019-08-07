@@ -32,7 +32,7 @@ public class GroupDataSourceMybatisAutoConfiguration {
 	@Bean(name = "ds-master", initMethod = "init", destroyMethod = "close")
 	public DruidDataSource druidDataSourceMaster(@Value("${master.jdbc.driver.class}") String driverClassName
 			, @Value("${master.jdbc.url}") String url
-			, @Value("${master.jdbc.username}") String userName
+			, @Value("${master.jdbc.userName}") String userName
 			, @Value("${master.jdbc.password}") String password
 			, @Value("${master.jdbc.default.read.only:false}") boolean defaultReadOnly
 			, @Value("${master.jdbc.filters:stat}") String filters

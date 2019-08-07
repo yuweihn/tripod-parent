@@ -28,7 +28,7 @@ import java.util.*;
 public abstract class AbstractFilter<R extends HttpServletRequest, T extends HttpServletResponse> extends OncePerRequestFilter {
 	private static final Logger log = LoggerFactory.getLogger(AbstractFilter.class);
 
-
+	private static final String ACCESS_CONTROL_REQUEST_HEADERS = "access-control-request-headers";
 	private static final String DEFAULT_METHOD_PARAM = "_method";
 	private static final String DEFAULT_ENCODING = Constant.ENCODING_UTF_8;
 	private static final String DEFAULT_STATIC_PATH = "/static/";
@@ -225,8 +225,28 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 			response.setHeader("Access-Control-Allow-Methods", StringUtils.collectionToCommaDelimitedString(allowedMethods));
 		}
 		if (!response.containsHeader("Access-Control-Allow-Headers")) {
-			response.setHeader("Access-Control-Allow-Headers", "*");
+			response.setHeader("Access-Control-Allow-Headers", getAllowedHeaders(request));
 		}
+	}
+	private String getAllowedHeaders(HttpServletRequest request) {
+		Enumeration<String> headerNames = request.getHeaderNames();
+		StringBuilder builder = new StringBuilder("");
+		if (headerNames == null) {
+			return "*";
+		}
+
+		while (headerNames.hasMoreElements()) {
+			String headerName = headerNames.nextElement();
+			if (ACCESS_CONTROL_REQUEST_HEADERS.equalsIgnoreCase(headerName)) {
+				String headerVal = request.getHeader(headerName);
+				if (headerVal != null && !"".equals(headerVal.trim())) {
+					builder.append(headerVal).append(",");
+				}
+			} else {
+				builder.append(headerName).append(",");
+			}
+		}
+		return builder.deleteCharAt(builder.length() - 1).toString();
 	}
 
 
