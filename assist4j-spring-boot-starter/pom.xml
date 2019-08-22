@@ -17,6 +17,7 @@
 		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
 		<maven.compiler.encoding>utf-8</maven.compiler.encoding>
 		<druid.version>1.1.10</druid.version>
+        <fastjson.version>1.2.47</fastjson.version>
 		<freemarker.version>2.3.28</freemarker.version>
 		<jdk.version>1.7</jdk.version>
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
@@ -92,6 +93,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
 
 		<dependency>
