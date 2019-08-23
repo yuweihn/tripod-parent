@@ -1,9 +1,12 @@
 package com.assist4j.boot.exception;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.FastJsonJsonView;
+import com.assist4j.core.Response;
 import com.assist4j.core.exception.ExceptionHandler;
 import com.assist4j.core.exception.ExceptionViewResolver;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -24,14 +27,13 @@ import java.util.Set;
 public class ExceptionAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(ExceptionViewResolver.class)
-    public ExceptionViewResolver viewResolver() {
+    public ExceptionViewResolver viewResolver(@Value("${assist4j.boot.exception.errorCode:500}")final String errorCode) {
         return new ExceptionViewResolver() {
             @Override
             public ModelAndView createView(String content) {
                 FastJsonJsonView view = new FastJsonJsonView();
-                Map<String, Object> attributes = new HashMap<String, Object>();
-                attributes.put("code", "500");
-                attributes.put("msg", content);
+                String text = JSONObject.toJSONString(new Response<Void>(errorCode, content));
+                Map<String, Object> attributes = JSONObject.parseObject(text, Map.class);
                 view.setAttributesMap(attributes);
                 return new ModelAndView(view);
             }
