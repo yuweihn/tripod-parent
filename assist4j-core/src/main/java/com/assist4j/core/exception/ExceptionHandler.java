@@ -19,6 +19,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 	private static final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
 	private ExceptionViewResolver viewResolver;
 	private Map<Class<?>, String> errorMsgMap;
+	private boolean showExceptionName = true;
 
 	public void setViewResolver(ExceptionViewResolver viewResolver) {
 		this.viewResolver = viewResolver;
@@ -26,6 +27,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 
 	public void setErrorMsgMap(Map<Class<?>, String> errorMsgMap) {
 		this.errorMsgMap = errorMsgMap;
+	}
+
+	public void setShowExceptionName(boolean showExceptionName) {
+		this.showExceptionName = showExceptionName;
 	}
 
 	@Override
@@ -41,11 +46,11 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 		String defaultMsg = errorMsgMap == null ? null : errorMsgMap.get(aClz);
 
 		if (msg != null && !"".equals(msg)) {
-			return aClz.getName() + ": " + msg;
+			return showExceptionName ? aClz.getName() + ": " + msg : msg;
 		}
 
 		if (defaultMsg != null && !"".equals(defaultMsg)) {
-			return aClz.getName() + ": " + defaultMsg;
+			return showExceptionName ? aClz.getName() + ": " + defaultMsg : defaultMsg;
 		}
 
 		return aClz.getName();
