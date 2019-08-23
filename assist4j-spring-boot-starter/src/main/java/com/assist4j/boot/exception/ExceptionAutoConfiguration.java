@@ -12,8 +12,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +30,26 @@ import java.util.Set;
 @Configuration
 @ConditionalOnProperty(name = "assist4j.boot.exception.enabled")
 public class ExceptionAutoConfiguration {
+    @Configuration
+    @ConditionalOnProperty(name = "assist4j.boot.exception.defaultError.enabled", matchIfMissing = true)
+    protected static class ErrorControllerConfiguration {
+        @Value("${assist4j.boot.exception.errorCode:}")
+        private String errorCode;
+
+        @Controller
+        public class ErrorController {
+            @RequestMapping(value = {"/error", "/error/**"})
+            @ResponseBody
+            public Response<Void> toErrorPage(HttpServletResponse response) {
+                int status = response.getStatus();
+                HttpStatus httpStatus = HttpStatus.valueOf(status);
+
+                return new Response<Void>(errorCode == null || "".equals(errorCode) ? "" + status : errorCode
+                        , httpStatus == null ? "Unknown" : httpStatus.getReasonPhrase() + "[" + status + "]");
+            }
+        }
+    }
+
     @Bean
     @ConditionalOnMissingBean(ExceptionViewResolver.class)
     public ExceptionViewResolver viewResolver(@Value("${assist4j.boot.exception.errorCode:500}")final String errorCode) {
