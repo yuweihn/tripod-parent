@@ -40,12 +40,13 @@ public class ExceptionAutoConfiguration {
         public class ErrorController {
             @RequestMapping(value = {"/error", "/error/**"})
             @ResponseBody
-            public Response<Void> toErrorPage(HttpServletResponse response) {
+            public String toErrorPage(HttpServletResponse response) {
                 int status = response.getStatus();
                 HttpStatus httpStatus = HttpStatus.valueOf(status);
 
-                return new Response<Void>(errorCode == null || "".equals(errorCode) ? "" + status : errorCode
+                Response<Void> resp = new Response<Void>(errorCode == null || "".equals(errorCode) ? "" + status : errorCode
                         , httpStatus == null ? "Unknown" : httpStatus.getReasonPhrase() + "[" + status + "]");
+                return JSONObject.toJSONString(resp);
             }
         }
     }
