@@ -31,7 +31,7 @@ import java.util.Set;
 @ConditionalOnProperty(name = "assist4j.boot.exception.enabled")
 public class ExceptionAutoConfiguration {
     @Configuration
-    @ConditionalOnProperty(name = "assist4j.boot.exception.defaultError.enabled", matchIfMissing = true)
+    @ConditionalOnProperty(name = "assist4j.boot.exception.handler.enabled", matchIfMissing = true)
     protected static class ErrorControllerConfiguration {
         @Value("${assist4j.boot.exception.errorCode:}")
         private String errorCode;
