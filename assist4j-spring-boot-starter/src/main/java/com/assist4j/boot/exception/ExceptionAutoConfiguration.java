@@ -49,21 +49,21 @@ public class ExceptionAutoConfiguration {
                 return JSONObject.toJSONString(resp);
             }
         }
-    }
 
-    @Bean
-    @ConditionalOnMissingBean(ExceptionViewResolver.class)
-    public ExceptionViewResolver viewResolver(@Value("${assist4j.boot.exception.errorCode:500}")final String errorCode) {
-        return new ExceptionViewResolver() {
-            @Override
-            public ModelAndView createView(String content) {
-                FastJsonJsonView view = new FastJsonJsonView();
-                String text = JSONObject.toJSONString(new Response<Void>(errorCode, content));
-                Map<String, Object> attributes = JSONObject.parseObject(text, Map.class);
-                view.setAttributesMap(attributes);
-                return new ModelAndView(view);
-            }
-        };
+        @Bean
+        @ConditionalOnMissingBean(ExceptionViewResolver.class)
+        public ExceptionViewResolver viewResolver() {
+            return new ExceptionViewResolver() {
+                @Override
+                public ModelAndView createView(String content) {
+                    FastJsonJsonView view = new FastJsonJsonView();
+                    String text = JSONObject.toJSONString(new Response<Void>(errorCode == null || "".equals(errorCode) ? "500" : errorCode, content));
+                    Map<String, Object> attributes = JSONObject.parseObject(text, Map.class);
+                    view.setAttributesMap(attributes);
+                    return new ModelAndView(view);
+                }
+            };
+        }
     }
 
     @Bean
