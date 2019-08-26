@@ -83,7 +83,7 @@ public class ExceptionAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(ExceptionHandler.class)
     public ExceptionHandler exceptionHandler(ClassMessagePair classMessagePair, ExceptionViewResolver viewResolver
-            , @Value("${assist4j.boot.exception.showExceptionName:true}")boolean showExceptionName) {
+            , @Value("${assist4j.boot.exception.showExceptionName:false}")boolean showExceptionName) {
         Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
 
         Map<String, String> classMessageMap = classMessagePair.getClassMessageMap();
