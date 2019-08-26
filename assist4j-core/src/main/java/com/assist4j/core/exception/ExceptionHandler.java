@@ -19,7 +19,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 	private static final Logger log = LoggerFactory.getLogger(ExceptionHandler.class);
 	private ExceptionViewResolver viewResolver;
 	private Map<Class<?>, String> errorMsgMap;
-	private boolean showExceptionName = true;
+	private boolean showExceptionName;
 
 	public void setViewResolver(ExceptionViewResolver viewResolver) {
 		this.viewResolver = viewResolver;
