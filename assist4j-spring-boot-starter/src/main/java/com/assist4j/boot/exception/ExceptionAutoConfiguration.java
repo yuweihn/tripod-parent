@@ -71,11 +71,11 @@ public class ExceptionAutoConfiguration {
     @ConfigurationProperties(prefix = "assist4j.boot.exception", ignoreUnknownFields = true)
     public ClassMessagePair classMessagePair() {
         return new ClassMessagePair() {
-            private Map<String, String> classMessageMap = new HashMap<String, String>();
+            private Map<String, String> map = new HashMap<String, String>();
 
             @Override
-            public Map<String, String> getClassMessageMap() {
-                return classMessageMap;
+            public Map<String, String> getDefaultMessage() {
+                return map;
             }
         };
     }
@@ -86,7 +86,7 @@ public class ExceptionAutoConfiguration {
             , @Value("${assist4j.boot.exception.showExceptionName:false}")boolean showExceptionName) {
         Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
 
-        Map<String, String> classMessageMap = classMessagePair.getClassMessageMap();
+        Map<String, String> classMessageMap = classMessagePair.getDefaultMessage();
         if (classMessageMap != null) {
             Set<Map.Entry<String, String>> entrySet = classMessageMap.entrySet();
             for (Map.Entry<String, String> entry: entrySet) {
