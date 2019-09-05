@@ -1,6 +1,7 @@
 package com.assist4j.dao.mybatis.provider;
 
 
+import com.assist4j.dao.mybatis.where.Criteria;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Id;
@@ -61,6 +62,19 @@ public class DeleteSqlProvider extends AbstractProvider {
 			if (!whereSet) {
 				throw new IllegalAccessException("'where' is missed.");
 			}
+		}}.toString();
+	}
+
+	public <T>String deleteByCriteria(Map<String, Object> param) throws IllegalAccessException {
+		Class<T> entityClass = (Class<T>) param.get("clz");
+		final String tableName = getTableName(entityClass);
+		final Criteria criteria = (Criteria) param.get("criteria");
+		if (criteria == null || criteria.getParams() == null || criteria.getParams().size() <= 0) {
+			throw new IllegalAccessException("'where' is missed.");
+		}
+		return new SQL() {{
+			DELETE_FROM(tableName);
+			WHERE(criteria.toSql());
 		}}.toString();
 	}
 }
