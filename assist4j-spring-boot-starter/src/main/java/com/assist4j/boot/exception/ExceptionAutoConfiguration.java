@@ -52,7 +52,7 @@ public class ExceptionAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(ExceptionViewResolver.class)
-        public ExceptionViewResolver viewResolver() {
+        public ExceptionViewResolver exceptionViewResolver() {
             return new ExceptionViewResolver() {
                 @Override
                 public ModelAndView createView(String content) {
