@@ -234,6 +234,9 @@ public class JedisCache implements RedisCache {
 
 	@Override
 	public boolean unlock(String key, String owner) {
+		if (!contains(key)) {
+			return true;
+		}
 		String v = serialize.encode(owner);
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
 		redisScript.setResultType(Long.class);
