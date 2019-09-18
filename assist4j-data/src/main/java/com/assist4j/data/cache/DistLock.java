@@ -12,6 +12,6 @@ public interface DistLock {
 	 * @param expiredTime 单位：秒。
 	 */
 	boolean lock(String key, String owner, long expiredTime);
-	boolean lock(String key, String owner, boolean reentrant, long expiredTime);
+	boolean lock(String key, String owner, long expiredTime, boolean reentrant);
 	boolean unlock(String key, String owner);
 }
