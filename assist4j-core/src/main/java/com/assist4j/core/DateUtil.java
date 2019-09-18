@@ -356,25 +356,25 @@ public abstract class DateUtil {
 
 //	public static String showTime(Date date) {
 //		String resp = "";
-//		if(date == null) {
+//		if (date == null) {
 //			return resp;
 //		}
 //
 //		long sec = (Calendar.getInstance().getTimeInMillis() - date.getTime()) / 1000;
-//		if(sec < 0) {
+//		if (sec < 0) {
 //			resp = "";
-//		} else if(sec < 60) {
+//		} else if (sec < 60) {
 //			/**
 //			 * 1分钟内
 //			 */
 //			resp = sec + "秒";
-//		} else if(sec < 60 * 60) {
+//		} else if (sec < 60 * 60) {
 //			/**
 //			 * 1小时内
 //			 */
 //			int m = (int) (sec / 60);
 //			resp = m + "分钟";
-//		} else if(sec < 60 * 60 * 24) {
+//		} else if (sec < 60 * 60 * 24) {
 //			/**
 //			 * 1天
 //			 */
