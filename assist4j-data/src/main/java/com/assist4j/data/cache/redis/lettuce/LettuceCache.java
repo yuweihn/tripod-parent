@@ -199,14 +199,37 @@ public class LettuceCache implements RedisCache {
 		redisTemplate.opsForHash().delete(key, field);
 	}
 
-	@Override
-	public boolean lock(String key, String owner, long expiredTime) {
+	private boolean setNx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
 		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockNx.lua")));
 		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
 		return result != null && "1".equals(result.toString());
+	}
+	private boolean setXx(String key, String owner, long expiredTime) {
+		String v = serialize.encode(owner);
+		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
+		redisScript.setResultType(Long.class);
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
+		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
+		return result != null && "1".equals(result.toString());
+	}
+
+	@Override
+	public boolean lock(String key, String owner, long expiredTime) {
+		return setNx(key, owner, expiredTime);
+	}
+
+	@Override
+	public boolean reentrantLock(String key, String owner, long expiredTime) {
+		String owner2 = this.get(key);
+		if (owner.equals(owner2)) {
+			if (setXx(key, owner, expiredTime)) {
+				return true;
+			}
+		}
+		return setNx(key, owner, expiredTime);
 	}
 
 	@Override
