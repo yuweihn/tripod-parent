@@ -151,11 +151,31 @@ public class JedisClusterCache implements RedisCache {
 		jedisCluster.hdel(key, field);
 	}
 
-	@Override
-	public boolean lock(String key, String owner, long expiredTime) {
+	private boolean setNx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
 		String res = jedisCluster.set(key, v, "NX", "EX", (int) expiredTime);
 		return "OK".equals(res);
+	}
+	private boolean setXx(String key, String owner, long expiredTime) {
+		String v = serialize.encode(owner);
+		String res = jedisCluster.set(key, v, "XX", "EX", (int) expiredTime);
+		return "OK".equals(res);
+	}
+
+	@Override
+	public boolean lock(String key, String owner, long expiredTime) {
+		return setNx(key, owner, expiredTime);
+	}
+
+	@Override
+	public boolean reentrantLock(String key, String owner, long expiredTime) {
+		String owner2 = this.get(key);
+		if (owner.equals(owner2)) {
+			if (setXx(key, owner, expiredTime)) {
+				return true;
+			}
+		}
+		return setNx(key, owner, expiredTime);
 	}
 
 	@Override
