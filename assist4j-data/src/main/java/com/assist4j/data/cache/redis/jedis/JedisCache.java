@@ -204,7 +204,7 @@ public class JedisCache implements RedisCache {
 		String v = serialize.encode(owner);
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
 		redisScript.setResultType(Long.class);
-		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLock.lua")));
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockNx.lua")));
 		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
 		return result != null && "1".equals(result.toString());
 	}
