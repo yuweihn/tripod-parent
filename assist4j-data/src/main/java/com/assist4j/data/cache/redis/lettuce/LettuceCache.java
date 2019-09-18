@@ -201,19 +201,19 @@ public class LettuceCache implements RedisCache {
 
 	private boolean setNx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
-		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
-		redisScript.setResultType(Long.class);
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockNx.lua")));
-		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
-		return result != null && "1".equals(result.toString());
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
+		return result != null && "OK".equals(result.toString());
 	}
 	private boolean setXx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
-		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
-		redisScript.setResultType(Long.class);
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
-		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
-		return result != null && "1".equals(result.toString());
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
+		return result != null && "OK".equals(result.toString());
 	}
 
 	@Override
