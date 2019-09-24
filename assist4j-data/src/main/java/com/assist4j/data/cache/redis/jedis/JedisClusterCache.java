@@ -151,15 +151,49 @@ public class JedisClusterCache implements RedisCache {
 		jedisCluster.hdel(key, field);
 	}
 
-	@Override
-    public boolean lock(String key, String owner, long expiredTime) {
+	private boolean setNx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
-        String res = jedisCluster.set(key, v, "NX", "EX", (int) expiredTime);
-        return "OK".equals(res);
-    }
+		String res = jedisCluster.set(key, v, "NX", "EX", (int) expiredTime);
+		return "OK".equals(res);
+	}
+	private boolean setXx(String key, String owner, long expiredTime) {
+		String v = serialize.encode(owner);
+		String res = jedisCluster.set(key, v, "XX", "EX", (int) expiredTime);
+		return "OK".equals(res);
+	}
 
-    @Override
+	private boolean reentrantLock(String key, String owner, long expiredTime) {
+		String owner2 = this.get(key);
+		if (owner.equals(owner2)) {
+			if (setXx(key, owner, expiredTime)) {
+				return true;
+			}
+		}
+		return setNx(key, owner, expiredTime);
+	}
+	private boolean nonReentrantLock(String key, String owner, long expiredTime) {
+		return setNx(key, owner, expiredTime);
+	}
+
+	@Override
+	public boolean lock(String key, String owner, long expiredTime) {
+		return lock(key, owner, expiredTime, false);
+	}
+
+	@Override
+	public boolean lock(String key, String owner, long expiredTime, boolean reentrant) {
+		if (reentrant) {
+			return reentrantLock(key, owner, expiredTime);
+		} else {
+			return nonReentrantLock(key, owner, expiredTime);
+		}
+	}
+
+	@Override
     public boolean unlock(String key, String owner) {
+		if (!contains(key)) {
+			return true;
+		}
 		String v = serialize.encode(owner);
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
 		redisScript.setResultType(Long.class);
