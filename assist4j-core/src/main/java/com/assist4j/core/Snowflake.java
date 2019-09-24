@@ -4,8 +4,6 @@ package com.assist4j.core;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
-import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -13,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * @author yuwei
  */
-public class IdWorker {
+public class Snowflake {
 	private static final long twepoch = 1288834974657L;
 	/**
 	 * 机器标识位数
@@ -55,22 +53,28 @@ public class IdWorker {
 	private long lastTimestamp = -1L;
 
 
-	private IdWorker() {
-		this.workerId = getMachineId();
-		this.dataCenterId = getMachineId();
+	private Snowflake() {
+		this(getMachineId(), getMachineId());
+	}
+	private Snowflake(long workerId, long dataCenterId) {
+		this.workerId = workerId;
+		this.dataCenterId = dataCenterId;
 	}
 
-	public static IdWorker create() {
-		return new IdWorker();
+	public static Snowflake create() {
+		return new Snowflake();
 	}
-	private static IdWorker DEFAULT_INSTANCE = null;
+	public static Snowflake create(long workerId, long dataCenterId) {
+		return new Snowflake(workerId, dataCenterId);
+	}
+	private static Snowflake DEFAULT_INSTANCE = null;
 	private static Lock LOCK = new ReentrantLock();
-	public static IdWorker getDefaultInstance() {
+	public static Snowflake get() {
 		if (DEFAULT_INSTANCE == null) {
 			try {
 				LOCK.lock();
 				if (DEFAULT_INSTANCE == null) {
-					DEFAULT_INSTANCE = new IdWorker();
+					DEFAULT_INSTANCE = new Snowflake();
 				}
 			} finally {
 				LOCK.unlock();
@@ -78,26 +82,6 @@ public class IdWorker {
 		}
 		return DEFAULT_INSTANCE;
 	}
-
-
-	public static String getUuid() {
-		return UUID.randomUUID().toString().replace("-", "");
-	}
-
-	public static String getRandomString(int length) {
-		String base = "abcdefghijklmnopqrstuvwxyz0123456789";
-		return getRandomString(base, length);
-	}
-	public static String getRandomString(String base, int length) {
-		Random random = new Random();
-		StringBuilder builder = new StringBuilder("");
-		for (int i = 0; i < length; i++) {
-			int number = random.nextInt(base.length());
-			builder.append(base.charAt(number));
-		}
-		return builder.toString();
-	}
-
 
 	/**
 	 * 18位
