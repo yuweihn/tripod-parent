@@ -69,7 +69,7 @@ public class Snowflake {
 	}
 	private static Snowflake DEFAULT_INSTANCE = null;
 	private static Lock LOCK = new ReentrantLock();
-	public static Snowflake get() {
+	private static Snowflake get() {
 		if (DEFAULT_INSTANCE == null) {
 			try {
 				LOCK.lock();
@@ -81,6 +81,9 @@ public class Snowflake {
 			}
 		}
 		return DEFAULT_INSTANCE;
+	}
+	public static long getId() {
+		return get().nextId();
 	}
 
 	/**
