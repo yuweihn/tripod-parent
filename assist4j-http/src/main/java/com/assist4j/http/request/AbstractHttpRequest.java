@@ -272,7 +272,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 		try {
 			return (HttpResponse<B>) client.execute(httpUriRequest, handler, context);
 		} catch (Exception e) {
-			return new ErrorHttpResponse<B>(HttpStatus.SC_SERVICE_UNAVAILABLE, e.toString());
+			return new ErrorHttpResponse<B>(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.toString());
 		}
 	}
 }
