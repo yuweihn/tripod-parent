@@ -17,10 +17,10 @@ import javax.persistence.Table;
  * @author yuwei
  */
 public abstract class AbstractProvider {
-	private static Map<String, String> TABLE_NAME_MAP = new ConcurrentHashMap<String, String>();
-	private static Map<String, String> SELECT_SQL_MAP = new ConcurrentHashMap<String, String>();
-	private static Map<String, String> SELECT_SQL_WITH_TABLE_ALIAS_MAP = new ConcurrentHashMap<String, String>();
-	private static Map<String, List<FieldColumn>> PERSIST_FIELD_MAP = new ConcurrentHashMap<String, List<FieldColumn>>();
+	private static final Map<String, String> TABLE_NAME_MAP = new ConcurrentHashMap<String, String>();
+	private static final Map<String, String> SELECT_SQL_MAP = new ConcurrentHashMap<String, String>();
+	private static final Map<String, String> SELECT_SQL_WITH_TABLE_ALIAS_MAP = new ConcurrentHashMap<String, String>();
+	private static final Map<String, List<FieldColumn>> PERSIST_FIELD_MAP = new ConcurrentHashMap<String, List<FieldColumn>>();
 
 
 	/**
