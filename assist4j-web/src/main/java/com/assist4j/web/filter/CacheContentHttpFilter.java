@@ -17,55 +17,56 @@ import java.net.URLDecoder;
  * @author yuwei
  */
 public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequestWrapper, ContentCachingResponseWrapper> {
-	private static final Logger log = LoggerFactory.getLogger(CacheContentHttpFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(CacheContentHttpFilter.class);
 
-	private int contentLimit = 100;
-
-
-	public void setContentLimit(int contentLimit) {
-		this.contentLimit = contentLimit;
-	}
+    private int contentLimit = 100;
 
 
+    public void setContentLimit(int contentLimit) {
+        this.contentLimit = contentLimit;
+    }
 
-	@Override
-	protected ContentCachingRequestWrapper wrap(HttpServletRequest request) {
-		return new ContentCachingRequestWrapper(request);
-	}
 
-	@Override
-	protected ContentCachingResponseWrapper wrap(HttpServletResponse response) {
-		return new ContentCachingResponseWrapper(response);
-	}
 
-	@Override
-	protected void logRequest(ContentCachingRequestWrapper request) {
-		super.logRequest(request);
-		printBody(request);
-	}
+    @Override
+    protected ContentCachingRequestWrapper wrap(HttpServletRequest request) {
+        return new ContentCachingRequestWrapper(request);
+    }
 
-	private void printBody(ContentCachingRequestWrapper request) {
-		byte[] bytes = request.getContentAsByteArray();
-		if (bytes == null || bytes.length <= 0) {
-			return;
-		}
+    @Override
+    protected ContentCachingResponseWrapper wrap(HttpServletResponse response) {
+        return new ContentCachingResponseWrapper(response);
+    }
 
-		String content = new String(bytes);
-		if (content == null || "".equals(content)) {
-			return;
-		}
+    @Override
+    protected void logRequest(ContentCachingRequestWrapper request) {
+        super.logRequest(request);
+        printBody(request);
+    }
 
-		if (contentLimit > 0 && contentLimit < content.length()) {
-			content = content.substring(0, contentLimit) + "......";
-		}
-		try {
-			log.info("RequestBody: {}", URLDecoder.decode(content, "utf-8"));
-		} catch (UnsupportedEncodingException e) {
-		}
-	}
+    private void printBody(ContentCachingRequestWrapper request) {
+        byte[] bytes = request.getContentAsByteArray();
+        if (bytes == null || bytes.length <= 0) {
+            return;
+        }
 
-	@Override
-	protected void afterFilter(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException {
-		response.copyBodyToResponse();
-	}
+        String content = new String(bytes);
+        if (content == null || "".equals(content)) {
+            return;
+        }
+        try {
+            content = URLDecoder.decode(content, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+        }
+
+        if (contentLimit > 0 && contentLimit < content.length()) {
+            content = content.substring(0, contentLimit) + "......";
+        }
+        log.info("RequestBody: {}", content);
+    }
+
+    @Override
+    protected void afterFilter(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException {
+        response.copyBodyToResponse();
+    }
 }
