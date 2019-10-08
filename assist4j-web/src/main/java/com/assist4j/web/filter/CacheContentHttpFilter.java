@@ -9,6 +9,8 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 
 /**
@@ -51,6 +53,10 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 		String content = new String(bytes);
 		if (content == null || "".equals(content)) {
 			return;
+		}
+		try {
+			content = URLDecoder.decode(content, "utf-8");
+		} catch (UnsupportedEncodingException e) {
 		}
 
 		if (contentLimit > 0 && contentLimit < content.length()) {
