@@ -205,7 +205,7 @@ public class LettuceCache implements RedisCache {
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockNx.lua")));
 		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
-		return result != null && "OK".equals(result.toString());
+		return result != null && "OK".equals(result);
 	}
 	private boolean setXx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
@@ -213,7 +213,7 @@ public class LettuceCache implements RedisCache {
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
 		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
-		return result != null && "OK".equals(result.toString());
+		return result != null && "OK".equals(result);
 	}
 
 	private boolean reentrantLock(String key, String owner, long expiredTime) {
