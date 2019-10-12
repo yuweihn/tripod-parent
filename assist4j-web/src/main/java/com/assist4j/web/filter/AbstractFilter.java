@@ -199,16 +199,6 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	 * 跨域请求设置
 	 */
 	protected void setAccessControl(R request, T response) {
-		String referrer = request.getHeader("Referer");
-		if (referrer != null) {
-			try {
-				referrer = URLDecoder.decode(referrer, Constant.ENCODING_UTF_8);
-			} catch (Exception e) {
-				log.error("", e);
-			}
-			log.info("Referrer: {}", referrer);
-		}
-
 		if (!response.containsHeader("Access-Control-Allow-Origin")) {
 			String requestOrigin = request.getHeader("origin");
 			if (requestOrigin != null && !"".equals(requestOrigin.trim()) && !"null".equals(requestOrigin.trim())) {
