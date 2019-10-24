@@ -162,19 +162,6 @@ public class JedisClusterCache implements RedisCache {
 		return "OK".equals(res);
 	}
 
-	private boolean reentrantLock(String key, String owner, long expiredTime) {
-		String owner2 = this.get(key);
-		if (owner.equals(owner2)) {
-			if (setXx(key, owner, expiredTime)) {
-				return true;
-			}
-		}
-		return setNx(key, owner, expiredTime);
-	}
-	private boolean nonReentrantLock(String key, String owner, long expiredTime) {
-		return setNx(key, owner, expiredTime);
-	}
-
 	@Override
 	public boolean lock(String key, String owner, long expiredTime) {
 		return lock(key, owner, expiredTime, false);
@@ -182,11 +169,10 @@ public class JedisClusterCache implements RedisCache {
 
 	@Override
 	public boolean lock(String key, String owner, long expiredTime, boolean reentrant) {
-		if (reentrant) {
-			return reentrantLock(key, owner, expiredTime);
-		} else {
-			return nonReentrantLock(key, owner, expiredTime);
+		if (reentrant && setXx(key, owner, expiredTime)) {
+			return true;
 		}
+		return setNx(key, owner, expiredTime);
 	}
 
 	@Override
