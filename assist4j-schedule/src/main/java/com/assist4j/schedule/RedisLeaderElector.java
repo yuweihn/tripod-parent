@@ -31,8 +31,8 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 	}
 
 	@Override
-	protected boolean createLeaderNode(String node) {
-		return redis.lock(key, node, timeout / 1000);
+	protected boolean createLeaderNode() {
+		return redis.lock(key, getLocalNode(), timeout / 1000);
 	}
 
 	@Override
@@ -47,6 +47,6 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 
 	@Override
 	public void destroy() {
-
+		redis.unlock(key, getLocalNode());
 	}
 }
