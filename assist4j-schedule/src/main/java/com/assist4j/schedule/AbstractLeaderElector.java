@@ -15,6 +15,7 @@ public abstract class AbstractLeaderElector implements LeaderElector {
 	private String localNode;
 
 
+	@Override
 	public String getLocalNode() {
 		if (localNode == null || "".equals(localNode.trim())) {
 			localNodeLock.lock();
@@ -37,7 +38,6 @@ public abstract class AbstractLeaderElector implements LeaderElector {
 	 * 将当前节点作为leader存储在elector的指定节点上。
 	 */
 	abstract boolean createLeaderNode();
-	abstract String getLeaderNode();
 
 	@Override
 	public boolean isLeader() {
