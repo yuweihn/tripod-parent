@@ -10,7 +10,4 @@ public interface LeaderElector {
 	boolean isLeader();
 	String getLocalNode();
 	String getLeaderNode();
-
-	void init();
-	void destroy();
 }
