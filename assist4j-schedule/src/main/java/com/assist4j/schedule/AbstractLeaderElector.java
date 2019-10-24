@@ -11,8 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author yuwei
  */
 public abstract class AbstractLeaderElector implements LeaderElector {
-	private Lock localNodeLock = new ReentrantLock();
-
+	private final Lock localNodeLock = new ReentrantLock();
 	private String localNode;
 
 
@@ -36,13 +35,15 @@ public abstract class AbstractLeaderElector implements LeaderElector {
 	}
 
 	/**
-	 * 将当前机器作为leader存储在elector的指定节点上。
+	 * 将当前节点作为leader存储在elector的指定节点上。
 	 */
-	abstract boolean createLeaderNode(String node);
+	abstract boolean createLeaderNode();
 
 	@Override
 	public boolean isLeader() {
-		String localNode = getLocalNode();
-		return localNode.equals(getLeaderNode()) || createLeaderNode(localNode);
+		return getLocalNode().equals(getLeaderNode()) || createLeaderNode();
 	}
+
+	abstract void init();
+	abstract void destroy();
 }
