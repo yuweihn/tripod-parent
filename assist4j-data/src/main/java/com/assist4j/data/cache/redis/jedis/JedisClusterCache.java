@@ -169,7 +169,7 @@ public class JedisClusterCache implements RedisCache {
 
 	@Override
 	public boolean lock(String key, String owner, long expiredTime, boolean reentrant) {
-		if (reentrant && setXx(key, owner, expiredTime)) {
+		if (reentrant && owner.equals(get(key)) && setXx(key, owner, expiredTime)) {
 			return true;
 		}
 		return setNx(key, owner, expiredTime);
