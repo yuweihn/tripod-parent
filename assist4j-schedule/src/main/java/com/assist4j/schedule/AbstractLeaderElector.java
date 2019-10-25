@@ -27,6 +27,10 @@ public abstract class AbstractLeaderElector implements LeaderElector {
 				localNodeLock.unlock();
 			}
 		}
+
+		if (localNode == null || "".equals(localNode.trim())) {
+			throw new RuntimeException("[localNode] can't be empty.");
+		}
 		return localNode;
 	}
 
