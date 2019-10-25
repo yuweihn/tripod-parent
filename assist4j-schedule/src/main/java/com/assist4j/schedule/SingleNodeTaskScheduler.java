@@ -25,23 +25,23 @@ public class SingleNodeTaskScheduler extends ThreadPoolTaskScheduler {
 
 
 	private Runnable taskWrapper(final Runnable task) {
-		return new Runnable() {
-			@Override
-			public void run() {
-				if (leaderElector.isLeader()) {
-					task.run();
-					log.info("Job was executed here, {}", leaderElector.getLocalNode());
-				} else {
-					String leaderNode = leaderElector.getLeaderNode();
-					if (leaderNode == null) {
-						log.info("NOT leader, job will NOT be executed!");
-					} else {
-						log.info("NOT leader, job will NOT be executed! Leader: {}", leaderNode);
-					}
-				}
-			}
-		};
-	}
+        return new Runnable() {
+            @Override
+            public void run() {
+                if (leaderElector.isLeader()) {
+                    task.run();
+                    log.info("Job was executed here, {}", leaderElector.getLocalNode());
+                } else {
+                    String leaderNode = leaderElector.getLeaderNode();
+                    if (leaderNode == null) {
+                        log.info("NOT leader, job was NOT executed!");
+                    } else {
+                        log.info("NOT leader, job was NOT executed! Leader: {}", leaderNode);
+                    }
+                }
+            }
+        };
+    }
 
 	@Override
 	public ScheduledFuture<?> schedule(Runnable task, Trigger trigger) {
