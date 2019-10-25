@@ -161,6 +161,14 @@ public class JedisClusterCache implements RedisCache {
 		String res = jedisCluster.set(key, v, "XX", "EX", (int) expiredTime);
 		return "OK".equals(res);
 	}
+	private boolean setXxEquals(String key, String owner, long expiredTime) {
+		String v = serialize.encode(owner);
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
+		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Arrays.asList(v, "" + expiredTime));
+		return result != null && "OK".equals(result);
+	}
 
 	@Override
 	public boolean lock(String key, String owner, long expiredTime) {
@@ -169,7 +177,7 @@ public class JedisClusterCache implements RedisCache {
 
 	@Override
 	public boolean lock(String key, String owner, long expiredTime, boolean reentrant) {
-		if (reentrant && owner.equals(get(key)) && setXx(key, owner, expiredTime)) {
+		if (reentrant && owner.equals(get(key)) && setXxEquals(key, owner, expiredTime)) {
 			return true;
 		}
 		return setNx(key, owner, expiredTime);
