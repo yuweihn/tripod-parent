@@ -34,9 +34,9 @@ public class SingleNodeTaskScheduler extends ThreadPoolTaskScheduler {
 				} else {
 					String leaderNode = leaderElector.getLeaderNode();
 					if (leaderNode == null) {
-						log.info("NOT leader, job will NOT execute!");
+						log.info("NOT leader, job will NOT be executed!");
 					} else {
-						log.info("NOT leader, job will NOT execute! Leader: {}", leaderNode);
+						log.info("NOT leader, job will NOT be executed! Leader: {}", leaderNode);
 					}
 				}
 			}
