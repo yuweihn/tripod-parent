@@ -5,7 +5,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
@@ -47,10 +46,41 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 		this.zkNodeName = ZK_NODE_NAME_PRE + prjNo;
 	}
 
+	private ZooKeeper getZk() {
+		if (null == zk) {
+			synchronized (this) {
+				if (null == zk) {
+					final CountDownLatch connectZookeeperLatch = new CountDownLatch(1);
+					try {
+						log.info("Connecting......");
+						zk = new ZooKeeper(zkConn, zkTimeout, new Watcher() {
+							@Override
+							public void process(WatchedEvent event) {
+								log.info("ZooKeeper event occurs here: " + event);
+								if (event.getState() == Event.KeeperState.SyncConnected) {
+									connectZookeeperLatch.countDown();
+									log.info("Connected");
+								}
+							}
+						});
+						connectZookeeperLatch.await(5, TimeUnit.SECONDS);
+					} catch (Exception e) {
+						log.error("", e);
+						throw new RuntimeException(e);
+					}
+				}
+			}
+		}
+
+		if (zk == null) {
+			throw new RuntimeException("Can't connect zookeeper.");
+		}
+		return zk;
+	}
 
 	@Override
 	public void init() {
-		connectZookeeper();
+
 	}
 
 	@Override
@@ -65,54 +95,21 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 		}
 	}
 
-	/**
-	 * 连接zookeeper。
-	 */
-	private void connectZookeeper() {
-		final CountDownLatch connectZookeeperLatch = new CountDownLatch(1);
-		try {
-			zk = new ZooKeeper(zkConn, zkTimeout, new Watcher() {
-				@Override
-				public void process(WatchedEvent event) {
-					if (event.getState() == Event.KeeperState.SyncConnected) {
-						connectZookeeperLatch.countDown();
-					}
-					/**
-					 * 如果断开，则重新连接
-					 */
-					if (event.getState() == Event.KeeperState.Disconnected) {
-						log.info("Connecting......");
-						connectZookeeper();
-						log.info("Connected");
-					}
-				}
-			});
-			connectZookeeperLatch.await(5, TimeUnit.SECONDS);
-
-			if (zk == null) {
-				throw new RuntimeException("Can't connect zookeeper.");
-			}
-		} catch (Exception e) {
-			log.error("", e);
-			throw new RuntimeException(e);
-		}
-	}
-
 	@Override
 	protected boolean createLeaderNode() {
 		String node = getLocalNode();
-		if (node.equals(getLeaderNode())) {
-			return true;
+		String leaderNode = getLeaderNode();
+		if (leaderNode == null) {
+			try {
+				String path = getZk().create(zkNodeName, node.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+				log.info("Create server node ({} => {})", path, node);
+				return true;
+			} catch (Exception e) {
+				destroy();
+				return false;
+			}
 		}
-
-		try {
-			String path = zk.create(zkNodeName, node.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-			log.info("Create server node ({} => {})", path, node);
-			return true;
-		} catch (KeeperException | InterruptedException e) {
-			destroy();
-			return false;
-		}
+		return node.equals(leaderNode);
 	}
 
 	/**
@@ -122,12 +119,13 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	public String getLeaderNode() {
 		byte[] val = null;
 		try {
-			Stat stat = zk.exists(zkNodeName, false);
+			Stat stat = getZk().exists(zkNodeName, false);
 			if (stat == null) {
 				return null;
 			}
-			val = zk.getData(zkNodeName, false, stat);
+			val = getZk().getData(zkNodeName, false, stat);
 		} catch (Exception e) {
+			destroy();
 			log.error("get " + zkNodeName + " error, ", e);
 		}
 		return val == null ? null : new String(val);
