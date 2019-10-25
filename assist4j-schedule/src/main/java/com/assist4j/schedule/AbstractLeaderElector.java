@@ -35,6 +35,9 @@ public abstract class AbstractLeaderElector implements LeaderElector {
 	}
 
 	public void setLocalNode(String localNode) {
+		if (localNode == null || "".equals(localNode.trim())) {
+			throw new RuntimeException("[localNode] can't be empty.");
+		}
 		this.localNode = localNode;
 	}
 
