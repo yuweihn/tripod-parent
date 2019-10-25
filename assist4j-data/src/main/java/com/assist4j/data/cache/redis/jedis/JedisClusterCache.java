@@ -165,7 +165,7 @@ public class JedisClusterCache implements RedisCache {
 		String v = serialize.encode(owner);
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
-		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXxEquals.lua")));
 		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Arrays.asList(v, "" + expiredTime));
 		return result != null && "OK".equals(result);
 	}
