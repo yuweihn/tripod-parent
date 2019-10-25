@@ -35,20 +35,10 @@ public abstract class AbstractLeaderElector implements LeaderElector {
 	}
 
 	public void setLocalNode(String localNode) {
-        if (localNode == null || "".equals(localNode.trim())) {
-            throw new RuntimeException("[localNode] can't be empty.");
-        }
+		if (localNode == null || "".equals(localNode.trim())) {
+			throw new RuntimeException("[localNode] can't be empty.");
+		}
 		this.localNode = localNode;
-	}
-
-	/**
-	 * 将当前节点作为leader存储在elector的指定节点上。
-	 */
-	abstract boolean createLeaderNode();
-
-	@Override
-	public boolean isLeader() {
-		return getLocalNode().equals(getLeaderNode()) || createLeaderNode();
 	}
 
 	abstract void init();

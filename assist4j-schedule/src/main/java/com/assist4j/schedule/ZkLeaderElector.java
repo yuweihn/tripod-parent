@@ -79,24 +79,7 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	}
 
 	@Override
-	public void init() {
-
-	}
-
-	@Override
-	public void destroy() {
-		if (zk != null) {
-			try {
-				zk.close();
-			} catch (InterruptedException e) {
-				log.error("", e);
-			}
-			zk = null;
-		}
-	}
-
-	@Override
-	protected boolean createLeaderNode() {
+	public boolean isLeader() {
 		String node = getLocalNode();
 		String leaderNode = getLeaderNode();
 		if (leaderNode == null) {
@@ -129,5 +112,22 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 			log.error("get " + zkNodeName + " error, ", e);
 		}
 		return val == null ? null : new String(val);
+	}
+
+	@Override
+	public void init() {
+
+	}
+
+	@Override
+	public void destroy() {
+		if (zk != null) {
+			try {
+				zk.close();
+			} catch (InterruptedException e) {
+				log.error("", e);
+			}
+			zk = null;
+		}
 	}
 }
