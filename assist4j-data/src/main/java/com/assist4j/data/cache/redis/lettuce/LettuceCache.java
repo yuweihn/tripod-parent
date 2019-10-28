@@ -205,7 +205,7 @@ public class LettuceCache implements RedisCache {
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockNx.lua")));
 		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
-		return result != null && "OK".equals(result.toString());
+		return result != null && "OK".equals(result);
 	}
 	private boolean setXx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
@@ -213,20 +213,15 @@ public class LettuceCache implements RedisCache {
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
 		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
-		return result != null && "OK".equals(result.toString());
+		return result != null && "OK".equals(result);
 	}
-
-	private boolean reentrantLock(String key, String owner, long expiredTime) {
-		String owner2 = this.get(key);
-		if (owner.equals(owner2)) {
-			if (setXx(key, owner, expiredTime)) {
-				return true;
-			}
-		}
-		return setNx(key, owner, expiredTime);
-	}
-	private boolean nonReentrantLock(String key, String owner, long expiredTime) {
-		return setNx(key, owner, expiredTime);
+	private boolean setXxEquals(String key, String owner, long expiredTime) {
+		String v = serialize.encode(owner);
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXxEquals.lua")));
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
+		return result != null && "OK".equals(result);
 	}
 
 	@Override
@@ -236,11 +231,7 @@ public class LettuceCache implements RedisCache {
 
 	@Override
 	public boolean lock(String key, String owner, long expiredTime, boolean reentrant) {
-		if (reentrant) {
-			return reentrantLock(key, owner, expiredTime);
-		} else {
-			return nonReentrantLock(key, owner, expiredTime);
-		}
+		return reentrant && setXxEquals(key, owner, expiredTime) || setNx(key, owner, expiredTime);
 	}
 
 	@Override
