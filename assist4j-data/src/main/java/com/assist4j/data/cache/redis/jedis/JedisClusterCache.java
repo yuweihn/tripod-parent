@@ -156,6 +156,7 @@ public class JedisClusterCache implements RedisCache {
 		String res = jedisCluster.set(key, v, "NX", "EX", (int) expiredTime);
 		return "OK".equals(res);
 	}
+	@SuppressWarnings("unused")
 	private boolean setXx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
 		String res = jedisCluster.set(key, v, "XX", "EX", (int) expiredTime);

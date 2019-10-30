@@ -207,6 +207,7 @@ public class LettuceCache implements RedisCache {
 		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
 		return result != null && "OK".equals(result);
 	}
+	@SuppressWarnings("unused")
 	private boolean setXx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();

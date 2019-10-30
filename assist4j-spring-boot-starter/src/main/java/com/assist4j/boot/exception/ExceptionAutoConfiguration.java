@@ -30,77 +30,80 @@ import java.util.Set;
 @Configuration
 @ConditionalOnProperty(name = "assist4j.boot.exception.enabled")
 public class ExceptionAutoConfiguration {
-    @Configuration
-    @ConditionalOnProperty(name = "assist4j.boot.exception.handler.enabled", matchIfMissing = true)
-    protected static class ErrorControllerConfiguration {
-        @Value("${assist4j.boot.exception.errorCode:}")
-        private String errorCode;
+	@Configuration
+	@ConditionalOnProperty(name = "assist4j.boot.exception.handler.enabled", matchIfMissing = true)
+	protected static class ErrorControllerConfiguration {
+		@Value("${assist4j.boot.exception.errorCode:}")
+		private String errorCode;
 
-        @Controller
-        public class ErrorController {
-            @RequestMapping(value = {"/error", "/error/**"})
-            @ResponseBody
-            public String toErrorPage(HttpServletResponse response) {
-                int status = response.getStatus();
-                HttpStatus httpStatus = HttpStatus.valueOf(status);
+		@Controller
+		public class ErrorController {
+			@RequestMapping(value = { "/error", "/error/**" })
+			@ResponseBody
+			public String toErrorPage(HttpServletResponse response) {
+				int status = response.getStatus();
+				HttpStatus httpStatus = HttpStatus.valueOf(status);
 
-                Response<Void> resp = new Response<Void>(errorCode == null || "".equals(errorCode) ? "" + status : errorCode
-                        , httpStatus == null ? "Unknown" : httpStatus.getReasonPhrase() + "[" + status + "]");
-                return JSONObject.toJSONString(resp);
-            }
-        }
+				Response<Void> resp = new Response<Void>(
+						errorCode == null || "".equals(errorCode) ? "" + status : errorCode,
+						httpStatus == null ? "Unknown" : httpStatus.getReasonPhrase() + "[" + status + "]");
+				return JSONObject.toJSONString(resp);
+			}
+		}
 
-        @Bean
-        @ConditionalOnMissingBean(ExceptionViewResolver.class)
-        public ExceptionViewResolver exceptionViewResolver() {
-            return new ExceptionViewResolver() {
-                @Override
-                public ModelAndView createView(String content) {
-                    FastJsonJsonView view = new FastJsonJsonView();
-                    String text = JSONObject.toJSONString(new Response<Void>(errorCode == null || "".equals(errorCode) ? "500" : errorCode, content));
-                    Map<String, Object> attributes = JSONObject.parseObject(text, Map.class);
-                    view.setAttributesMap(attributes);
-                    return new ModelAndView(view);
-                }
-            };
-        }
-    }
+		@Bean
+		@ConditionalOnMissingBean(ExceptionViewResolver.class)
+		public ExceptionViewResolver exceptionViewResolver() {
+			return new ExceptionViewResolver() {
+				@SuppressWarnings("unchecked")
+				@Override
+				public ModelAndView createView(String content) {
+					FastJsonJsonView view = new FastJsonJsonView();
+					String text = JSONObject.toJSONString(
+							new Response<Void>(errorCode == null || "".equals(errorCode) ? "500" : errorCode, content));
+					Map<String, Object> attributes = JSONObject.parseObject(text, Map.class);
+					view.setAttributesMap(attributes);
+					return new ModelAndView(view);
+				}
+			};
+		}
+	}
 
-    @Bean
-    @ConditionalOnMissingBean(ClassMessagePair.class)
-    @ConfigurationProperties(prefix = "assist4j.boot.exception", ignoreUnknownFields = true)
-    public ClassMessagePair classMessagePair() {
-        return new ClassMessagePair() {
-            private Map<String, String> map = new HashMap<String, String>();
+	@Bean
+	@ConditionalOnMissingBean(ClassMessagePair.class)
+	@ConfigurationProperties(prefix = "assist4j.boot.exception", ignoreUnknownFields = true)
+	public ClassMessagePair classMessagePair() {
+		return new ClassMessagePair() {
+			private Map<String, String> map = new HashMap<String, String>();
 
-            @Override
-            public Map<String, String> getDefaultMessage() {
-                return map;
-            }
-        };
-    }
+			@Override
+			public Map<String, String> getDefaultMessage() {
+				return map;
+			}
+		};
+	}
 
-    @Bean
-    @ConditionalOnMissingBean(ExceptionHandler.class)
-    public ExceptionHandler exceptionHandler(ClassMessagePair classMessagePair, ExceptionViewResolver viewResolver
-            , @Value("${assist4j.boot.exception.showExceptionName:false}")boolean showExceptionName) {
-        Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
+	@Bean
+	@ConditionalOnMissingBean(ExceptionHandler.class)
+	public ExceptionHandler exceptionHandler(ClassMessagePair classMessagePair, ExceptionViewResolver viewResolver,
+			@Value("${assist4j.boot.exception.showExceptionName:false}") boolean showExceptionName) {
+		Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
 
-        Map<String, String> classMessageMap = classMessagePair.getDefaultMessage();
-        if (classMessageMap != null) {
-            Set<Map.Entry<String, String>> entrySet = classMessageMap.entrySet();
-            for (Map.Entry<String, String> entry: entrySet) {
-                try {
-                    errorMsgMap.put(Class.forName(entry.getKey()), entry.getValue());
-                } catch (ClassNotFoundException e) {
-                }
-            }
-        }
+		Map<String, String> classMessageMap = classMessagePair.getDefaultMessage();
+		if (classMessageMap != null) {
+			Set<Map.Entry<String, String>> entrySet = classMessageMap.entrySet();
+			for (Map.Entry<String, String> entry : entrySet) {
+				try {
+					errorMsgMap.put(Class.forName(entry.getKey()), entry.getValue());
+				} catch (ClassNotFoundException e) {
+				}
+			}
+		}
 
-        ExceptionHandler exceptionHandler = new ExceptionHandler();
-        exceptionHandler.setViewResolver(viewResolver);
-        exceptionHandler.setErrorMsgMap(errorMsgMap);
-        exceptionHandler.setShowExceptionName(showExceptionName);
-        return exceptionHandler;
-    }
+		ExceptionHandler exceptionHandler = new ExceptionHandler();
+		exceptionHandler.setViewResolver(viewResolver);
+		exceptionHandler.setErrorMsgMap(errorMsgMap);
+		exceptionHandler.setShowExceptionName(showExceptionName);
+		return exceptionHandler;
+	}
 }
