@@ -192,5 +192,5 @@ public class JedisClusterCache implements RedisCache {
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
 		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Collections.singletonList(v));
 		return result != null && "1".equals(result.toString());
-    }
+	}
 }
