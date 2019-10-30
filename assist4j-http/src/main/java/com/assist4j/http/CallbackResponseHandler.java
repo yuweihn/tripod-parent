@@ -124,10 +124,10 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 
 		String errorMessage = statusLine.toString();
 		Object body = null;
-        if (typeReference != null) {
-            String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-            body = JSONObject.parseObject(txt, typeReference);
-        } else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
+		if (typeReference != null) {
+			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+			body = JSONObject.parseObject(txt, typeReference);
+		} else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
 			/**
 			 * 返回字符串类型
 			 **/
