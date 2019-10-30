@@ -73,6 +73,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 		return toUpdateByCriteriaSql(param, true);
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T>String toUpdateByCriteriaSql(Map<String, Object> param, final boolean selective) throws IllegalAccessException {
 		final T t = (T) param.get("t");
 		Class<?> entityClass = t.getClass();

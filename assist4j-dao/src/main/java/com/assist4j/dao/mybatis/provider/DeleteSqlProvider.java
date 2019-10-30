@@ -65,6 +65,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 		}}.toString();
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T>String deleteByCriteria(Map<String, Object> param) throws IllegalAccessException {
 		Class<T> entityClass = (Class<T>) param.get("clz");
 		final String tableName = getTableName(entityClass);
