@@ -18,10 +18,7 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -246,5 +243,13 @@ public class JedisCache implements RedisCache {
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
 		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v);
 		return result != null && "1".equals(result.toString());
+	}
+
+	@Override
+	public String execute(String script, List<String> keyList, List<String> argList) {
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
+		redisScript.setScriptText(script);
+		return redisTemplate.execute(redisScript, keyList, argList == null ? new Object[0] : argList.toArray());
 	}
 }
