@@ -193,4 +193,13 @@ public class JedisClusterCache implements RedisCache {
 		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Collections.singletonList(v));
 		return result != null && "1".equals(result.toString());
 	}
+
+	@Override
+	public String execute(String script, List<String> keyList, List<String> argList) {
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
+		redisScript.setScriptText(script);
+		Object result = jedisCluster.eval(redisScript.getScriptAsString(), keyList, argList);
+		return result == null ? null : result.toString();
+	}
 }
