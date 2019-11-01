@@ -29,8 +29,8 @@ import org.springframework.scripting.support.ResourceScriptSource;
 public class LettuceCache implements RedisCache {
 	private static final Logger log = LoggerFactory.getLogger(LettuceCache.class);
 	private static final String CHARSET = "utf-8";
-	private RedisTemplate<String, Object> redisTemplate;
 	private Serialize serialize;
+	protected RedisTemplate<String, Object> redisTemplate;
 
 
 	public LettuceCache() {
