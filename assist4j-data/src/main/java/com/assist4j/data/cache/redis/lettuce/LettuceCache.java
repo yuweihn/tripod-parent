@@ -29,8 +29,8 @@ import org.springframework.scripting.support.ResourceScriptSource;
 public class LettuceCache implements RedisCache {
 	private static final Logger log = LoggerFactory.getLogger(LettuceCache.class);
 	private static final String CHARSET = "utf-8";
-	private RedisTemplate<String, Object> redisTemplate;
 	private Serialize serialize;
+	protected RedisTemplate<String, Object> redisTemplate;
 
 
 	public LettuceCache() {
@@ -246,5 +246,13 @@ public class LettuceCache implements RedisCache {
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
 		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v);
 		return result != null && "1".equals(result.toString());
+	}
+
+	@Override
+	public String execute(String script, List<String> keyList, List<String> argList) {
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
+		redisScript.setScriptText(script);
+		return redisTemplate.execute(redisScript, keyList, argList == null ? new Object[0] : argList.toArray());
 	}
 }

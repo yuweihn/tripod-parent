@@ -23,8 +23,8 @@ import redis.clients.jedis.JedisPubSub;
 public class JedisClusterCache implements RedisCache {
 	private static final Logger log = LoggerFactory.getLogger(JedisClusterCache.class);
 	private static final String UTF_8 = "utf-8";
-	private BinaryJedisCluster jedisCluster;
 	private Serialize serialize;
+	protected BinaryJedisCluster jedisCluster;
 
 
 	public JedisClusterCache() {
@@ -192,5 +192,14 @@ public class JedisClusterCache implements RedisCache {
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
 		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Collections.singletonList(v));
 		return result != null && "1".equals(result.toString());
+	}
+
+	@Override
+	public String execute(String script, List<String> keyList, List<String> argList) {
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
+		redisScript.setScriptText(script);
+		Object result = jedisCluster.eval(redisScript.getScriptAsString(), keyList, argList);
+		return result == null ? null : result.toString();
 	}
 }

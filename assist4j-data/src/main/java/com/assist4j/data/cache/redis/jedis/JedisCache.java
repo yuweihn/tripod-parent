@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -31,8 +32,8 @@ import java.util.concurrent.TimeUnit;
 public class JedisCache implements RedisCache {
 	private static final Logger log = LoggerFactory.getLogger(JedisCache.class);
 	private static final String CHARSET = "utf-8";
-	private RedisTemplate<String, Object> redisTemplate;
 	private Serialize serialize;
+	protected RedisTemplate<String, Object> redisTemplate;
 
 
 	public JedisCache() {
@@ -246,5 +247,13 @@ public class JedisCache implements RedisCache {
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
 		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v);
 		return result != null && "1".equals(result.toString());
+	}
+
+	@Override
+	public String execute(String script, List<String> keyList, List<String> argList) {
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
+		redisScript.setScriptText(script);
+		return redisTemplate.execute(redisScript, keyList, argList == null ? new Object[0] : argList.toArray());
 	}
 }
