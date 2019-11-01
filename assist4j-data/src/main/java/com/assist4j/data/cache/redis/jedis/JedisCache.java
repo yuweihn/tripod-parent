@@ -31,8 +31,8 @@ import java.util.concurrent.TimeUnit;
 public class JedisCache implements RedisCache {
 	private static final Logger log = LoggerFactory.getLogger(JedisCache.class);
 	private static final String CHARSET = "utf-8";
-	private RedisTemplate<String, Object> redisTemplate;
 	private Serialize serialize;
+	protected RedisTemplate<String, Object> redisTemplate;
 
 
 	public JedisCache() {

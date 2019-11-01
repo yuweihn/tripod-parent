@@ -23,8 +23,8 @@ import redis.clients.jedis.JedisPubSub;
 public class JedisClusterCache implements RedisCache {
 	private static final Logger log = LoggerFactory.getLogger(JedisClusterCache.class);
 	private static final String UTF_8 = "utf-8";
-	private BinaryJedisCluster jedisCluster;
 	private Serialize serialize;
+	protected BinaryJedisCluster jedisCluster;
 
 
 	public JedisClusterCache() {
