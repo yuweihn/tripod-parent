@@ -8,5 +8,5 @@ import java.util.Map;
  * @author yuwei
  */
 public interface ClassMessagePair {
-    Map<String, String> getDefaultMessage();
+	Map<String, String> getDefaultMessage();
 }

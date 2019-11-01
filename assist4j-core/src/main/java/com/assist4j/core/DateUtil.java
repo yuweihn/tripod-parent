@@ -359,30 +359,45 @@ public abstract class DateUtil {
 //		if (date == null) {
 //			return resp;
 //		}
-//
-//		long sec = (Calendar.getInstance().getTimeInMillis() - date.getTime()) / 1000;
-//		if (sec < 0) {
-//			resp = "";
-//		} else if (sec < 60) {
+//		
+//		Date now = Calendar.getInstance().getTime();
+//		if (DateUtil.isSameDay(now, date)) {
+//			long sec = (now.getTime() - date.getTime()) / 1000;
+//			if (sec < 0) {
+//				return "";
+//			}
+//			
+//			if (sec < 60) {
+//				/**
+//				 * 1分钟内
+//				 */
+//				return sec + "秒前";
+//			}
+//			if (sec < 60 * 60) {
+//				/**
+//				 * 1小时内
+//				 */
+//				int m = (int) (sec / 60);
+//				return m + "分钟前";
+//			}
 //			/**
-//			 * 1分钟内
-//			 */
-//			resp = sec + "秒";
-//		} else if (sec < 60 * 60) {
-//			/**
-//			 * 1小时内
-//			 */
-//			int m = (int) (sec / 60);
-//			resp = m + "分钟";
-//		} else if (sec < 60 * 60 * 24) {
-//			/**
-//			 * 1天
+//			 * 1天内
 //			 */
 //			int h = (int) (sec / (60 * 60));
-//			resp = h + "小时";
-//		} else {
-//			resp = DateUtil.formatDate(date, DateUtil.PATTERN_DATE_TIME2);
+//			return h + "小时前";
 //		}
-//		return resp;
+//		
+//		int diff = DateUtil.getDayDiff(DateUtil.getStartOfDate(date), DateUtil.getStartOfDate(now));
+//		if (diff <= 0) {
+//			return "";
+//		}
+//		if (diff == 1) {
+//			return "昨天";
+//		}
+//		if (diff < 7) {
+//			return diff + "天前";
+//		}
+//		
+//		return DateUtil.formatDate(date, "yyyy-MM-dd");
 //	}
 }
