@@ -199,7 +199,7 @@ public class JedisClusterCache implements RedisCache {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptText(script);
-		Object result = jedisCluster.eval(redisScript.getScriptAsString(), keyList, argList);
+		Object result = jedisCluster.eval(redisScript.getScriptAsString(), keyList, argList == null ? new ArrayList<String>() : argList);
 		return result == null ? null : result.toString();
 	}
 }
