@@ -64,10 +64,9 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 		try {
 			content = URLDecoder.decode(content, "utf-8");
 		} catch (Exception e) {
-			content = null;
 		}
 
-		if (contentLimit > 0 && contentLimit < content.length()) {
+		if (contentLimit > 0 && content != null && contentLimit < content.length()) {
 			content = content.substring(0, contentLimit) + "......";
 		}
 		return content;
