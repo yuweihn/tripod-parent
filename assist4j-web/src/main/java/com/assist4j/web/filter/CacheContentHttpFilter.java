@@ -66,7 +66,7 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 		} catch (Exception e) {
 		}
 
-		if (contentLimit > 0 && contentLimit < content.length()) {
+		if (contentLimit > 0 && content != null && contentLimit < content.length()) {
 			content = content.substring(0, contentLimit) + "......";
 		}
 		return content;
