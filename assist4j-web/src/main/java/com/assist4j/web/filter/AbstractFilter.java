@@ -227,11 +227,11 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	}
 	private String getAllowedHeaders(HttpServletRequest request) {
 		Enumeration<String> headerNames = request.getHeaderNames();
-		StringBuilder builder = new StringBuilder("");
 		if (headerNames == null || !headerNames.hasMoreElements()) {
 			return "*";
 		}
 
+        StringBuilder builder = new StringBuilder("");
 		while (headerNames.hasMoreElements()) {
 			String headerName = headerNames.nextElement();
 			if (ACCESS_CONTROL_REQUEST_HEADERS.equalsIgnoreCase(headerName)) {
