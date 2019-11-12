@@ -227,7 +227,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	}
 	private String getAllowedHeaders(HttpServletRequest request) {
 		Enumeration<String> headerNames = request.getHeaderNames();
-        if (headerNames == null || !headerNames.hasMoreElements()) {
+		if (headerNames == null || !headerNames.hasMoreElements()) {
 			return "*";
 		}
 
