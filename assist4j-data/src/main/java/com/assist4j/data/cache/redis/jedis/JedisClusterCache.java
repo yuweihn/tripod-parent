@@ -68,24 +68,15 @@ public class JedisClusterCache implements RedisCache {
 	}
 
 	@Override
-	public <T>boolean put(String key, T value, long expiredTime) {
-		if (expiredTime <= 0) {
-			throw new RuntimeException("Invalid expiredTime.");
+	public <T>boolean put(String key, T value, long timeout) {
+		if (timeout <= 0) {
+			throw new RuntimeException("Invalid parameter[timeout].");
 		}
 
 		String v = serialize.encode(value);
 		Charset charset = Charset.forName(UTF_8);
-		String res = jedisCluster.setex(key, (int) expiredTime, v.getBytes(charset));
+		String res = jedisCluster.setex(key, (int) timeout, v.getBytes(charset));
 		return "OK".equalsIgnoreCase(res);
-	}
-
-	@Override
-	public <T>boolean put(String key, T value, Date expiredTime) {
-		if (!expiredTime.after(new Date())) {
-			throw new RuntimeException("Invalid expiredTime.");
-		}
-
-		return put(key, value, expiredTime.getTime() / 1000);
 	}
 
 	@Override
@@ -109,46 +100,6 @@ public class JedisClusterCache implements RedisCache {
 	@Override
 	public void remove(String key) {
 		jedisCluster.del(key);
-	}
-
-	@Override
-	public <T> void hset(String key, String field, T value, long expiredTime) {
-		if (expiredTime <= 0) {
-			throw new RuntimeException("Invalid expiredTime.");
-		}
-
-		String v = serialize.encode(value);
-		Charset charset = Charset.forName(UTF_8);
-		jedisCluster.hset(key, field, v.getBytes(charset));
-		jedisCluster.expire(key, (int) expiredTime);
-	}
-
-	@Override
-	public Set<String> hfields(String key) {
-		return jedisCluster.hkeys(key);
-	}
-
-	@Override
-	public <T> T hget(String key, String field) {
-		byte[] bytes = jedisCluster.hgetBytes(key, field);
-		if (bytes == null) {
-			return null;
-		}
-
-		Charset charset = Charset.forName(UTF_8);
-		String str = new String(bytes, charset);
-		try {
-			return serialize.decode(str);
-		} catch(Exception e) {
-			log.error("数据异常！！！key: {}, field: {}, message: {}", key, field, e.getMessage());
-			hdel(key, field);
-			return null;
-		}
-	}
-
-	@Override
-	public void hdel(String key, String field) {
-		jedisCluster.hdel(key, field);
 	}
 
 	private boolean setNx(String key, String owner, long expiredTime) {

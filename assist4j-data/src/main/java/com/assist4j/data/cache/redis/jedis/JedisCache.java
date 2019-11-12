@@ -18,7 +18,8 @@ import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -112,23 +113,14 @@ public class JedisCache implements RedisCache {
 	}
 
 	@Override
-	public <T>boolean put(String key, T value, long expiredTime) {
-		if (expiredTime <= 0) {
-			throw new RuntimeException("Invalid expiredTime.");
+	public <T>boolean put(String key, T value, long timeout) {
+		if (timeout <= 0) {
+			throw new RuntimeException("Invalid parameter[timeout].");
 		}
 
 		String v = serialize.encode(value);
-		redisTemplate.opsForValue().set(key, v, expiredTime, TimeUnit.SECONDS);
+		redisTemplate.opsForValue().set(key, v, timeout, TimeUnit.SECONDS);
 		return true;
-	}
-
-	@Override
-	public <T>boolean put(String key, T value, Date expiredTime) {
-		if (!expiredTime.after(new Date())) {
-			throw new RuntimeException("Invalid expiredTime.");
-		}
-
-		return put(key, value, expiredTime.getTime() / 1000);
 	}
 
 	@Override
@@ -149,51 +141,6 @@ public class JedisCache implements RedisCache {
 	@Override
 	public void remove(String key) {
 		redisTemplate.delete(key);
-	}
-
-	@Override
-	public <T> void hset(String key, String field, T value, long expiredTime) {
-		if (expiredTime <= 0) {
-			throw new RuntimeException("Invalid expiredTime.");
-		}
-
-		String v = serialize.encode(value);
-		redisTemplate.opsForHash().put(key, field, v);
-		redisTemplate.expire(key, expiredTime, TimeUnit.SECONDS);
-	}
-
-	@Override
-	public Set<String> hfields(String key) {
-		Set<String> fieldSet = new HashSet<String>();
-		Set<Object> objectSet = redisTemplate.opsForHash().keys(key);
-		if (objectSet == null || objectSet.size() <= 0) {
-			return fieldSet;
-		}
-
-		for (Object obj: objectSet) {
-			fieldSet.add(obj.toString());
-		}
-		return fieldSet;
-	}
-
-	@Override
-	public <T> T hget(String key, String field) {
-		String str = (String) redisTemplate.opsForHash().get(key, field);
-		if (str == null) {
-			return null;
-		}
-		try {
-			return serialize.decode(str);
-		} catch (Exception e) {
-			log.error("数据异常！！！key: {}, field: {}, message: {}", key, field, e.getMessage());
-			hdel(key, field);
-			return null;
-		}
-	}
-
-	@Override
-	public void hdel(String key, String field) {
-		redisTemplate.opsForHash().delete(key, field);
 	}
 
 	private boolean setNx(String key, String owner, long expiredTime) {
