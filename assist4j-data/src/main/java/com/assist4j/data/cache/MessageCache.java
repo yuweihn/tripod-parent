@@ -11,12 +11,12 @@ public interface MessageCache {
 	 * @param channel
 	 * @param value
 	 */
-	<T>void publish(String channel, T value);
+	void publish(String channel, String value);
 
 	/**
 	 * 订阅消息
 	 * @param channel
 	 * @param handler
 	 */
-	<T>void subscribe(String channel, MessageHandler<T> handler);
+	void subscribe(String channel, MessageHandler handler);
 }

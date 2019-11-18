@@ -1,12 +1,8 @@
 package com.assist4j.data.cache.redis.jedis;
 
 
-import com.assist4j.data.cache.*;
+import com.assist4j.data.cache.MessageHandler;
 import com.assist4j.data.cache.redis.RedisCache;
-import com.assist4j.data.cache.serialize.DefaultSerialize;
-import com.assist4j.data.cache.serialize.Serialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.Message;
@@ -27,26 +23,17 @@ import java.util.concurrent.TimeUnit;
  * @author yuwei
  */
 public class JedisCache implements RedisCache {
-	private static final Logger log = LoggerFactory.getLogger(JedisCache.class);
 	private static final String CHARSET = "utf-8";
-	private Serialize serialize;
 	protected RedisTemplate<String, Object> redisTemplate;
 
 
 	public JedisCache() {
-		this(new DefaultSerialize());
-	}
-	public JedisCache(Serialize serialize) {
-		this.serialize = serialize;
+
 	}
 
 
 	public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
 		this.redisTemplate = redisTemplate;
-	}
-
-	public void setSerialize(Serialize serialize) {
-		this.serialize = serialize;
 	}
 
 	private static byte[] encode(final String str) {
@@ -67,19 +54,18 @@ public class JedisCache implements RedisCache {
 		}
 	}
 	@Override
-	public <T>void publish(final String channel, final T value) {
-		final String v = serialize.encode(value);
+	public void publish(final String channel, final String value) {
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.publish(encode(channel), encode(v));
+				connection.publish(encode(channel), encode(value));
 				return null;
 			}
 		});
 	}
 
 	@Override
-	public <T>void subscribe(final String channel, final MessageHandler<T> handler) {
+	public void subscribe(final String channel, final MessageHandler handler) {
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
@@ -97,8 +83,7 @@ public class JedisCache implements RedisCache {
 							msg = decode(message.getBody());
 						}
 
-						T t = serialize.decode(msg);
-						handler.handle(channel, t);
+						handler.handle(channel, msg);
 					}
 				}, encode(channel));
 				return null;
@@ -113,29 +98,18 @@ public class JedisCache implements RedisCache {
 	}
 
 	@Override
-	public <T>boolean put(String key, T value, long timeout) {
+	public boolean put(String key, String value, long timeout) {
 		if (timeout <= 0) {
 			throw new RuntimeException("Invalid parameter[timeout].");
 		}
 
-		String v = serialize.encode(value);
-		redisTemplate.opsForValue().set(key, v, timeout, TimeUnit.SECONDS);
+		redisTemplate.opsForValue().set(key, value, timeout, TimeUnit.SECONDS);
 		return true;
 	}
 
 	@Override
-	public <T>T get(String key) {
-		String str = (String) redisTemplate.opsForValue().get(key);
-		if (str == null) {
-			return null;
-		}
-		try {
-			return serialize.decode(str);
-		} catch(Exception e) {
-			log.error("数据异常！！！key: {}, message: {}", key, e.getMessage());
-			remove(key);
-			return null;
-		}
+	public String get(String key) {
+		return (String) redisTemplate.opsForValue().get(key);
 	}
 
 	@Override
@@ -143,40 +117,37 @@ public class JedisCache implements RedisCache {
 		redisTemplate.delete(key);
 	}
 
-	private boolean setNx(String key, String owner, long expiredTime) {
-		String v = serialize.encode(owner);
+	private boolean setNx(String key, String owner, long timeout) {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockNx.lua")));
-		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
 		return result != null && "OK".equalsIgnoreCase(result);
 	}
 	@SuppressWarnings("unused")
-	private boolean setXx(String key, String owner, long expiredTime) {
-		String v = serialize.encode(owner);
+	private boolean setXx(String key, String owner, long timeout) {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
-		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
 		return result != null && "OK".equalsIgnoreCase(result);
 	}
-	private boolean setXxEquals(String key, String owner, long expiredTime) {
-		String v = serialize.encode(owner);
+	private boolean setXxEquals(String key, String owner, long timeout) {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXxEquals.lua")));
-		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
 		return result != null && "OK".equalsIgnoreCase(result);
 	}
 
 	@Override
-	public boolean lock(String key, String owner, long expiredTime) {
-		return lock(key, owner, expiredTime, false);
+	public boolean lock(String key, String owner, long timeout) {
+		return lock(key, owner, timeout, false);
 	}
 
 	@Override
-	public boolean lock(String key, String owner, long expiredTime, boolean reentrant) {
-		return reentrant && setXxEquals(key, owner, expiredTime) || setNx(key, owner, expiredTime);
+	public boolean lock(String key, String owner, long timeout, boolean reentrant) {
+		return reentrant && setXxEquals(key, owner, timeout) || setNx(key, owner, timeout);
 	}
 
 	@Override
@@ -184,11 +155,10 @@ public class JedisCache implements RedisCache {
 		if (!contains(key)) {
 			return true;
 		}
-		String v = serialize.encode(owner);
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
 		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
-		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), v);
+		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner);
 		return result != null && "1".equals(result.toString());
 	}
 
