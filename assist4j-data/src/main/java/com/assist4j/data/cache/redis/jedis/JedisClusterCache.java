@@ -2,14 +2,13 @@ package com.assist4j.data.cache.redis.jedis;
 
 
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import com.assist4j.data.cache.*;
+import com.assist4j.data.cache.MessageHandler;
 import com.assist4j.data.cache.redis.RedisCache;
-import com.assist4j.data.cache.serialize.DefaultSerialize;
-import com.assist4j.data.cache.serialize.Serialize;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -21,43 +20,32 @@ import redis.clients.jedis.JedisPubSub;
  * @author yuwei
  */
 public class JedisClusterCache implements RedisCache {
-	private static final Logger log = LoggerFactory.getLogger(JedisClusterCache.class);
 	private static final String UTF_8 = "utf-8";
-	private Serialize serialize;
 	protected BinaryJedisCluster jedisCluster;
 
 
 	public JedisClusterCache() {
-		this(new DefaultSerialize());
+		
 	}
-	public JedisClusterCache(Serialize serialize) {
-		this.serialize = serialize;
-	}
-
-
+	
+	
 	public void setJedisCluster(BinaryJedisCluster jedisCluster) {
 		this.jedisCluster = jedisCluster;
 	}
-
-	public void setSerialize(Serialize serialize) {
-		this.serialize = serialize;
-	}
-
-
+	
+	
 	@Override
-	public <T>void publish(String channel, T value) {
-		String v = serialize.encode(value);
+	public void publish(String channel, String value) {
 		Charset charset = Charset.forName(UTF_8);
-		jedisCluster.publish(channel.getBytes(charset), v.getBytes(charset));
+		jedisCluster.publish(channel.getBytes(charset), value.getBytes(charset));
 	}
 
 	@Override
-	public <T>void subscribe(String channel, final MessageHandler<T> handler) {
+	public void subscribe(String channel, final MessageHandler handler) {
 		jedisCluster.subscribe(new JedisPubSub() {
 			@Override
 			public void onMessage(String channel, String message) {
-				T t = serialize.decode(message);
-				handler.handle(channel, t);
+				handler.handle(channel, message);
 			}
 		}, channel);
 	}
@@ -68,33 +56,23 @@ public class JedisClusterCache implements RedisCache {
 	}
 
 	@Override
-	public <T>boolean put(String key, T value, long timeout) {
+	public boolean put(String key, String value, long timeout) {
 		if (timeout <= 0) {
 			throw new RuntimeException("Invalid parameter[timeout].");
 		}
-
-		String v = serialize.encode(value);
-		Charset charset = Charset.forName(UTF_8);
-		String res = jedisCluster.setex(key, (int) timeout, v.getBytes(charset));
+		
+		String res = jedisCluster.setex(key, (int) timeout, value.getBytes(Charset.forName(UTF_8)));
 		return "OK".equalsIgnoreCase(res);
 	}
 
 	@Override
-	public <T>T get(String key) {
+	public String get(String key) {
 		byte[] bytes = jedisCluster.getBytes(key);
 		if (bytes == null) {
 			return null;
 		}
-
-		Charset charset = Charset.forName(UTF_8);
-		String str = new String(bytes, charset);
-		try {
-			return serialize.decode(str);
-		} catch(Exception e) {
-			log.error("数据异常！！！key: {}, message: {}", key, e.getMessage());
-			remove(key);
-			return null;
-		}
+		
+		return new String(bytes, Charset.forName(UTF_8));
 	}
 
 	@Override
@@ -102,34 +80,31 @@ public class JedisClusterCache implements RedisCache {
 		jedisCluster.del(key);
 	}
 
-	private boolean setNx(String key, String owner, long expiredTime) {
-		String v = serialize.encode(owner);
-		String res = jedisCluster.set(key, v, "NX", "EX", (int) expiredTime);
-		return "OK".equals(res);
+	private boolean setNx(String key, String owner, long timeout) {
+		String res = jedisCluster.set(key, owner, "NX", "EX", (int) timeout);
+		return "OK".equalsIgnoreCase(res);
 	}
 	@SuppressWarnings("unused")
-	private boolean setXx(String key, String owner, long expiredTime) {
-		String v = serialize.encode(owner);
-		String res = jedisCluster.set(key, v, "XX", "EX", (int) expiredTime);
-		return "OK".equals(res);
+	private boolean setXx(String key, String owner, long timeout) {
+		String res = jedisCluster.set(key, owner, "XX", "EX", (int) timeout);
+		return "OK".equalsIgnoreCase(res);
 	}
-	private boolean setXxEquals(String key, String owner, long expiredTime) {
-		String v = serialize.encode(owner);
+	private boolean setXxEquals(String key, String owner, long timeout) {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXxEquals.lua")));
-		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Arrays.asList(v, "" + expiredTime));
-		return result != null && "OK".equals(result);
+		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Arrays.asList(owner, "" + timeout));
+		return result != null && "OK".equalsIgnoreCase(result.toString());
 	}
 
 	@Override
-	public boolean lock(String key, String owner, long expiredTime) {
-		return lock(key, owner, expiredTime, false);
+	public boolean lock(String key, String owner, long timeout) {
+		return lock(key, owner, timeout, false);
 	}
 
 	@Override
-	public boolean lock(String key, String owner, long expiredTime, boolean reentrant) {
-		return reentrant && setXxEquals(key, owner, expiredTime) || setNx(key, owner, expiredTime);
+	public boolean lock(String key, String owner, long timeout, boolean reentrant) {
+		return reentrant && setXxEquals(key, owner, timeout) || setNx(key, owner, timeout);
 	}
 
 	@Override
@@ -137,11 +112,10 @@ public class JedisClusterCache implements RedisCache {
 		if (!contains(key)) {
 			return true;
 		}
-		String v = serialize.encode(owner);
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
 		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
-		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Collections.singletonList(v));
+		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Collections.singletonList(owner));
 		return result != null && "1".equals(result.toString());
 	}
 
