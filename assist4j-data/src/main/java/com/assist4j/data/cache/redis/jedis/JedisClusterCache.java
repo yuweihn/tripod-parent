@@ -62,7 +62,7 @@ public class JedisClusterCache implements RedisCache {
 			throw new RuntimeException("Invalid parameter[timeout].");
 		}
 		
-		String res = jedisCluster.setex(key, (int) timeout, value.getBytes(Charset.forName(UTF_8)));
+		String res = jedisCluster.setex(key, (int) timeout, value);
 		return "OK".equalsIgnoreCase(res);
 	}
 
@@ -73,12 +73,7 @@ public class JedisClusterCache implements RedisCache {
 
 	@Override
 	public String get(String key) {
-		byte[] bytes = jedisCluster.getBytes(key);
-		if (bytes == null) {
-			return null;
-		}
-		
-		return new String(bytes, Charset.forName(UTF_8));
+		return jedisCluster.get(key);
 	}
 
 	@Override
