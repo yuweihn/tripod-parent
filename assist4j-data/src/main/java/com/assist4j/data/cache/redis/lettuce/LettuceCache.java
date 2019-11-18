@@ -38,10 +38,10 @@ public class LettuceCache implements RedisCache {
 
 
 	private static byte[] encode(final String str) {
+		if (str == null) {
+			throw new RuntimeException("value sent to redis cannot be null");
+		}
 		try {
-			if (str == null) {
-				throw new RuntimeException("value sent to redis cannot be null");
-			}
 			return str.getBytes(CHARSET);
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
