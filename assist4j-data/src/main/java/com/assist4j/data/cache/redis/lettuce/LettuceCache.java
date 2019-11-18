@@ -150,7 +150,7 @@ public class LettuceCache implements RedisCache {
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockNx.lua")));
 		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
-		return result != null && "OK".equals(result);
+		return result != null && "OK".equalsIgnoreCase(result);
 	}
 	@SuppressWarnings("unused")
 	private boolean setXx(String key, String owner, long expiredTime) {
@@ -159,7 +159,7 @@ public class LettuceCache implements RedisCache {
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
 		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
-		return result != null && "OK".equals(result);
+		return result != null && "OK".equalsIgnoreCase(result);
 	}
 	private boolean setXxEquals(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
@@ -167,7 +167,7 @@ public class LettuceCache implements RedisCache {
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXxEquals.lua")));
 		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), v, "" + expiredTime);
-		return result != null && "OK".equals(result);
+		return result != null && "OK".equalsIgnoreCase(result);
 	}
 
 	@Override

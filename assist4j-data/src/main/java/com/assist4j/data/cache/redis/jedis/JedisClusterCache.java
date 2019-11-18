@@ -105,13 +105,13 @@ public class JedisClusterCache implements RedisCache {
 	private boolean setNx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
 		String res = jedisCluster.set(key, v, "NX", "EX", (int) expiredTime);
-		return "OK".equals(res);
+		return "OK".equalsIgnoreCase(res);
 	}
 	@SuppressWarnings("unused")
 	private boolean setXx(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
 		String res = jedisCluster.set(key, v, "XX", "EX", (int) expiredTime);
-		return "OK".equals(res);
+		return "OK".equalsIgnoreCase(res);
 	}
 	private boolean setXxEquals(String key, String owner, long expiredTime) {
 		String v = serialize.encode(owner);
@@ -119,7 +119,7 @@ public class JedisClusterCache implements RedisCache {
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXxEquals.lua")));
 		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Arrays.asList(v, "" + expiredTime));
-		return result != null && "OK".equals(result);
+		return result != null && "OK".equalsIgnoreCase(result.toString());
 	}
 
 	@Override
