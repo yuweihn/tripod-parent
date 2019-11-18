@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.JSON;
 import com.assist4j.data.cache.MessageHandler;
 import com.assist4j.data.cache.redis.RedisCache;
 import org.springframework.core.io.ClassPathResource;
@@ -109,8 +110,22 @@ public class LettuceCache implements RedisCache {
 	}
 
 	@Override
+	public <T> boolean put(String key, T value, long timeout) {
+		return put(key, JSON.toJSONString(value), timeout);
+	}
+
+	@Override
 	public String get(String key) {
 		return (String) redisTemplate.opsForValue().get(key);
+	}
+
+	@Override
+	public <T> T get(String key, Class<T> clz) {
+		String val = get(key);
+		if (val == null) {
+			return null;
+		}
+		return JSON.parseObject(val, clz);
 	}
 
 	@Override
