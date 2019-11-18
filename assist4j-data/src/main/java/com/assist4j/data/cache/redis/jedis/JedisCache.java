@@ -1,7 +1,6 @@
 package com.assist4j.data.cache.redis.jedis;
 
 
-import com.alibaba.fastjson.JSON;
 import com.assist4j.data.cache.MessageHandler;
 import com.assist4j.data.cache.redis.RedisCache;
 import org.springframework.core.io.ClassPathResource;
@@ -14,7 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +23,6 @@ import java.util.concurrent.TimeUnit;
  * @author yuwei
  */
 public class JedisCache implements RedisCache {
-	private static final String CHARSET = "utf-8";
 	protected RedisTemplate<String, Object> redisTemplate;
 
 
@@ -37,29 +35,13 @@ public class JedisCache implements RedisCache {
 		this.redisTemplate = redisTemplate;
 	}
 
-	private static byte[] encode(final String str) {
-		if (str == null) {
-			throw new RuntimeException("value sent to redis cannot be null");
-		}
-		try {
-			return str.getBytes(CHARSET);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	private static String decode(final byte[] data) {
-		try {
-			return new String(data, CHARSET);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
+
 	@Override
 	public void publish(final String channel, final String value) {
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.publish(encode(channel), encode(value));
+				connection.publish(channel.getBytes(StandardCharsets.UTF_8), value.getBytes(StandardCharsets.UTF_8));
 				return null;
 			}
 		});
@@ -75,18 +57,18 @@ public class JedisCache implements RedisCache {
 					public void onMessage(Message message, byte[] bytes) {
 						String channel = null;
 						String msg = null;
-						
+
 						if (message.getChannel() != null) {
-							channel = decode(message.getChannel());
+							channel = new String(message.getChannel(), StandardCharsets.UTF_8);
 						}
-						
+
 						if (message.getBody() != null) {
-							msg = decode(message.getBody());
+							msg = new String(message.getBody(), StandardCharsets.UTF_8);
 						}
-						
+
 						handler.handle(channel, msg);
 					}
-				}, encode(channel));
+				}, channel.getBytes(StandardCharsets.UTF_8));
 				return null;
 			}
 		});
@@ -99,7 +81,7 @@ public class JedisCache implements RedisCache {
 	}
 
 	@Override
-	public boolean put(String key, String value, long timeout) {
+	public <T> boolean put(String key, T value, long timeout) {
 		if (timeout <= 0) {
 			throw new RuntimeException("Invalid parameter[timeout].");
 		}
@@ -109,22 +91,8 @@ public class JedisCache implements RedisCache {
 	}
 
 	@Override
-	public <T> boolean put(String key, T value, long timeout) {
-		return put(key, JSON.toJSONString(value), timeout);
-	}
-
-	@Override
-	public String get(String key) {
-		return (String) redisTemplate.opsForValue().get(key);
-	}
-
-	@Override
-	public <T> T get(String key, Class<T> clz) {
-		String val = get(key);
-		if (val == null) {
-			return null;
-		}
-		return JSON.parseObject(val, clz);
+	public <T> T get(String key) {
+		return (T) redisTemplate.opsForValue().get(key);
 	}
 
 	@Override

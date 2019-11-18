@@ -19,15 +19,13 @@ public interface Cache {
 	 * @param timeout 过期时间(s)。
 	 * @return
 	 */
-    boolean put(String key, String value, long timeout);
     <T>boolean put(String key, T value, long timeout);
 
 	/**
 	 * @param key
 	 * @return
 	 */
-    String get(String key);
-    <T>T get(String key, Class<T> clz);
+    <T>T get(String key);
 
 	/**
 	 * @param key
