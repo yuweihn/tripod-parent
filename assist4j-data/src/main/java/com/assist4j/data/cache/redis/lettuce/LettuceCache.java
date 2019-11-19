@@ -138,24 +138,36 @@ public class LettuceCache implements RedisCache {
 	}
 
 	@Override
-	public boolean lock(String key, String owner, long timeout) {
+	public <T>boolean lock(String key, T owner, long timeout) {
 		return lock(key, owner, timeout, false);
 	}
 
 	@Override
-	public boolean lock(String key, String owner, long timeout, boolean reentrant) {
-		return reentrant && setXxEquals(key, owner, timeout) || setNx(key, owner, timeout);
+	public <T>boolean lock(String key, T owner, long timeout, boolean reentrant) {
+		String val = null;
+		if (owner.getClass() == String.class) {
+			val = (String) owner;
+		} else {
+			val = JSON.toJSONString(owner);
+		}
+		return reentrant && setXxEquals(key, val, timeout) || setNx(key, val, timeout);
 	}
 
 	@Override
-	public boolean unlock(String key, String owner) {
+	public <T>boolean unlock(String key, T owner) {
 		if (!contains(key)) {
 			return true;
+		}
+		String val = null;
+		if (owner.getClass() == String.class) {
+			val = (String) owner;
+		} else {
+			val = JSON.toJSONString(owner);
 		}
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
 		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
-		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner);
+		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), val);
 		return result != null && "1".equals(result.toString());
 	}
 
