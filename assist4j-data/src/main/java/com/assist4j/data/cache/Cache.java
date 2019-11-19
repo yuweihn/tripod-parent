@@ -1,6 +1,7 @@
 package com.assist4j.data.cache;
 
 
+import com.alibaba.fastjson.TypeReference;
 
 
 /**
@@ -29,6 +30,7 @@ public interface Cache {
 	 * @return
 	 */
 	<T>T get(String key, Class<T> clz);
+	<T>T get(String key, TypeReference<T> type);
 
 	/**
 	 * @param key

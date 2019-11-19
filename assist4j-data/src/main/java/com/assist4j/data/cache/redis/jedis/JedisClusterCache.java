@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.assist4j.data.cache.MessageHandler;
 import com.assist4j.data.cache.redis.RedisCache;
 
@@ -80,6 +81,15 @@ public class JedisClusterCache implements RedisCache {
 			return null;
 		}
 		return JSON.parseObject(val, clz);
+	}
+
+	@Override
+	public <T> T get(String key, TypeReference<T> type) {
+		String val = get(key);
+		if (val == null) {
+			return null;
+		}
+		return JSON.parseObject(val, type);
 	}
 
 	@Override
