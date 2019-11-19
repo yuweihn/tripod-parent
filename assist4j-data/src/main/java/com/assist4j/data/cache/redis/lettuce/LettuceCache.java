@@ -38,11 +38,11 @@ public class LettuceCache implements RedisCache {
 
 
 	@Override
-	public void publish(final String channel, final String value) {
+	public void publish(final String channel, final String message) {
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.publish(channel.getBytes(StandardCharsets.UTF_8), value.getBytes(StandardCharsets.UTF_8));
+				connection.publish(channel.getBytes(StandardCharsets.UTF_8), message.getBytes(StandardCharsets.UTF_8));
 				return null;
 			}
 		});

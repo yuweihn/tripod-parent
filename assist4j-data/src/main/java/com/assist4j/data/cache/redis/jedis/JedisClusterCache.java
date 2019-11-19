@@ -36,9 +36,9 @@ public class JedisClusterCache implements RedisCache {
 	
 	
 	@Override
-	public void publish(String channel, String value) {
+	public void publish(String channel, String message) {
 		Charset charset = Charset.forName(UTF_8);
-		jedisCluster.publish(channel.getBytes(charset), value.getBytes(charset));
+		jedisCluster.publish(channel.getBytes(charset), message.getBytes(charset));
 	}
 
 	@Override

@@ -38,7 +38,7 @@ public class JedisCache implements RedisCache {
 
 
 	@Override
-	public void publish(final String channel, final String value) {
+	public void publish(final String channel, final String message) {
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
