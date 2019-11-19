@@ -9,9 +9,9 @@ package com.assist4j.session.cache;
  */
 public interface SessionCache {
 	/**
-	 * expiredTime 有效期(单位：秒)。
+	 * timeout 有效期(单位：秒)。
 	 */
-	boolean put(String key, String value, long expiredTime);
+	boolean put(String key, String value, long timeout);
 	String get(String key);
 	void remove(String key);
 
