@@ -4,10 +4,9 @@ package com.assist4j.data.cache;
 
 
 /**
- * 分布式锁
  * @author yuwei
  */
-public interface DistLock {
+public interface Lock {
 	<T>boolean lock(String key, T owner, long timeout);
 	/**
 	 * @param key
