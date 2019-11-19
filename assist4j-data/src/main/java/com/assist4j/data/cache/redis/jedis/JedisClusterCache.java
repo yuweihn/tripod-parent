@@ -1,7 +1,6 @@
 package com.assist4j.data.cache.redis.jedis;
 
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,24 +20,22 @@ import redis.clients.jedis.JedisPubSub;
  * @author yuwei
  */
 public class JedisClusterCache implements RedisCache {
-	private static final String UTF_8 = "utf-8";
 	protected BinaryJedisCluster jedisCluster;
 
 
 	public JedisClusterCache() {
-		
+
 	}
-	
-	
+
+
 	public void setJedisCluster(BinaryJedisCluster jedisCluster) {
 		this.jedisCluster = jedisCluster;
 	}
-	
-	
+
+
 	@Override
 	public void publish(String channel, String message) {
-		Charset charset = Charset.forName(UTF_8);
-		jedisCluster.publish(channel.getBytes(charset), message.getBytes(charset));
+		jedisCluster.publish(channel, message);
 	}
 
 	@Override
