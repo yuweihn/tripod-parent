@@ -42,7 +42,7 @@ public class JedisCache implements RedisCache {
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.publish(channel.getBytes(StandardCharsets.UTF_8), value.getBytes(StandardCharsets.UTF_8));
+				connection.publish(channel.getBytes(StandardCharsets.UTF_8), message.getBytes(StandardCharsets.UTF_8));
 				return null;
 			}
 		});
