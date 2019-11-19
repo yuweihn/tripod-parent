@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import com.assist4j.data.cache.MessageHandler;
 import com.assist4j.data.cache.redis.RedisCache;
 
@@ -57,19 +58,31 @@ public class JedisClusterCache implements RedisCache {
 
 	@Override
 	public <T> boolean put(String key, T value, long timeout) {
-//		if (timeout <= 0) {
-//			throw new RuntimeException("Invalid parameter[timeout].");
-//		}
-//
-//		String res = jedisCluster.setex(key, (int) timeout, value);
-//		return "OK".equalsIgnoreCase(res);
-		return false;
+		if (timeout <= 0) {
+			throw new RuntimeException("Invalid parameter[timeout].");
+		}
+
+		String res = null;
+		if (value.getClass() == String.class) {
+			res = jedisCluster.setex(key, (int) timeout, (String) value);
+		} else {
+			res = jedisCluster.setex(key, (int) timeout, JSON.toJSONString(value));
+		}
+		return "OK".equalsIgnoreCase(res);
 	}
 
 	@Override
-	public <T> T get(String key) {
-//		return jedisCluster.get(key);
-		return null;
+	public String get(String key) {
+		return jedisCluster.get(key);
+	}
+
+	@Override
+	public <T> T get(String key, Class<T> clz) {
+		String val = get(key);
+		if (val == null) {
+			return null;
+		}
+		return JSON.parseObject(val, clz);
 	}
 
 	@Override

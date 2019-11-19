@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.alibaba.fastjson.JSON;
 import com.assist4j.data.cache.MessageHandler;
 import com.assist4j.data.cache.redis.RedisCache;
 import org.springframework.core.io.ClassPathResource;
@@ -86,13 +87,26 @@ public class LettuceCache implements RedisCache {
 			throw new RuntimeException("Invalid parameter[timeout].");
 		}
 
-		redisTemplate.opsForValue().set(key, value, timeout, TimeUnit.SECONDS);
+		if (value.getClass() == String.class) {
+			redisTemplate.opsForValue().set(key, value, timeout, TimeUnit.SECONDS);
+		} else {
+			redisTemplate.opsForValue().set(key, JSON.toJSONString(value), timeout, TimeUnit.SECONDS);
+		}
 		return true;
 	}
 
 	@Override
-	public <T> T get(String key) {
-		return (T) redisTemplate.opsForValue().get(key);
+	public String get(String key) {
+		return (String) redisTemplate.opsForValue().get(key);
+	}
+
+	@Override
+	public <T> T get(String key, Class<T> clz) {
+		String val = get(key);
+		if (val == null) {
+			return null;
+		}
+		return JSON.parseObject(val, clz);
 	}
 
 	@Override

@@ -21,11 +21,14 @@ public interface Cache {
 	 */
     <T>boolean put(String key, T value, long timeout);
 
+	String get(String key);
 	/**
 	 * @param key
+	 * @param clz
+	 * @param <T>
 	 * @return
 	 */
-    <T>T get(String key);
+	<T>T get(String key, Class<T> clz);
 
 	/**
 	 * @param key
