@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
  * @author yuwei
  */
 public class JedisCache implements RedisCache {
-	private static final String CHARSET = "utf-8";
 	protected RedisTemplate<String, Object> redisTemplate;
 
 
@@ -37,29 +36,13 @@ public class JedisCache implements RedisCache {
 		this.redisTemplate = redisTemplate;
 	}
 
-	private static byte[] encode(final String str) {
-		if (str == null) {
-			throw new RuntimeException("value sent to redis cannot be null");
-		}
-		try {
-			return str.getBytes(CHARSET);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	private static String decode(final byte[] data) {
-		try {
-			return new String(data, CHARSET);
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
+
 	@Override
 	public void publish(final String channel, final String value) {
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
 			public Object doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.publish(encode(channel), encode(value));
+				connection.publish(channel.getBytes(StandardCharsets.UTF_8), value.getBytes(StandardCharsets.UTF_8));
 				return null;
 			}
 		});
@@ -77,16 +60,16 @@ public class JedisCache implements RedisCache {
 						String msg = null;
 
 						if (message.getChannel() != null) {
-							channel = decode(message.getChannel());
+							channel = new String(message.getChannel(), StandardCharsets.UTF_8);
 						}
 
 						if (message.getBody() != null) {
-							msg = decode(message.getBody());
+							msg = new String(message.getBody(), StandardCharsets.UTF_8);
 						}
 
 						handler.handle(channel, msg);
 					}
-				}, encode(channel));
+				}, channel.getBytes(StandardCharsets.UTF_8));
 				return null;
 			}
 		});
@@ -99,18 +82,17 @@ public class JedisCache implements RedisCache {
 	}
 
 	@Override
-	public boolean put(String key, String value, long timeout) {
+	public <T> boolean put(String key, T value, long timeout) {
 		if (timeout <= 0) {
 			throw new RuntimeException("Invalid parameter[timeout].");
 		}
 
-		redisTemplate.opsForValue().set(key, value, timeout, TimeUnit.SECONDS);
+		if (value.getClass() == String.class) {
+			redisTemplate.opsForValue().set(key, value, timeout, TimeUnit.SECONDS);
+		} else {
+			redisTemplate.opsForValue().set(key, JSON.toJSONString(value), timeout, TimeUnit.SECONDS);
+		}
 		return true;
-	}
-
-	@Override
-	public <T> boolean put(String key, T value, long timeout) {
-		return put(key, JSON.toJSONString(value), timeout);
 	}
 
 	@Override

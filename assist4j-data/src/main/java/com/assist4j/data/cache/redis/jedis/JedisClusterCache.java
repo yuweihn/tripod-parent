@@ -57,18 +57,18 @@ public class JedisClusterCache implements RedisCache {
 	}
 
 	@Override
-	public boolean put(String key, String value, long timeout) {
+	public <T> boolean put(String key, T value, long timeout) {
 		if (timeout <= 0) {
 			throw new RuntimeException("Invalid parameter[timeout].");
 		}
 
-		String res = jedisCluster.setex(key, (int) timeout, value);
+		String res = null;
+		if (value.getClass() == String.class) {
+			res = jedisCluster.setex(key, (int) timeout, (String) value);
+		} else {
+			res = jedisCluster.setex(key, (int) timeout, JSON.toJSONString(value));
+		}
 		return "OK".equalsIgnoreCase(res);
-	}
-
-	@Override
-	public <T> boolean put(String key, T value, long timeout) {
-		return put(key, JSON.toJSONString(value), timeout);
 	}
 
 	@Override

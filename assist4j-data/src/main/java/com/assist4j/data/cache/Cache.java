@@ -12,23 +12,24 @@ public interface Cache {
 	 * @return
 	 */
 	boolean contains(String key);
-	
+
 	/**
 	 * @param key
 	 * @param value
 	 * @param timeout 过期时间(s)。
 	 * @return
 	 */
-	boolean put(String key, String value, long timeout);
 	<T>boolean put(String key, T value, long timeout);
-	
+
+	String get(String key);
 	/**
 	 * @param key
+	 * @param clz
+	 * @param <T>
 	 * @return
 	 */
-	String get(String key);
 	<T>T get(String key, Class<T> clz);
-	
+
 	/**
 	 * @param key
 	 */
