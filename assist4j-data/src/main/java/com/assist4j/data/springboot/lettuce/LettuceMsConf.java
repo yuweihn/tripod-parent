@@ -2,12 +2,9 @@ package com.assist4j.data.springboot.lettuce;
 
 
 import com.assist4j.data.cache.redis.lettuce.LettuceCache;
-import com.assist4j.data.cache.serialize.DefaultSerialize;
-import com.assist4j.data.cache.serialize.Serialize;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.RedisPassword;
@@ -28,27 +25,27 @@ import java.util.Set;
  * @author yuwei
  */
 public class LettuceMsConf {
-    @Bean(name = "lettuceClientConfiguration")
-    public LettuceClientConfiguration clientConfiguration(@Value("${redis.pool.maxTotal:1024}") int maxTotal
-            , @Value("${redis.pool.maxIdle:100}") int maxIdle
-            , @Value("${redis.pool.minIdle:100}") int minIdle
-            , @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
-            , @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow
-            , @Value("${redis.timeoutMillis:5000}") long timeoutMillis) {
-        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
-        poolConfig.setMaxTotal(maxTotal);
-        poolConfig.setMaxIdle(maxIdle);
-        poolConfig.setMinIdle(minIdle);
-        poolConfig.setMaxWaitMillis(maxWaitMillis);
-        poolConfig.setTestOnBorrow(testOnBorrow);
+	@Bean(name = "lettuceClientConfiguration")
+	public LettuceClientConfiguration clientConfiguration(@Value("${redis.pool.maxTotal:1024}") int maxTotal
+			, @Value("${redis.pool.maxIdle:100}") int maxIdle
+			, @Value("${redis.pool.minIdle:100}") int minIdle
+			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
+			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow
+			, @Value("${redis.timeoutMillis:5000}") long timeoutMillis) {
+		GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+		poolConfig.setMaxTotal(maxTotal);
+		poolConfig.setMaxIdle(maxIdle);
+		poolConfig.setMinIdle(minIdle);
+		poolConfig.setMaxWaitMillis(maxWaitMillis);
+		poolConfig.setTestOnBorrow(testOnBorrow);
 
-        LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
-                .commandTimeout(Duration.ofMillis(timeoutMillis))
-                .poolConfig(poolConfig)
-                .build();
+		LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
+				.commandTimeout(Duration.ofMillis(timeoutMillis))
+				.poolConfig(poolConfig)
+				.build();
 
-        return clientConfig;
-    }
+		return clientConfig;
+	}
 
 	@Bean(name = "redisSentinelConfiguration")
 	public RedisSentinelConfiguration redisSentinelConfiguration(@Value("${redis.master.name}") String masterName
@@ -91,16 +88,9 @@ public class LettuceMsConf {
 		return template;
 	}
 
-	@ConditionalOnMissingBean
-	@Bean(name = "serialize")
-	public Serialize serialize() {
-		return new DefaultSerialize();
-	}
-
 	@Bean(name = "redisCache")
-	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
-			, @Qualifier("serialize") Serialize serialize) {
-		LettuceCache cache = new LettuceCache(serialize);
+	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template) {
+		LettuceCache cache = new LettuceCache();
 		cache.setRedisTemplate(template);
 		return cache;
 	}

@@ -4,6 +4,7 @@ package com.assist4j.web.filter;
 import com.assist4j.core.ActionUtil;
 import com.assist4j.core.Constant;
 import com.assist4j.core.JsonUtil;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -88,12 +89,18 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 		filterChain.doFilter(req, resp);
 
+		Map<String, Object> logInfoMap = new LinkedHashMap<String, Object>();
 		if (allowLogRequest) {
-			logRequest(req);
+			Map<String, Object> map = logRequest(req);
+			if (map != null && !map.isEmpty()) {
+				logInfoMap.putAll(map);
+			}
 		}
 		afterFilter(req, resp);
 		long endTimeMillis = System.currentTimeMillis();
-		log.info("Status: {}. Time Cost: {} ms.", resp.getStatus(), endTimeMillis - startTimeMillis);
+		logInfoMap.put("status", resp.getStatus());
+		logInfoMap.put("timeCost", (endTimeMillis - startTimeMillis) + "ms");
+		log.info("{}", JsonUtil.toJson(logInfoMap));
 	}
 
 
@@ -132,7 +139,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	/**
 	 * 打印请求参数
 	 */
-	protected void logRequest(R request) {
+	protected Map<String, Object> logRequest(R request) {
 		String url = request.getRequestURL().toString();
 		try {
 			url = URLDecoder.decode(url, Constant.ENCODING_UTF_8);
@@ -164,7 +171,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 			allLogMap.putAll(lastLogMap);
 		}
 
-		log.info(JsonUtil.toJson(allLogMap));
+		return allLogMap;
 	}
 
 	protected LinkedHashMap<String, Object> addLogFirst() {
@@ -220,11 +227,11 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	}
 	private String getAllowedHeaders(HttpServletRequest request) {
 		Enumeration<String> headerNames = request.getHeaderNames();
-		StringBuilder builder = new StringBuilder("");
-		if (headerNames == null) {
+		if (headerNames == null || !headerNames.hasMoreElements()) {
 			return "*";
 		}
 
+		StringBuilder builder = new StringBuilder("");
 		while (headerNames.hasMoreElements()) {
 			String headerName = headerNames.nextElement();
 			if (ACCESS_CONTROL_REQUEST_HEADERS.equalsIgnoreCase(headerName)) {

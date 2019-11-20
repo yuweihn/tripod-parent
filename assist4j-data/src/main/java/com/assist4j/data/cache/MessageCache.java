@@ -9,14 +9,14 @@ public interface MessageCache {
 	/**
 	 * 发布消息
 	 * @param channel
-	 * @param value
+	 * @param message
 	 */
-	<T>void publish(String channel, T value);
+	void publish(String channel, String message);
 
 	/**
 	 * 订阅消息
 	 * @param channel
 	 * @param handler
 	 */
-	<T>void subscribe(String channel, MessageHandler<T> handler);
+	void subscribe(String channel, MessageHandler handler);
 }

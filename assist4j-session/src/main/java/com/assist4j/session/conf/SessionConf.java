@@ -22,10 +22,10 @@ public class SessionConf {
 	private String applicationName;
 	private SessionCache cache;
 
-
 	private SessionConf() {
 
 	}
+
 	private static class Holder {
 		private static final SessionConf instance = new SessionConf();
 	}
@@ -37,6 +37,7 @@ public class SessionConf {
 	public void setExclusivePattern(String[] exclusiveURLs) {
 		exclusivePattern = new PathPattern(exclusiveURLs);
 	}
+
 	public PathPattern getExclusivePattern() {
 		return exclusivePattern;
 	}
@@ -44,6 +45,7 @@ public class SessionConf {
 	public void setValueSplit(ValueSplit valueSplit) {
 		this.valueSplit = valueSplit;
 	}
+
 	public ValueSplit getValueSplit() {
 		return valueSplit;
 	}
@@ -52,36 +54,38 @@ public class SessionConf {
 		Assert.notNull(cache, "[cache] is required.");
 		this.cache = cache;
 	}
+
 	public SessionCache getCache() {
 		Assert.notNull(cache, "[cache] is required.");
 		return cache;
 	}
 
 	public void setMaxInactiveInterval(int maxInactiveInterval) {
-        this.maxInactiveInterval = maxInactiveInterval;
+		this.maxInactiveInterval = maxInactiveInterval;
 	}
+
 	public int getMaxInactiveInterval() {
-        if (maxInactiveInterval <= 0) {
-            return SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL;
-        } else {
-            return this.maxInactiveInterval;
-        }
+		if (maxInactiveInterval <= 0) {
+			return SessionConstant.DEFAULT_MAX_INACTIVE_INTERVAL;
+		} else {
+			return this.maxInactiveInterval;
+		}
 	}
 
 	public void setApplicationName(String applicationName) {
 		Assert.notNull(applicationName, "[applicationName] is required.");
-		String regEx="[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+		String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
 		Matcher m = Pattern.compile(regEx).matcher(applicationName);
 		this.applicationName = m.replaceAll("").trim();
 	}
+
 	public String getApplicationName() {
 		Assert.notNull(applicationName, "[applicationName] is required.");
 		return applicationName;
 	}
 
-
 	public void check() {
-        Assert.notNull(cache, "[cache] is required.");
-        Assert.notNull(applicationName, "[applicationName] is required.");
-    }
+		Assert.notNull(cache, "[cache] is required.");
+		Assert.notNull(applicationName, "[applicationName] is required.");
+	}
 }
