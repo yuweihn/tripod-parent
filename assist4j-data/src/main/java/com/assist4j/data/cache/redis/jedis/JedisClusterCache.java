@@ -81,7 +81,7 @@ public class JedisClusterCache implements RedisCache {
 		if (val == null) {
 			return null;
 		}
-		return JSON.parseObject(val, clz);
+		return clz == String.class ? (T) val : JSON.parseObject(val, clz);
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class JedisClusterCache implements RedisCache {
 		if (val == null) {
 			return null;
 		}
-		return JSON.parseObject(val, type);
+		return type.getType() == String.class ? (T) val : JSON.parseObject(val, type);
 	}
 
 	@Override
