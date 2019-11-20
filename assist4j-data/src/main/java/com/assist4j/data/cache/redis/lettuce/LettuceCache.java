@@ -101,6 +101,7 @@ public class LettuceCache implements RedisCache {
 		return (String) redisTemplate.opsForValue().get(key);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(String key, Class<T> clz) {
 		String val = get(key);
@@ -110,6 +111,7 @@ public class LettuceCache implements RedisCache {
 		return clz == String.class ? (T) val : JSON.parseObject(val, clz);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(String key, TypeReference<T> type) {
 		String val = get(key);
