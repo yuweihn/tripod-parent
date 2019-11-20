@@ -51,7 +51,8 @@ public class JedisClusterCache implements RedisCache {
 
 	@Override
 	public boolean contains(String key) {
-		return jedisCluster.exists(key);
+		Boolean exists = jedisCluster.exists(key);
+		return exists != null && exists;
 	}
 
 	@Override
