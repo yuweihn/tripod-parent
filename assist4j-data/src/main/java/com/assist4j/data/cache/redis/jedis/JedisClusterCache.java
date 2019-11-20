@@ -75,22 +75,24 @@ public class JedisClusterCache implements RedisCache {
 		return jedisCluster.get(key);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(String key, Class<T> clz) {
 		String val = get(key);
 		if (val == null) {
 			return null;
 		}
-		return JSON.parseObject(val, clz);
+		return clz == String.class ? (T) val : JSON.parseObject(val, clz);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T get(String key, TypeReference<T> type) {
 		String val = get(key);
 		if (val == null) {
 			return null;
 		}
-		return JSON.parseObject(val, type);
+		return type.getType() == String.class ? (T) val : JSON.parseObject(val, type);
 	}
 
 	@Override
