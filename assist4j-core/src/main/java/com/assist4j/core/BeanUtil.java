@@ -19,10 +19,21 @@ import org.springframework.util.Assert;
  */
 public abstract class BeanUtil {
 	private static final String[] CHAR_ARRAY = {"A", "B", "C", "D", "E", "F", "G"
-											, "H", "I", "J", "K", "L", "M", "N"
-											, "O", "P", "Q", "R", "S", "T"
-											, "U", "V", "W", "X", "Y", "Z"
-											, "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+			, "H", "I", "J", "K", "L", "M", "N"
+			, "O", "P", "Q", "R", "S", "T"
+			, "U", "V", "W", "X", "Y", "Z"
+			, "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+
+	private static final String EMAIL_REG = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
+	private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REG);
+
+	private static final Pattern MOBILE_PATTERN = Pattern.compile("^[1][3-9]\\d{9}$");
+
+	private static final Pattern PHONE_PATTERN = Pattern.compile("^[\\d]{5,20}$");
+
+	private static final String IP_REG = "^(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|[1-9])\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)\\.(1\\d{2}|2[0-4]\\d|25[0-5]|[1-9]\\d|\\d)$";
+	private static final Pattern IP_PATTERN = Pattern.compile(IP_REG);
+
 
 
 
@@ -95,10 +106,7 @@ public abstract class BeanUtil {
 		if (email == null || "".equals(email.trim())) {
 			return false;
 		}
-		String regex = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(email.trim());
-		return m.find();
+		return EMAIL_PATTERN.matcher(email.trim()).find();
 	}
 
 	/**
@@ -110,9 +118,7 @@ public abstract class BeanUtil {
 		if (mobile == null || "".equals(mobile.trim())) {
 			return false;
 		}
-		Pattern p = Pattern.compile("^[1][3-9]\\d{9}$");
-		Matcher m = p.matcher(mobile.trim());
-		return m.find();
+		return MOBILE_PATTERN.matcher(mobile.trim()).find();
 	}
 
 	/**
@@ -124,9 +130,14 @@ public abstract class BeanUtil {
 		if (phone == null || "".equals(phone.trim())) {
 			return false;
 		}
-		Pattern p = Pattern.compile("^[\\d]{5,20}$");
-		Matcher m = p.matcher(phone.trim());
-		return m.find();
+		return PHONE_PATTERN.matcher(phone.trim()).find();
+	}
+
+	public static boolean isIp(String ip) {
+		if (ip == null || "".equals(ip.trim())) {
+			return false;
+		}
+		return IP_PATTERN.matcher(ip.trim()).matches();
 	}
 
 	/**
@@ -228,7 +239,7 @@ public abstract class BeanUtil {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static<T> void copyProperties(Object source, T target, String... ignoreProperties) {
 		if (source == null || target == null) {
 			return;
@@ -240,12 +251,12 @@ public abstract class BeanUtil {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static<T> String join(T[] arr, String separator) {
 		if (arr == null || arr.length <= 0) {
 			return null;
 		}
-		
+
 		StringBuilder builder = new StringBuilder("");
 		for (T t: arr) {
 			builder.append(separator).append(t.toString());
