@@ -25,16 +25,5 @@ public interface RedisCache extends Cache {
 	 */
 	void subscribe(String channel, MessageHandler handler);
 
-	<T>boolean lock(String key, T owner, long timeout);
-	/**
-	 * @param key
-	 * @param owner
-	 * @param timeout 单位：秒。
-	 * @param reentrant   是否可重入
-	 * @return
-	 */
-	<T>boolean lock(String key, T owner, long timeout, boolean reentrant);
-	<T>boolean unlock(String key, T owner);
-
 	String execute(String script, List<String> keyList, List<String> argList);
 }
