@@ -7,8 +7,8 @@ For example:
 	public SessionCache sessionCache(@Qualifier("redisCache") Cache cache) {
 		return new SessionCache() {
 			@Override
-			public boolean put(String key, String value, long expiredTime) {
-				return cache.put(key, value, expiredTime);
+			public boolean put(String key, String value, long timeout) {
+				return cache.put(key, value, timeout);
 			}
 
 			@Override
