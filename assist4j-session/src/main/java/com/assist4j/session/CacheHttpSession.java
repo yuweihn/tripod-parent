@@ -256,8 +256,8 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	/**
-	 * 查找一个缓存中的属性储存bean.如果不存在将返回一个新的空bean.
-	 * @return 用户Session属性键键值对储存bean.
+	 * 查找一个缓存中的属性储存bean，如果不存在将返回一个新的空bean。
+	 * @return 用户Session属性键键值对储存bean。
 	 */
 	private void findSessionAttribute() {
 		if (sessionAttribute != null) {
