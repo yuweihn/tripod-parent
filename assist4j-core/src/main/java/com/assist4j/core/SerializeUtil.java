@@ -24,7 +24,7 @@ public abstract class SerializeUtil {
 	 * @param object
 	 * @return
 	 */
-	public static byte[] encode(Object object) {
+	public static <T>byte[] encode(T object) {
 		ByteArrayOutputStream baos = null;
 		ObjectOutputStream oos = null;
 		try {
@@ -58,13 +58,13 @@ public abstract class SerializeUtil {
 	 * @param bytes
 	 * @return
 	 */
-	public static Object decode(byte[] bytes) {
+	public static <T>T decode(byte[] bytes) {
 		ByteArrayInputStream bais = null;
 		ObjectInputStream ois = null;
 		try {
 			bais = new ByteArrayInputStream(bytes);
 			ois = new ObjectInputStream(bais);
-			return ois.readObject();
+			return (T) ois.readObject();
 		} catch (Exception e) {
 			log.error("", e);
 			return null;
