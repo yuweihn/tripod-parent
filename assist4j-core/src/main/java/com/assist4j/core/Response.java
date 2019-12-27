@@ -1,6 +1,7 @@
 package com.assist4j.core;
 
 
+import com.alibaba.fastjson.JSONObject;
 import java.io.Serializable;
 
 
@@ -30,7 +31,7 @@ public class Response<T> implements Serializable {
 
 	@Override
 	public String toString() {
-		return JsonUtil.toJson(this);
+		return JSONObject.toJSONString(this);
 	}
 
 
