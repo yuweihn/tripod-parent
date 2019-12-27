@@ -16,7 +16,6 @@ import com.assist4j.session.CacheHttpServletRequest;
 import com.assist4j.session.cache.SessionCache;
 import com.assist4j.session.conf.PathPattern;
 import com.assist4j.session.conf.SessionConf;
-import com.assist4j.session.conf.ValueSplit;
 
 
 /**
@@ -54,12 +53,6 @@ public class SessionFilter implements Filter {
 	}
 	public void setApplicationName(String applicationName) {
 		SessionConf.getInstance().setApplicationName(applicationName);
-	}
-	public void setValueSplit(boolean split) {
-		SessionConf.getInstance().setValueSplit(new ValueSplit(split));
-	}
-	public void setValueSplit(boolean split, int maxLength) {
-		SessionConf.getInstance().setValueSplit(new ValueSplit(split, maxLength));
 	}
 
 
