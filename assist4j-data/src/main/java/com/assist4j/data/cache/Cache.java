@@ -32,6 +32,12 @@ public interface Cache {
 	<T>T get(String key, Class<T> clz);
 	<T>T get(String key, TypeReference<T> type);
 
+	<T>boolean putSplit(String key, T value, long timeout, int maxLength);
+	String getSplit(String key);
+	<T>T getSplit(String key, Class<T> clz);
+	<T>T getSplit(String key, TypeReference<T> type);
+	void removeSplit(String key);
+
 	/**
 	 * @param key
 	 */

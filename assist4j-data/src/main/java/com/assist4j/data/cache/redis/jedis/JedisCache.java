@@ -3,6 +3,7 @@ package com.assist4j.data.cache.redis.jedis;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.assist4j.data.cache.AbstractCache;
 import com.assist4j.data.cache.MessageHandler;
 import com.assist4j.data.cache.redis.RedisCache;
 import org.springframework.core.io.ClassPathResource;
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author yuwei
  */
-public class JedisCache implements RedisCache {
+public class JedisCache extends AbstractCache implements RedisCache {
 	protected RedisTemplate<String, Object> redisTemplate;
 
 

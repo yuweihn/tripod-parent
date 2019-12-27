@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.assist4j.data.cache.AbstractCache;
 import com.assist4j.data.cache.MessageHandler;
 import com.assist4j.data.cache.redis.RedisCache;
 
@@ -20,7 +21,7 @@ import redis.clients.jedis.JedisPubSub;
 /**
  * @author yuwei
  */
-public class JedisClusterCache implements RedisCache {
+public class JedisClusterCache extends AbstractCache implements RedisCache {
 	protected BinaryJedisCluster jedisCluster;
 
 
