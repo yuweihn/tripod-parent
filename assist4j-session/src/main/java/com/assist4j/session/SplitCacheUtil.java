@@ -44,7 +44,7 @@ public abstract class SplitCacheUtil {
 	}
 
 	public static void remove(String key, SessionCache cache) {
-		int size = parseValueSize(key);
+		int size = parseValueSize(cache.get(key));
 		if (size <= 0) {
 			cache.remove(key);
 			return;
