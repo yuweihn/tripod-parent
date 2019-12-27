@@ -21,6 +21,7 @@ public abstract class AbstractCache implements Cache {
 		}
 	}
 	private boolean putSplit0(String key, String value, long timeout, int maxLength) {
+		int oldSize = parseValueSize(get(key));
 		List<String> valList = split(value, maxLength);
 		int newSize = valList.size();
 		boolean b = put(key, "" + newSize, timeout);
@@ -28,7 +29,6 @@ public abstract class AbstractCache implements Cache {
 			b &= put(key + "." + i, valList.get(i), timeout + 60);
 		}
 
-		int oldSize = parseValueSize(get(key));
 		for (int i = newSize; i < oldSize; i++) {
 			remove(key + "." + i);
 		}
