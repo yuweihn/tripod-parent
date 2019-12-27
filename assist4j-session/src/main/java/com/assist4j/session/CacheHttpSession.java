@@ -6,6 +6,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
+import com.assist4j.session.cache.SessionCache;
 import com.assist4j.session.conf.SessionConf;
 
 
@@ -209,9 +210,9 @@ public class CacheHttpSession implements HttpSession {
 	}
 
 	public void removeSessionFromCache() {
-		ProxySessionCache.remove(fullSessionId);
+		SessionConf.getInstance().getCache().remove(fullSessionId);
 		if (sessionIdKey != null) {
-			ProxySessionCache.remove(sessionIdKey);
+			SessionConf.getInstance().getCache().remove(sessionIdKey);
 		}
 	}
 
@@ -225,7 +226,10 @@ public class CacheHttpSession implements HttpSession {
 			return fullSessionId;
 		}
 
-		ProxySessionCache.put(fullSessionId, SessionAttribute.encode(sessionAttribute));
+		SessionCache sessionCache = SessionConf.getInstance().getCache();
+		long timeSec = SessionConf.getInstance().getMaxInactiveInterval() * 60;
+
+		sessionCache.put(fullSessionId, SessionAttribute.encode(sessionAttribute), timeSec);
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -233,11 +237,11 @@ public class CacheHttpSession implements HttpSession {
 			/**
 			 * 把当前账号之前登录的session清除掉，防止重复登录
 			 */
-			String sessionId = ProxySessionCache.get(sessionIdKey);
+			String sessionId = sessionCache.get(sessionIdKey);
 			if (sessionId != null && !sessionId.equals(fullSessionId)) {
-				ProxySessionCache.remove(sessionId);
+				sessionCache.remove(sessionId);
 			}
-			ProxySessionCache.put(sessionIdKey, fullSessionId);
+			sessionCache.put(sessionIdKey, fullSessionId, timeSec);
 		}
 		return fullSessionId;
 	}
@@ -264,7 +268,7 @@ public class CacheHttpSession implements HttpSession {
 			return;
 		}
 
-		sessionAttribute = SessionAttribute.decode(ProxySessionCache.get(fullSessionId));
+		sessionAttribute = SessionAttribute.decode(SessionConf.getInstance().getCache().get(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new SessionAttribute();
