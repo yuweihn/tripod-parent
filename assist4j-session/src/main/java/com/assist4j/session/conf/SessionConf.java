@@ -14,7 +14,6 @@ import java.util.regex.Pattern;
  */
 public class SessionConf {
 	private PathPattern exclusivePattern;
-	private ValueSplit valueSplit;
 	/**
 	 * session失效时间(分钟)
 	 */
@@ -40,14 +39,6 @@ public class SessionConf {
 
 	public PathPattern getExclusivePattern() {
 		return exclusivePattern;
-	}
-
-	public void setValueSplit(ValueSplit valueSplit) {
-		this.valueSplit = valueSplit;
-	}
-
-	public ValueSplit getValueSplit() {
-		return valueSplit;
 	}
 
 	public void setCache(SessionCache cache) {
