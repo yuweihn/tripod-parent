@@ -24,7 +24,7 @@ public class SessionAttribute implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1978262792864619187L;
+	private static final long serialVersionUID = 1L;
 
 
 	private boolean newBuild;

@@ -32,8 +32,25 @@ public interface Cache {
 	<T>T get(String key, Class<T> clz);
 	<T>T get(String key, TypeReference<T> type);
 
+	<T>boolean putSplit(String key, T value, long timeout, int maxLength);
+	String getSplit(String key);
+	<T>T getSplit(String key, Class<T> clz);
+	<T>T getSplit(String key, TypeReference<T> type);
+	void removeSplit(String key);
+
 	/**
 	 * @param key
 	 */
 	void remove(String key);
+
+	<T>boolean lock(String key, T owner, long timeout);
+	/**
+	 * @param key
+	 * @param owner
+	 * @param timeout 单位：秒。
+	 * @param reentrant   是否可重入
+	 * @return
+	 */
+	<T>boolean lock(String key, T owner, long timeout, boolean reentrant);
+	<T>boolean unlock(String key, T owner);
 }
