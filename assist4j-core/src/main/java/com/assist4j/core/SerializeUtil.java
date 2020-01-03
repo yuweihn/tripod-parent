@@ -58,6 +58,7 @@ public abstract class SerializeUtil {
 	 * @param bytes
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T>T decode(byte[] bytes) {
 		ByteArrayInputStream bais = null;
 		ObjectInputStream ois = null;
