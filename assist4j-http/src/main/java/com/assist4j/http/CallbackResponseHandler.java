@@ -124,35 +124,36 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 
 		String errorMessage = statusLine.toString();
 		Object body = null;
-		if (typeReference != null) {
-			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-			body = JSONObject.parseObject(txt, typeReference);
-		} else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
-			/**
-			 * 返回字符串类型
-			 **/
-			body = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-		} else if (byte[].class.isAssignableFrom(typeClass)) {
-			/**
-			 * 返回字节数组类型
-			 **/
-			body = read(entity.getContent());
-		} else if (Decoder.class.isAssignableFrom(typeClass)) {
-			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-			try {
+		try {
+			if (typeReference != null) {
+				String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+				body = JSONObject.parseObject(txt, typeReference);
+			} else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
+				/**
+				 * 返回字符串类型
+				 **/
+				body = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+			} else if (byte[].class.isAssignableFrom(typeClass)) {
+				/**
+				 * 返回字节数组类型
+				 **/
+				body = read(entity.getContent());
+			} else if (Decoder.class.isAssignableFrom(typeClass)) {
+				String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 				Constructor<?> constructor = typeClass.getDeclaredConstructor();
 				constructor.setAccessible(true);
 				Decoder<?> decoder = (Decoder<?>) constructor.newInstance();
 				body = decoder.decode(txt);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+			} else {
+				/**
+				 * 返回指定的其它类型
+				 **/
+				String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+				body = JSONObject.parseObject(txt, typeClass);
 			}
-		} else {
-			/**
-			 * 返回指定的其它类型
-			 **/
-			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-			body = JSONObject.parseObject(txt, typeClass);
+		} catch (Exception e) {
+			body = null;
+			errorMessage += e.getMessage();
 		}
 		return createBasicHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
 	}
