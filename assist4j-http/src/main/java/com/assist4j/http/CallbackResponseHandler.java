@@ -5,10 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.servlet.http.Cookie;
 
@@ -70,7 +67,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 	@Override
 	public HttpResponse<? extends Object> handleResponse(org.apache.http.HttpResponse response) throws IOException {
 		StatusLine statusLine = response.getStatusLine();
-		
+
 		/**
 		 * status
 		 */
@@ -127,39 +124,40 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 
 		String errorMessage = statusLine.toString();
 		Object body = null;
-		if (typeReference != null) {
-			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-			body = JSONObject.parseObject(txt, typeReference);
-		} else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
-			/**
-			 * 返回字符串类型
-			 **/
-			body = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-		} else if (byte[].class.isAssignableFrom(typeClass)) {
-			/**
-			 * 返回字节数组类型
-			 **/
-			body = read(entity.getContent());
-		} else if (Decoder.class.isAssignableFrom(typeClass)) {
-			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-			try {
+		try {
+			if (typeReference != null) {
+				String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+				body = JSONObject.parseObject(txt, typeReference);
+			} else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
+				/**
+				 * 返回字符串类型
+				 **/
+				body = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+			} else if (byte[].class.isAssignableFrom(typeClass)) {
+				/**
+				 * 返回字节数组类型
+				 **/
+				body = read(entity.getContent());
+			} else if (Decoder.class.isAssignableFrom(typeClass)) {
+				String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 				Constructor<?> constructor = typeClass.getDeclaredConstructor();
 				constructor.setAccessible(true);
 				Decoder<?> decoder = (Decoder<?>) constructor.newInstance();
 				body = decoder.decode(txt);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+			} else {
+				/**
+				 * 返回指定的其它类型
+				 **/
+				String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+				body = JSONObject.parseObject(txt, typeClass);
 			}
-		} else {
-			/**
-			 * 返回指定的其它类型
-			 **/
-			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-			body = JSONObject.parseObject(txt, typeClass);
+		} catch (Exception e) {
+			body = null;
+			errorMessage += e.toString();
 		}
 		return createBasicHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
 	}
-	
+
 	private static byte[] read(InputStream is) {
 		ByteArrayOutputStream out = null;
 		try {
@@ -182,9 +180,9 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			}
 		}
 	}
-	
+
 	private <T>BasicHttpResponse<T> createBasicHttpResponse(int status, String errorMessage, T body
-								, List<Header> headerList, List<Cookie> cookieList, Header contentType) {
+			, List<Header> headerList, List<Cookie> cookieList, Header contentType) {
 		BasicHttpResponse<T> res = new BasicHttpResponse<T>();
 		res.setStatus(status);
 		res.setErrorMessage(errorMessage);
@@ -194,7 +192,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		res.setContentType(contentType == null ? null : contentType.getValue());
 		return res;
 	}
-	
+
 	private class BasicHttpResponse<B> implements HttpResponse<B> {
 		private int status;
 		private String errorMessage;
