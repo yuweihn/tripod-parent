@@ -44,7 +44,7 @@ public class ExceptionAutoConfiguration {
 				int status = response.getStatus();
 				HttpStatus httpStatus = HttpStatus.valueOf(status);
 
-				Response<Void> resp = new Response<Void>(
+				Response<String, Void> resp = new Response<String, Void>(
 						errorCode == null || "".equals(errorCode) ? "" + status : errorCode,
 						httpStatus == null ? "Unknown" : httpStatus.getReasonPhrase() + "[" + status + "]");
 				return JSONObject.toJSONString(resp);
@@ -60,7 +60,7 @@ public class ExceptionAutoConfiguration {
 				public ModelAndView createView(String content) {
 					FastJsonJsonView view = new FastJsonJsonView();
 					String text = JSONObject.toJSONString(
-							new Response<Void>(errorCode == null || "".equals(errorCode) ? "500" : errorCode, content));
+							new Response<String, Void>(errorCode == null || "".equals(errorCode) ? "500" : errorCode, content));
 					Map<String, Object> attributes = JSONObject.parseObject(text, Map.class);
 					view.setAttributesMap(attributes);
 					return new ModelAndView(view);
