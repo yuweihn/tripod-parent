@@ -126,7 +126,11 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		Object body = null;
 		if (typeReference != null) {
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-			body = JSONObject.parseObject(txt, typeReference);
+			if (HttpStatus.SC_OK == status) {
+				body = JSONObject.parseObject(txt, typeReference);
+			} else {
+				errorMessage = txt;
+			}
 		} else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
 			/**
 			 * 返回字符串类型
@@ -152,7 +156,11 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			 * 返回指定的其它类型
 			 **/
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-			body = JSONObject.parseObject(txt, typeClass);
+			if (HttpStatus.SC_OK == status) {
+				body = JSONObject.parseObject(txt, typeClass);
+			} else {
+				errorMessage = txt;
+			}
 		}
 		return createBasicHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
 	}
