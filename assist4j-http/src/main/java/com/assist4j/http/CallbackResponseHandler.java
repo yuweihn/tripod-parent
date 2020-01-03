@@ -122,7 +122,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		 */
 		Header contentType = entity.getContentType();
 
-		String errorMessage = statusLine.toString();
+		StringBuilder errorMessage = new StringBuilder(statusLine.toString());
 		Object body = null;
 		try {
 			if (typeReference != null) {
@@ -153,9 +153,9 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			}
 		} catch (Exception e) {
 			body = null;
-			errorMessage += e.toString();
+			errorMessage.append(e.toString());
 		}
-		return createBasicHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
+		return createBasicHttpResponse(status, errorMessage.toString(), body, headerList, cookieList, contentType);
 	}
 
 	private static byte[] read(InputStream is) {
