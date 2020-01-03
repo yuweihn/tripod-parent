@@ -122,40 +122,39 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		 */
 		Header contentType = entity.getContentType();
 
-		StringBuilder errorMessage = new StringBuilder(statusLine.toString());
+		String errorMessage = statusLine.toString();
 		Object body = null;
-		try {
-			if (typeReference != null) {
-				String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-				body = JSONObject.parseObject(txt, typeReference);
-			} else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
-				/**
-				 * 返回字符串类型
-				 **/
-				body = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-			} else if (byte[].class.isAssignableFrom(typeClass)) {
-				/**
-				 * 返回字节数组类型
-				 **/
-				body = read(entity.getContent());
-			} else if (Decoder.class.isAssignableFrom(typeClass)) {
-				String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+		if (typeReference != null) {
+			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+			body = JSONObject.parseObject(txt, typeReference);
+		} else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
+			/**
+			 * 返回字符串类型
+			 **/
+			body = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+		} else if (byte[].class.isAssignableFrom(typeClass)) {
+			/**
+			 * 返回字节数组类型
+			 **/
+			body = read(entity.getContent());
+		} else if (Decoder.class.isAssignableFrom(typeClass)) {
+			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+			try {
 				Constructor<?> constructor = typeClass.getDeclaredConstructor();
 				constructor.setAccessible(true);
 				Decoder<?> decoder = (Decoder<?>) constructor.newInstance();
 				body = decoder.decode(txt);
-			} else {
-				/**
-				 * 返回指定的其它类型
-				 **/
-				String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
-				body = JSONObject.parseObject(txt, typeClass);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
 			}
-		} catch (Exception e) {
-			body = null;
-			errorMessage.append(". ").append(e.toString());
+		} else {
+			/**
+			 * 返回指定的其它类型
+			 **/
+			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+			body = JSONObject.parseObject(txt, typeClass);
 		}
-		return createBasicHttpResponse(status, errorMessage.toString(), body, headerList, cookieList, contentType);
+		return createBasicHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
 	}
 
 	private static byte[] read(InputStream is) {
