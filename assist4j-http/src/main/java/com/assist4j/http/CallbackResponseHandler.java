@@ -153,7 +153,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			}
 		} catch (Exception e) {
 			body = null;
-			errorMessage.append(e.toString());
+			errorMessage.append("\r\n").append(e.toString());
 		}
 		return createBasicHttpResponse(status, errorMessage.toString(), body, headerList, cookieList, contentType);
 	}
