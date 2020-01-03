@@ -122,14 +122,14 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		 */
 		Header contentType = entity.getContentType();
 
-		String errorMessage = statusLine.toString();
+		StringBuilder errorMessage = new StringBuilder(statusLine.toString());
 		Object body = null;
 		if (typeReference != null) {
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 			if (HttpStatus.SC_OK == status) {
 				body = JSONObject.parseObject(txt, typeReference);
 			} else {
-				errorMessage = txt;
+				errorMessage.append(". ").append(txt);
 			}
 		} else if (typeClass == null || String.class.isAssignableFrom(typeClass)) {
 			/**
@@ -159,10 +159,10 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			if (HttpStatus.SC_OK == status) {
 				body = JSONObject.parseObject(txt, typeClass);
 			} else {
-				errorMessage = txt;
+				errorMessage.append(". ").append(txt);
 			}
 		}
-		return createBasicHttpResponse(status, errorMessage, body, headerList, cookieList, contentType);
+		return createBasicHttpResponse(status, errorMessage.toString(), body, headerList, cookieList, contentType);
 	}
 
 	private static byte[] read(InputStream is) {
