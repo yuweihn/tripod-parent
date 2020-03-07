@@ -1,13 +1,13 @@
 package com.assist4j.data.springboot.jedis;
 
 
-import com.assist4j.data.cache.redis.jedis.BinaryJedisCluster;
 import com.assist4j.data.cache.redis.jedis.JedisClusterCache;
 import com.assist4j.data.cache.redis.jedis.JedisClusterFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class JedisClusterConf {
 	}
 
 	@Bean(name = "redisCache")
-	public JedisClusterCache redisClusterCache(@Qualifier("jedisCluster") BinaryJedisCluster jedisCluster) {
+	public JedisClusterCache redisClusterCache(@Qualifier("jedisCluster") JedisCluster jedisCluster) {
 		JedisClusterCache cache = new JedisClusterCache();
 		cache.setJedisCluster(jedisCluster);
 		return cache;

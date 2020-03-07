@@ -9,14 +9,15 @@ import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.util.Assert;
 import redis.clients.jedis.HostAndPort;
+import redis.clients.jedis.JedisCluster;
 
 
 /**
  * @author wei
  */
-public class JedisClusterFactory implements FactoryBean<BinaryJedisCluster> {
+public class JedisClusterFactory implements FactoryBean<JedisCluster> {
 	private List<HostAndPort> redisNodeList;
-	private BinaryJedisCluster binaryJedisCluster;
+	private JedisCluster jedisCluster;
 	private int timeout;
 	private int maxRedirections;
 	private GenericObjectPoolConfig jedisPoolConfig;
@@ -25,13 +26,13 @@ public class JedisClusterFactory implements FactoryBean<BinaryJedisCluster> {
 
 
 	@Override
-	public BinaryJedisCluster getObject() throws Exception {
-		return binaryJedisCluster;
+	public JedisCluster getObject() throws Exception {
+		return jedisCluster;
 	}
 
 	@Override
-	public Class<? extends BinaryJedisCluster> getObjectType() {
-		return this.binaryJedisCluster != null ? this.binaryJedisCluster.getClass() : BinaryJedisCluster.class;
+	public Class<? extends JedisCluster> getObjectType() {
+		return this.jedisCluster != null ? this.jedisCluster.getClass() : JedisCluster.class;
 	}
 
 	@Override
@@ -42,7 +43,7 @@ public class JedisClusterFactory implements FactoryBean<BinaryJedisCluster> {
 	public void init() {
 		Assert.notEmpty(redisNodeList, "[Assertion failed] - this collection must not be empty: it must contain at least 1 element");
 		Set<HostAndPort> nodes = new HashSet<HostAndPort>(redisNodeList);
-		binaryJedisCluster = new BinaryJedisCluster(nodes, timeout, maxRedirections, jedisPoolConfig);
+		jedisCluster = new JedisCluster(nodes, timeout, maxRedirections, jedisPoolConfig);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

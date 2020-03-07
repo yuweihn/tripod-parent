@@ -15,6 +15,7 @@ import com.assist4j.data.cache.redis.RedisCache;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
+import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPubSub;
 
 
@@ -22,7 +23,7 @@ import redis.clients.jedis.JedisPubSub;
  * @author yuwei
  */
 public class JedisClusterCache extends AbstractCache implements RedisCache {
-	protected BinaryJedisCluster jedisCluster;
+	protected JedisCluster jedisCluster;
 
 
 	public JedisClusterCache() {
@@ -30,7 +31,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 	}
 
 
-	public void setJedisCluster(BinaryJedisCluster jedisCluster) {
+	public void setJedisCluster(JedisCluster jedisCluster) {
 		this.jedisCluster = jedisCluster;
 	}
 
