@@ -21,10 +21,10 @@ public class SingleNodeTaskScheduler extends ThreadPoolTaskScheduler {
 	private static final Logger log = LoggerFactory.getLogger(SingleNodeTaskScheduler.class);
 
 
-	private LeaderElector leaderElector;
+	protected LeaderElector leaderElector;
 
 
-	private Runnable taskWrapper(final Runnable task) {
+	protected Runnable taskWrapper(final Runnable task) {
 		return new Runnable() {
 			@Override
 			public void run() {
