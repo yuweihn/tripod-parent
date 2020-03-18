@@ -41,7 +41,7 @@ public abstract class CookiesUtil {
 	 * @param value Cookie的值。
 	 */
 	public static void addCookie(HttpServletRequest request, HttpServletResponse response, String name, String value) {
-		addCookie(request, response, name, value, null, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
+		addCookie(request, response, name, value, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 	}
 
 
