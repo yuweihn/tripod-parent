@@ -36,47 +36,18 @@ public abstract class CookiesUtil {
 	}
 
 	/**
-	 * 增加一个Cookie,使用默认域名。
 	 * @param name Cookie名称 。
 	 * @param value Cookie的值。
 	 */
 	public static void addCookie(HttpServletRequest request, HttpServletResponse response, String name, String value) {
-		addCookie(request, response, name, value, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
-	}
-
-
-	/**
-	 * 增加一个Cookie,使用默认域名。
-	 * @param name Cookie名称 。
-	 * @param value Cookie的值。
-	 * @param maxAge 生命周期。
-	 */
-	public static void addCookie(HttpServletRequest request, HttpServletResponse response, String name, String value, int maxAge) {
-		addCookie(request, response, name, value, null, maxAge);
+		addCookie(request, response, name, value, null, null, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 	}
 
 	/**
-	 * 增加一个Cookie,使用指定域名。
-	 * @param name Cookie名称 。
-	 * @param value Cookie的值。
-	 * @param domain cookie域名
-	 * @param maxAge 生命周期。
-	 */
-	public static void addCookie(HttpServletRequest request, HttpServletResponse response, String name, String value
-			, String domain, int maxAge) {
-		String contextPath = request.getContextPath();
-		if (contextPath == null || contextPath.isEmpty()) {
-			contextPath = "/";
-		}
-		addCookie(request, response, name, value, domain, contextPath, maxAge);
-	}
-
-	/**
-	 * 增加一个Cookie.ContextPath如果为空或者长度为0，将使用"/".
 	 * @param name cookie名称
 	 * @param value cookie值
-	 * @param domain cookie域名
-	 * @param contextPath cookie路径。
+	 * @param domain cookie域名            默认：null
+	 * @param contextPath cookie路径。     默认："/"
 	 * @param maxAge 有效时间。
 	 */
 	public static void addCookie(HttpServletRequest request, HttpServletResponse response, String name, String value
@@ -90,10 +61,12 @@ public abstract class CookiesUtil {
 		cookie.setSecure(request.isSecure());
 
 		if (contextPath == null || contextPath.isEmpty()) {
-			cookie.setPath("/");
-		} else {
-			cookie.setPath(contextPath);
+			contextPath = request.getContextPath();
 		}
+		if (contextPath == null || contextPath.isEmpty()) {
+			contextPath = "/";
+		}
+		cookie.setPath(contextPath);
 
 		if (domain != null && !domain.isEmpty()) {
 			cookie.setDomain(domain);
