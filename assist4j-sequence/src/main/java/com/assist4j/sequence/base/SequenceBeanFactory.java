@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.assist4j.sequence.dao.SequenceDao;
 import com.assist4j.sequence.exception.SequenceException;
@@ -16,11 +15,11 @@ import com.assist4j.sequence.exception.SequenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.util.Assert;
 
 
@@ -28,7 +27,7 @@ import org.springframework.util.Assert;
  * 注册一系列{@link Sequence}实例到Spring容器中
  * @author yuwei
  */
-public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostProcessor {
+public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor {
 	private static final Logger log = LoggerFactory.getLogger(SequenceBeanFactory.class);
 
 
@@ -49,9 +48,9 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	private String initMethod;
 	private String destroyMethod;
 
-
-	private DefaultListableBeanFactory beanFactory;
-	private static volatile AtomicBoolean done = new AtomicBoolean(false);
+	private ConfigurableListableBeanFactory beanFactory;
+	private BeanDefinitionRegistry registry;
+	private SequenceBeanHolder seqBeanHolder;
 
 
 
@@ -170,24 +169,31 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		this.beanFactory = (DefaultListableBeanFactory) beanFactory;
+		this.beanFactory = beanFactory;
 	}
+
+	@Override
+	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+		this.registry = registry;
+	}
+
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		return bean;
 	}
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (!done.get() && !beanName.equals(sequenceBeanHolderBeanName) && done.compareAndSet(false, true)) {
+		if (beanName.equals(sequenceBeanHolderBeanName)) {
+			seqBeanHolder = (SequenceBeanHolder) bean;
 			registerBeans();
+		} else if (seqBeanHolder == null) {
+			beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
 		}
-
 		return bean;
 	}
 
 	private void registerBeans() {
-		SequenceBeanHolder sequenceBeanHolder = beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
-		Map<String, String> beanSeqMap = sequenceBeanHolder.getSequenceMap();
+		Map<String, String> beanSeqMap = seqBeanHolder.getSequenceMap();
 		if (beanSeqMap == null || beanSeqMap.isEmpty()) {
 			return;
 		}
@@ -255,7 +261,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		if (destroyMethod != null && !"".equals(destroyMethod)) {
 			builder.setDestroyMethodName(destroyMethod);
 		}
-		beanFactory.registerBeanDefinition(beanName, builder.getBeanDefinition());
+		registry.registerBeanDefinition(beanName, builder.getBeanDefinition());
 	}
 
 	/**
