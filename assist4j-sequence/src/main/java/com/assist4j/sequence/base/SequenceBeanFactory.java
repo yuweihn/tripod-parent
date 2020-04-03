@@ -31,9 +31,7 @@ import org.springframework.util.Assert;
 public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor {
 	private static final Logger log = LoggerFactory.getLogger(SequenceBeanFactory.class);
 
-
 	private static final String DELIMITER = ",";
-
 	private static final String DEFAULT_FIELD_SEQUENCE_DAO = "sequenceDao";
 	private static final String DEFAULT_FIELD_SEQ_NAME = "name";
 	private static final String DEFAULT_FIELD_MIN_VALUE = "minValue";
@@ -52,7 +50,6 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	private ConfigurableListableBeanFactory beanFactory;
 	private BeanDefinitionRegistry registry;
 	private volatile AtomicBoolean done = new AtomicBoolean(false);
-
 
 
 	public SequenceBeanFactory(Class<? extends Sequence> sequenceClass, String sequenceBeanHolderBeanName) {
@@ -201,7 +198,6 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		if (beanSeqMap == null || beanSeqMap.isEmpty()) {
 			return;
 		}
-
 		checkPropertyList();
 
 		Iterator<Entry<String, String>> entryItr = beanSeqMap.entrySet().iterator();
