@@ -187,8 +187,11 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		if (done.get()) {
 			return bean;
 		}
-		if (beanName.equals(sequenceBeanHolderBeanName) && done.compareAndSet(false, true)) {
-			registerBeans(((SequenceBeanHolder) bean).getSequenceMap());
+
+		if (beanName.equals(sequenceBeanHolderBeanName)) {
+			if (done.compareAndSet(false, true)) {
+				registerBeans(((SequenceBeanHolder) bean).getSequenceMap());
+			}
 		} else {
 			beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
 		}
