@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.assist4j.sequence.dao.SequenceDao;
 import com.assist4j.sequence.exception.SequenceException;
@@ -50,7 +51,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 
 	private ConfigurableListableBeanFactory beanFactory;
 	private BeanDefinitionRegistry registry;
-	private SequenceBeanHolder seqBeanHolder;
+	private volatile AtomicBoolean done = new AtomicBoolean(false);
 
 
 
@@ -183,17 +184,20 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	}
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+		if (done.get()) {
+			return bean;
+		}
 		if (beanName.equals(sequenceBeanHolderBeanName)) {
-			seqBeanHolder = (SequenceBeanHolder) bean;
-			registerBeans();
-		} else if (seqBeanHolder == null) {
+			if (done.compareAndSet(false, true)) {
+				registerBeans(((SequenceBeanHolder) bean).getSequenceMap());
+			}
+		} else {
 			beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
 		}
 		return bean;
 	}
 
-	private void registerBeans() {
-		Map<String, String> beanSeqMap = seqBeanHolder.getSequenceMap();
+	private void registerBeans(Map<String, String> beanSeqMap) {
 		if (beanSeqMap == null || beanSeqMap.isEmpty()) {
 			return;
 		}
