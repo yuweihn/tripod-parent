@@ -101,15 +101,15 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		this.initMethod = initMethod;
 		this.destroyMethod = destroyMethod;
 
-		checkSequenceClass();
-		checkInitMethod();
-		checkDestroyMethod();
+		prepareSequenceClass();
+		prepareInitMethod();
+		prepareDestroyMethod();
 	}
 
 	/**
 	 * 检查sequenceClass，必须含有fieldSeqName和fieldMinValue指定的属性名和propertyList中的所有属性名。
 	 */
-	private void checkSequenceClass() {
+	private void prepareSequenceClass() {
 		try {
 			Field seqNameField = this.sequenceClass.getDeclaredField(this.fieldSeqName);
 			if (seqNameField == null) {
@@ -135,7 +135,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	/**
 	 * 如果未设置initMethod，将sequenceClass类中的init作为默认的initMethod
 	 */
-	private void checkInitMethod() {
+	private void prepareInitMethod() {
 		if (this.initMethod != null && !"".equals(this.initMethod)) {
 			return;
 		}
@@ -151,7 +151,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	/**
 	 * 如果未设置destroyMethod，将sequenceClass类中的destroy作为默认的destroyMethod
 	 */
-	private void checkDestroyMethod() {
+	private void prepareDestroyMethod() {
 		if (this.destroyMethod != null && !"".equals(this.destroyMethod)) {
 			return;
 		}
