@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.assist4j.sequence.dao.SequenceDao;
 import com.assist4j.sequence.exception.SequenceException;
@@ -49,7 +48,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 
 	private ConfigurableListableBeanFactory beanFactory;
 	private BeanDefinitionRegistry registry;
-	private volatile AtomicBoolean done = new AtomicBoolean(false);
+	private boolean done = false;
 
 
 	public SequenceBeanFactory(Class<? extends Sequence> sequenceClass, String sequenceBeanHolderBeanName) {
@@ -181,14 +180,10 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	}
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (done.get()) {
-			return bean;
-		}
 		if (beanName.equals(sequenceBeanHolderBeanName)) {
-			if (done.compareAndSet(false, true)) {
-				registerBeans(((SequenceBeanHolder) bean).getSequenceMap());
-			}
-		} else {
+			registerBeans(((SequenceBeanHolder) bean).getSequenceMap());
+			done = true;
+		} else if (!done) {
 			beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
 		}
 		return bean;
