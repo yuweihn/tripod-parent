@@ -141,7 +141,6 @@ public abstract class AbstractProvider {
 	 */
 	protected List<FieldColumn> getPersistFieldList(Class<?> clz) {
 		String className = clz.getName();
-
 		Map<String, List<FieldColumn>> persistFieldMap = null;
 		if (PERSIST_FIELD_REF == null || (persistFieldMap = PERSIST_FIELD_REF.get()) == null) {
 			persistFieldMap = new ConcurrentHashMap<String, List<FieldColumn>>();
