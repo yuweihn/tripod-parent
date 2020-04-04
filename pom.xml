@@ -6,7 +6,7 @@
     <groupId>com.assist4j</groupId>
     <artifactId>assist4j-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.46</version>
+    <version>1.0.47</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>The Project of Assist4j</description>
@@ -31,8 +31,8 @@
         <module>assist4j-schedule</module>
         <module>assist4j-sequence</module>
         <module>assist4j-session</module>
-        <module>assist4j-web</module>
         <module>assist4j-spring-boot-starter</module>
+        <module>assist4j-web</module>
     </modules>
 
 
