@@ -1,6 +1,7 @@
 package com.assist4j.dao.mybatis.provider;
 
 
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +18,10 @@ import javax.persistence.Table;
  * @author yuwei
  */
 public abstract class AbstractProvider {
-	private static final Map<String, String> TABLE_NAME_MAP = new ConcurrentHashMap<String, String>();
-	private static final Map<String, String> SELECT_SQL_MAP = new ConcurrentHashMap<String, String>();
-	private static final Map<String, String> SELECT_SQL_WITH_TABLE_ALIAS_MAP = new ConcurrentHashMap<String, String>();
-	private static final Map<String, List<FieldColumn>> PERSIST_FIELD_MAP = new ConcurrentHashMap<String, List<FieldColumn>>();
+	private static SoftReference<Map<String, String>> TABLE_NAME_REF;
+	private static SoftReference<Map<String, String>> SELECT_SQL_REF;
+	private static SoftReference<Map<String, String>> SELECT_SQL_WITH_TABLE_ALIAS_REF;
+	private static SoftReference<Map<String, List<FieldColumn>>> PERSIST_FIELD_REF;
 
 
 	/**
@@ -52,7 +53,12 @@ public abstract class AbstractProvider {
 	 */
 	protected String getTableName(Class<?> clz) {
 		String className = clz.getName();
-		String tableName = TABLE_NAME_MAP.get(className);
+		Map<String, String> tableNameMap = null;
+		if (TABLE_NAME_REF == null || (tableNameMap = TABLE_NAME_REF.get()) == null) {
+			tableNameMap = new ConcurrentHashMap<String, String>();
+			TABLE_NAME_REF = new SoftReference<Map<String, String>>(tableNameMap);
+		}
+		String tableName = tableNameMap.get(className);
 		if (tableName == null) {
 			Table table = clz.getAnnotation(Table.class);
 			if (table != null && table.name() != null && !"".equals(table.name().trim())) {
@@ -63,7 +69,7 @@ public abstract class AbstractProvider {
 					throw new RuntimeException("Table name is not found.");
 				}
 			}
-			TABLE_NAME_MAP.put(className, tableName);
+			tableNameMap.put(className, tableName);
 		}
 		return tableName;
 	}
@@ -76,7 +82,12 @@ public abstract class AbstractProvider {
 	 */
 	protected String getAllColumnSql(Class<?> clz) {
 		String className = clz.getName();
-		String selectSql = SELECT_SQL_MAP.get(className);
+		Map<String, String> selectSqlMap = null;
+		if (SELECT_SQL_REF == null || (selectSqlMap = SELECT_SQL_REF.get()) == null) {
+			selectSqlMap = new ConcurrentHashMap<String, String>();
+			SELECT_SQL_REF = new SoftReference<Map<String, String>>(selectSqlMap);
+		}
+		String selectSql = selectSqlMap.get(className);
 		if (selectSql == null) {
 			StringBuilder builder = new StringBuilder("");
 			List<FieldColumn> fcList = getPersistFieldList(clz);
@@ -88,7 +99,7 @@ public abstract class AbstractProvider {
 				builder.append(fc.getColumnName()).append(" as ").append(fc.getField().getName());
 			}
 			selectSql = builder.toString();
-			SELECT_SQL_MAP.put(className, selectSql);
+			selectSqlMap.put(className, selectSql);
 		}
 		return selectSql;
 	}
@@ -101,7 +112,12 @@ public abstract class AbstractProvider {
 	 */
 	protected String getAllColumnSql(Class<?> clz, String tableAlias) {
 		String className = clz.getName();
-		String selectSql = SELECT_SQL_WITH_TABLE_ALIAS_MAP.get(className);
+		Map<String, String> selectSqlMap = null;
+		if (SELECT_SQL_WITH_TABLE_ALIAS_REF == null || (selectSqlMap = SELECT_SQL_WITH_TABLE_ALIAS_REF.get()) == null) {
+			selectSqlMap = new ConcurrentHashMap<String, String>();
+			SELECT_SQL_WITH_TABLE_ALIAS_REF = new SoftReference<Map<String, String>>(selectSqlMap);
+		}
+		String selectSql = selectSqlMap.get(className);
 		if (selectSql == null) {
 			StringBuilder builder = new StringBuilder("");
 			List<FieldColumn> fcList = getPersistFieldList(clz);
@@ -113,7 +129,7 @@ public abstract class AbstractProvider {
 				builder.append(tableAlias).append(".").append(fc.getColumnName()).append(" as ").append(fc.getField().getName());
 			}
 			selectSql = builder.toString();
-			SELECT_SQL_WITH_TABLE_ALIAS_MAP.put(className, selectSql);
+			selectSqlMap.put(className, selectSql);
 		}
 		return selectSql;
 	}
@@ -125,10 +141,16 @@ public abstract class AbstractProvider {
 	 */
 	protected List<FieldColumn> getPersistFieldList(Class<?> clz) {
 		String className = clz.getName();
-		List<FieldColumn> fcList = PERSIST_FIELD_MAP.get(className);
+
+		Map<String, List<FieldColumn>> persistFieldMap = null;
+		if (PERSIST_FIELD_REF == null || (persistFieldMap = PERSIST_FIELD_REF.get()) == null) {
+			persistFieldMap = new ConcurrentHashMap<String, List<FieldColumn>>();
+			PERSIST_FIELD_REF = new SoftReference<Map<String, List<FieldColumn>>>(persistFieldMap);
+		}
+		List<FieldColumn> fcList = persistFieldMap.get(className);
 		if (fcList == null) {
 			fcList = getPersistFieldList0(clz);
-			PERSIST_FIELD_MAP.put(className, fcList);
+			persistFieldMap.put(className, fcList);
 		}
 		return fcList;
 	}
