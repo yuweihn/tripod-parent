@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.assist4j.sequence.dao.SequenceDao;
 import com.assist4j.sequence.exception.SequenceException;
@@ -16,11 +15,11 @@ import com.assist4j.sequence.exception.SequenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.util.Assert;
 
 
@@ -28,12 +27,10 @@ import org.springframework.util.Assert;
  * 注册一系列{@link Sequence}实例到Spring容器中
  * @author yuwei
  */
-public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostProcessor {
+public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor {
 	private static final Logger log = LoggerFactory.getLogger(SequenceBeanFactory.class);
 
-
 	private static final String DELIMITER = ",";
-
 	private static final String DEFAULT_FIELD_SEQUENCE_DAO = "sequenceDao";
 	private static final String DEFAULT_FIELD_SEQ_NAME = "name";
 	private static final String DEFAULT_FIELD_MIN_VALUE = "minValue";
@@ -49,10 +46,9 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	private String initMethod;
 	private String destroyMethod;
 
-
-	private DefaultListableBeanFactory beanFactory;
-	private static volatile AtomicBoolean done = new AtomicBoolean(false);
-
+	private ConfigurableListableBeanFactory beanFactory;
+	private BeanDefinitionRegistry registry;
+	private boolean done = false;
 
 
 	public SequenceBeanFactory(Class<? extends Sequence> sequenceClass, String sequenceBeanHolderBeanName) {
@@ -104,15 +100,15 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		this.initMethod = initMethod;
 		this.destroyMethod = destroyMethod;
 
-		checkSequenceClass();
-		checkInitMethod();
-		checkDestroyMethod();
+		prepareSequenceClass();
+		prepareInitMethod();
+		prepareDestroyMethod();
 	}
 
 	/**
 	 * 检查sequenceClass，必须含有fieldSeqName和fieldMinValue指定的属性名和propertyList中的所有属性名。
 	 */
-	private void checkSequenceClass() {
+	private void prepareSequenceClass() {
 		try {
 			Field seqNameField = this.sequenceClass.getDeclaredField(this.fieldSeqName);
 			if (seqNameField == null) {
@@ -138,7 +134,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	/**
 	 * 如果未设置initMethod，将sequenceClass类中的init作为默认的initMethod
 	 */
-	private void checkInitMethod() {
+	private void prepareInitMethod() {
 		if (this.initMethod != null && !"".equals(this.initMethod)) {
 			return;
 		}
@@ -154,7 +150,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 	/**
 	 * 如果未设置destroyMethod，将sequenceClass类中的destroy作为默认的destroyMethod
 	 */
-	private void checkDestroyMethod() {
+	private void prepareDestroyMethod() {
 		if (this.destroyMethod != null && !"".equals(this.destroyMethod)) {
 			return;
 		}
@@ -170,28 +166,33 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-		this.beanFactory = (DefaultListableBeanFactory) beanFactory;
+		this.beanFactory = beanFactory;
 	}
+
+	@Override
+	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+		this.registry = registry;
+	}
+
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		return bean;
 	}
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (!done.get() && !beanName.equals(sequenceBeanHolderBeanName) && done.compareAndSet(false, true)) {
-			registerBeans();
+		if (beanName.equals(sequenceBeanHolderBeanName)) {
+			registerBeans(((SequenceBeanHolder) bean).getSequenceMap());
+			done = true;
+		} else if (!done) {
+			beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
 		}
-
 		return bean;
 	}
 
-	private void registerBeans() {
-		SequenceBeanHolder sequenceBeanHolder = beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
-		Map<String, String> beanSeqMap = sequenceBeanHolder.getSequenceMap();
+	private void registerBeans(Map<String, String> beanSeqMap) {
 		if (beanSeqMap == null || beanSeqMap.isEmpty()) {
 			return;
 		}
-
 		checkPropertyList();
 
 		Iterator<Entry<String, String>> entryItr = beanSeqMap.entrySet().iterator();
@@ -255,7 +256,7 @@ public class SequenceBeanFactory implements BeanFactoryPostProcessor, BeanPostPr
 		if (destroyMethod != null && !"".equals(destroyMethod)) {
 			builder.setDestroyMethodName(destroyMethod);
 		}
-		beanFactory.registerBeanDefinition(beanName, builder.getBeanDefinition());
+		registry.registerBeanDefinition(beanName, builder.getBeanDefinition());
 	}
 
 	/**

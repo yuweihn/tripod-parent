@@ -8,22 +8,22 @@ import java.io.Serializable;
 /**
  * @author yuwei
  */
-public class Response<T> implements Serializable {
+public class Response<C, D> implements Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private String code;
+	private C code;
 	private String msg;
-	private T data;
+	private D data;
 
 	public Response() {
 
 	}
-	public Response(String code, String msg) {
+	public Response(C code, String msg) {
 		this(code, msg, null);
 	}
-	public Response(String code, String msg, T data) {
+	public Response(C code, String msg, D data) {
 		this.code = code;
 		this.msg = msg;
 		this.data = data;
@@ -35,10 +35,10 @@ public class Response<T> implements Serializable {
 	}
 
 
-	public String getCode() {
+	public C getCode() {
 		return code;
 	}
-	public void setCode(String code) {
+	public void setCode(C code) {
 		this.code = code;
 	}
 	public String getMsg() {
@@ -47,10 +47,10 @@ public class Response<T> implements Serializable {
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
-	public T getData() {
+	public D getData() {
 		return data;
 	}
-	public void setData(T data) {
+	public void setData(D data) {
 		this.data = data;
 	}
 }
