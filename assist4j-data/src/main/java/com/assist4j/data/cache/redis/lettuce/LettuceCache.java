@@ -3,7 +3,9 @@ package com.assist4j.data.cache.redis.lettuce;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
@@ -125,6 +127,104 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 	@Override
 	public void remove(String key) {
 		redisTemplate.delete(key);
+	}
+
+	@Override
+	public <T>boolean hset(String key, String field, T value, long timeout) {
+		String val = null;
+		if (value.getClass() != String.class) {
+			val = JSON.toJSONString(value);
+		} else {
+			val = (String) value;
+		}
+		redisTemplate.opsForHash().put(key, field, val);
+		redisTemplate.expire(key, timeout, TimeUnit.SECONDS);
+		return true;
+	}
+
+	@Override
+	public String hget(String key, String field) {
+		return (String) redisTemplate.opsForHash().get(key, field);
+	}
+
+	@Override
+	public <T>T hget(String key, String field, Class<T> clz) {
+		String val = hget(key, field);
+		if (val == null) {
+			return null;
+		}
+		return clz == String.class ? (T) val : JSON.parseObject(val, clz);
+	}
+
+	@Override
+	public <T>T hget(String key, String field, TypeReference<T> type) {
+		String val = hget(key, field);
+		if (val == null) {
+			return null;
+		}
+		return type.getType() == String.class ? (T) val : JSON.parseObject(val, type);
+	}
+
+	@Override
+	public Map<String, String> hgetAll(String key) {
+		Map<?, ?> entries = redisTemplate.opsForHash().entries(key);
+		return (Map<String, String>) entries;
+	}
+
+	@Override
+	public <T>Map<String, T> hgetAll(String key, Class<T> clz) {
+		Map<String, String> strMap = hgetAll(key);
+		if (clz == String.class) {
+			return (Map<String, T>) strMap;
+		}
+		Map<String, T> resultMap = new HashMap<String, T>();
+		if (strMap == null || strMap.isEmpty()) {
+			return resultMap;
+		}
+		for (Map.Entry<String, String> entry: strMap.entrySet()) {
+			resultMap.put(entry.getKey(), JSON.parseObject(entry.getValue(), clz));
+		}
+		return resultMap;
+	}
+
+	@Override
+	public <T>Map<String, T> hgetAll(String key, TypeReference<T> type) {
+		Map<String, String> strMap = hgetAll(key);
+		if (type.getType() == String.class) {
+			return (Map<String, T>) strMap;
+		}
+		Map<String, T> resultMap = new HashMap<String, T>();
+		if (strMap == null || strMap.isEmpty()) {
+			return resultMap;
+		}
+		for (Map.Entry<String, String> entry: strMap.entrySet()) {
+			resultMap.put(entry.getKey(), JSON.parseObject(entry.getValue(), type));
+		}
+		return resultMap;
+	}
+
+	@Override
+	public <T>boolean hmset(String key, Map<String, T> entries, long timeout) {
+		if (entries == null || entries.isEmpty()) {
+			return true;
+		}
+		Class<?> valClass = entries.values().toArray()[0].getClass();
+		if (valClass == String.class) {
+			redisTemplate.opsForHash().putAll(key, (Map<String, String>) entries);
+		} else {
+			Map<String, String> strMap = new HashMap<String, String>();
+			for (Map.Entry<String, T> entry: entries.entrySet()) {
+				strMap.put(entry.getKey(), JSON.toJSONString(entry.getValue()));
+			}
+			redisTemplate.opsForHash().putAll(key, strMap);
+		}
+		redisTemplate.expire(key, timeout, TimeUnit.SECONDS);
+		return true;
+	}
+
+	@Override
+	public void remove(String key, String field) {
+		redisTemplate.opsForHash().delete(key, field);
 	}
 
 	private boolean setNx(String key, String owner, long timeout) {
