@@ -90,6 +90,7 @@ public class LettuceConf {
 		return template;
 	}
 
+	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template) {
 		LettuceCache cache = new LettuceCache();
