@@ -15,6 +15,7 @@ import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 
@@ -282,6 +283,37 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 			return false;
 		}
 		return redisTemplate.opsForSet().remove(key, members.toArray()) > 0;
+	}
+
+	@Override
+	public <T>void zadd(String key, T value, double score, long timeout) {
+		redisTemplate.opsForZSet().add(key, value, score);
+		redisTemplate.expire(key, timeout, TimeUnit.SECONDS);
+	}
+
+	@Override
+	public <T>void zadd(String key, Map<T, Double> memScore, long timeout) {
+		Set<ZSetOperations.TypedTuple<Object>> tuples = new HashSet<ZSetOperations.TypedTuple<Object>>();
+		for (Map.Entry<T, Double> entry: memScore.entrySet()) {
+			tuples.add(new ZSetOperations.TypedTuple<Object>() {
+				@Override
+				public int compareTo(ZSetOperations.TypedTuple<Object> o) {
+					return this.getScore() > o.getScore() ? 1 : -1;
+				}
+
+				@Override
+				public Object getValue() {
+					return entry.getKey();
+				}
+
+				@Override
+				public Double getScore() {
+					return entry.getValue();
+				}
+			});
+		}
+		redisTemplate.opsForZSet().add(key, tuples);
+		redisTemplate.expire(key, timeout, TimeUnit.SECONDS);
 	}
 
 	private <T>boolean setNx(String key, T owner, long timeout) {

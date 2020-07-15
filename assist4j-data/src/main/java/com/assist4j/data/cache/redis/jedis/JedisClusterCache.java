@@ -368,6 +368,25 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 		return jedisCluster.srem(key, strList.toArray(new String[0])) > 0;
 	}
 
+	@Override
+	public <T>void zadd(String key, T value, double score, long timeout) {
+		jedisCluster.zadd(key, score, serialize(value));
+		jedisCluster.expire(key, (int) timeout);
+	}
+
+	@Override
+	public <T>void zadd(String key, Map<T, Double> memScore, long timeout) {
+		if (memScore == null || memScore.isEmpty()) {
+			return;
+		}
+		Map<String, Double> strMap = new HashMap<String, Double>();
+		for (Map.Entry<T, Double> entry: memScore.entrySet()) {
+			strMap.put(serialize(entry.getKey()), entry.getValue());
+		}
+		jedisCluster.zadd(key, strMap);
+		jedisCluster.expire(key, (int) timeout);
+	}
+
 	private boolean setNx(String key, Object owner, long timeout) {
 		String res = jedisCluster.set(key, serialize(owner), "NX", "EX", (int) timeout);
 		return "OK".equalsIgnoreCase(res);
