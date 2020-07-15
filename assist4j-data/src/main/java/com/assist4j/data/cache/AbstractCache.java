@@ -1,9 +1,6 @@
 package com.assist4j.data.cache;
 
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,14 +10,10 @@ import java.util.List;
  */
 public abstract class AbstractCache implements Cache {
 	@Override
-	public <T> boolean putSplit(String key, T value, long timeout, int maxLength) {
-		if (value.getClass() == String.class) {
-			return putSplit0(key, (String) value, timeout, maxLength);
-		} else {
-			return putSplit0(key, JSON.toJSONString(value), timeout, maxLength);
+	public boolean putSplit(String key, String value, long timeout, int maxLength) {
+		if (value == null) {
+			return false;
 		}
-	}
-	private boolean putSplit0(String key, String value, long timeout, int maxLength) {
 		int oldSize = parseValueSize(get(key));
 		List<String> valList = split(value, maxLength);
 		int newSize = valList.size();
@@ -49,26 +42,6 @@ public abstract class AbstractCache implements Cache {
 			builder.append(subVal);
 		}
 		return builder.toString();
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getSplit(String key, Class<T> clz) {
-		String val = getSplit(key);
-		if (val == null) {
-			return null;
-		}
-		return clz == String.class ? (T) val : JSON.parseObject(val, clz);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getSplit(String key, TypeReference<T> type) {
-		String val = getSplit(key);
-		if (val == null) {
-			return null;
-		}
-		return type.getType() == String.class ? (T) val : JSON.parseObject(val, type);
 	}
 
 	@Override
