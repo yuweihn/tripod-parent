@@ -423,6 +423,17 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 		redisTemplate.opsForSet().add(key, strList.toArray(new String[0]));
 	}
 
+	@Override
+	public long ssize(String key) {
+		return redisTemplate.opsForSet().size(key);
+	}
+
+	@Override
+	public Set<String> sdiff(String key1, String key2) {
+		Set<?> set = redisTemplate.opsForSet().difference(key1, key2);
+		return (Set<String>) set;
+	}
+
 	private boolean setNx(String key, String owner, long timeout) {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);

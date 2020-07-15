@@ -399,6 +399,16 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 		jedisCluster.sadd(key, strList.toArray(new String[0]));
 	}
 
+	@Override
+	public long ssize(String key) {
+		return jedisCluster.scard(key);
+	}
+
+	@Override
+	public Set<String> sdiff(String key1, String key2) {
+		return jedisCluster.sdiff(key1, key2);
+	}
+
 	private boolean setNx(String key, String owner, long timeout) {
 		String res = jedisCluster.set(key, owner, "NX", "EX", (int) timeout);
 		return "OK".equalsIgnoreCase(res);
