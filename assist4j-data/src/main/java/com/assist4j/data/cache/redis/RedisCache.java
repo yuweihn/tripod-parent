@@ -69,5 +69,10 @@ public interface RedisCache extends Cache {
 	<T>T rpop(String key, Class<T> clz);
 	<T>T rpop(String key, TypeReference<T> type);
 
+	/**
+	 * timeout 过期时间(s)。
+	 */
+	<T>void sadd(String key, T... members);
+
 	String execute(String script, List<String> keyList, List<String> argList);
 }

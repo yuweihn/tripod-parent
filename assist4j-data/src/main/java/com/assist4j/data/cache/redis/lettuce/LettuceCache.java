@@ -83,6 +83,11 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 	}
 
 	@Override
+	public void expire(String key, long timeout) {
+		redisTemplate.expire(key, timeout, TimeUnit.SECONDS);
+	}
+
+	@Override
 	public <T> boolean put(String key, T value, long timeout) {
 		if (timeout <= 0) {
 			throw new RuntimeException("Invalid parameter[timeout].");
@@ -404,6 +409,18 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 			return null;
 		}
 		return type.getType() == String.class ? (T) val : JSON.parseObject(val, type);
+	}
+
+	@Override
+	public <T>void sadd(String key, T... members) {
+		if (members == null || members.length <= 0) {
+			return;
+		}
+		List<String> strList = new ArrayList<String>();
+		for (T t: members) {
+			strList.add(JSON.toJSONString(t));
+		}
+		redisTemplate.opsForSet().add(key, strList.toArray(new String[0]));
 	}
 
 	private boolean setNx(String key, String owner, long timeout) {

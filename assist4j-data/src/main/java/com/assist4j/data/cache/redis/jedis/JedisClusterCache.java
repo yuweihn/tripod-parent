@@ -2,7 +2,6 @@ package com.assist4j.data.cache.redis.jedis;
 
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -58,6 +57,11 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 	public boolean contains(String key) {
 		Boolean exists = jedisCluster.exists(key);
 		return exists != null && exists;
+	}
+
+	@Override
+	public void expire(String key, long timeout) {
+		jedisCluster.expire(key, (int) timeout);
 	}
 
 	@Override
@@ -381,6 +385,18 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 			return null;
 		}
 		return type.getType() == String.class ? (T) val : JSON.parseObject(val, type);
+	}
+
+	@Override
+	public <T>void sadd(String key, T... members) {
+		if (members == null || members.length <= 0) {
+			return;
+		}
+		List<String> strList = new ArrayList<String>();
+		for (T t: members) {
+			strList.add(JSON.toJSONString(t));
+		}
+		jedisCluster.sadd(key, strList.toArray(new String[0]));
 	}
 
 	private boolean setNx(String key, String owner, long timeout) {
