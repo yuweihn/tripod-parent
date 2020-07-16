@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class JedisCache extends AbstractCache implements RedisCache {
 	protected RedisTemplate<String, Object> redisTemplate;
+	protected RedisTemplate<String, Object> stringValueRedisTemplate;
 
 
 	public JedisCache() {
@@ -34,6 +35,10 @@ public class JedisCache extends AbstractCache implements RedisCache {
 
 	public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
 		this.redisTemplate = redisTemplate;
+	}
+
+	public void setStringValueRedisTemplate(RedisTemplate<String, Object> stringValueRedisTemplate) {
+		this.stringValueRedisTemplate = stringValueRedisTemplate;
 	}
 
 
@@ -316,48 +321,63 @@ public class JedisCache extends AbstractCache implements RedisCache {
 		redisTemplate.expire(key, timeout, TimeUnit.SECONDS);
 	}
 
-	private <T>boolean setNx(String key, T owner, long timeout) {
+	@Override
+	public long zlen(String key) {
+		return redisTemplate.opsForZSet().size(key);
+	}
+
+	@Override
+	public long zcount(String key, double min, double max) {
+		return redisTemplate.opsForZSet().count(key, min, max);
+	}
+
+	@Override
+	public <T>void zincrby(String key, T member, double increment) {
+		redisTemplate.opsForZSet().incrementScore(key, member, increment);
+	}
+
+	private boolean setNx(String key, String owner, long timeout) {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockNx.lua")));
-		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
+		String result = stringValueRedisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
 		return result != null && "OK".equalsIgnoreCase(result);
 	}
 	@SuppressWarnings("unused")
-	private <T>boolean setXx(String key, T owner, long timeout) {
+	private boolean setXx(String key, String owner, long timeout) {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
-		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
+		String result = stringValueRedisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
 		return result != null && "OK".equalsIgnoreCase(result);
 	}
-	private <T>boolean setXxEquals(String key, T owner, long timeout) {
+	private boolean setXxEquals(String key, String owner, long timeout) {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXxEquals.lua")));
-		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
+		String result = stringValueRedisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
 		return result != null && "OK".equalsIgnoreCase(result);
 	}
 
 	@Override
-	public <T>boolean lock(String key, T owner, long timeout) {
+	public boolean lock(String key, String owner, long timeout) {
 		return lock(key, owner, timeout, false);
 	}
 
 	@Override
-	public <T>boolean lock(String key, T owner, long timeout, boolean reentrant) {
+	public boolean lock(String key, String owner, long timeout, boolean reentrant) {
 		return reentrant && setXxEquals(key, owner, timeout) || setNx(key, owner, timeout);
 	}
 
 	@Override
-	public <T>boolean unlock(String key, T owner) {
+	public boolean unlock(String key, String owner) {
 		if (!contains(key)) {
 			return true;
 		}
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
 		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
-		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner);
+		Long result = stringValueRedisTemplate.execute(redisScript, Collections.singletonList(key), owner);
 		return result != null && "1".equals(result.toString());
 	}
 
@@ -366,6 +386,6 @@ public class JedisCache extends AbstractCache implements RedisCache {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptText(script);
-		return redisTemplate.execute(redisScript, keyList, argList == null ? new Object[0] : argList.toArray());
+		return stringValueRedisTemplate.execute(redisScript, keyList, argList == null ? new Object[0] : argList.toArray());
 	}
 }

@@ -387,43 +387,57 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 		jedisCluster.expire(key, (int) timeout);
 	}
 
-	private boolean setNx(String key, Object owner, long timeout) {
-		String res = jedisCluster.set(key, serialize(owner), "NX", "EX", (int) timeout);
+	@Override
+	public long zlen(String key) {
+		return jedisCluster.zcard(key);
+	}
+
+	@Override
+	public long zcount(String key, double min, double max) {
+		return jedisCluster.zcount(key, min, max);
+	}
+
+	@Override
+	public <T>void zincrby(String key, T member, double increment) {
+		jedisCluster.zincrby(key, increment, serialize(member));
+	}
+
+	private boolean setNx(String key, String owner, long timeout) {
+		String res = jedisCluster.set(key, owner, "NX", "EX", (int) timeout);
 		return "OK".equalsIgnoreCase(res);
 	}
 	@SuppressWarnings("unused")
-	private boolean setXx(String key, Object owner, long timeout) {
-		String res = jedisCluster.set(key, serialize(owner), "XX", "EX", (int) timeout);
+	private boolean setXx(String key, String owner, long timeout) {
+		String res = jedisCluster.set(key, owner, "XX", "EX", (int) timeout);
 		return "OK".equalsIgnoreCase(res);
 	}
-	private boolean setXxEquals(String key, Object owner, long timeout) {
+	private boolean setXxEquals(String key, String owner, long timeout) {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXxEquals.lua")));
-		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Arrays.asList(serialize(owner), "" + timeout));
+		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Arrays.asList(owner, "" + timeout));
 		return result != null && "OK".equalsIgnoreCase(result.toString());
 	}
 
 	@Override
-	public <T>boolean lock(String key, T owner, long timeout) {
+	public boolean lock(String key, String owner, long timeout) {
 		return lock(key, owner, timeout, false);
 	}
 
 	@Override
-	public <T>boolean lock(String key, T owner, long timeout, boolean reentrant) {
+	public boolean lock(String key, String owner, long timeout, boolean reentrant) {
 		return reentrant && setXxEquals(key, owner, timeout) || setNx(key, owner, timeout);
 	}
 
 	@Override
-	public <T>boolean unlock(String key, T owner) {
+	public boolean unlock(String key, String owner) {
 		if (!contains(key)) {
 			return true;
 		}
-		String val = serialize(owner);
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
 		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
-		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Collections.singletonList(val));
+		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key), Collections.singletonList(owner));
 		return result != null && "1".equals(result.toString());
 	}
 
