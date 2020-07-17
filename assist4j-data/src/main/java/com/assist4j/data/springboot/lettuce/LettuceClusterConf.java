@@ -82,25 +82,11 @@ public class LettuceClusterConf {
 		return template;
 	}
 
-	@Bean(name = "stringValueRedisTemplate")
-	public RedisTemplate<String, Object> stringValueRedisTemplate(
-			@Qualifier("lettuceConnectionFactory") LettuceConnectionFactory connFactory) {
-		RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
-		template.setConnectionFactory(connFactory);
-		template.setKeySerializer(new StringRedisSerializer());
-		template.setValueSerializer(new StringRedisSerializer());
-		template.setEnableDefaultSerializer(true);
-//		template.setEnableTransactionSupport(true);
-		return template;
-	}
-
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
-	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
-			, @Qualifier("stringValueRedisTemplate") RedisTemplate<String, Object> stringValueRedisTemplate) {
+	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template) {
 		LettuceCache cache = new LettuceCache();
 		cache.setRedisTemplate(template);
-		cache.setStringValueRedisTemplate(stringValueRedisTemplate);
 		return cache;
 	}
 }

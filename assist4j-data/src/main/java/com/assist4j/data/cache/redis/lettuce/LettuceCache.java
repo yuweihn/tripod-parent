@@ -25,7 +25,6 @@ import org.springframework.scripting.support.ResourceScriptSource;
  */
 public class LettuceCache extends AbstractCache implements RedisCache {
 	protected RedisTemplate<String, Object> redisTemplate;
-	protected RedisTemplate<String, Object> stringValueRedisTemplate;
 
 
 	public LettuceCache() {
@@ -35,10 +34,6 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 	public void setRedisTemplate(RedisTemplate<String, Object> redisTemplate) {
 		this.redisTemplate = redisTemplate;
-	}
-
-	public void setStringValueRedisTemplate(RedisTemplate<String, Object> stringValueRedisTemplate) {
-		this.stringValueRedisTemplate = stringValueRedisTemplate;
 	}
 
 	@Override
@@ -339,7 +334,7 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockNx.lua")));
-		String result = stringValueRedisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
 		return result != null && "OK".equalsIgnoreCase(result);
 	}
 	@SuppressWarnings("unused")
@@ -347,14 +342,14 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
-		String result = stringValueRedisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
 		return result != null && "OK".equalsIgnoreCase(result);
 	}
 	private boolean setXxEquals(String key, String owner, long timeout) {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXxEquals.lua")));
-		String result = stringValueRedisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner, "" + timeout);
 		return result != null && "OK".equalsIgnoreCase(result);
 	}
 
@@ -376,7 +371,7 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
 		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
-		Long result = stringValueRedisTemplate.execute(redisScript, Collections.singletonList(key), owner);
+		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), owner);
 		return result != null && "1".equals(result.toString());
 	}
 
@@ -385,6 +380,6 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptText(script);
-		return stringValueRedisTemplate.execute(redisScript, keyList, argList == null ? new Object[0] : argList.toArray());
+		return redisTemplate.execute(redisScript, keyList, argList == null ? new Object[0] : argList.toArray());
 	}
 }
