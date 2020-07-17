@@ -97,7 +97,7 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>T get(String key) {
-		return (T) redisTemplate.opsForValue().get(key);
+		return (T) deserialize((String) redisTemplate.opsForValue().get(key));
 	}
 
 	@Override
@@ -128,13 +128,21 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>T hget(String key, String field) {
-		return (T) redisTemplate.opsForHash().get(key, field);
+		return (T) deserialize((String) redisTemplate.opsForHash().get(key, field));
 	}
 
 	@Override
 	public <T>Map<String, T> hgetAll(String key) {
 		Map<?, ?> entries = redisTemplate.opsForHash().entries(key);
-		return (Map<String, T>) entries;
+		Map<String, String> strMap = (Map<String, String>) entries;
+		Map<String, T> resMap = new HashMap<String, T>();
+		if (strMap == null || strMap.isEmpty()) {
+			return resMap;
+		}
+		for (Map.Entry<String, String> strEntry: strMap.entrySet()) {
+			resMap.put(strEntry.getKey(), deserialize(strEntry.getValue()));
+		}
+		return resMap;
 	}
 
 	@Override
@@ -191,12 +199,20 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>T lindex(String key, long index) {
-		return (T) redisTemplate.opsForList().index(key, index);
+		return deserialize((String) redisTemplate.opsForList().index(key, index));
 	}
 
 	@Override
 	public <T>List<T> lrange(String key, long start, long end) {
-		return (List<T>) redisTemplate.opsForList().range(key, start, end);
+		List<?> strList = redisTemplate.opsForList().range(key, start, end);
+		List<T> tList = new ArrayList<T>();
+		if (strList == null || strList.size() <= 0) {
+			return tList;
+		}
+		for (Object str: strList) {
+			tList.add(deserialize((String) str));
+		}
+		return tList;
 	}
 
 	@Override
@@ -211,12 +227,12 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>T lpop(String key) {
-		return (T) redisTemplate.opsForList().leftPop(key);
+		return deserialize((String) redisTemplate.opsForList().leftPop(key));
 	}
 
 	@Override
 	public <T>T rpop(String key) {
-		return (T) redisTemplate.opsForList().rightPop(key);
+		return deserialize((String) redisTemplate.opsForList().rightPop(key));
 	}
 
 	@Override
@@ -245,8 +261,15 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>Set<T> sdiff(String key, Collection<String> otherKeys) {
-		Set<?> set = redisTemplate.opsForSet().difference(key, otherKeys);
-		return (Set<T>) set;
+		Set<Object> strSet = redisTemplate.opsForSet().difference(key, otherKeys);
+		Set<T> tSet = new HashSet<T>();
+		if (strSet == null || strSet.isEmpty()) {
+			return tSet;
+		}
+		for (Object str: strSet) {
+			tSet.add(deserialize((String) str));
+		}
+		return tSet;
 	}
 
 	@Override
@@ -256,8 +279,15 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>Set<T> sinter(String key, Collection<String> otherKeys) {
-		Set<?> set = redisTemplate.opsForSet().intersect(key, otherKeys);
-		return (Set<T>) set;
+		Set<Object> strSet = redisTemplate.opsForSet().intersect(key, otherKeys);
+		Set<T> tSet = new HashSet<T>();
+		if (strSet == null || strSet.isEmpty()) {
+			return tSet;
+		}
+		for (Object str: strSet) {
+			tSet.add(deserialize((String) str));
+		}
+		return tSet;
 	}
 
 	@Override
@@ -267,8 +297,15 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>Set<T> sunion(String key, Collection<String> otherKeys) {
-		Set<?> set = redisTemplate.opsForSet().union(key, otherKeys);
-		return (Set<T>) set;
+		Set<Object> strSet = redisTemplate.opsForSet().union(key, otherKeys);
+		Set<T> tSet = new HashSet<T>();
+		if (strSet == null || strSet.isEmpty()) {
+			return tSet;
+		}
+		for (Object str: strSet) {
+			tSet.add(deserialize((String) str));
+		}
+		return tSet;
 	}
 
 	@Override
@@ -283,8 +320,15 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>Set<T> smembers(String key) {
-		Set<?> set = redisTemplate.opsForSet().members(key);
-		return (Set<T>) set;
+		Set<Object> strSet = redisTemplate.opsForSet().members(key);
+		Set<T> tSet = new HashSet<T>();
+		if (strSet == null || strSet.isEmpty()) {
+			return tSet;
+		}
+		for (Object str: strSet) {
+			tSet.add(deserialize((String) str));
+		}
+		return tSet;
 	}
 
 	@Override
