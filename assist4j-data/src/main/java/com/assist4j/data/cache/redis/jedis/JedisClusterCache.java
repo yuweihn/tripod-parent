@@ -9,7 +9,6 @@ import com.assist4j.data.cache.redis.RedisCache;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.scripting.support.ResourceScriptSource;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPubSub;
@@ -20,7 +19,6 @@ import redis.clients.jedis.JedisPubSub;
  */
 public class JedisClusterCache extends AbstractCache implements RedisCache {
 	protected JedisCluster jedisCluster;
-	protected RedisSerializer<Object> redisSerializer;
 
 
 	public JedisClusterCache() {
@@ -30,23 +28,6 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 
 	public void setJedisCluster(JedisCluster jedisCluster) {
 		this.jedisCluster = jedisCluster;
-	}
-
-	public void setRedisSerializer(RedisSerializer<Object> redisSerializer) {
-		this.redisSerializer = redisSerializer;
-	}
-
-	private String serialize(Object o) {
-		if (o == null) {
-			return null;
-		}
-		return new String(redisSerializer.serialize(o));
-	}
-	private <T>T deserialize(String str) {
-		if (str == null) {
-			return null;
-		}
-		return (T) redisSerializer.deserialize(str.getBytes());
 	}
 
 	@Override
@@ -192,8 +173,8 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 	}
 
 	@Override
-	public String lindex(String key, long index) {
-		return jedisCluster.lindex(key, index);
+	public <T>T lindex(String key, long index) {
+		return deserialize(jedisCluster.lindex(key, index));
 	}
 
 	@Override

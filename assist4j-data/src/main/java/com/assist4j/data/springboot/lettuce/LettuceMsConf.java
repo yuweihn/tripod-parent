@@ -1,7 +1,6 @@
 package com.assist4j.data.springboot.lettuce;
 
 
-import com.assist4j.data.cache.DefaultRedisSerializer;
 import com.assist4j.data.cache.redis.lettuce.LettuceCache;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,7 +14,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceClientConfigurat
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
@@ -80,18 +78,12 @@ public class LettuceMsConf {
 		return connFactory;
 	}
 
-	@Bean(name = "redisSerializer")
-	public RedisSerializer<Object> redisSerializer() {
-		return new DefaultRedisSerializer();
-	}
-
 	@Bean(name = "redisTemplate")
-	public RedisTemplate<String, Object> redisTemplate(@Qualifier("lettuceConnectionFactory") LettuceConnectionFactory connFactory
-			, @Qualifier("redisSerializer") RedisSerializer<Object> redisSerializer) {
+	public RedisTemplate<String, Object> redisTemplate(@Qualifier("lettuceConnectionFactory") LettuceConnectionFactory connFactory) {
 		RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
 		template.setConnectionFactory(connFactory);
 		template.setKeySerializer(new StringRedisSerializer());
-		template.setValueSerializer(redisSerializer);
+		template.setValueSerializer(new StringRedisSerializer());
 		template.setEnableDefaultSerializer(true);
 //		template.setEnableTransactionSupport(true);
 		return template;

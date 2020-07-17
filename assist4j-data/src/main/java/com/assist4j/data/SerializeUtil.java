@@ -20,7 +20,7 @@ public abstract class SerializeUtil {
 	 * @param object
 	 * @return
 	 */
-	public static <T>byte[] encode(T object) {
+	public static <T>byte[] serialize(T object) {
 		ByteArrayOutputStream baos = null;
 		ObjectOutputStream oos = null;
 		try {
@@ -55,7 +55,7 @@ public abstract class SerializeUtil {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T>T decode(byte[] bytes) {
+	public static <T>T deserialize(byte[] bytes) {
 		ByteArrayInputStream bais = null;
 		ObjectInputStream ois = null;
 		try {
