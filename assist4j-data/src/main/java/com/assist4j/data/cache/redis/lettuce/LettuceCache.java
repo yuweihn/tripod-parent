@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import com.assist4j.data.cache.AbstractCache;
 import com.assist4j.data.cache.MessageHandler;
 import com.assist4j.data.cache.redis.RedisCache;
+import com.assist4j.data.serializier.DefaultSerializier;
 import com.assist4j.data.serializier.Serializier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
@@ -30,7 +31,7 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 
 	public LettuceCache() {
-		
+		serializier = new DefaultSerializier();
 	}
 
 
