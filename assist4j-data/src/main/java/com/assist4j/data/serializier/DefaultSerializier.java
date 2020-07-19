@@ -1,4 +1,4 @@
-package com.assist4j.data;
+package com.assist4j.data.serializier;
 
 
 import org.slf4j.Logger;
@@ -11,14 +11,14 @@ import java.io.*;
  * 序列化工具
  * @author wei
  */
-public abstract class SerializeUtil {
-	private static final Logger log = LoggerFactory.getLogger(SerializeUtil.class);
+public class DefaultSerializier implements Serializier {
+	private static final Logger log = LoggerFactory.getLogger(DefaultSerializier.class);
 
 
 	/**
 	 * 序列化
 	 */
-	public static <T>String serialize(T t) {
+	public <T>String serialize(T t) {
 		if (t == null) {
 			return null;
 		}
@@ -54,7 +54,7 @@ public abstract class SerializeUtil {
 	 * 反序列化
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T>T deserialize(String str) {
+	public <T>T deserialize(String str) {
 		if (str == null) {
 			return null;
 		}
