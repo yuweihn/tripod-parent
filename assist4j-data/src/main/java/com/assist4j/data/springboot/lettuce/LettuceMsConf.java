@@ -2,6 +2,8 @@ package com.assist4j.data.springboot.lettuce;
 
 
 import com.assist4j.data.cache.redis.lettuce.LettuceCache;
+import com.assist4j.data.serializier.DefaultSerializier;
+import com.assist4j.data.serializier.Serializier;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,11 +91,19 @@ public class LettuceMsConf {
 		return template;
 	}
 
+	@ConditionalOnMissingBean(Serializier.class)
+	@Bean(name = "cacheSerializer")
+	public Serializier cacheSerializer() {
+		return new DefaultSerializier();
+	}
+
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
-	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template) {
+	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
+			, @Qualifier("cacheSerializer") Serializier serializier) {
 		LettuceCache cache = new LettuceCache();
 		cache.setRedisTemplate(template);
+		cache.setSerializier(serializier);
 		return cache;
 	}
 }
