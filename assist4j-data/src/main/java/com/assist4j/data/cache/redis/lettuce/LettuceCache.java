@@ -489,6 +489,6 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptText(script);
-		return redisTemplate.execute(redisScript, keyList, argList == null ? new Object[0] : strArgList.toArray());
+		return redisTemplate.execute(redisScript, keyList, strArgList.toArray());
 	}
 }
