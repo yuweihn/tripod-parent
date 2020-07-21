@@ -3,8 +3,8 @@ package com.assist4j.data.springboot.jedis;
 
 import com.assist4j.data.cache.redis.jedis.JedisClusterCache;
 import com.assist4j.data.cache.redis.jedis.JedisClusterFactory;
-import com.assist4j.data.serializier.DefaultSerializier;
-import com.assist4j.data.serializier.Serializier;
+import com.assist4j.data.serializer.DefaultSerializier;
+import com.assist4j.data.serializer.Serializier;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

@@ -2,8 +2,8 @@ package com.assist4j.data.springboot.lettuce;
 
 
 import com.assist4j.data.cache.redis.lettuce.LettuceCache;
-import com.assist4j.data.serializier.DefaultSerializier;
-import com.assist4j.data.serializier.Serializier;
+import com.assist4j.data.serializer.DefaultSerializier;
+import com.assist4j.data.serializer.Serializier;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

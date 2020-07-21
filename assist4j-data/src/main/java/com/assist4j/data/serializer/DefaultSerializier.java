@@ -1,4 +1,4 @@
-package com.assist4j.data.serializier;
+package com.assist4j.data.serializer;
 
 
 import org.slf4j.Logger;
