@@ -22,6 +22,7 @@ public class SingleNodeTaskScheduler extends ThreadPoolTaskScheduler {
 
 
 	protected LeaderElector leaderElector;
+	protected boolean release = true;
 
 
 	protected Runnable taskWrapper(final Runnable task) {
@@ -31,6 +32,9 @@ public class SingleNodeTaskScheduler extends ThreadPoolTaskScheduler {
 				if (leaderElector.acquire()) {
 					task.run();
 					log.info("Job executed here, {}", leaderElector.getLocalNode());
+					if (release) {
+						leaderElector.release();
+					}
 				} else {
 					String leaderNode = leaderElector.getLeaderNode();
 					if (leaderNode == null) {
@@ -75,5 +79,9 @@ public class SingleNodeTaskScheduler extends ThreadPoolTaskScheduler {
 
 	public void setLeaderElector(LeaderElector leaderElector) {
 		this.leaderElector = leaderElector;
+	}
+
+	public void setRelease(boolean release) {
+		this.release = release;
 	}
 }
