@@ -31,10 +31,11 @@ public class SingleNodeTaskScheduler extends ThreadPoolTaskScheduler {
 			public void run() {
 				if (leaderElector.acquire()) {
 					task.run();
-					log.info("Job executed here, {}", leaderElector.getLocalNode());
+					String localNode = leaderElector.getLocalNode();
 					if (release) {
 						leaderElector.release();
 					}
+					log.info("Job executed here, {}", localNode);
 				} else {
 					String leaderNode = leaderElector.getLeaderNode();
 					if (leaderNode == null) {
