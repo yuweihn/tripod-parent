@@ -17,31 +17,29 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 	 */
 	private int timeout;
 
-	/**
-	 * leader key in redis
-	 */
-	private String key;
 
 
-
-	public RedisLeaderElector(Redis redis, int timeout, String prjNo) {
+	public RedisLeaderElector(Redis redis, int timeout) {
+		super();
 		this.redis = redis;
 		this.timeout = timeout;
-		this.key = CACHE_LEADER_KEY_PRE + prjNo;
 	}
 
 	@Override
-	public boolean acquire() {
-		return redis.lock(key, getLocalNode(), timeout / 1000);
+	public boolean acquire(String lock) {
+		String key = CACHE_LEADER_KEY_PRE + lock;
+		return redis.lock(lock, getLocalNode(key), timeout / 1000);
 	}
 
 	@Override
-	public void release() {
-		redis.unlock(key, getLocalNode());
+	public void release(String lock) {
+		String key = CACHE_LEADER_KEY_PRE + lock;
+		redis.unlock(lock, getLocalNode(key));
 	}
 
 	@Override
-	public String getLeaderNode() {
+	public String getLeaderNode(String lock) {
+		String key = CACHE_LEADER_KEY_PRE + lock;
 		return redis.get(key);
 	}
 
@@ -52,6 +50,6 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 
 	@Override
 	public void destroy() {
-		release();
+
 	}
 }
