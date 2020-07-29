@@ -11,68 +11,43 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractTask {
 	private static final Logger log = LoggerFactory.getLogger(AbstractTask.class);
-	private LeaderElector leaderElector;
-	private boolean release = true;
-
 
 
 	public AbstractTask() {
 		
 	}
 
-	public void setLeaderElector(LeaderElector leaderElector) {
-		this.leaderElector = leaderElector;
-	}
-
 	public void execute() {
 		String lockName = getLockName();
+		LeaderElector leaderElector= getLeaderElector();
+		if (leaderElector == null) {
+			leaderElector = getDefaultLeaderElector();
+		}
+		boolean release = getRelease();
 		if (leaderElector.acquire(lockName)) {
-			log.info("{} - start...", this.getClass().getName());
+			before();
 			long startTime = System.currentTimeMillis();
 			String localNode = leaderElector.getLocalNode(lockName);
-			before();
 			executeTask();
 			after();
 			if (release) {
 				leaderElector.release(lockName);
 			}
-			log.info("{} - end...", this.getClass().getName());
 			long timeCost = System.currentTimeMillis() - startTime;
-			log.info("Job executed here, {}, timeCost: {}s", localNode, timeCost / 1000.0);
+			log.info("Job executed here, job: {}, localNode: {}, timeCost: {}s"
+					, this.getClass().getName(), localNode, timeCost / 1000.0);
 		} else {
 			String leaderNode = leaderElector.getLeaderNode(lockName);
 			if (leaderNode == null) {
-				log.info("Not leader, job didn't execute!");
+				log.info("Not leader, job didn't execute! job: {}", this.getClass().getName());
 			} else {
-				log.info("Not leader, job didn't execute! Leader: {}", leaderNode);
+				log.info("Not leader, job didn't execute! job: {}, Leader: {}", this.getClass().getName(), leaderNode);
 			}
 		}
 	}
 
 	protected void before() {
-		if (leaderElector == null) {
-			leaderElector = new LeaderElector() {
-				@Override
-				public boolean acquire(String lock) {
-					return true;
-				}
 
-				@Override
-				public void release(String lock) {
-
-				}
-
-				@Override
-				public String getLocalNode(String lock) {
-					return "Local";
-				}
-
-				@Override
-				public String getLeaderNode(String lock) {
-					return "Local";
-				}
-			};
-		}
 	}
 	protected void after() {
 		
@@ -81,7 +56,33 @@ public abstract class AbstractTask {
 	protected String getLockName() {
 		return this.getClass().getName();
 	}
-	public void setRelease(boolean release) {
-		this.release = release;
+	protected LeaderElector getLeaderElector() {
+		return null;
+	}
+	private LeaderElector getDefaultLeaderElector() {
+		return new LeaderElector() {
+			@Override
+			public boolean acquire(String lock) {
+				return true;
+			}
+
+			@Override
+			public void release(String lock) {
+
+			}
+
+			@Override
+			public String getLocalNode(String lock) {
+				return "Local";
+			}
+
+			@Override
+			public String getLeaderNode(String lock) {
+				return "Local";
+			}
+		};
+	}
+	protected boolean getRelease() {
+		return true;
 	}
 }
