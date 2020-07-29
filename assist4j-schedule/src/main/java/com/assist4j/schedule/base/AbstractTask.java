@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractTask {
 	private static final Logger log = LoggerFactory.getLogger(AbstractTask.class);
 
-
 	public AbstractTask() {
 		
 	}
