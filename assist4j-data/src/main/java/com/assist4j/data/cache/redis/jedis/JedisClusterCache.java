@@ -442,11 +442,6 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 	}
 
 	@Override
-	public <T> T rlock(String key, T owner, long timeout) {
-		return rlock(key, owner, timeout, false);
-	}
-
-	@Override
 	public <T>boolean lock(String key, T owner, long timeout, boolean reentrant) {
 		if (owner == null) {
 			return false;
@@ -460,15 +455,15 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 	}
 
 	@Override
-	public <T> T rlock(String key, T owner, long timeout, boolean reentrant) {
+	public <T> T tlock(String key, T owner, long timeout) {
 		if (owner == null) {
 			return null;
 		}
 		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
 		redisScript.setResultType(String.class);
-		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockr.lua")));
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockt.lua")));
 		Object result = jedisCluster.eval(redisScript.getScriptAsString(), Collections.singletonList(key)
-				, Arrays.asList(String.valueOf(reentrant), serializer.serialize(owner), String.valueOf(timeout)));
+				, Arrays.asList(serializer.serialize(owner), String.valueOf(timeout)));
 		return result == null ? null : serializer.deserialize(result.toString());
 	}
 
