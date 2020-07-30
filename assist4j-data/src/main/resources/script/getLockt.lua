@@ -1,24 +1,13 @@
-local res = nil
-if ARGV[1] == 'true' then
-    res = redis.call('get', KEYS[1])
-    if res == ARGV[2] then
-        local r = redis.call('set', KEYS[1], ARGV[2], 'EX', ARGV[3], 'XX')
-        if (r ~= 'OK' and r ~= 'ok') then
-            res = nil
-        end
-    else
-        local r = redis.call('set', KEYS[1], ARGV[2], 'EX', ARGV[3], 'NX')
-        if (r == 'OK' or r == 'ok') then
-            res = ARGV[2]
-        end
+local res = redis.call('get', KEYS[1])
+if res == ARGV[1] then
+    local r = redis.call('set', KEYS[1], ARGV[1], 'EX', ARGV[2], 'XX')
+    if (r ~= 'OK' and r ~= 'ok') then
+        res = nil
     end
 else
-    local r = redis.call('set', KEYS[1], ARGV[2], 'EX', ARGV[3], 'NX')
+    local r = redis.call('set', KEYS[1], ARGV[1], 'EX', ARGV[2], 'NX')
     if (r == 'OK' or r == 'ok') then
-        res = ARGV[2]
-    else
-        res = redis.call('get', KEYS[1])
+        res = ARGV[1]
     end
 end
-
 return res
