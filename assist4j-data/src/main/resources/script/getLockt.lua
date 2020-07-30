@@ -1,13 +1,16 @@
 local res = redis.call('get', KEYS[1])
 if res == ARGV[1] then
     local r = redis.call('set', KEYS[1], ARGV[1], 'EX', ARGV[2], 'XX')
-    if ('ok' ~= string.lower(r)) then
-        res = nil
+    if ('OK' == r) then
+        return ARGV[1]
+    else
+        return nil
     end
 else
     local r = redis.call('set', KEYS[1], ARGV[1], 'EX', ARGV[2], 'NX')
-    if ('ok' == string.lower(r)) then
-        res = ARGV[1]
+    if ('OK' == r) then
+        return ARGV[1]
+    else
+        return nil
     end
 end
-return res
