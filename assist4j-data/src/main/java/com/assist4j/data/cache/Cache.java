@@ -44,5 +44,9 @@ public interface Cache {
 	 * @return
 	 */
 	<T>boolean lock(String key, T owner, long timeout, boolean reentrant);
+	/**
+	 * 尝试获取锁，不管成功失败，返回锁的持有者。如果持有者是自己，重入。
+	 */
+	<T>T tlock(String key, T owner, long timeout);
 	<T>boolean unlock(String key, T owner);
 }

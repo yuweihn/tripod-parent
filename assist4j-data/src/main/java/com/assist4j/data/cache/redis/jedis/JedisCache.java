@@ -433,29 +433,6 @@ public class JedisCache extends AbstractCache implements RedisCache {
 		return redisTemplate.opsForZSet().rank(key, serializer.serialize(member));
 	}
 
-	private <T>boolean setNx(String key, T owner, long timeout) {
-		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
-		redisScript.setResultType(String.class);
-		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockNx.lua")));
-		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), serializer.serialize(owner), "" + timeout);
-		return result != null && "OK".equalsIgnoreCase(result);
-	}
-	@SuppressWarnings("unused")
-	private <T>boolean setXx(String key, T owner, long timeout) {
-		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
-		redisScript.setResultType(String.class);
-		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXx.lua")));
-		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), serializer.serialize(owner), "" + timeout);
-		return result != null && "OK".equalsIgnoreCase(result);
-	}
-	private <T>boolean setXxEquals(String key, T owner, long timeout) {
-		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
-		redisScript.setResultType(String.class);
-		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockXxEquals.lua")));
-		String result = redisTemplate.execute(redisScript, Collections.singletonList(key), serializer.serialize(owner), "" + timeout);
-		return result != null && "OK".equalsIgnoreCase(result);
-	}
-
 	@Override
 	public <T>boolean lock(String key, T owner, long timeout) {
 		return lock(key, owner, timeout, false);
@@ -463,11 +440,35 @@ public class JedisCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>boolean lock(String key, T owner, long timeout, boolean reentrant) {
-		return reentrant && setXxEquals(key, owner, timeout) || setNx(key, owner, timeout);
+		if (owner == null) {
+			return false;
+		}
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLock.lua")));
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key)
+				, String.valueOf(reentrant), serializer.serialize(owner), String.valueOf(timeout));
+		return "OK".equalsIgnoreCase(result);
+	}
+
+	@Override
+	public <T> T tlock(String key, T owner, long timeout) {
+		if (owner == null) {
+			return null;
+		}
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		redisScript.setResultType(String.class);
+		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockt.lua")));
+		String result = redisTemplate.execute(redisScript, Collections.singletonList(key)
+				, serializer.serialize(owner), String.valueOf(timeout));
+		return result == null ? null : serializer.deserialize(result);
 	}
 
 	@Override
 	public <T>boolean unlock(String key, T owner) {
+		if (owner == null) {
+			return false;
+		}
 		if (!contains(key)) {
 			return true;
 		}
@@ -480,14 +481,19 @@ public class JedisCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>String execute(String script, List<String> keyList, List<T> argList) {
+		return execute(script, keyList, argList, String.class);
+	}
+
+	@Override
+	public <T, S> S execute(String script, List<String> keyList, List<T> argList, Class<S> returnType) {
 		List<String> strArgList = new ArrayList<String>();
 		if (argList != null && argList.size() > 0) {
 			for (T t: argList) {
 				strArgList.add(serializer.serialize(t));
 			}
 		}
-		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
-		redisScript.setResultType(String.class);
+		DefaultRedisScript<S> redisScript = new DefaultRedisScript<S>();
+		redisScript.setResultType(returnType);
 		redisScript.setScriptText(script);
 		return redisTemplate.execute(redisScript, keyList, strArgList.toArray());
 	}

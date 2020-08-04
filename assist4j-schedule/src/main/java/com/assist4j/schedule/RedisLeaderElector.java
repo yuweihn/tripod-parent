@@ -9,7 +9,6 @@ package com.assist4j.schedule;
 public class RedisLeaderElector extends AbstractLeaderElector {
 	private static final String CACHE_LEADER_KEY_PRE = "cache.schedule.leader.";
 
-
 	private Redis redis;
 
 	/**
@@ -17,27 +16,23 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 	 */
 	private int timeout;
 
-	/**
-	 * leader key in redis
-	 */
-	private String key;
 
-
-
-	public RedisLeaderElector(Redis redis, int timeout, String prjNo) {
+	public RedisLeaderElector(Redis redis, int timeout) {
+		super();
 		this.redis = redis;
 		this.timeout = timeout;
-		this.key = CACHE_LEADER_KEY_PRE + prjNo;
 	}
 
 	@Override
-	public boolean isLeader() {
-		return redis.lock(key, getLocalNode(), timeout / 1000);
+	public String acquire(String lock) {
+		String key = CACHE_LEADER_KEY_PRE + lock;
+		return redis.lock(lock, getLocalNode(key), timeout / 1000);
 	}
 
 	@Override
-	public String getLeaderNode() {
-		return redis.get(key);
+	public void release(String lock) {
+		String key = CACHE_LEADER_KEY_PRE + lock;
+		redis.unlock(lock, getLocalNode(key));
 	}
 
 	@Override
@@ -47,6 +42,6 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 
 	@Override
 	public void destroy() {
-		redis.unlock(key, getLocalNode());
+
 	}
 }

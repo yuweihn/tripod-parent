@@ -4,11 +4,7 @@ package com.assist4j.schedule;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.WatchedEvent;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooDefs;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +17,7 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	private static final Logger log = LoggerFactory.getLogger(ZkLeaderElector.class);
 	private static final String ZK_NODE_NAME_PRE = "/Schedule_leader_";
 
-	private ZooKeeper zk;
+	private static ZooKeeper zk;
 
 
 	/**
@@ -33,24 +29,20 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	 * zookeeper session timeout in milliseconds
 	 */
 	private int zkTimeout;
-	/**
-	 * zookeeper node name
-	 */
-	private String zkNodeName;
 
 
 
-	public ZkLeaderElector(String zkConn, int zkTimeout, String prjNo) {
+	public ZkLeaderElector(String zkConn, int zkTimeout) {
+		super();
 		this.zkConn = zkConn;
 		this.zkTimeout = zkTimeout;
-		this.zkNodeName = ZK_NODE_NAME_PRE + prjNo;
 	}
 
 	private ZooKeeper getZk() {
 		if (null == zk) {
-			synchronized (this) {
+			synchronized (ZkLeaderElector.class) {
 				if (null == zk) {
-					final CountDownLatch connectZookeeperLatch = new CountDownLatch(1);
+					final CountDownLatch latch = new CountDownLatch(1);
 					try {
 						log.info("Connecting......");
 						zk = new ZooKeeper(zkConn, zkTimeout, new Watcher() {
@@ -58,12 +50,12 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 							public void process(WatchedEvent event) {
 								log.info("ZooKeeper event occurs here: " + event);
 								if (event.getState() == Event.KeeperState.SyncConnected) {
-									connectZookeeperLatch.countDown();
+									latch.countDown();
 									log.info("Connected");
 								}
 							}
 						});
-						connectZookeeperLatch.await(5, TimeUnit.SECONDS);
+						latch.await(5, TimeUnit.SECONDS);
 					} catch (Exception e) {
 						log.error("", e);
 						throw new RuntimeException(e);
@@ -79,37 +71,54 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	}
 
 	@Override
-	public boolean isLeader() {
-		String node = getLocalNode();
-		String leaderNode = getLeaderNode();
+	public String acquire(String lock) {
+		String key = ZK_NODE_NAME_PRE + lock;
+		String node = getLocalNode(key);
+		String leaderNode = getLeaderNode(lock);
 		if (leaderNode == null) {
 			try {
-				String path = getZk().create(zkNodeName, node.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+				String path = getZk().create(lock, node.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 				log.info("Create server node ({} => {})", path, node);
-				return true;
+				return node;
 			} catch (Exception e) {
-				destroy();
-				return false;
+				log.error("{}", e.getMessage());
 			}
 		}
-		return node.equals(leaderNode);
+		return getLeaderNode(lock);
+	}
+
+	@Override
+	public void release(String lock) {
+		String key = ZK_NODE_NAME_PRE + lock;
+		if (zk == null) {
+			return;
+		}
+		String node = getLocalNode(key);
+		String leaderNode = getLeaderNode(key);
+		if (node == null || !node.equals(leaderNode)) {
+			return;
+		}
+		try {
+			zk.delete(key, -1);
+		} catch (InterruptedException | KeeperException e) {
+			log.warn("", e);
+		}
 	}
 
 	/**
 	 * 获取当前leader
 	 */
-	@Override
-	public String getLeaderNode() {
+	private String getLeaderNode(String lock) {
+		String key = ZK_NODE_NAME_PRE + lock;
 		byte[] val = null;
 		try {
-			Stat stat = getZk().exists(zkNodeName, false);
+			Stat stat = getZk().exists(key, false);
 			if (stat == null) {
 				return null;
 			}
-			val = getZk().getData(zkNodeName, false, stat);
+			val = getZk().getData(key, false, stat);
 		} catch (Exception e) {
-			destroy();
-			log.error("get " + zkNodeName + " error, ", e);
+			log.warn("get " + key + " error, ", e);
 		}
 		return val == null ? null : new String(val);
 	}
