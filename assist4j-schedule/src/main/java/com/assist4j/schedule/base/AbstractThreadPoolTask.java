@@ -54,7 +54,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 		taskList.forEach(task -> futureList.add(executor.submit(() -> new Result(task, processTask(task)))));
 
 		/**
-         * 收集执行结果，用于处理失败的记录。
+		 * 收集执行结果，用于处理失败的记录。
 		 */
 		List<T> failList = new ArrayList<T>();
 		for (Future<Result> future: futureList) {
