@@ -3,14 +3,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.assist4j.boot</groupId>
+	<groupId>com.yuweix.boot</groupId>
 	<artifactId>assist4j-spring-boot-starter</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1.30</version>
+	<version>1.1.0</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>The Project of Assist4j</description>
-	<url>https://assist4j.com</url>
+	<url>https://www.yuweix.com</url>
 
 	<properties>
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
@@ -109,42 +109,42 @@
 
 
 		<dependency>
-			<groupId>com.assist4j</groupId>
+			<groupId>com.yuweix</groupId>
 			<artifactId>assist4j-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.assist4j</groupId>
+			<groupId>com.yuweix</groupId>
 			<artifactId>assist4j-dao</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.assist4j</groupId>
+			<groupId>com.yuweix</groupId>
 			<artifactId>assist4j-data</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.assist4j</groupId>
+			<groupId>com.yuweix</groupId>
 			<artifactId>assist4j-http</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.assist4j</groupId>
+			<groupId>com.yuweix</groupId>
 			<artifactId>assist4j-sequence</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.assist4j</groupId>
+			<groupId>com.yuweix</groupId>
 			<artifactId>assist4j-session</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.assist4j</groupId>
+			<groupId>com.yuweix</groupId>
 			<artifactId>assist4j-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.assist4j</groupId>
+			<groupId>com.yuweix</groupId>
 			<artifactId>assist4j-schedule</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -189,7 +189,7 @@
 		<developer>
 			<name>yuwei</name>
 			<email>yuwei@yuweix.com</email>
-			<url>https://assist4j.com</url>
+			<url>https://www.yuweix.com</url>
 		</developer>
 	</developers>
 
@@ -291,7 +291,7 @@
 							<promoteTransitiveDependencies>true</promoteTransitiveDependencies>
 							<artifactSet>
 								<includes>
-									<include>com.assist4j:*</include>
+									<include>com.yuweix:*</include>
 								</includes>
 							</artifactSet>
 						</configuration>
