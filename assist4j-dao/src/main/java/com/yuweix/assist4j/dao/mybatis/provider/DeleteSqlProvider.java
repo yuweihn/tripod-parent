@@ -17,17 +17,32 @@ public class DeleteSqlProvider extends AbstractProvider {
 
 	public <T>String delete(T t) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			DELETE_FROM(tableName);
 			boolean whereSet = false;
 
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
-				
+
+				String shardingIndex = getShardingIndex(field, t);
 				Id idAnn = field.getAnnotation(Id.class);
+				if (shardingIndex != null) {
+					tableNameBuilder.append("_").append(shardingIndex);
+					/**
+					 * 分片字段，必须放在where子句中
+					 */
+					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
+					if (idAnn != null) {
+						whereSet = true;
+					}
+					continue;
+				}
+
+				/**
+				 * ID字段，必须放在where子句中
+				 */
 				if (idAnn != null) {
 					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
 					whereSet = true;
@@ -36,6 +51,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 			if (!whereSet) {
 				throw new IllegalAccessException("'where' is missed.");
 			}
+			INSERT_INTO(tableNameBuilder.toString());
 		}}.toString();
 	}
 	

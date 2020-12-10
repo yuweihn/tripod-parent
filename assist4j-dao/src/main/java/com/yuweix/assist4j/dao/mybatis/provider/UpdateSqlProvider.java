@@ -2,7 +2,6 @@ package com.yuweix.assist4j.dao.mybatis.provider;
 
 
 import com.yuweix.assist4j.dao.mybatis.where.Criteria;
-import com.yuweix.assist4j.dao.sharding.Sharding;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Id;
@@ -37,12 +36,16 @@ public class UpdateSqlProvider extends AbstractProvider {
 				field.setAccessible(true);
 
 				String shardingIndex = getShardingIndex(field, t);
+				Id idAnn = field.getAnnotation(Id.class);
 				if (shardingIndex != null) {
 					tableNameBuilder.append("_").append(shardingIndex);
 					/**
 					 * 分片字段，必须放在where子句中，且一定不能修改
 					 */
 					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
+					if (idAnn != null) {
+						whereSet = true;
+					}
 					continue;
 				}
 
@@ -53,7 +56,6 @@ public class UpdateSqlProvider extends AbstractProvider {
 					}
 				}
 
-				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
 					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
 					whereSet = true;
