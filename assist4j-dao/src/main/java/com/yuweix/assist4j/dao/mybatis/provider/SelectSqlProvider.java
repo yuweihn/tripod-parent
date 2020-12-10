@@ -94,18 +94,41 @@ public class SelectSqlProvider extends AbstractProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T>String findCount(Map<String, Object> param) {
+	public <T>String findCount(Map<String, Object> param) throws IllegalAccessException {
 		Criteria criteria = (Criteria) param.get("criteria");
 		Class<T> entityClass = (Class<T>) param.get("clazz");
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
+
+		Object shardingVal = criteria.getShardingVal();
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 
 		StringBuilder builder = new StringBuilder("");
 		builder.append("  select count(1) as cnt ")
-				.append(" from ").append(tableName).append("  ");
+				.append(" from ").append(tableNameBuilder.toString()).append("  ")
+				.append(" where 1 = 1 ");
+
+		for (FieldColumn fc: fcList) {
+			Field field = fc.getField();
+			Sharding sharding = field.getAnnotation(Sharding.class);
+			if (sharding != null) {
+				if (shardingVal == null) {
+					throw new IllegalAccessException("'Sharding Value' is required.");
+				}
+				String shardingIndex = getShardingIndex(sharding, shardingVal);
+				if (shardingIndex != null) {
+					tableNameBuilder.append("_").append(shardingIndex);
+					/**
+					 * 分片字段，必须放在where子句中
+					 */
+					builder.append(" and `" + fc.getColumnName() + "` = #{criteria.shardingVal} ");
+				}
+			}
+		}
+
 		if (criteria != null) {
 			String criteriaSql = criteria.toSql();
 			if (criteriaSql != null && !"".equals(criteriaSql.trim())) {
-				builder.append(" where ").append(criteriaSql).append(" ");
+				builder.append(" and ").append(criteriaSql).append(" ");
 			}
 		}
 
@@ -113,7 +136,7 @@ public class SelectSqlProvider extends AbstractProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T>String findList(Map<String, Object> param) {
+	public <T>String findList(Map<String, Object> param) throws IllegalAccessException {
 		Criteria criteria = (Criteria) param.get("criteria");
 		OrderBy orderBy = (OrderBy) param.get("orderBy");
 		Class<T> entityClass = (Class<T>) param.get("clazz");
@@ -125,15 +148,38 @@ public class SelectSqlProvider extends AbstractProvider {
 		if (param.containsKey("pageSize")) {
 			pageSize0 = (Integer) param.get("pageSize");
 		}
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
+
+		Object shardingVal = criteria.getShardingVal();
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 
 		StringBuilder builder = new StringBuilder("");
 		builder.append("  select ").append(getAllColumnSql(entityClass))
-				.append(" from ").append(tableName).append("  ");
+				.append(" from ").append(tableNameBuilder.toString()).append("  ")
+				.append(" where 1 = 1 ");
+
+		for (FieldColumn fc: fcList) {
+			Field field = fc.getField();
+			Sharding sharding = field.getAnnotation(Sharding.class);
+			if (sharding != null) {
+				if (shardingVal == null) {
+					throw new IllegalAccessException("'Sharding Value' is required.");
+				}
+				String shardingIndex = getShardingIndex(sharding, shardingVal);
+				if (shardingIndex != null) {
+					tableNameBuilder.append("_").append(shardingIndex);
+					/**
+					 * 分片字段，必须放在where子句中
+					 */
+					builder.append(" and `" + fc.getColumnName() + "` = #{criteria.shardingVal} ");
+				}
+			}
+		}
+
 		if (criteria != null) {
 			String criteriaSql = criteria.toSql();
 			if (criteriaSql != null && !"".equals(criteriaSql.trim())) {
-				builder.append(" where ").append(criteriaSql).append(" ");
+				builder.append(" and ").append(criteriaSql).append(" ");
 			}
 		}
 
