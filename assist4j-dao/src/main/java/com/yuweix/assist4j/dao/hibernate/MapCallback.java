@@ -10,7 +10,7 @@ import org.hibernate.query.NativeQuery;
 
 
 /**
- * @author wei
+ * @author yuwei
  */
 public class MapCallback extends MapParamCallback {
 	protected String sql;
