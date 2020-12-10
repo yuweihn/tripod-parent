@@ -28,19 +28,9 @@ public class InsertSqlProvider extends AbstractProvider {
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
 
-				Sharding sharding = field.getAnnotation(Sharding.class);
-				if (sharding != null) {
-					try {
-						Strategy shardingStrategy = (Strategy) sharding.strategy().newInstance();
-						if (!field.isAccessible()) {
-							field.setAccessible(true);
-						}
-						String shardingIndex = shardingStrategy.getShardingIndex(field.get(t)
-								, sharding.suffixLength(), sharding.shardingSize());
-						tableNameBuilder.append("_").append(shardingIndex);
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+				String shardingIndex = getShardingIndex(field, t);
+				if (shardingIndex != null) {
+					tableNameBuilder.append("_").append(shardingIndex);
 				}
 
 				/**
@@ -68,19 +58,9 @@ public class InsertSqlProvider extends AbstractProvider {
 				Field field = fc.getField();
 				field.setAccessible(true);
 
-				Sharding sharding = field.getAnnotation(Sharding.class);
-				if (sharding != null) {
-					try {
-						Strategy shardingStrategy = (Strategy) sharding.strategy().newInstance();
-						if (!field.isAccessible()) {
-							field.setAccessible(true);
-						}
-						String shardingIndex = shardingStrategy.getShardingIndex(field.get(t)
-								, sharding.suffixLength(), sharding.shardingSize());
-						tableNameBuilder.append("_").append(shardingIndex);
-					} catch (Exception e) {
-						throw new RuntimeException(e);
-					}
+				String shardingIndex = getShardingIndex(field, t);
+				if (shardingIndex != null) {
+					tableNameBuilder.append("_").append(shardingIndex);
 				}
 
 				Object o = field.get(t);
@@ -107,12 +87,17 @@ public class InsertSqlProvider extends AbstractProvider {
 		List<T> list = param.get("param1");
 		T t = list.get(0);
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		List<Field> persistFieldList = new ArrayList<Field>();
 		for (FieldColumn fc: fcList) {
 			Field field = fc.getField();
+
+			String shardingIndex = getShardingIndex(field, t);
+			if (shardingIndex != null) {
+				tableNameBuilder.append("_").append(shardingIndex);
+			}
 			
 			/**
 			 * 如果使用数据库自增主键，此处生成的SQL中排除该字段
@@ -127,7 +112,7 @@ public class InsertSqlProvider extends AbstractProvider {
 		}
 		
 		StringBuilder builder = new StringBuilder("insert into ");
-		builder.append(tableName).append(" (");
+		builder.append(tableNameBuilder.toString()).append(" (");
 		for (int i = 0; i < persistFieldList.size(); i++) {
 			Field field = persistFieldList.get(i);
 			Column col = field.getAnnotation(Column.class);
@@ -155,5 +140,23 @@ public class InsertSqlProvider extends AbstractProvider {
 			}
 		}
 		return builder.toString();
+	}
+
+	private String getShardingIndex(Field field, Object t) {
+		Sharding sharding = field.getAnnotation(Sharding.class);
+		if (sharding == null) {
+			return null;
+		}
+		try {
+			Strategy shardingStrategy = (Strategy) sharding.strategy().newInstance();
+			if (!field.isAccessible()) {
+				field.setAccessible(true);
+			}
+			String shardingIndex = shardingStrategy.getShardingIndex(field.get(t)
+					, sharding.suffixLength(), sharding.shardingSize());
+			return shardingIndex;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
