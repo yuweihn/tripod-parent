@@ -24,7 +24,7 @@ public @interface Sharding {
      * 分片数量
      * @return   分片数量
      */
-    int shardingSize();
+    int shardingSize() default 2;
 
     /**
      * 逻辑表后占位符长度

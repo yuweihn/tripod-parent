@@ -2,6 +2,7 @@ package com.yuweix.assist4j.dao.mybatis.provider;
 
 
 import com.yuweix.assist4j.dao.mybatis.where.Criteria;
+import com.yuweix.assist4j.dao.sharding.Sharding;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Id;
@@ -26,15 +27,24 @@ public class UpdateSqlProvider extends AbstractProvider {
 
 	private <T>String toUpdateByPrimaryKeySql(T t, boolean selective) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			UPDATE(tableName);
 			boolean whereSet = false;
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
 				field.setAccessible(true);
+
+				String shardingIndex = getShardingIndex(field, t);
+				if (shardingIndex != null) {
+					tableNameBuilder.append("_").append(shardingIndex);
+					/**
+					 * 分片字段，必须放在where子句中，且一定不能修改
+					 */
+					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
+					continue;
+				}
 
 				if (selective) {
 					Object o = field.get(t);
@@ -62,6 +72,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 			if (!whereSet) {
 				throw new IllegalAccessException("'where' is missed.");
 			}
+			UPDATE(tableNameBuilder.toString());
 		}}.toString();
 	}
 

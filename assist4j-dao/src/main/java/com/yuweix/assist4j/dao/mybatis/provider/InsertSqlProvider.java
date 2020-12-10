@@ -1,8 +1,6 @@
 package com.yuweix.assist4j.dao.mybatis.provider;
 
 
-import com.yuweix.assist4j.dao.sharding.Sharding;
-import com.yuweix.assist4j.dao.sharding.Strategy;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Id;
@@ -140,23 +138,5 @@ public class InsertSqlProvider extends AbstractProvider {
 			}
 		}
 		return builder.toString();
-	}
-
-	private String getShardingIndex(Field field, Object t) {
-		Sharding sharding = field.getAnnotation(Sharding.class);
-		if (sharding == null) {
-			return null;
-		}
-		try {
-			Strategy shardingStrategy = (Strategy) sharding.strategy().newInstance();
-			if (!field.isAccessible()) {
-				field.setAccessible(true);
-			}
-			String shardingIndex = shardingStrategy.getShardingIndex(field.get(t)
-					, sharding.suffixLength(), sharding.shardingSize());
-			return shardingIndex;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 }
