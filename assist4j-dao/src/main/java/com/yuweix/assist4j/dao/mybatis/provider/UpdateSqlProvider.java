@@ -73,7 +73,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 				}
 			}
 			if (!whereSet) {
-				throw new IllegalAccessException("'where' is missed.");
+				throw new IllegalAccessException("'where' is required.");
 			}
 			UPDATE(tableNameBuilder.toString());
 		}}.toString();
@@ -94,7 +94,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 		List<String> excludeFields = (List<String>) param.get("excludeFields");
 		Criteria criteria = (Criteria) param.get("criteria");
 		if (criteria == null || criteria.getParams() == null || criteria.getParams().size() <= 0) {
-			throw new IllegalAccessException("'where' is missed.");
+			throw new IllegalAccessException("'where' is required.");
 		}
 		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 
@@ -108,7 +108,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 				Sharding sharding = field.getAnnotation(Sharding.class);
 				if (sharding != null) {
 					if (shardingVal == null) {
-						throw new IllegalAccessException("'Sharding Value' is missed.");
+						throw new IllegalAccessException("'Sharding Value' is required.");
 					}
 					String shardingIndex = getShardingIndex(sharding, shardingVal);
 					if (shardingIndex != null) {

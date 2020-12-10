@@ -50,7 +50,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 				}
 			}
 			if (!whereSet) {
-				throw new IllegalAccessException("'where' is missed.");
+				throw new IllegalAccessException("'where' is required.");
 			}
 			INSERT_INTO(tableNameBuilder.toString());
 		}}.toString();
@@ -68,6 +68,12 @@ public class DeleteSqlProvider extends AbstractProvider {
 
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
+
+				Sharding sharding = field.getAnnotation(Sharding.class);
+				if (sharding != null) {
+					throw new IllegalAccessException("'Sharding Value' is required.");
+				}
+
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
 					WHERE("`" + fc.getColumnName() + "` = #{id}");
@@ -75,7 +81,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 				}
 			}
 			if (!whereSet) {
-				throw new IllegalAccessException("'where' is missed.");
+				throw new IllegalAccessException("'where' is required.");
 			}
 			INSERT_INTO(tableNameBuilder.toString());
 		}}.toString();
@@ -115,7 +121,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 				}
 			}
 			if (!whereSet) {
-				throw new IllegalAccessException("'where' is missed.");
+				throw new IllegalAccessException("'where' is required.");
 			}
 			INSERT_INTO(tableNameBuilder.toString());
 		}}.toString();
@@ -127,7 +133,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 		Criteria criteria = (Criteria) param.get("criteria");
 		if (criteria == null || criteria.getParams() == null || criteria.getParams().size() <= 0) {
-			throw new IllegalAccessException("'where' is missed.");
+			throw new IllegalAccessException("'where' is required.");
 		}
 
 		Object shardingVal = criteria.getShardingVal();
@@ -138,7 +144,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 				Sharding sharding = field.getAnnotation(Sharding.class);
 				if (sharding != null) {
 					if (shardingVal == null) {
-						throw new IllegalAccessException("'Sharding Value' is missed.");
+						throw new IllegalAccessException("'Sharding Value' is required.");
 					}
 					String shardingIndex = getShardingIndex(sharding, shardingVal);
 					if (shardingIndex != null) {
