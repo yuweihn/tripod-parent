@@ -16,13 +16,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface Sharding {
     /**
      * 分片策略
-     * @return
+     * @return   分片策略
      */
     Class<?> strategy() default ModStrategy.class;
 
     /**
      * 分片数量
-     * @return
+     * @return   分片数量
      */
     int shardingSize();
 
@@ -30,7 +30,7 @@ public @interface Sharding {
      * 逻辑表后占位符长度
      * eg.
      * user  ====>>>>>  user_0000
-     * @return
+     * @return   逻辑表后占位符长度
      */
     int suffixLength() default 4;
 }
