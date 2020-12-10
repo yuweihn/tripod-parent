@@ -19,7 +19,7 @@ public interface SelectMapper<T extends Serializable, PK extends Serializable> {
 	T selectOneById(@Param("id") PK id, @Param("clz") Class<T> clz);
 
 	@SelectProvider(type = SelectSqlProvider.class, method = "selectOneByIdSharding")
-	T selectOneById(@Param("id") PK id, @Param("shardingVal") Object shardingVal, @Param("clz") Class<T> clz);
+	T selectOneByIdSharding(@Param("id") PK id, @Param("shardingVal") Object shardingVal, @Param("clz") Class<T> clz);
 
 	@SelectProvider(type = SelectSqlProvider.class, method = "findCount")
 	int findCount(@Param("criteria") Criteria criteria, @Param("clazz") Class<T> clazz);
