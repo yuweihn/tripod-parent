@@ -60,15 +60,29 @@ public class InsertSqlProvider extends AbstractProvider {
 	
 	public <T>String insertSelective(T t) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			INSERT_INTO(tableName);
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
-
 				field.setAccessible(true);
+
+				Sharding sharding = field.getAnnotation(Sharding.class);
+				if (sharding != null) {
+					try {
+						Strategy shardingStrategy = (Strategy) sharding.strategy().newInstance();
+						if (!field.isAccessible()) {
+							field.setAccessible(true);
+						}
+						String shardingIndex = shardingStrategy.getShardingIndex(field.get(t)
+								, sharding.suffixLength(), sharding.shardingSize());
+						tableNameBuilder.append("_").append(shardingIndex);
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+
 				Object o = field.get(t);
 				if (o == null) {
 					continue;
@@ -85,6 +99,7 @@ public class InsertSqlProvider extends AbstractProvider {
 				
 				VALUES("`" + fc.getColumnName() + "`", "#{" + field.getName() + "}");
 			}
+			INSERT_INTO(tableNameBuilder.toString());
 		}}.toString();
 	}
 	
