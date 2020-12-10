@@ -93,17 +93,26 @@ public class UpdateSqlProvider extends AbstractProvider {
 		if (criteria == null || criteria.getParams() == null || criteria.getParams().size() <= 0) {
 			throw new IllegalAccessException("'where' is missed.");
 		}
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			UPDATE(tableName);
-			WHERE(criteria.toSql());
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
+				field.setAccessible(true);
+
+				String shardingIndex = getShardingIndex(field, t);
+				if (shardingIndex != null) {
+					tableNameBuilder.append("_").append(shardingIndex);
+					/**
+					 * 分片字段，必须放在where子句中，且一定不能修改
+					 */
+					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
+					continue;
+				}
+
 				if (excludeFields != null && excludeFields.contains(field.getName())) {
 					continue;
 				}
-				field.setAccessible(true);
 
 				if (selective) {
 					Object o = field.get(t);
@@ -122,6 +131,8 @@ public class UpdateSqlProvider extends AbstractProvider {
 					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1) + " ");
 				}
 			}
+			WHERE(criteria.toSql());
+			UPDATE(tableNameBuilder.toString());
 		}}.toString();
 	}
 }
