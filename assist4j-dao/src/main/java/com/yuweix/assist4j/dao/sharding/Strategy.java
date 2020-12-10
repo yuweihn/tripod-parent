@@ -10,7 +10,7 @@ public interface Strategy {
     /**
      * 返回分片。如：0000,0001等等
      * @param val                分片字段的值
-     * @param suffixLength
+     * @param suffixLength       占位符长度。如：0000,0001等等，则该值为4
      * @param shardingSize       分片总数
      * @return
      */

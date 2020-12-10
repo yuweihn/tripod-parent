@@ -1,6 +1,8 @@
 package com.yuweix.assist4j.dao.mybatis.provider;
 
 
+import com.yuweix.assist4j.dao.sharding.Sharding;
+import com.yuweix.assist4j.dao.sharding.Strategy;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Id;
@@ -19,14 +21,28 @@ import java.util.Map;
 public class InsertSqlProvider extends AbstractProvider {
 	public <T>String insert(T t) {
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			INSERT_INTO(tableName);
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
-				
+
+				Sharding sharding = field.getAnnotation(Sharding.class);
+				if (sharding != null) {
+					try {
+						Strategy shardingStrategy = (Strategy) sharding.strategy().newInstance();
+						if (!field.isAccessible()) {
+							field.setAccessible(true);
+						}
+						String shardingIndex = shardingStrategy.getShardingIndex(field.get(t)
+								, sharding.suffixLength(), sharding.shardingSize());
+						tableNameBuilder.append("_").append(shardingIndex);
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+
 				/**
 				 * 如果使用数据库自增主键，此处生成的SQL中排除该字段
 				 */
@@ -38,6 +54,7 @@ public class InsertSqlProvider extends AbstractProvider {
 				
 				VALUES("`" + fc.getColumnName() + "`", "#{" + field.getName() + "}");
 			}
+			INSERT_INTO(tableNameBuilder.toString());
 		}}.toString();
 	}
 	

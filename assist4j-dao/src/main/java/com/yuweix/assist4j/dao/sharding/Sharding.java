@@ -21,6 +21,12 @@ public @interface Sharding {
     Class<?> strategy() default ModStrategy.class;
 
     /**
+     * 分片数量
+     * @return
+     */
+    int shardingSize();
+
+    /**
      * 逻辑表后占位符长度
      * eg.
      * user  ====>>>>>  user_0000
