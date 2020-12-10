@@ -97,19 +97,27 @@ public class UpdateSqlProvider extends AbstractProvider {
 			throw new IllegalAccessException("'where' is missed.");
 		}
 		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
+
+		Object shardingVal = criteria.getShardingVal();
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
 				field.setAccessible(true);
 
-				String shardingIndex = getShardingIndex(field.getAnnotation(Sharding.class), getFieldValue(field, t));
-				if (shardingIndex != null) {
-					tableNameBuilder.append("_").append(shardingIndex);
-					/**
-					 * 分片字段，必须放在where子句中，且一定不能修改
-					 */
-					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
+				Sharding sharding = field.getAnnotation(Sharding.class);
+				if (sharding != null) {
+					if (shardingVal == null) {
+						throw new IllegalAccessException("'Sharding Value' is missed.");
+					}
+					String shardingIndex = getShardingIndex(sharding, shardingVal);
+					if (shardingIndex != null) {
+						tableNameBuilder.append("_").append(shardingIndex);
+						/**
+						 * 分片字段，必须放在where子句中
+						 */
+						WHERE("`" + fc.getColumnName() + "` = #{criteria.shardingVal} ");
+					}
 					continue;
 				}
 
