@@ -52,7 +52,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 			if (!whereSet) {
 				throw new IllegalAccessException("'where' is required.");
 			}
-			INSERT_INTO(tableNameBuilder.toString());
+			DELETE_FROM(tableNameBuilder.toString());
 		}}.toString();
 	}
 
@@ -64,6 +64,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
+			boolean hasSharding = false;
 			boolean whereSet = false;
 
 			for (FieldColumn fc: fcList) {
@@ -71,7 +72,8 @@ public class DeleteSqlProvider extends AbstractProvider {
 
 				Sharding sharding = field.getAnnotation(Sharding.class);
 				if (sharding != null) {
-					throw new IllegalAccessException("'Sharding Value' is required.");
+					hasSharding = true;
+					break;
 				}
 
 				Id idAnn = field.getAnnotation(Id.class);
@@ -80,10 +82,13 @@ public class DeleteSqlProvider extends AbstractProvider {
 					whereSet = true;
 				}
 			}
+			if (hasSharding) {
+				throw new IllegalAccessException("'Sharding Value' is required.");
+			}
 			if (!whereSet) {
 				throw new IllegalAccessException("'where' is required.");
 			}
-			INSERT_INTO(tableNameBuilder.toString());
+			DELETE_FROM(tableNameBuilder.toString());
 		}}.toString();
 	}
 
@@ -123,7 +128,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 			if (!whereSet) {
 				throw new IllegalAccessException("'where' is required.");
 			}
-			INSERT_INTO(tableNameBuilder.toString());
+			DELETE_FROM(tableNameBuilder.toString());
 		}}.toString();
 	}
 
@@ -158,7 +163,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 			}
 
 			WHERE(criteria.toSql());
-			INSERT_INTO(tableNameBuilder.toString());
+			DELETE_FROM(tableNameBuilder.toString());
 		}}.toString();
 	}
 }

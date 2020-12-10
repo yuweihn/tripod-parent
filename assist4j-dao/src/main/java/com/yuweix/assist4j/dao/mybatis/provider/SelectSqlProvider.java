@@ -3,6 +3,7 @@ package com.yuweix.assist4j.dao.mybatis.provider;
 
 import com.yuweix.assist4j.dao.mybatis.order.OrderBy;
 import com.yuweix.assist4j.dao.mybatis.where.Criteria;
+import com.yuweix.assist4j.dao.sharding.Sharding;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Id;
@@ -19,13 +20,21 @@ public class SelectSqlProvider extends AbstractProvider {
 	public <PK, T>String selectOneById(Map<String, Object> param) throws IllegalAccessException {
 //		PK id = (PK) param.get("id");
 		Class<T> entityClass = (Class<T>) param.get("clz");
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 		
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
+			boolean hasSharding = false;
 			boolean whereSet = false;
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
+
+				Sharding sharding = field.getAnnotation(Sharding.class);
+				if (sharding != null) {
+					hasSharding = true;
+					break;
+				}
+
 				SELECT(fc.getColumnName() + " as " + field.getName());
 				
 				Id idAnn = field.getAnnotation(Id.class);
@@ -34,10 +43,53 @@ public class SelectSqlProvider extends AbstractProvider {
 					whereSet = true;
 				}
 			}
-			FROM(tableName);
+			if (hasSharding) {
+				throw new IllegalAccessException("'Sharding Value' is required.");
+			}
 			if (!whereSet) {
 				throw new IllegalAccessException("'where' is required.");
 			}
+			FROM(tableNameBuilder.toString());
+		}}.toString();
+	}
+
+	@SuppressWarnings("unchecked")
+	public <PK, T>String selectOneByIdSharding(Map<String, Object> param) throws IllegalAccessException {
+//		PK id = (PK) param.get("id");
+		Class<T> entityClass = (Class<T>) param.get("clz");
+		Object shardingVal = param.get("shardingVal");
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
+
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		return new SQL() {{
+			boolean whereSet = false;
+			for (FieldColumn fc: fcList) {
+				Field field = fc.getField();
+				SELECT(fc.getColumnName() + " as " + field.getName());
+
+				String shardingIndex = getShardingIndex(field.getAnnotation(Sharding.class), shardingVal);
+				Id idAnn = field.getAnnotation(Id.class);
+				if (shardingIndex != null) {
+					tableNameBuilder.append("_").append(shardingIndex);
+					/**
+					 * 分片字段，必须放在where子句中
+					 */
+					WHERE("`" + fc.getColumnName() + "` = #{shardingVal}");
+					if (idAnn != null) {
+						whereSet = true;
+					}
+					continue;
+				}
+
+				if (idAnn != null) {
+					WHERE(fc.getColumnName() + " = #{id}");
+					whereSet = true;
+				}
+			}
+			if (!whereSet) {
+				throw new IllegalAccessException("'where' is required.");
+			}
+			FROM(tableNameBuilder.toString());
 		}}.toString();
 	}
 
