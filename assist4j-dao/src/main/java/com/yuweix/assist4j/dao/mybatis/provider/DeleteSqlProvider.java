@@ -102,7 +102,7 @@ public class DeleteSqlProvider extends AbstractProvider {
 					/**
 					 * 分片字段，必须放在where子句中
 					 */
-					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
+					WHERE("`" + fc.getColumnName() + "` = #{shardingVal}");
 					if (idAnn != null) {
 						whereSet = true;
 					}
@@ -129,7 +129,28 @@ public class DeleteSqlProvider extends AbstractProvider {
 		if (criteria == null || criteria.getParams() == null || criteria.getParams().size() <= 0) {
 			throw new IllegalAccessException("'where' is missed.");
 		}
+
+		Object shardingVal = criteria.getShardingVal();
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
+			for (FieldColumn fc: fcList) {
+				Field field = fc.getField();
+				Sharding sharding = field.getAnnotation(Sharding.class);
+				if (sharding != null) {
+					if (shardingVal == null) {
+						throw new IllegalAccessException("'Sharding Value' is missed.");
+					}
+					String shardingIndex = getShardingIndex(sharding, shardingVal);
+					if (shardingIndex != null) {
+						tableNameBuilder.append("_").append(shardingIndex);
+						/**
+						 * 分片字段，必须放在where子句中
+						 */
+						WHERE("`" + fc.getColumnName() + "` = #{criteria.shardingVal} ");
+					}
+				}
+			}
+
 			WHERE(criteria.toSql());
 			INSERT_INTO(tableNameBuilder.toString());
 		}}.toString();

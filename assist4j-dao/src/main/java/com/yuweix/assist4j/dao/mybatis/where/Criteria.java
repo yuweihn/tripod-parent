@@ -18,6 +18,10 @@ public class Criteria implements Serializable {
 	private StringBuilder sql;
 	private Map<String, Object> params;
 	private int pindex;
+	/**
+	 * 分片字段的值
+	 */
+	private Object shardingVal;
 
 	private Criteria() {
 		sql = new StringBuilder("");
@@ -94,11 +98,20 @@ public class Criteria implements Serializable {
 		return add(Connector.or, criteria);
 	}
 
+	public Criteria addSharding(Object shardingVal) {
+		this.shardingVal = shardingVal;
+		return this;
+	}
+
 	public String toSql() {
 		return sql.toString();
 	}
 
 	public Map<String, Object> getParams() {
 		return params;
+	}
+
+	public Object getShardingVal() {
+		return shardingVal;
 	}
 }
