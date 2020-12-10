@@ -99,7 +99,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		Class<T> entityClass = (Class<T>) param.get("clazz");
 		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 
-		Object shardingVal = criteria.getShardingVal();
+		Object shardingVal = criteria == null ? null : criteria.getShardingVal();
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 
 		StringBuilder builder = new StringBuilder("");
@@ -150,7 +150,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		}
 		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 
-		Object shardingVal = criteria.getShardingVal();
+		Object shardingVal = criteria == null ? null : criteria.getShardingVal();
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 
 		StringBuilder builder = new StringBuilder("");
