@@ -208,19 +208,25 @@ public abstract class AbstractProvider {
 		}
 	}
 
-	protected String getShardingIndex(Field field, Object t) {
-		Sharding sharding = field.getAnnotation(Sharding.class);
+	protected Object getFieldValue(Field field, Object t) {
+		if (!field.isAccessible()) {
+			field.setAccessible(true);
+		}
+		try {
+			return field.get(t);
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String getShardingIndex(Sharding sharding, Object shardingVal) {
 		if (sharding == null) {
 			return null;
 		}
 		try {
 			Strategy shardingStrategy = (Strategy) sharding.strategy().newInstance();
-			if (!field.isAccessible()) {
-				field.setAccessible(true);
-			}
-			String shardingIndex = shardingStrategy.getShardingIndex(field.get(t)
+			return shardingStrategy.getShardingIndex(shardingVal
 					, sharding.suffixLength(), sharding.shardingSize());
-			return shardingIndex;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

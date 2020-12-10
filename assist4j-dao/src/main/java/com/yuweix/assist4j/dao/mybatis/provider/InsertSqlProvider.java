@@ -1,6 +1,7 @@
 package com.yuweix.assist4j.dao.mybatis.provider;
 
 
+import com.yuweix.assist4j.dao.sharding.Sharding;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ public class InsertSqlProvider extends AbstractProvider {
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
 
-				String shardingIndex = getShardingIndex(field, t);
+				String shardingIndex = getShardingIndex(field.getAnnotation(Sharding.class), getFieldValue(field, t));
 				if (shardingIndex != null) {
 					tableNameBuilder.append("_").append(shardingIndex);
 				}
@@ -56,7 +57,7 @@ public class InsertSqlProvider extends AbstractProvider {
 				Field field = fc.getField();
 				field.setAccessible(true);
 
-				String shardingIndex = getShardingIndex(field, t);
+				String shardingIndex = getShardingIndex(field.getAnnotation(Sharding.class), getFieldValue(field, t));
 				if (shardingIndex != null) {
 					tableNameBuilder.append("_").append(shardingIndex);
 				}
@@ -92,7 +93,7 @@ public class InsertSqlProvider extends AbstractProvider {
 		for (FieldColumn fc: fcList) {
 			Field field = fc.getField();
 
-			String shardingIndex = getShardingIndex(field, t);
+			String shardingIndex = getShardingIndex(field.getAnnotation(Sharding.class), getFieldValue(field, t));
 			if (shardingIndex != null) {
 				tableNameBuilder.append("_").append(shardingIndex);
 			}
