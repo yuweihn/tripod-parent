@@ -7,10 +7,7 @@ import java.util.List;
 
 
 /**
- * @author wei
- *
- * @param <T>
- * @param <PK>
+ * @author yuwei
  */
 public interface Dao<T extends Serializable, PK extends Serializable> {
 	List<T> getAll();

@@ -9,7 +9,7 @@ import org.hibernate.query.NativeQuery;
 
 
 /**
- * @author wei
+ * @author yuwei
  */
 public abstract class MapParamCallback extends AbstractParamCallback {
 	protected void assembleParams(NativeQuery<?> query, Map<String, Object> params) {

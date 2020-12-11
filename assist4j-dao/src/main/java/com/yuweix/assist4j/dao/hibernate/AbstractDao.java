@@ -18,7 +18,7 @@ import javax.persistence.criteria.CriteriaQuery;
 
 
 /**
- * @author wei
+ * @author yuwei
  */
 public abstract class AbstractDao<T extends Serializable, PK extends Serializable> implements Dao<T, PK> {
 	private Class<T> clz;

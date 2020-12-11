@@ -5,7 +5,7 @@ import org.hibernate.query.NativeQuery;
 
 
 /**
- * @author wei
+ * @author yuwei
  */
 public abstract class IndexParamCallback extends AbstractParamCallback {
 	protected void assembleParams(NativeQuery<?> query, Object[] params) {

@@ -2,6 +2,7 @@ package com.yuweix.assist4j.dao.mybatis.provider;
 
 
 import com.yuweix.assist4j.dao.mybatis.where.Criteria;
+import com.yuweix.assist4j.dao.sharding.Sharding;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Id;
@@ -26,15 +27,28 @@ public class UpdateSqlProvider extends AbstractProvider {
 
 	private <T>String toUpdateByPrimaryKeySql(T t, boolean selective) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
 
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			UPDATE(tableName);
 			boolean whereSet = false;
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
 				field.setAccessible(true);
+
+				String shardingIndex = getShardingIndex(field.getAnnotation(Sharding.class), getFieldValue(field, t));
+				Id idAnn = field.getAnnotation(Id.class);
+				if (shardingIndex != null) {
+					tableNameBuilder.append("_").append(shardingIndex);
+					/**
+					 * 分片字段，必须放在where子句中，且一定不能修改
+					 */
+					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
+					if (idAnn != null) {
+						whereSet = true;
+					}
+					continue;
+				}
 
 				if (selective) {
 					Object o = field.get(t);
@@ -43,25 +57,22 @@ public class UpdateSqlProvider extends AbstractProvider {
 					}
 				}
 
-				Id idAnn = field.getAnnotation(Id.class);
+				Version version = field.getAnnotation(Version.class);
 				if (idAnn != null) {
 					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
 					whereSet = true;
+				} else if (version != null) {
+					int val = field.getInt(t);
+					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1));
+					WHERE("`" + fc.getColumnName() + "` = " + val);
 				} else {
 					SET("`" + fc.getColumnName() + "`" + " = #{" + field.getName() + "} ");
 				}
-
-				Version version = field.getAnnotation(Version.class);
-				if (version != null) {
-					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
-
-					int val = field.getInt(t);
-					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1) + " ");
-				}
 			}
 			if (!whereSet) {
-				throw new IllegalAccessException("'where' is missed.");
+				throw new IllegalAccessException("'where' is required.");
 			}
+			UPDATE(tableNameBuilder.toString());
 		}}.toString();
 	}
 
@@ -80,19 +91,36 @@ public class UpdateSqlProvider extends AbstractProvider {
 		List<String> excludeFields = (List<String>) param.get("excludeFields");
 		Criteria criteria = (Criteria) param.get("criteria");
 		if (criteria == null || criteria.getParams() == null || criteria.getParams().size() <= 0) {
-			throw new IllegalAccessException("'where' is missed.");
+			throw new IllegalAccessException("'where' is required.");
 		}
-		String tableName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
+
+		Object shardingVal = criteria.getShardingVal();
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
-			UPDATE(tableName);
-			WHERE(criteria.toSql());
 			for (FieldColumn fc: fcList) {
 				Field field = fc.getField();
+				field.setAccessible(true);
+
+				Sharding sharding = field.getAnnotation(Sharding.class);
+				if (sharding != null) {
+					if (shardingVal == null) {
+						throw new IllegalAccessException("'Sharding Value' is required.");
+					}
+					String shardingIndex = getShardingIndex(sharding, shardingVal);
+					if (shardingIndex != null) {
+						tableNameBuilder.append("_").append(shardingIndex);
+						/**
+						 * 分片字段，必须放在where子句中
+						 */
+						WHERE("`" + fc.getColumnName() + "` = #{criteria.shardingVal} ");
+					}
+					continue;
+				}
+
 				if (excludeFields != null && excludeFields.contains(field.getName())) {
 					continue;
 				}
-				field.setAccessible(true);
 
 				if (selective) {
 					Object o = field.get(t);
@@ -101,16 +129,17 @@ public class UpdateSqlProvider extends AbstractProvider {
 					}
 				}
 
-				SET("`" + fc.getColumnName() + "`" + " = #{t." + field.getName() + "} ");
-
 				Version version = field.getAnnotation(Version.class);
 				if (version != null) {
-					WHERE("`" + fc.getColumnName() + "` = #{t." + field.getName() + "}");
-
 					int val = field.getInt(t);
-					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1) + " ");
+					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1));
+					WHERE("`" + fc.getColumnName() + "` = " + val);
+				} else {
+					SET("`" + fc.getColumnName() + "`" + " = #{t." + field.getName() + "} ");
 				}
 			}
+			WHERE(criteria.toSql());
+			UPDATE(tableNameBuilder.toString());
 		}}.toString();
 	}
 }
