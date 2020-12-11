@@ -57,18 +57,16 @@ public class UpdateSqlProvider extends AbstractProvider {
 					}
 				}
 
+				Version version = field.getAnnotation(Version.class);
 				if (idAnn != null) {
 					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
 					whereSet = true;
-				} else {
-					SET("`" + fc.getColumnName() + "`" + " = #{" + field.getName() + "} ");
-				}
-
-				Version version = field.getAnnotation(Version.class);
-				if (version != null) {
+				} else if (version != null) {
 					int val = field.getInt(t);
 					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1));
 					WHERE("`" + fc.getColumnName() + "` = " + val);
+				} else {
+					SET("`" + fc.getColumnName() + "`" + " = #{" + field.getName() + "} ");
 				}
 			}
 			if (!whereSet) {
