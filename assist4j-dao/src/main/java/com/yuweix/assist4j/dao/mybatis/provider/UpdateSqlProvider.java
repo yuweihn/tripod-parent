@@ -132,14 +132,14 @@ public class UpdateSqlProvider extends AbstractProvider {
 					}
 				}
 
-				SET("`" + fc.getColumnName() + "`" + " = #{t." + field.getName() + "} ");
-
 				Version version = field.getAnnotation(Version.class);
 				if (version != null) {
 					WHERE("`" + fc.getColumnName() + "` = #{t." + field.getName() + "}");
 
 					int val = field.getInt(t);
 					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1) + " ");
+				} else {
+					SET("`" + fc.getColumnName() + "`" + " = #{t." + field.getName() + "} ");
 				}
 			}
 			WHERE(criteria.toSql());
