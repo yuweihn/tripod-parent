@@ -66,10 +66,9 @@ public class UpdateSqlProvider extends AbstractProvider {
 
 				Version version = field.getAnnotation(Version.class);
 				if (version != null) {
-					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
-
 					int val = field.getInt(t);
-					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1) + " ");
+					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1));
+					WHERE("`" + fc.getColumnName() + "` = " + val);
 				}
 			}
 			if (!whereSet) {
@@ -134,10 +133,9 @@ public class UpdateSqlProvider extends AbstractProvider {
 
 				Version version = field.getAnnotation(Version.class);
 				if (version != null) {
-					WHERE("`" + fc.getColumnName() + "` = #{t." + field.getName() + "}");
-
 					int val = field.getInt(t);
-					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1) + " ");
+					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1));
+					WHERE("`" + fc.getColumnName() + "` = " + val);
 				} else {
 					SET("`" + fc.getColumnName() + "`" + " = #{t." + field.getName() + "} ");
 				}
