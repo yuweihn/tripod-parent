@@ -27,7 +27,8 @@ public class UpdateSqlProvider extends AbstractProvider {
 
 	private <T>String toUpdateByPrimaryKeySql(T t, boolean selective) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
+		String tbName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(tbName);
 
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		return new SQL() {{
@@ -36,7 +37,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 				Field field = fc.getField();
 				field.setAccessible(true);
 
-				String shardingIndex = getShardingIndex(field.getAnnotation(Sharding.class), getFieldValue(field, t));
+				String shardingIndex = getShardingIndex(field.getAnnotation(Sharding.class), tbName, getFieldValue(field, t));
 				Id idAnn = field.getAnnotation(Id.class);
 				if (shardingIndex != null) {
 					tableNameBuilder.append("_").append(shardingIndex);
@@ -93,7 +94,8 @@ public class UpdateSqlProvider extends AbstractProvider {
 		if (criteria == null || criteria.getParams() == null || criteria.getParams().size() <= 0) {
 			throw new IllegalAccessException("'where' is required.");
 		}
-		StringBuilder tableNameBuilder = new StringBuilder(getTableName(entityClass));
+		String tbName = getTableName(entityClass);
+		StringBuilder tableNameBuilder = new StringBuilder(tbName);
 
 		Object shardingVal = criteria.getShardingVal();
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
@@ -107,7 +109,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 					if (shardingVal == null) {
 						throw new IllegalAccessException("'Sharding Value' is required.");
 					}
-					String shardingIndex = getShardingIndex(sharding, shardingVal);
+					String shardingIndex = getShardingIndex(sharding, tbName, shardingVal);
 					if (shardingIndex != null) {
 						tableNameBuilder.append("_").append(shardingIndex);
 						/**
