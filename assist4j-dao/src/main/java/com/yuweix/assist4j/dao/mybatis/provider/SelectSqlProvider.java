@@ -102,11 +102,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		Object shardingVal = criteria == null ? null : criteria.getShardingVal();
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 
-		StringBuilder builder = new StringBuilder("");
-		builder.append("  select count(1) as cnt ")
-				.append(" from ").append(tableNameBuilder.toString()).append("  ")
-				.append(" where 1 = 1 ");
-
+		String shardingWhere = null;
 		for (FieldColumn fc: fcList) {
 			Field field = fc.getField();
 			Sharding sharding = field.getAnnotation(Sharding.class);
@@ -120,9 +116,18 @@ public class SelectSqlProvider extends AbstractProvider {
 					/**
 					 * 分片字段，必须放在where子句中
 					 */
-					builder.append(" and `" + fc.getColumnName() + "` = #{criteria.shardingVal} ");
+					shardingWhere = "`" + fc.getColumnName() + "` = #{criteria.shardingVal} ";
 				}
 			}
+		}
+
+		StringBuilder builder = new StringBuilder("");
+		builder.append(" select count(1) as cnt ");
+		builder.append(" from ").append(tableNameBuilder.toString()).append("  ");
+		if (shardingWhere == null) {
+			builder.append(" where 1 = 1 ");
+		} else {
+			builder.append(" where ").append(shardingWhere);
 		}
 
 		if (criteria != null) {
@@ -153,11 +158,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		Object shardingVal = criteria == null ? null : criteria.getShardingVal();
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 
-		StringBuilder builder = new StringBuilder("");
-		builder.append("  select ").append(getAllColumnSql(entityClass))
-				.append(" from ").append(tableNameBuilder.toString()).append("  ")
-				.append(" where 1 = 1 ");
-
+		String shardingWhere = null;
 		for (FieldColumn fc: fcList) {
 			Field field = fc.getField();
 			Sharding sharding = field.getAnnotation(Sharding.class);
@@ -171,9 +172,18 @@ public class SelectSqlProvider extends AbstractProvider {
 					/**
 					 * 分片字段，必须放在where子句中
 					 */
-					builder.append(" and `" + fc.getColumnName() + "` = #{criteria.shardingVal} ");
+					shardingWhere = "`" + fc.getColumnName() + "` = #{criteria.shardingVal} ";
 				}
 			}
+		}
+
+		StringBuilder builder = new StringBuilder("");
+		builder.append(" select ").append(getAllColumnSql(entityClass));
+		builder.append(" from ").append(tableNameBuilder.toString()).append("  ");
+		if (shardingWhere == null) {
+			builder.append(" where 1 = 1 ");
+		} else {
+			builder.append(" where ").append(shardingWhere);
 		}
 
 		if (criteria != null) {
