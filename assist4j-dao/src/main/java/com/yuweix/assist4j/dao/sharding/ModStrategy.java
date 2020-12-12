@@ -1,7 +1,6 @@
 package com.yuweix.assist4j.dao.sharding;
 
 
-
 /**
  * 分片策略-取模
  * @author yuwei
