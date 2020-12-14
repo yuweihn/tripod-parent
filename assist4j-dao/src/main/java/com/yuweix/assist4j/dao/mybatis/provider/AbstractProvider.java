@@ -4,6 +4,7 @@ package com.yuweix.assist4j.dao.mybatis.provider;
 import com.yuweix.assist4j.dao.sharding.Sharding;
 import com.yuweix.assist4j.dao.sharding.Strategy;
 
+import java.lang.annotation.Annotation;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -229,5 +230,21 @@ public abstract class AbstractProvider {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	protected String getPhysicalTable(Class<?> entityClass, Object shardingVal) {
+		String tbName = getTableName(entityClass);
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		for (FieldColumn fc: fcList) {
+			Field field = fc.getField();
+			Sharding sharding = field.getAnnotation(Sharding.class);
+			if (sharding == null) {
+				continue;
+			}
+
+			String shardingIndex = getShardingIndex(sharding, tbName, shardingVal);
+			return tbName + "_" + shardingIndex;
+		}
+		return tbName;
 	}
 }
