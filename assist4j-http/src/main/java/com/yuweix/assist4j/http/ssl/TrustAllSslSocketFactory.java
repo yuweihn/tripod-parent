@@ -1,7 +1,6 @@
 package com.yuweix.assist4j.http.ssl;
 
 
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
