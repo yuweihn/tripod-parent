@@ -4,7 +4,6 @@ package com.yuweix.assist4j.dao.mybatis.provider;
 import com.yuweix.assist4j.dao.sharding.Sharding;
 import com.yuweix.assist4j.dao.sharding.Strategy;
 
-import java.lang.annotation.Annotation;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
