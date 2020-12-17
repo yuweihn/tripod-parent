@@ -139,7 +139,9 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 		if (sid == null || "".equals(sid)) {
 			throw new RuntimeException("生成SessionId失败！！！");
 		}
-		addCookie(sid);
+		if (SessionConf.getInstance().getAddCookie()) {
+			addCookie(sid);
+		}
 		return sid;
 	}
 
