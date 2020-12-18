@@ -4,7 +4,6 @@ package com.yuweix.assist4j.session.filter;
 import java.io.IOException;
 import java.util.UUID;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -24,7 +23,7 @@ import com.yuweix.assist4j.session.conf.SessionConf;
 /**
  * @author yuwei
  */
-public class CookieSessionFilter implements Filter {
+public class CookieSessionFilter extends AbstractSessionFilter {
 	/**
 	 * 需要排除的URI
 	 */
