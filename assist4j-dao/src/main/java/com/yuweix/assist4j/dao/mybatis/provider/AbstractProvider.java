@@ -231,7 +231,7 @@ public abstract class AbstractProvider {
 		}
 	}
 
-	protected String getPhysicalTableName(Class<?> entityClass, Object shardingVal) {
+	protected <T>String getPhysicalTableName(Class<T> entityClass, Object shardingVal) {
 		String tbName = getTableName(entityClass);
 		List<FieldColumn> fcList = getPersistFieldList(entityClass);
 		for (FieldColumn fc: fcList) {
@@ -239,6 +239,21 @@ public abstract class AbstractProvider {
 			Sharding sharding = field.getAnnotation(Sharding.class);
 			if (sharding != null) {
 				String shardingIndex = getShardingIndex(sharding, tbName, shardingVal);
+				return tbName + "_" + shardingIndex;
+			}
+		}
+		return tbName;
+	}
+
+	protected <T>String getPhysicalTableName(T t) {
+		Class<?> entityClass = t.getClass();
+		String tbName = getTableName(entityClass);
+		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		for (FieldColumn fc: fcList) {
+			Field field = fc.getField();
+			Sharding sharding = field.getAnnotation(Sharding.class);
+			if (sharding != null) {
+				String shardingIndex = getShardingIndex(sharding, tbName, getFieldValue(field, t));
 				return tbName + "_" + shardingIndex;
 			}
 		}

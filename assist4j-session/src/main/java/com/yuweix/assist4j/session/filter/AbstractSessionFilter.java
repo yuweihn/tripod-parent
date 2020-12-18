@@ -1,44 +1,34 @@
 package com.yuweix.assist4j.session.filter;
 
 
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.yuweix.assist4j.session.CacheHttpServletRequest;
 import com.yuweix.assist4j.session.cache.SessionCache;
 import com.yuweix.assist4j.session.conf.PathPattern;
 import com.yuweix.assist4j.session.conf.SessionConf;
 
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 
 /**
  * @author yuwei
  */
-public class SessionFilter implements Filter {
+public abstract class AbstractSessionFilter implements Filter {
 	/**
 	 * 需要排除的URI
 	 */
 	private static final String EXCLUSIVE = "exclusive";
 
 
-
-
-
-
 	/**
 	 * @param cache                           缓存引擎
 	 */
-	public SessionFilter(SessionCache cache) {
+	public AbstractSessionFilter(SessionCache cache) {
 		setCache(cache);
 	}
-	public SessionFilter() {
+	public AbstractSessionFilter() {
 
 	}
 
@@ -56,8 +46,6 @@ public class SessionFilter implements Filter {
 	}
 
 
-
-
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -70,17 +58,14 @@ public class SessionFilter implements Filter {
 		}
 
 		before(httpRequest, httpResponse);
-		CacheHttpServletRequest cacheRequest = new CacheHttpServletRequest(httpRequest, httpResponse
-				, getSessionId(httpRequest, httpResponse));
+		CacheHttpServletRequest cacheRequest = new CacheHttpServletRequest(httpRequest, getSessionId(httpRequest, httpResponse));
 
 		chain.doFilter(cacheRequest, httpResponse);
 		cacheRequest.sync();
 		after(cacheRequest, httpResponse);
 	}
 
-	protected String getSessionId(HttpServletRequest request, HttpServletResponse response) {
-		return null;
-	}
+	protected abstract String getSessionId(HttpServletRequest request, HttpServletResponse response);
 
 	protected void before(HttpServletRequest request, HttpServletResponse response) {
 
