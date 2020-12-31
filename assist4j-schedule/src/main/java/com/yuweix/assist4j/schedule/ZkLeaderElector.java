@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ZkLeaderElector extends AbstractLeaderElector {
 	private static final Logger log = LoggerFactory.getLogger(ZkLeaderElector.class);
-	private static final String ZK_NODE_NAME_PRE = "/Schedule_leader_";
+	private static final String ZK_NODE_NAME_PRE = "/Schedule_leader%s_";
 
 	private static ZooKeeper zk;
 
@@ -30,12 +30,18 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	 */
 	private int zkTimeout;
 
+	private String appName;
+
 
 
 	public ZkLeaderElector(String zkConn, int zkTimeout) {
+		this(zkConn, zkTimeout, null);
+	}
+	public ZkLeaderElector(String zkConn, int zkTimeout, String appName) {
 		super();
 		this.zkConn = zkConn;
 		this.zkTimeout = zkTimeout;
+		this.appName = appName;
 	}
 
 	private ZooKeeper getZk() {
@@ -72,29 +78,31 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 
 	@Override
 	public String acquire(String lock) {
-		String key = ZK_NODE_NAME_PRE + lock;
-		String node = getLocalNode(key);
-		String leaderNode = getLeaderNode(lock);
+		String key = String.format(ZK_NODE_NAME_PRE
+				, this.appName == null || "".equals(this.appName.trim()) ? "" : "_" + this.appName.trim()) + lock;
+		String node = getLocalNode();
+		String leaderNode = getNodeValue(key);
 		if (leaderNode == null) {
 			try {
-				String path = getZk().create(lock, node.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+				String path = getZk().create(key, node.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
 				log.info("Create server node ({} => {})", path, node);
 				return node;
 			} catch (Exception e) {
 				log.error("{}", e.getMessage());
 			}
 		}
-		return getLeaderNode(lock);
+		return getNodeValue(key);
 	}
 
 	@Override
 	public void release(String lock) {
-		String key = ZK_NODE_NAME_PRE + lock;
+		String key = String.format(ZK_NODE_NAME_PRE
+				, this.appName == null || "".equals(this.appName.trim()) ? "" : "_" + this.appName.trim()) + lock;
 		if (zk == null) {
 			return;
 		}
-		String node = getLocalNode(key);
-		String leaderNode = getLeaderNode(key);
+		String node = getLocalNode();
+		String leaderNode = getNodeValue(key);
 		if (node == null || !node.equals(leaderNode)) {
 			return;
 		}
@@ -106,10 +114,9 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	}
 
 	/**
-	 * 获取当前leader
+	 * 获取指定节点的值，如果节点不存在，返回null
 	 */
-	private String getLeaderNode(String lock) {
-		String key = ZK_NODE_NAME_PRE + lock;
+	private String getNodeValue(String key) {
 		byte[] val = null;
 		try {
 			Stat stat = getZk().exists(key, false);
