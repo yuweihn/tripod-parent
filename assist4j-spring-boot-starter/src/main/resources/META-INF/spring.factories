@@ -1,8 +1,6 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.yuweix.assist4j.boot.DefaultAutoConfiguration,\
   com.yuweix.assist4j.boot.datasource.SingleDataSourceHibernateAutoConfiguration,\
-  com.yuweix.assist4j.boot.datasource.GroupDataSourceHibernateAutoConfiguration,\
   com.yuweix.assist4j.boot.datasource.SingleDataSourceMybatisAutoConfiguration,\
-  com.yuweix.assist4j.boot.datasource.GroupDataSourceMybatisAutoConfiguration,\
   com.yuweix.assist4j.boot.mongo.MongoAutoConfiguration,\
   com.yuweix.assist4j.boot.redis.JedisAutoConfiguration,\
   com.yuweix.assist4j.boot.redis.JedisMsAutoConfiguration,\
