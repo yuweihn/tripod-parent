@@ -19,7 +19,7 @@ import java.util.Properties;
  * @author yuwei
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-public class SingleDataSourceHibernateConf {
+public class HibernateConf {
 
 	@ConditionalOnMissingBean(name = "mappingLocations")
 	@Bean(name = "mappingLocations")
