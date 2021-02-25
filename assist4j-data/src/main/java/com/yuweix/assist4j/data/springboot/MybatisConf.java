@@ -25,7 +25,7 @@ import java.io.IOException;
  * @author yuwei
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-public class SingleDataSourceMybatisConf {
+public class MybatisConf {
 	@ConditionalOnMissingBean(name = "mapperLocations")
 	@Bean(name = "mapperLocations")
 	public Resource[] mapperLocations(@Value("${assist4j.mybatis.mapper.locationPattern:}") String locationPattern) throws IOException {

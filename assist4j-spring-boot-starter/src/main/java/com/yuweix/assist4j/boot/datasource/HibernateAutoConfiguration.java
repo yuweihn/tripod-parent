@@ -2,13 +2,12 @@ package com.yuweix.assist4j.boot.datasource;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.yuweix.assist4j.data.springboot.SingleDataSourceMybatisConf;
+import com.yuweix.assist4j.data.springboot.HibernateConf;
 import com.yuweix.assist4j.sequence.base.DefaultSequence;
 import com.yuweix.assist4j.sequence.base.SequenceBeanFactory;
 import com.yuweix.assist4j.sequence.base.SequenceBeanHolder;
 import com.yuweix.assist4j.sequence.dao.SegmentSequenceDao;
 import com.yuweix.assist4j.sequence.dao.SequenceDao;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,9 +27,9 @@ import java.util.Map;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.single.datasource.mybatis.enabled")
-@Import({SingleDataSourceMybatisConf.class})
-public class SingleDataSourceMybatisAutoConfiguration {
+@ConditionalOnProperty(name = "assist4j.boot.hibernate.enabled")
+@Import({HibernateConf.class})
+public class HibernateAutoConfiguration {
 
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
@@ -120,14 +119,5 @@ public class SingleDataSourceMybatisAutoConfiguration {
 	@Bean(name = "sequenceBeanFactory")
 	public SequenceBeanFactory sequenceBeanFactory() {
 		return new SequenceBeanFactory(DefaultSequence.class, "sequenceBeanHolder");
-	}
-
-	@Bean
-	public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("basePackage") String basePackage) {
-		MapperScannerConfigurer configurer = new MapperScannerConfigurer();
-//		configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
-		configurer.setSqlSessionTemplateBeanName("sqlSessionTemplate");
-		configurer.setBasePackage(basePackage);
-		return configurer;
 	}
 }
