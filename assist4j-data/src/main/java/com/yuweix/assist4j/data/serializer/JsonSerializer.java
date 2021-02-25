@@ -34,6 +34,12 @@ public class JsonSerializer implements Serializer {
 		}
 
 		JsonText jsonText = JSONObject.parseObject(str, JsonText.class);
-		return (T) jsonText.getText();
+		T t = null;
+		try {
+			t = (T) JSONObject.parseObject(JSONObject.toJSONString(jsonText.getText()), Class.forName(jsonText.getClz()));
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		return t;
 	}
 }
