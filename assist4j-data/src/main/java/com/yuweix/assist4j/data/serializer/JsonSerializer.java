@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
  * 序列化工具
  * @author yuwei
  */
-public class DefaultSerializer implements Serializer {
-	private static final Logger log = LoggerFactory.getLogger(DefaultSerializer.class);
+public class JsonSerializer implements Serializer {
+	private static final Logger log = LoggerFactory.getLogger(JsonSerializer.class);
 
 
 	/**

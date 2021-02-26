@@ -3,7 +3,7 @@ package com.yuweix.assist4j.data.springboot.jedis;
 
 import com.yuweix.assist4j.data.cache.redis.jedis.JedisClusterCache;
 import com.yuweix.assist4j.data.cache.redis.jedis.JedisClusterFactory;
-import com.yuweix.assist4j.data.serializer.DefaultSerializer;
+import com.yuweix.assist4j.data.serializer.JsonSerializer;
 import com.yuweix.assist4j.data.serializer.Serializer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +53,7 @@ public class JedisClusterConf {
 	@ConditionalOnMissingBean(Serializer.class)
 	@Bean
 	public Serializer cacheSerializer() {
-		return new DefaultSerializer();
+		return new JsonSerializer();
 	}
 
 	@ConditionalOnMissingBean(name = "redisCache")
