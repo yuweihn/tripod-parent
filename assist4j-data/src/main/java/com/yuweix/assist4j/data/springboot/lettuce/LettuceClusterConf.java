@@ -77,7 +77,7 @@ public class LettuceClusterConf {
 	}
 
 	@ConditionalOnMissingBean(Serializer.class)
-	@Bean(name = "cacheSerializer")
+	@Bean
 	public Serializer cacheSerializer() {
 		return new DefaultSerializer();
 	}
@@ -85,7 +85,7 @@ public class LettuceClusterConf {
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
-			, @Qualifier("cacheSerializer") Serializer serializer) {
+			, Serializer serializer) {
 		LettuceCache cache = new LettuceCache();
 		cache.setRedisTemplate(template);
 		cache.setSerializer(serializer);

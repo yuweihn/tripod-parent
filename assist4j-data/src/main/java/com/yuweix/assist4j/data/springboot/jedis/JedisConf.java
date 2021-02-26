@@ -80,7 +80,7 @@ public class JedisConf {
 	}
 
 	@ConditionalOnMissingBean(Serializer.class)
-	@Bean(name = "cacheSerializer")
+	@Bean
 	public Serializer cacheSerializer() {
 		return new DefaultSerializer();
 	}
@@ -88,7 +88,7 @@ public class JedisConf {
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public JedisCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
-			, @Qualifier("cacheSerializer") Serializer serializer) {
+			, Serializer serializer) {
 		JedisCache cache = new JedisCache();
 		cache.setRedisTemplate(template);
 		cache.setSerializer(serializer);

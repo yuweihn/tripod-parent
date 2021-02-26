@@ -51,7 +51,7 @@ public class JedisClusterConf {
 	}
 
 	@ConditionalOnMissingBean(Serializer.class)
-	@Bean(name = "cacheSerializer")
+	@Bean
 	public Serializer cacheSerializer() {
 		return new DefaultSerializer();
 	}
@@ -59,7 +59,7 @@ public class JedisClusterConf {
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public JedisClusterCache redisClusterCache(@Qualifier("jedisCluster") JedisCluster jedisCluster
-			, @Qualifier("cacheSerializer") Serializer serializer) {
+			, Serializer serializer) {
 		JedisClusterCache cache = new JedisClusterCache();
 		cache.setJedisCluster(jedisCluster);
 		cache.setSerializer(serializer);
