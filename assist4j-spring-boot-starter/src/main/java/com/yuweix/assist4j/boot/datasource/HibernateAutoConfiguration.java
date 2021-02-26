@@ -30,10 +30,9 @@ import java.util.Map;
 @ConditionalOnProperty(name = "assist4j.boot.hibernate.enabled")
 @Import({HibernateConf.class})
 public class HibernateAutoConfiguration {
-
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
-	public DruidDataSource druidDataSourceMaster(@Value("${jdbc.driver.class}") String driverClassName
+	public DataSource druidDataSourceMaster(@Value("${jdbc.driver.class}") String driverClassName
 			, @Value("${jdbc.url}") String url
 			, @Value("${jdbc.userName}") String userName
 			, @Value("${jdbc.password}") String password
