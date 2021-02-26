@@ -8,7 +8,6 @@ import com.yuweix.assist4j.sequence.base.SequenceBeanFactory;
 import com.yuweix.assist4j.sequence.base.SequenceBeanHolder;
 import com.yuweix.assist4j.sequence.dao.SegmentSequenceDao;
 import com.yuweix.assist4j.sequence.dao.SequenceDao;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -31,10 +30,9 @@ import java.util.Map;
 @ConditionalOnProperty(name = "assist4j.boot.mybatis.enabled")
 @Import({MybatisConf.class})
 public class MybatisAutoConfiguration {
-
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
-	public DruidDataSource druidDataSourceMaster(@Value("${jdbc.driver.class}") String driverClassName
+	public DataSource druidDataSourceMaster(@Value("${jdbc.driver.class}") String driverClassName
 			, @Value("${jdbc.url}") String url
 			, @Value("${jdbc.userName}") String userName
 			, @Value("${jdbc.password}") String password
@@ -120,14 +118,5 @@ public class MybatisAutoConfiguration {
 	@Bean(name = "sequenceBeanFactory")
 	public SequenceBeanFactory sequenceBeanFactory() {
 		return new SequenceBeanFactory(DefaultSequence.class, "sequenceBeanHolder");
-	}
-
-	@Bean
-	public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("basePackage") String basePackage) {
-		MapperScannerConfigurer configurer = new MapperScannerConfigurer();
-//		configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
-		configurer.setSqlSessionTemplateBeanName("sqlSessionTemplate");
-		configurer.setBasePackage(basePackage);
-		return configurer;
 	}
 }
