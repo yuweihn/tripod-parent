@@ -11,8 +11,8 @@ import java.io.*;
  * 序列化工具
  * @author yuwei
  */
-public class DefaultSerializer implements Serializer {
-	private static final Logger log = LoggerFactory.getLogger(DefaultSerializer.class);
+public class HexSerializer implements Serializer {
+	private static final Logger log = LoggerFactory.getLogger(HexSerializer.class);
 
 
 	/**

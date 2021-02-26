@@ -2,7 +2,7 @@ package com.yuweix.assist4j.data.springboot.lettuce;
 
 
 import com.yuweix.assist4j.data.cache.redis.lettuce.LettuceCache;
-import com.yuweix.assist4j.data.serializer.DefaultSerializer;
+import com.yuweix.assist4j.data.serializer.JsonSerializer;
 import com.yuweix.assist4j.data.serializer.Serializer;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -92,15 +92,15 @@ public class LettuceMsConf {
 	}
 
 	@ConditionalOnMissingBean(Serializer.class)
-	@Bean(name = "cacheSerializer")
+	@Bean
 	public Serializer cacheSerializer() {
-		return new DefaultSerializer();
+		return new JsonSerializer();
 	}
 
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
-			, @Qualifier("cacheSerializer") Serializer serializer) {
+			, Serializer serializer) {
 		LettuceCache cache = new LettuceCache();
 		cache.setRedisTemplate(template);
 		cache.setSerializer(serializer);

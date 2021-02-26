@@ -7,7 +7,7 @@ import com.yuweix.assist4j.data.cache.AbstractCache;
 import com.yuweix.assist4j.data.cache.MessageHandler;
 import com.yuweix.assist4j.data.cache.redis.RedisCache;
 
-import com.yuweix.assist4j.data.serializer.DefaultSerializer;
+import com.yuweix.assist4j.data.serializer.JsonSerializer;
 import com.yuweix.assist4j.data.serializer.Serializer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -25,7 +25,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 
 
 	public JedisClusterCache() {
-		serializer = new DefaultSerializer();
+		serializer = new JsonSerializer();
 	}
 
 
