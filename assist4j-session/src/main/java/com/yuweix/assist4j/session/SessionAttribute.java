@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
 
@@ -115,6 +116,9 @@ public class SessionAttribute implements Serializable {
 	}
 
 	public static SessionAttribute deserialize(String value) {
+		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
+			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+		}
 		return JSONObject.parseObject(value, new TypeReference<SessionAttribute>() {});
 	}
 }
