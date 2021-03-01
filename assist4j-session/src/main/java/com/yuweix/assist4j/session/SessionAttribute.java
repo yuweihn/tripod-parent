@@ -101,7 +101,7 @@ public class SessionAttribute implements Serializable {
 	}
 
 
-	public static String encode(SessionAttribute attr) {
+	public static String serialize(SessionAttribute attr) {
 		if (attr == null) {
 			return null;
 		}
@@ -122,7 +122,7 @@ public class SessionAttribute implements Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static SessionAttribute decode(String value) {
+	public static SessionAttribute deserialize(String value) {
 		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
 			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 		}
