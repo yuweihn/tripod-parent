@@ -284,7 +284,7 @@ public class CacheHttpSession implements HttpSession {
 
 	@Override
 	public Enumeration<String> getAttributeNames() {
-		return new SessionEnumeration(sessionAttribute.getAttributeNames());
+		return new SessionEnumeration(sessionAttribute.getAttributes().keySet());
 	}
 	private class SessionEnumeration implements Enumeration<String> {
 		private Iterator<String> iterator;
