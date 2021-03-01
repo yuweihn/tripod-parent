@@ -2,13 +2,13 @@ package com.yuweix.assist4j.session;
 
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.alibaba.fastjson.parser.ParserConfig;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 
 
@@ -31,7 +31,11 @@ public class SessionAttribute implements Serializable {
 
 
 	public SessionAttribute() {
-		this.attributes = new HashMap<String, Object>();
+		Date now = Calendar.getInstance().getTime();
+		this.createTime = now;
+		this.lastAccessTime = now;
+		this.newBuild = true;
+		this.attributes = new HashMap<>();
 	}
 
 	public Map<String, Object> getAttributes() {
@@ -82,10 +86,6 @@ public class SessionAttribute implements Serializable {
 		this.repeatValue = repeatValue;
 	}
 
-	public boolean isEmpty() {
-		return attributes == null || attributes.size() <= 0;
-	}
-
 	public void putAttribute(String name, Object value) {
 		attributes.put(name, value);
 	}
@@ -98,6 +98,13 @@ public class SessionAttribute implements Serializable {
 		return attributes.get(name);
 	}
 
+	public void clear() {
+		if (attributes == null) {
+			return;
+		}
+		attributes.clear();
+	}
+
 
 	public static String serialize(SessionAttribute attr) {
 		if (attr == null) {
@@ -108,9 +115,6 @@ public class SessionAttribute implements Serializable {
 	}
 
 	public static SessionAttribute deserialize(String value) {
-		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
-			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
-		}
 		return JSONObject.parseObject(value, new TypeReference<SessionAttribute>() {});
 	}
 }
