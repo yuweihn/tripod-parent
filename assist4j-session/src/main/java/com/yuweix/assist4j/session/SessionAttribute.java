@@ -99,19 +99,8 @@ public class SessionAttribute implements Serializable {
 		return attributes.get(name);
 	}
 
-	public void clear() {
-		if (attributes == null) {
-			return;
-		}
-		attributes.clear();
-	}
-
 
 	public static String serialize(SessionAttribute attr) {
-		if (attr == null) {
-			return null;
-		}
-
 		return JSONObject.toJSONString(attr, SerializerFeature.WriteClassName);
 	}
 

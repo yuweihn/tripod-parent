@@ -78,13 +78,6 @@ public class CacheHttpServletRequest extends HttpServletRequestWrapper {
 			}
 			return cacheSession;
 		}
-
-		if (cacheSession.isInvalid()) {
-			cacheSession.removeSessionFromCache();
-			if (create) {
-				cacheSession = new CacheHttpSession(sessionId);
-			}
-		}
 		cacheSession.access();
 		return cacheSession;
 	}

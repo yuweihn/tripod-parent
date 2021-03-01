@@ -19,6 +19,10 @@ import org.springframework.util.CollectionUtils;
 public class CacheHttpSession implements HttpSession {
 	private String id;
 	/**
+	 * session是否已失效
+	 */
+	private boolean invalid = false;
+	/**
 	 * 存入cache的session的key
 	 */
 	private final String fullSessionId;
@@ -146,10 +150,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void invalidate() {
-		if (sessionAttribute == null || CollectionUtils.isEmpty(sessionAttribute.getAttributes())) {
-			return;
-		}
-		sessionAttribute.clear();
+		this.invalid = true;
 	}
 
 	/**
@@ -157,15 +158,18 @@ public class CacheHttpSession implements HttpSession {
 	 * @return true超过，false没有超过。
 	 */
 	public boolean isInvalid() {
-		int mii = SessionConf.getInstance().getMaxInactiveInterval();
-		if (mii <= 0) {
-			return false;
-		} else {
-			long invalidMillis = mii * 60 * 1000L;
-			long lastAccessTime = getLastAccessedTime();
-			long now = Calendar.getInstance().getTimeInMillis();
-			return (now - lastAccessTime) > invalidMillis;
+		if (!this.invalid) {
+			int mii = SessionConf.getInstance().getMaxInactiveInterval();
+			if (mii <= 0) {
+				this.invalid = false;
+			} else {
+				long invalidMillis = mii * 60 * 1000L;
+				long lastAccessTime = getLastAccessedTime();
+				long now = Calendar.getInstance().getTimeInMillis();
+				this.invalid = (now - lastAccessTime) > invalidMillis;
+			}
 		}
+		return this.invalid;
 	}
 
 	/**
@@ -240,15 +244,14 @@ public class CacheHttpSession implements HttpSession {
 	 * 如果缓存中没有，则新建并设定创建时间和最后访问时间为当前时间和为新的会话。
 	 */
 	private void init() {
-		findSessionAttribute();
+		initSessionAttribute();
 		Object repeatValue = sessionAttribute.getRepeatValue();
 		if (repeatValue != null && !"".equals(repeatValue.toString())) {
 			this.sessionIdKey = sessionIdKeyPre + "." + repeatValue;
 		}
 		this.access();
 	}
-
-	private void findSessionAttribute() {
+	private void initSessionAttribute() {
 		if (sessionAttribute != null) {
 			return;
 		}
