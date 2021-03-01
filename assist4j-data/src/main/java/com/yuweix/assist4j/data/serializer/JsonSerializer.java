@@ -39,6 +39,6 @@ public class JsonSerializer implements Serializer {
 		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
 			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 		}
-		return (T) JSONObject.parseObject(str, new TypeReference<T>() {});
+		return JSONObject.parseObject(str, new TypeReference<T>() {});
 	}
 }

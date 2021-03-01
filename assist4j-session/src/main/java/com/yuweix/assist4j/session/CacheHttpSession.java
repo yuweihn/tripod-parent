@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSessionContext;
 
 import com.yuweix.assist4j.session.cache.SessionCache;
 import com.yuweix.assist4j.session.conf.SessionConf;
+import org.springframework.util.CollectionUtils;
 
 
 /**
@@ -114,7 +115,7 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public Object getAttribute(String attributeName) {
-		return this.invalid ? null : sessionAttribute.getAttribute(attributeName);
+		return sessionAttribute.getAttribute(attributeName);
 	}
 
 	/**
@@ -124,9 +125,6 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void setAttribute(String attributeName, Object attributeValue) {
-		if (this.invalid) {
-			return;
-		}
 		if (attributeValue instanceof RepeatKey) {
 			RepeatKey rlk = (RepeatKey) attributeValue;
 			sessionAttribute.putAttribute(attributeName, rlk.getValue());
@@ -144,14 +142,11 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public void removeAttribute(String attributeName) {
-		if (this.invalid) {
-			return;
-		}
 		sessionAttribute.removeAttribute(attributeName);
 	}
 
 	/**
-	 * Session过期。
+	 * 让Session过期。
 	 */
 	@Override
 	public void invalidate() {
@@ -183,9 +178,6 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	@Override
 	public boolean isNew() {
-		if (this.invalid) {
-			return false;
-		}
 		return sessionAttribute.isNewBuild();
 	}
 
@@ -221,7 +213,7 @@ public class CacheHttpSession implements HttpSession {
 	 * @return sessionId
 	 */
 	public String sync() {
-		if (isInvalid() || sessionAttribute == null || sessionAttribute.isEmpty()) {
+		if (isInvalid() || sessionAttribute == null || CollectionUtils.isEmpty(sessionAttribute.getAttributes())) {
 			removeSessionFromCache();
 			return fullSessionId;
 		}
@@ -252,19 +244,14 @@ public class CacheHttpSession implements HttpSession {
 	 * 如果缓存中没有，则新建并设定创建时间和最后访问时间为当前时间和为新的会话。
 	 */
 	private void init() {
-		findSessionAttribute();
+		initSessionAttribute();
 		Object repeatValue = sessionAttribute.getRepeatValue();
 		if (repeatValue != null && !"".equals(repeatValue.toString())) {
 			this.sessionIdKey = sessionIdKeyPre + "." + repeatValue;
 		}
 		this.access();
 	}
-
-	/**
-	 * 查找一个缓存中的属性储存bean，如果不存在将返回一个新的空bean。
-	 * @return 用户Session属性键键值对储存bean。
-	 */
-	private void findSessionAttribute() {
+	private void initSessionAttribute() {
 		if (sessionAttribute != null) {
 			return;
 		}
@@ -273,10 +260,6 @@ public class CacheHttpSession implements HttpSession {
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new SessionAttribute();
-			Calendar now = Calendar.getInstance();
-			sessionAttribute.setCreateTime(now.getTime());
-			sessionAttribute.setLastAccessTime(now.getTime());
-			sessionAttribute.setNewBuild(true);
 		} else {
 			sessionAttribute.setNewBuild(false);
 		}
@@ -284,12 +267,12 @@ public class CacheHttpSession implements HttpSession {
 
 	@Override
 	public Enumeration<String> getAttributeNames() {
-		return new SessionEnumeration(sessionAttribute.getAttributeNames());
+		return new SessionEnumeration(sessionAttribute.getAttributes().keySet());
 	}
-	private class SessionEnumeration implements Enumeration<String> {
-		private Iterator<String> iterator;
+	private static class SessionEnumeration implements Enumeration<String> {
+		Iterator<String> iterator;
 		public SessionEnumeration (Set<String> _attributeNames) {
-			Set<String> attributeNames = new HashSet<String>();
+			Set<String> attributeNames = new HashSet<>();
 			if (_attributeNames != null && _attributeNames.size() > 0) {
 				attributeNames.addAll(_attributeNames);
 			}
