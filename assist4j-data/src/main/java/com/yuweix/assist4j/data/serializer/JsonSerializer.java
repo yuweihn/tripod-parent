@@ -2,6 +2,9 @@ package com.yuweix.assist4j.data.serializer;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +25,7 @@ public class JsonSerializer implements Serializer {
 			return null;
 		}
 
-		return JSONObject.toJSONString(new JsonText(t.getClass().getName(), t));
+		return JSONObject.toJSONString(t, SerializerFeature.WriteClassName);
 	}
 
 	/**
@@ -33,13 +36,9 @@ public class JsonSerializer implements Serializer {
 			return null;
 		}
 
-		JsonText jsonText = JSONObject.parseObject(str, JsonText.class);
-		T t = null;
-		try {
-			t = (T) JSONObject.parseObject(JSONObject.toJSONString(jsonText.getText()), Class.forName(jsonText.getClz()));
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
+		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
+			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 		}
-		return t;
+		return (T) JSONObject.parseObject(str, new TypeReference<T>() {});
 	}
 }

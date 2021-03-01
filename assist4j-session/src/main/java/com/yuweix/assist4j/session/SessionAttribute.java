@@ -2,18 +2,15 @@ package com.yuweix.assist4j.session;
 
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 
 /**
@@ -32,7 +29,7 @@ public class SessionAttribute implements Serializable {
 	private Date createTime;
 	private String repeatKey;
 	private Object repeatValue;
-	private Set<AttributeData> attributes;
+	private Map<String, Object> attributes;
 
 
 	public boolean isEmpty() {
@@ -40,7 +37,7 @@ public class SessionAttribute implements Serializable {
 	}
 
 	public SessionAttribute() {
-		attributes = new HashSet<AttributeData>();
+		attributes = new HashMap<String, Object>();
 	}
 	public SessionAttribute(Date createTime) {
 		this();
@@ -48,53 +45,19 @@ public class SessionAttribute implements Serializable {
 	}
 
 	public void putAttribute(String name, Object value) {
-		if (name == null || "".equals(name) || value == null || "".equals(value)) {
-			return;
-		}
-		AttributeData data = new AttributeData();
-		data.setKey(name);
-		data.setValue(value);
-		data.setValueClassName(value.getClass().getName());
-		attributes.remove(data);
-		attributes.add(data);
+		attributes.put(name, value);
 	}
 
 	public Object removeAttribute(String name) {
-		if (name == null || isEmpty()) {
-			return null;
-		}
-		for (AttributeData data: attributes) {
-			if (name.equals(data.getKey())) {
-				Object value = data.getValue();
-				attributes.remove(data);
-				return value;
-			}
-		}
-		return null;
+		return attributes.remove(name);
 	}
 
 	public Object getAttribute(String name) {
-		if (name == null || isEmpty()) {
-			return null;
-		}
-		for (AttributeData data: attributes) {
-			if (name.equals(data.getKey())) {
-				return data.getValue();
-			}
-		}
-		return null;
+		return attributes.get(name);
 	}
 
 	public Set<String> getAttributeNames() {
-		Set<String> set = new HashSet<String>();
-		if (isEmpty()) {
-			return set;
-		}
-
-		for (AttributeData data: attributes) {
-			set.add(data.getKey());
-		}
-		return set;
+		return attributes.keySet();
 	}
 
 	public Date getCreateTime() {
@@ -138,93 +101,43 @@ public class SessionAttribute implements Serializable {
 	}
 
 
-	public static String encode(SessionAttribute attr) {
+	public static String serialize(SessionAttribute attr) {
 		if (attr == null) {
 			return null;
 		}
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("newBuild", attr.newBuild);
-		map.put("lastAccessTime", attr.lastAccessTime == null ? null : formatDate(attr.lastAccessTime, "yyyy-MM-dd HH:mm:ss.SSS"));
-		map.put("createTime", attr.createTime == null ? null : formatDate(attr.createTime, "yyyy-MM-dd HH:mm:ss.SSS"));
+		map.put("lastAccessTime", attr.lastAccessTime);
+		map.put("createTime", attr.createTime);
 
 		if (!attr.isEmpty()) {
-			List<String> attributeStrList = new ArrayList<String>();
-			for (AttributeData data: attr.attributes) {
-				attributeStrList.add(data.encode());
-			}
-			map.put("attribute", attributeStrList);
+			map.put("attributes", attr.attributes);
 		}
 		if (attr.repeatKey != null && !"".equals(attr.repeatKey) && attr.repeatValue != null && !"".equals(attr.repeatValue.toString())) {
 			map.put("repeatKey", attr.repeatKey);
 			map.put("repeatValue", attr.repeatValue);
 		}
-		return JSONObject.toJSONString(map);
+		return JSONObject.toJSONString(map, SerializerFeature.WriteClassName);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static SessionAttribute decode(String value) {
-		Map<String, Object> map = null;
-		try {
-			map = JSONObject.parseObject(value, Map.class);
-		} catch (Exception e) {
+	public static SessionAttribute deserialize(String value) {
+		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
+			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 		}
-		
+		Map<String, Object> map = JSONObject.parseObject(value, new TypeReference<Map<String, Object>>() {});
 		if (map == null) {
 			return null;
 		}
-
-		Object newBuildObj = map.get("newBuild");
-		Object lastAccessTimeObj = map.get("lastAccessTime");
-		Object createTimeObj = map.get("createTime");
-		Object attributeObj = map.get("attribute");
-		Object repeatKeyObj = map.get("repeatKey");
-		Object repeatValueObj = map.get("repeatValue");
 		
 		SessionAttribute attr = new SessionAttribute();
-		attr.newBuild = Boolean.valueOf(newBuildObj == null ? "false" : newBuildObj.toString());
-		attr.lastAccessTime = lastAccessTimeObj == null ? null 
-						: parseDate(lastAccessTimeObj.toString(), "yyyy-MM-dd HH:mm:ss.SSS");
-		attr.createTime = createTimeObj == null ? null 
-						: parseDate(createTimeObj.toString(), "yyyy-MM-dd HH:mm:ss.SSS");
-
-		List<String> attributeStrList = (List<String>) attributeObj;
-		if (attributeStrList != null && attributeStrList.size() > 0) {
-			Set<AttributeData> _attributes = new HashSet<AttributeData>();
-			for (String attributeStr: attributeStrList) {
-				AttributeData data = new AttributeData();
-				data.decode(attributeStr);
-				_attributes.add(data);
-			}
-			attr.attributes = _attributes;
-		}
-		attr.repeatKey = (String) repeatKeyObj;
-		attr.repeatValue = repeatValueObj;
+		attr.newBuild = map.containsKey("newBuild") && (boolean) map.get("newBuild");
+		attr.lastAccessTime = (Date) map.get("lastAccessTime");
+		attr.createTime = (Date) map.get("createTime");
+		attr.attributes = (Map<String, Object>) map.get("attributes");
+		attr.repeatKey = (String) map.get("repeatKey");
+		attr.repeatValue = map.get("repeatValue");
 		return attr;
-	}
-	
-	/**
-	 * 按指定格式格式化日期
-	 * @param date
-	 * @param pattern
-	 * @return
-	 */
-	private static String formatDate(Date date, String pattern) {
-		return new SimpleDateFormat(pattern).format(date);
-	}
-	
-	/**
-	 * 按指定格式解析日期
-	 * @param dateStr
-	 * @param pattern
-	 * @return
-	 */
-	private static Date parseDate(String dateStr, String pattern) {
-		DateFormat df = new SimpleDateFormat(pattern);
-		try {
-			return df.parse(dateStr);
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
 	}
 }
