@@ -110,14 +110,9 @@ public class SessionAttribute implements Serializable {
 		map.put("newBuild", attr.newBuild);
 		map.put("lastAccessTime", attr.lastAccessTime);
 		map.put("createTime", attr.createTime);
-
-		if (!attr.isEmpty()) {
-			map.put("attributes", attr.attributes);
-		}
-		if (attr.repeatKey != null && !"".equals(attr.repeatKey) && attr.repeatValue != null && !"".equals(attr.repeatValue.toString())) {
-			map.put("repeatKey", attr.repeatKey);
-			map.put("repeatValue", attr.repeatValue);
-		}
+		map.put("attributes", attr.attributes);
+		map.put("repeatKey", attr.repeatKey);
+		map.put("repeatValue", attr.repeatValue);
 		return JSONObject.toJSONString(map, SerializerFeature.WriteClassName);
 	}
 
