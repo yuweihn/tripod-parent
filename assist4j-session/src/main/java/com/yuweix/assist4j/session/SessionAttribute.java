@@ -2,9 +2,6 @@ package com.yuweix.assist4j.session;
 
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -130,50 +127,17 @@ public class SessionAttribute implements Serializable {
 			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 		}
 		Map<String, Object> map = JSONObject.parseObject(value, new TypeReference<Map<String, Object>>() {});
-		
 		if (map == null) {
 			return null;
 		}
-
-		Object newBuildObj = map.get("newBuild");
-		Object lastAccessTimeObj = map.get("lastAccessTime");
-		Object createTimeObj = map.get("createTime");
-		Object attributesObj = map.get("attributes");
-		Object repeatKeyObj = map.get("repeatKey");
-		Object repeatValueObj = map.get("repeatValue");
 		
 		SessionAttribute attr = new SessionAttribute();
-		attr.newBuild = Boolean.parseBoolean(newBuildObj == null ? "false" : newBuildObj.toString());
-		attr.lastAccessTime = (Date) lastAccessTimeObj;
-		attr.createTime = (Date) createTimeObj;
-		attr.attributes = (Map<String, Object>) attributesObj;
-		attr.repeatKey = (String) repeatKeyObj;
-		attr.repeatValue = repeatValueObj;
+		attr.newBuild = map.containsKey("newBuild") && (boolean) map.get("newBuild");
+		attr.lastAccessTime = (Date) map.get("lastAccessTime");
+		attr.createTime = (Date) map.get("createTime");
+		attr.attributes = (Map<String, Object>) map.get("attributes");
+		attr.repeatKey = (String) map.get("repeatKey");
+		attr.repeatValue = map.get("repeatValue");
 		return attr;
-	}
-	
-	/**
-	 * 按指定格式格式化日期
-	 * @param date
-	 * @param pattern
-	 * @return
-	 */
-	private static String formatDate(Date date, String pattern) {
-		return new SimpleDateFormat(pattern).format(date);
-	}
-	
-	/**
-	 * 按指定格式解析日期
-	 * @param dateStr
-	 * @param pattern
-	 * @return
-	 */
-	private static Date parseDate(String dateStr, String pattern) {
-		DateFormat df = new SimpleDateFormat(pattern);
-		try {
-			return df.parse(dateStr);
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
 	}
 }
