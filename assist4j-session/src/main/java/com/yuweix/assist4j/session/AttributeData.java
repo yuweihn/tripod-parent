@@ -69,7 +69,9 @@ public class AttributeData {
 
 		ParserConfig.getGlobalInstance().addAccept(valueClassName);
 		ParserConfig.getGlobalInstance().addAccept(this.getClass().getName());
-		ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
+			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+		}
 		return JSONObject.toJSONString(map, SerializerFeature.WriteClassName);
 	}
 	@SuppressWarnings("unchecked")
@@ -84,7 +86,9 @@ public class AttributeData {
 
 		ParserConfig.getGlobalInstance().addAccept(this.valueClassName);
 		ParserConfig.getGlobalInstance().addAccept(this.getClass().getName());
-		ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
+			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+		}
 
 		try {
 			Class<?> vClz = Class.forName(_valueClassName);
