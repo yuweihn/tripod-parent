@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -155,12 +156,16 @@ public abstract class MonitorUtil {
 			e.printStackTrace();
 		} finally {
 			try {
-				buffer.close();
-			} catch (Exception e) {
+				if (buffer != null) {
+					buffer.close();
+				}
+			} catch (Exception ignored) {
 			}
 			try {
-				inputs.close();
-			} catch (Exception e) {
+				if (inputs != null) {
+					inputs.close();
+				}
+			} catch (Exception ignored) {
 			}
 		}
 		return map;
@@ -199,18 +204,18 @@ public abstract class MonitorUtil {
 				// ThreadCount,UserModeTime,WriteOperation
 				String caption = substring(line, capidx, cmdidx - 1).trim();
 				String cmd = substring(line, cmdidx, kmtidx - 1).trim();
-				if (cmd.indexOf("javaw.exe") >= 0) {
+				if (cmd.contains("javaw.exe")) {
 					continue;
 				}
 				// log.info("line="+line);
 				if (caption.equals("System Idle Process") || caption.equals("System")) {
-					idleTime += Long.valueOf(substring(line, kmtidx, rocidx - 1).trim()).longValue();
-					idleTime += Long.valueOf(substring(line, umtidx, wocidx - 1).trim()).longValue();
+					idleTime += Long.parseLong(substring(line, kmtidx, rocidx - 1).trim());
+					idleTime += Long.parseLong(substring(line, umtidx, wocidx - 1).trim());
 					continue;
 				}
 
-				knelTime += Long.valueOf(substring(line, kmtidx, rocidx - 1).trim()).longValue();
-				userTime += Long.valueOf(substring(line, umtidx, wocidx - 1).trim()).longValue();
+				knelTime += Long.parseLong(substring(line, kmtidx, rocidx - 1).trim());
+				userTime += Long.parseLong(substring(line, umtidx, wocidx - 1).trim());
 			}
 			retn[0] = idleTime;
 			retn[1] = knelTime + userTime;
@@ -228,12 +233,12 @@ public abstract class MonitorUtil {
 	}
 
 	private static String substring(String src, int start_idx, int end_idx) throws UnsupportedEncodingException {
-		byte[] b = src.getBytes("utf-8");
-		String tgt = "";
+		byte[] b = src.getBytes(StandardCharsets.UTF_8);
+		StringBuilder tgt = new StringBuilder();
 		for (int i = start_idx; i <= end_idx; i++) {
-			tgt += (char) b[i];
+			tgt.append((char) b[i]);
 		}
-		return tgt;
+		return tgt.toString();
 	}
 
 
@@ -300,12 +305,16 @@ public abstract class MonitorUtil {
 			return 0;
 		} finally {
 			try {
-				buffer.close();
-			} catch (Exception e) {
+				if (buffer != null) {
+					buffer.close();
+				}
+			} catch (Exception ignored) {
 			}
 			try {
-				inputs.close();
-			} catch (Exception e) {
+				if (inputs != null) {
+					inputs.close();
+				}
+			} catch (Exception ignored) {
 			}
 		}
 	}
@@ -355,9 +364,9 @@ public abstract class MonitorUtil {
 						continue;
 					}
 					++m;
-					if (tmp.indexOf("G") != -1) {
+					if (tmp.contains("G")) {
 						if (m == 2) {
-							if (!tmp.equals("") && !tmp.equals("0")) {
+							if (!tmp.equals("0")) {
 								totalHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1)) * 1024;
 							}
 						}
@@ -367,9 +376,9 @@ public abstract class MonitorUtil {
 							}
 						}
 					}
-					if (tmp.indexOf("M") != -1) {
+					if (tmp.contains("M")) {
 						if (m == 2) {
-							if (!tmp.equals("") && !tmp.equals("0")) {
+							if (!tmp.equals("0")) {
 								totalHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1));
 							}
 						}
@@ -387,8 +396,10 @@ public abstract class MonitorUtil {
 			return 0;
 		} finally {
 			try {
-				in.close();
-			} catch (IOException e) {
+				if (in != null) {
+					in.close();
+				}
+			} catch (IOException ignored) {
 			}
 		}
 	}
@@ -430,15 +441,23 @@ public abstract class MonitorUtil {
 			return new NetSpeed(0, 0);
 		} finally {
 			try {
-				input1.close();
-			} catch (IOException e) {
+				if (input1 != null) {
+					input1.close();
+				}
+			} catch (IOException ignored) {
 			}
 			try {
-				input2.close();
-			} catch (IOException e) {
+				if (input2 != null) {
+					input2.close();
+				}
+			} catch (IOException ignored) {
 			}
-			pro1.destroy();
-			pro2.destroy();
+			if (pro1 != null) {
+				pro1.destroy();
+			}
+			if (pro2 != null) {
+				pro2.destroy();
+			}
 		}
 	}
 
@@ -465,15 +484,23 @@ public abstract class MonitorUtil {
 			return new NetSpeed(0, 0);
 		} finally {
 			try {
-				input1.close();
-			} catch (IOException e) {
+				if (input1 != null) {
+					input1.close();
+				}
+			} catch (IOException ignored) {
 			}
 			try {
-				input2.close();
-			} catch (IOException e) {
+				if (input2 != null) {
+					input2.close();
+				}
+			} catch (IOException ignored) {
 			}
-			pro1.destroy();
-			pro2.destroy();
+			if (pro1 != null) {
+				pro1.destroy();
+			}
+			if (pro2 != null) {
+				pro2.destroy();
+			}
 		}
 	}
 
@@ -483,16 +510,16 @@ public abstract class MonitorUtil {
 		StringTokenizer tokenStat = null;
 		try {
 			if ("linux".equalsIgnoreCase(osType)) {
-				String result[] = input.readLine().split(" ");
+				String[] result = input.readLine().split(" ");
 				int j = 0, k = 0;
 				for (int i = 0; i < result.length; i++) {
-					if (result[i].indexOf("RX") != -1) {
+					if (result[i].contains("RX")) {
 						j++;
 						if (j == 2) {
 							rxResult = result[i + 1].split(":")[1];
 						}
 					}
-					if (result[i].indexOf("TX") != -1) {
+					if (result[i].contains("TX")) {
 						k++;
 						if (k == 2) {
 							txResult = result[i + 1].split(":")[1];

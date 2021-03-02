@@ -76,9 +76,7 @@ public class SpringContext implements ApplicationContextAware {
 		} else {
 			try {
 				Method defaultInitMethod = clz.getMethod(DEFAULT_INIT_METHOD);
-				if (defaultInitMethod != null) {
-					builder.setInitMethodName(defaultInitMethod.getName());
-				}
+				builder.setInitMethodName(defaultInitMethod.getName());
 			} catch (NoSuchMethodException | SecurityException e) {
 				log.warn(e.toString());
 			}
@@ -91,9 +89,7 @@ public class SpringContext implements ApplicationContextAware {
 		} else {
 			try {
 				Method defaultDestroyMethod = clz.getMethod(DEFAULT_DESTROY_METHOD);
-				if (defaultDestroyMethod != null) {
-					builder.setDestroyMethodName(defaultDestroyMethod.getName());
-				}
+				builder.setDestroyMethodName(defaultDestroyMethod.getName());
 			} catch (NoSuchMethodException | SecurityException e) {
 				log.warn(e.toString());
 			}
