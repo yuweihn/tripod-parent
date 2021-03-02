@@ -46,7 +46,7 @@ public class ExceptionAutoConfiguration {
 
 				Response<String, Void> resp = new Response<String, Void>(
 						errorCode == null || "".equals(errorCode) ? "" + status : errorCode,
-						httpStatus == null ? "Unknown" : httpStatus.getReasonPhrase() + "[" + status + "]");
+						httpStatus.getReasonPhrase() + "[" + status + "]");
 				return JSONObject.toJSONString(resp);
 			}
 		}

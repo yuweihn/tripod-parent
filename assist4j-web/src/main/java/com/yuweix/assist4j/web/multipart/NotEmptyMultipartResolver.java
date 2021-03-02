@@ -22,7 +22,7 @@ public class NotEmptyMultipartResolver extends CommonsMultipartResolver {
 	 */
 	@Override
 	protected MultipartParsingResult parseFileItems(List<FileItem> fileItems, String encoding) {
-		if (fileItems == null || fileItems.size() <= 0) {
+		if (fileItems.size() <= 0) {
 			/**
 			 * do nothing.
 			 */
