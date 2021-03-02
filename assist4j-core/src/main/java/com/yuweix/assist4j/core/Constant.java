@@ -19,11 +19,11 @@ public abstract class Constant {
 	 */
 	public static final int DEFAULT_PAGE_SIZE = 10;
 	/**
-	 * 站点地址key
+	 * 上下文KEY
 	 */
 	public static final String CONTEXT_PATH_KEY = "contextPath";
 	/**
-	 * 静态资源地址key
+	 * 静态资源地址KEY
 	 */
 	public static final String STATIC_PATH_KEY = "staticPath";
 }
