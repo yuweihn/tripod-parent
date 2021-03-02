@@ -40,8 +40,8 @@ public class MongoConf {
 	public MongoClientFactory mongoClientFactory(@Value("${assist4j.mongo.need.auth}") boolean needAuth
 			, @Qualifier("mongoSeeds") List<ServerAddress> seeds
 			, @Qualifier("mongoCredential") MongoCredential credential) {
-		MongoClientFactory mongoClientFactory = new MongoClientFactory(needAuth, seeds, credential);
-		return mongoClientFactory;
+		MongoClientFactory factory = new MongoClientFactory(needAuth, seeds, credential);
+		return factory;
 	}
 
 	@Bean(name = "mongoDbFactory")

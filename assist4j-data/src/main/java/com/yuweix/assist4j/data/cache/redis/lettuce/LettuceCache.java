@@ -62,17 +62,8 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 				connection.subscribe(new MessageListener() {
 					@Override
 					public void onMessage(Message message, byte[] bytes) {
-						String channel = null;
-						String msg = null;
-						
-						if (message.getChannel() != null) {
-							channel = new String(message.getChannel(), StandardCharsets.UTF_8);
-						}
-						
-						if (message.getBody() != null) {
-							msg = new String(message.getBody(), StandardCharsets.UTF_8);
-						}
-						
+						String channel = new String(message.getChannel(), StandardCharsets.UTF_8);
+						String msg = new String(message.getBody(), StandardCharsets.UTF_8);
 						handler.handle(channel, msg);
 					}
 				}, channel.getBytes(StandardCharsets.UTF_8));
@@ -143,7 +134,7 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 		Map<?, ?> entries = redisTemplate.opsForHash().entries(key);
 		Map<String, String> strMap = (Map<String, String>) entries;
 		Map<String, T> resMap = new HashMap<String, T>();
-		if (strMap == null || strMap.isEmpty()) {
+		if (strMap.isEmpty()) {
 			return resMap;
 		}
 		for (Map.Entry<String, String> strEntry: strMap.entrySet()) {
