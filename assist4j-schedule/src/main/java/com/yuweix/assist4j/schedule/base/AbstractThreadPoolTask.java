@@ -60,14 +60,14 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 		for (Future<Result> future: futureList) {
 			try {
 				Result result = future.get();
-				if (result.success == false) {
+				if (!result.success) {
 					failList.add(result.task);
 				}
 			} catch (Exception e) {
 				log.error("{}", e.getMessage());
 			}
 		}
-		if (failList != null && failList.size() > 0) {
+		if (failList.size() > 0) {
 			failure(failList);
 		}
 	}

@@ -4,7 +4,6 @@ package com.yuweix.assist4j.sequence.base;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -140,9 +139,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		}
 		try {
 			Method defaultInitMethod = this.sequenceClass.getMethod(DEFAULT_METHOD_INIT);
-			if (defaultInitMethod != null) {
-				this.initMethod = defaultInitMethod.getName();
-			}
+			this.initMethod = defaultInitMethod.getName();
 		} catch (NoSuchMethodException | SecurityException e) {
 			log.warn(e.toString());
 		}
@@ -156,9 +153,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		}
 		try {
 			Method defaultDestroyMethod = this.sequenceClass.getMethod(DEFAULT_METHOD_DESTROY);
-			if (defaultDestroyMethod != null) {
-				this.destroyMethod = defaultDestroyMethod.getName();
-			}
+			this.destroyMethod = defaultDestroyMethod.getName();
 		} catch (NoSuchMethodException | SecurityException e) {
 			log.warn(e.toString());
 		}
@@ -195,9 +190,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		}
 		checkPropertyList();
 
-		Iterator<Entry<String, String>> entryItr = beanSeqMap.entrySet().iterator();
-		while (entryItr.hasNext()) {
-			Entry<String, String> entry = entryItr.next();
+		for (Entry<String, String> entry : beanSeqMap.entrySet()) {
 			String beanName = entry.getKey();
 			String seqNameValue = entry.getValue();
 
@@ -273,7 +266,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 				if (SequenceDao.class.isAssignableFrom(field.getType())) {
 					return;
 				}
-			} catch (Exception e) {
+			} catch (Exception ignored) {
 			}
 		}
 
@@ -287,7 +280,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		}
 
 		String[] beanNamesForSequenceDao = beanFactory.getBeanNamesForType(SequenceDao.class);
-		if (beanNamesForSequenceDao == null || beanNamesForSequenceDao.length != 1) {
+		if (beanNamesForSequenceDao.length != 1) {
 			throw new SequenceException("Error happens while inject field SequenceDao.");
 		}
 
