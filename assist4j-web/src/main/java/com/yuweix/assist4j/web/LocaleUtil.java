@@ -39,10 +39,7 @@ public abstract class LocaleUtil {
 	public static Locale getLocaleFromString(String localeStr){
 		Locale defaultLocale = Locale.getDefault();
 		if ((localeStr == null) || (localeStr.trim().length() == 0) || ("_".equals(localeStr))) {
-			if (defaultLocale != null) {
-				return defaultLocale;
-			}
-			return Locale.getDefault();
+			return defaultLocale;
 		}
 
 		int index = localeStr.indexOf('_');

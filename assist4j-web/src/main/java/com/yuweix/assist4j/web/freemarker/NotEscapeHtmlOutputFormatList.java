@@ -29,7 +29,7 @@ public class NotEscapeHtmlOutputFormatList extends ArrayList<OutputFormat> {
 	}
 
 
-	private static OutputFormat INSTANCE = new CommonMarkupOutputFormat<TemplateHTMLOutputModel>() {
+	private static final OutputFormat INSTANCE = new CommonMarkupOutputFormat<TemplateHTMLOutputModel>() {
 		@Override
 		public void output(String textToEsc, Writer out) throws IOException {
 			out.write(textToEsc);

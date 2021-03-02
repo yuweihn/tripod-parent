@@ -55,9 +55,7 @@ public class LettuceConf {
 			, @Value("${redis.needPassword:false}") boolean needPassword
 			, @Value("${redis.password:}") String password) {
 		RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration();
-		if (host != null || !"".equals(host)) {
-			conf.setHostName(host);
-		}
+		conf.setHostName(host);
 		if (port > 0) {
 			conf.setPort(port);
 		}

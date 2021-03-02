@@ -53,17 +53,17 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 
 	private String getBodyInfo(ContentCachingRequestWrapper request) {
 		byte[] bytes = request.getContentAsByteArray();
-		if (bytes == null || bytes.length <= 0) {
+		if (bytes.length <= 0) {
 			return null;
 		}
 
 		String content = new String(bytes);
-		if (content == null || "".equals(content)) {
+		if ("".equals(content)) {
 			return null;
 		}
 		try {
 			content = URLDecoder.decode(content, "utf-8");
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 
 		if (contentLimit > 0 && content != null && contentLimit < content.length()) {

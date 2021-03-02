@@ -264,6 +264,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		FilterConfig config = this.getFilterConfig();
 		InitParameter initParameter = InitParameter.getInstance();
 
+		assert config != null;
 		String exclusive = config.getInitParameter("exclusive");
 		if (exclusive != null && !"".equals(exclusive.trim())) {
 			initParameter.setExclusivePattern(exclusive.split(","));

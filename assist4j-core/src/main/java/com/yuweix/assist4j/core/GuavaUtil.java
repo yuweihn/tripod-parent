@@ -57,7 +57,7 @@ public class GuavaUtil {
 	}
 
 	private static GuavaUtil DEFAULT_INSTANCE = null;
-	private static Lock LOCK = new ReentrantLock();
+	private static final Lock LOCK = new ReentrantLock();
 	public static GuavaUtil getDefaultInstance() {
 		if (DEFAULT_INSTANCE == null) {
 			try {

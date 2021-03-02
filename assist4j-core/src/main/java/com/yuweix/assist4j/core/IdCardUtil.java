@@ -23,12 +23,12 @@ public abstract class IdCardUtil {
 	/** 中国公民二代身份证号码长度。 */
 	private static final int CHINA_ID_NO_2_LENGTH = 18;
 	/** 加权因子 */
-	private static final int WEIGHT_FACTORS[] = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
-	private static Map<String, String> cityCodes = new HashMap<String, String>();
+	private static final int[] WEIGHT_FACTORS = {7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2};
+	private static final Map<String, String> cityCodes = new HashMap<String, String>();
 	/** 台湾身份首字母对应数字 */
-	private static Map<String, Integer> twFirstCode = new HashMap<String, Integer>();
+	private static final Map<String, Integer> twFirstCode = new HashMap<String, Integer>();
 	/** 香港身份首字母对应数字 */
-	private static Map<String, Integer> hkFirstCode = new HashMap<String, Integer>();
+	private static final Map<String, Integer> hkFirstCode = new HashMap<String, Integer>();
 
 
 	static {
@@ -166,10 +166,7 @@ public abstract class IdCardUtil {
 		if (check18(cardNo0)) {
 			return true;
 		}
-		if (check15(cardNo0)) {
-			return true;
-		}
-		return false;
+		return check15(cardNo0);
 	}
 
 	/**
@@ -241,10 +238,10 @@ public abstract class IdCardUtil {
 		char[] chars = mid.toCharArray();
 		int iflag = 8;
 		for (char c: chars) {
-			sum = sum + Integer.valueOf(c + "") * iflag;
+			sum = sum + Integer.parseInt(c + "") * iflag;
 			iflag--;
 		}
-		return (sum % 10 == 0 ? 0 : (10 - sum % 10)) == Integer.valueOf(end) ? true : false;
+		return (sum % 10 == 0 ? 0 : (10 - sum % 10)) == Integer.parseInt(end);
 	}
 
 	/**
@@ -266,26 +263,26 @@ public abstract class IdCardUtil {
 		String card = cardNo.replaceAll("[\\(|\\)]", "");
 		int sum = 0;
 		if (card.length() == 9) {
-			sum = (Integer.valueOf(card.substring(0, 1).toUpperCase().toCharArray()[0]) - 55) * 9
-					+ (Integer.valueOf(card.substring(1, 2).toUpperCase().toCharArray()[0]) - 55) * 8;
+			sum = ((int) card.substring(0, 1).toUpperCase().toCharArray()[0] - 55) * 9
+					+ ((int) card.substring(1, 2).toUpperCase().toCharArray()[0] - 55) * 8;
 			card = card.substring(1, 9);
 		} else {
-			sum = 522 + (Integer.valueOf(card.substring(0, 1).toUpperCase().toCharArray()[0]) - 55) * 8;
+			sum = 522 + ((int) card.substring(0, 1).toUpperCase().toCharArray()[0] - 55) * 8;
 		}
 		String mid = card.substring(1, 7);
 		String end = card.substring(7, 8);
 		char[] chars = mid.toCharArray();
 		Integer iflag = 7;
 		for (char c: chars) {
-			sum = sum + Integer.valueOf(c + "") * iflag;
+			sum = sum + Integer.parseInt(c + "") * iflag;
 			iflag--;
 		}
 		if (end.toUpperCase().equals("A")) {
 			sum = sum + 10;
 		} else {
-			sum = sum + Integer.valueOf(end);
+			sum = sum + Integer.parseInt(end);
 		}
-		return (sum % 11 == 0) ? true : false;
+		return sum % 11 == 0;
 	}
 
 	/**
@@ -464,6 +461,6 @@ public abstract class IdCardUtil {
 	 * @param val
 	 */
 	private static boolean isNum(String val) {
-		return val == null || "".equals(val) ? false : val.matches("^[0-9]*$");
+		return val != null && !"".equals(val) && val.matches("^[0-9]*$");
 	}
 }

@@ -53,6 +53,12 @@ public class NeedRetryHandler implements HttpRequestRetryHandler {
 			return false;
 		}
 		/**
+		 * 连接超时
+		 */
+		if (exception instanceof ConnectTimeoutException) {
+			return true;
+		}
+		/**
 		 * io操作中断
 		 */
 		if (exception instanceof InterruptedIOException) {
@@ -63,12 +69,6 @@ public class NeedRetryHandler implements HttpRequestRetryHandler {
 		 */
 		if (exception instanceof UnknownHostException) {
 			return false;
-		}
-		/**
-		 * 连接超时
-		 */
-		if (exception instanceof ConnectTimeoutException) {
-			return true;
 		}
 		/**
 		 * SSL handshake exception

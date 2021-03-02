@@ -7,6 +7,7 @@ import com.yuweix.assist4j.dao.sharding.Strategy;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,7 +65,7 @@ public abstract class AbstractProvider {
 		String tableName = tableNameMap.get(className);
 		if (tableName == null) {
 			Table table = clz.getAnnotation(Table.class);
-			if (table != null && table.name() != null && !"".equals(table.name().trim())) {
+			if (table != null && !"".equals(table.name().trim())) {
 				tableName = table.name().trim();
 			} else {
 				tableName = toUnderline(clz.getSimpleName());
@@ -165,10 +166,7 @@ public abstract class AbstractProvider {
 		final List<Field> allFields = new ArrayList<Field>();
 		Class<?> currentClass = clz;
 		while (currentClass != null) {
-			final Field[] declaredFields = currentClass.getDeclaredFields();
-			for (Field field : declaredFields) {
-				allFields.add(field);
-			}
+			allFields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
 			currentClass = currentClass.getSuperclass();
 		}
 
@@ -180,7 +178,7 @@ public abstract class AbstractProvider {
 			}
 
 			String colName = column.name();
-			if (colName == null || "".equals(colName.trim())) {
+			if ("".equals(colName.trim())) {
 				colName = toUnderline(field.getName());
 			}
 			if (colName == null || "".equals(colName.trim())) {
