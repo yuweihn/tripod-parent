@@ -49,8 +49,8 @@ public abstract class AbstractTask {
 			}
 			after();
 			long timeCost = System.currentTimeMillis() - startTime;
-			log.info("Job executed here, JobName: {}, LocalNode: {}, TimeCost: {}s"
-					, this.getClass().getName(), localNode, timeCost / 1000.0);
+			log.info("Job executed here, JobName: {}, LocalNode: {}, TimeCost: {}"
+					, this.getClass().getName(), localNode, timeCost >= 1000 ? (timeCost / 1000.0) + "s" : timeCost + "ms");
 		} else {
 			log.info("Not leader, job didn't execute! JobName: {}, Leader: {}", this.getClass().getName(), leaderNode);
 		}
