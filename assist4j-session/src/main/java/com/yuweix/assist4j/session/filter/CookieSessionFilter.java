@@ -40,7 +40,8 @@ public class CookieSessionFilter extends AbstractSessionFilter {
 		if (sid == null || "".equals(sid)) {
 			sid = UUID.randomUUID().toString().replace("-", "");
 		}
-		CookiesUtil.addCookie(request, response, _cookieName, sid,null,null, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
+		CookiesUtil.addCookie(request, response, _cookieName, sid, null, null
+				, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 		return sid;
 	}
 }
