@@ -13,7 +13,7 @@ import com.yuweix.assist4j.session.conf.SessionConf;
 /**
  * @author yuwei
  */
-public class CookieSessionFilter extends AbstractSessionFilter {
+public class CookieSessionFilter extends SessionFilter {
 	private String cookieName;
 
 

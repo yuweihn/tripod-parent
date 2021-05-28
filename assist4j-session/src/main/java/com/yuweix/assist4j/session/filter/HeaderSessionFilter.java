@@ -14,7 +14,7 @@ import java.util.UUID;
  * 从header中取出某个值作为sessionId
  * @author yuwei
  */
-public class HeaderSessionFilter extends AbstractSessionFilter {
+public class HeaderSessionFilter extends SessionFilter {
 	private String key;
 
 

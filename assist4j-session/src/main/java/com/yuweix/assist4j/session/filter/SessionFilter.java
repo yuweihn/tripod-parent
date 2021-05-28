@@ -15,7 +15,7 @@ import java.io.IOException;
 /**
  * @author yuwei
  */
-public abstract class AbstractSessionFilter implements Filter {
+public abstract class SessionFilter implements Filter {
 	/**
 	 * 需要排除的URI
 	 */
@@ -25,10 +25,10 @@ public abstract class AbstractSessionFilter implements Filter {
 	/**
 	 * @param cache                           缓存引擎
 	 */
-	public AbstractSessionFilter(SessionCache cache) {
+	public SessionFilter(SessionCache cache) {
 		setCache(cache);
 	}
-	public AbstractSessionFilter() {
+	public SessionFilter() {
 
 	}
 
