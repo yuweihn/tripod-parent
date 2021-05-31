@@ -2,6 +2,7 @@ package com.yuweix.assist4j.core.cloud;
 
 
 import com.aliyun.oss.OSSClient;
+import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.GetObjectRequest;
 import com.aliyun.oss.model.OSSObject;
@@ -50,7 +51,8 @@ public class OssUtil {
 			ossClientLock.lock();
 			try {
 				if (ossClient == null) {
-					ossClient = new OSSClient(this.endpoint, this.accessKey, this.accessSecret);
+					ossClient = new OSSClient(this.endpoint
+							, new DefaultCredentialProvider(this.accessKey, this.accessSecret), null);
 				}
 			} finally {
 				ossClientLock.unlock();
@@ -76,7 +78,6 @@ public class OssUtil {
 				ossClientWithBucketLock.unlock();
 			}
 		}
-
 		return ossClient;
 	}
 
