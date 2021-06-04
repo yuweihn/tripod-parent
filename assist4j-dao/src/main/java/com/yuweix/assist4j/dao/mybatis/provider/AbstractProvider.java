@@ -26,6 +26,7 @@ public abstract class AbstractProvider {
 	private static SoftReference<Map<String, String>> SELECT_SQL_REF;
 	private static SoftReference<Map<String, String>> SELECT_SQL_WITH_TABLE_ALIAS_REF;
 	private static SoftReference<Map<String, List<FieldColumn>>> PERSIST_FIELD_REF;
+	private static SoftReference<Map<Class<? extends Strategy>, Strategy>> SHARD_STRATEGY_REF;
 
 
 	/**
@@ -221,12 +222,23 @@ public abstract class AbstractProvider {
 		if (sharding == null) {
 			return null;
 		}
-		try {
-			Strategy shardingStrategy = sharding.strategy().newInstance();
-			return shardingStrategy.getShardingIndex(tableName, shardingVal);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		Class<? extends Strategy> strategyClz = sharding.strategy();
+
+		Map<Class<? extends Strategy>, Strategy> strategyMap = null;
+		if (SHARD_STRATEGY_REF == null || (strategyMap = SHARD_STRATEGY_REF.get()) == null) {
+			strategyMap = new ConcurrentHashMap<>();
+			SHARD_STRATEGY_REF = new SoftReference<>(strategyMap);
 		}
+		Strategy strategy = strategyMap.get(strategyClz);
+		if (strategy == null) {
+			try {
+				strategy = strategyClz.newInstance();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			strategyMap.put(strategyClz, strategy);
+		}
+		return strategy.getShardingIndex(tableName, shardingVal);
 	}
 
 	protected <T>String getPhysicalTableName(Class<T> entityClass, Object shardingVal) {
