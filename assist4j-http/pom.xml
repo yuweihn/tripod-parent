@@ -17,7 +17,7 @@
 		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
 		<maven.compiler.encoding>utf-8</maven.compiler.encoding>
 		<fastjson.version>1.2.47</fastjson.version>
-		<httpclient.version>4.5.5</httpclient.version>
+		<httpclient.version>4.5.13</httpclient.version>
 		<httpcore.version>4.4.9</httpcore.version>
 		<jdk.version>1.8</jdk.version>
 		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
