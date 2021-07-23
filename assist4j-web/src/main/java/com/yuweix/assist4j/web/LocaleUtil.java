@@ -15,7 +15,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
  * @author yuwei
  */
 public abstract class LocaleUtil {
-	public static Locale getLocale(){
+	public static Locale getLocale() {
 		HttpServletRequest request = ActionUtil.getRequest();
 		if (request == null) {
 			return getLocaleFromString(Constant.LOCALE_ZH_CN);
@@ -24,11 +24,11 @@ public abstract class LocaleUtil {
 		return localeResolver.resolveLocale(request);
 	}
 
-	public static void setLocale(String locale){
+	public static void setLocale(String locale) {
 		setLocale(getLocaleFromString(locale));
 	}
 
-	private static void setLocale(Locale locale){
+	private static void setLocale(Locale locale) {
 		HttpServletRequest request = ActionUtil.getRequest();
 		LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
 		LocaleEditor localeEditor = new LocaleEditor();
@@ -36,7 +36,7 @@ public abstract class LocaleUtil {
 		localeResolver.setLocale(request, null, locale);
 	}
 
-	public static Locale getLocaleFromString(String localeStr){
+	public static Locale getLocaleFromString(String localeStr) {
 		Locale defaultLocale = Locale.getDefault();
 		if ((localeStr == null) || (localeStr.trim().length() == 0) || ("_".equals(localeStr))) {
 			return defaultLocale;
