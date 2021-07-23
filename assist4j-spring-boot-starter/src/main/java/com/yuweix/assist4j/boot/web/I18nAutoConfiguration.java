@@ -20,8 +20,8 @@ import java.lang.reflect.Constructor;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.web.enabled")
-public class WebAutoConfiguration {
+@ConditionalOnProperty(name = "assist4j.boot.i18n.enabled")
+public class I18nAutoConfiguration {
 	@ConditionalOnBean(name = "messageSource")
 	@ConditionalOnMissingBean
 	@Bean
