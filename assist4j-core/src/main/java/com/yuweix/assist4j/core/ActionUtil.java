@@ -2,11 +2,8 @@ package com.yuweix.assist4j.core;
 
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -116,27 +113,22 @@ public abstract class ActionUtil {
 	/**
 	 * 将站点URL存入ServletContext中
 	 */
-	public static void addContextPath(String scheme) {
-		addContextPath(getRequest(), scheme);
+	public static void addContextPath() {
+		addContextPath(getRequest());
 	}
 
 	/**
 	 * 将站点URL存入ServletContext中
 	 */
-	public static void addContextPath(HttpServletRequest request, String scheme) {
-		if (scheme == null || "".equals(scheme.trim())) {
-			scheme = request.getScheme();
+	public static void addContextPath(HttpServletRequest request) {
+		try {
+			URI uri = new URI(request.getRequestURL().toString());
+			URI effectiveURI = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), null, null, null);
+			String contextPath = effectiveURI.toString().replace("http:", "").replace("https:", "");
+			request.getServletContext().setAttribute(Constant.CONTEXT_PATH_KEY, contextPath);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		StringBuilder builder = new StringBuilder("");
-		builder.append(scheme).append("://").append(request.getServerName());
-
-		int port = request.getServerPort();
-		if (port != Constant.DEFAULT_HTTP_PORT && port != Constant.DEFAULT_HTTPS_PORT && port > 0) {
-			builder.append(":").append(port);
-		}
-		builder.append(request.getContextPath());
-
-		request.getServletContext().setAttribute(Constant.CONTEXT_PATH_KEY, builder.toString());
 	}
 
 	/**
@@ -186,11 +178,7 @@ public abstract class ActionUtil {
 	}
 
 	public static void output(String str) {
-		try {
-			output(str.getBytes(Constant.ENCODING_UTF_8), "text/html");
-		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		output(str.getBytes(StandardCharsets.UTF_8), "text/html");
 	}
 
 	public static void output(byte[] content, String contentType) {

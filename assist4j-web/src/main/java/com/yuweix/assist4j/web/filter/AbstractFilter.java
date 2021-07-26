@@ -200,7 +200,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	 * 将站点域名和static资源地址存入context
 	 **/
 	protected void setContextPath(R request) {
-		ActionUtil.addContextPath(request, scheme);
+		ActionUtil.addContextPath(request);
 		ActionUtil.addStaticPath(request, staticPath);
 	}
 
