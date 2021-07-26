@@ -37,7 +37,6 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	private String methodParam = DEFAULT_METHOD_PARAM;
 	private String encoding = DEFAULT_ENCODING;
 	private String staticPath = DEFAULT_STATIC_PATH;
-	private String scheme = null;
 	/**
 	 * 跨域白名单
 	 * 如果originWhiteList为空，所有origin都可访问，否则只允许规定的origin访问
@@ -56,10 +55,6 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 	public void setStaticPath(String staticPath) {
 		this.staticPath = staticPath;
-	}
-
-	public void setScheme(String scheme) {
-		this.scheme = scheme;
 	}
 
 	public void setOriginWhiteList(List<String> originWhiteList) {
