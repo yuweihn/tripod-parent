@@ -77,7 +77,7 @@ public abstract class ActionUtil {
 			Enumeration<InetAddress> address = ni.getInetAddresses();
 			while (address.hasMoreElements()) {
 				ip = address.nextElement();
-				if (!ip.isSiteLocalAddress() && !ip.isLoopbackAddress() && ip.getHostAddress().indexOf(":") < 0) {
+				if (!ip.isSiteLocalAddress() && !ip.isLoopbackAddress() && !ip.getHostAddress().contains(":")) {
 					netIp = ip.getHostAddress();
 					found = true;
 					break;
@@ -124,7 +124,7 @@ public abstract class ActionUtil {
 		try {
 			URI uri = new URI(request.getRequestURL().toString());
 			URI effectiveURI = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), null, null, null);
-			String contextPath = effectiveURI.toString().replace("http:", "").replace("https:", "");
+			String contextPath = effectiveURI.toString().replaceFirst("http:", "").replaceFirst("https:", "");
 			request.getServletContext().setAttribute(Constant.CONTEXT_PATH_KEY, contextPath);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -190,6 +190,7 @@ public abstract class ActionUtil {
 	 */
 	public static void output(byte[] content, String contentType, Map<String, String> headers) {
 		HttpServletResponse response = getResponse();
+		assert response != null;
 		response.setContentType(contentType + "; charset=" + Constant.ENCODING_UTF_8);
 		response.setHeader("Cache-Control", "no-cache, no-store");
 		response.setHeader("Pragma", "no-cache");
