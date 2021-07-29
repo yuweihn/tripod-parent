@@ -51,7 +51,7 @@
         <spring.mongodb.version>1.10.9.RELEASE</spring.mongodb.version>
         <spring.redis.version>2.0.8.RELEASE</spring.redis.version>
         <spring.version>5.0.7.RELEASE</spring.version>
-        <zookeeper.version>3.4.9</zookeeper.version>
+        <zookeeper.version>3.4.14</zookeeper.version>
         <zxing.version>3.3.0</zxing.version>
     </properties>
 
