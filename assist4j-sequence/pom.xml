@@ -3,60 +3,40 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.yuweix</groupId>
+	<parent>
+		<groupId>com.yuweix</groupId>
+		<artifactId>assist4j-parent</artifactId>
+		<version>1.1.13</version>
+	</parent>
+
 	<artifactId>assist4j-sequence</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1.13</version>
+	<version>${parent.version}</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>The Project of Assist4j</description>
 	<url>https://www.yuweix.com</url>
 
-	<properties>
-		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
-		<maven.compiler.encoding>utf-8</maven.compiler.encoding>
-		<jdk.version>1.8</jdk.version>
-		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
-		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
-		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
-		<maven.source.plugin.version>3.0.1</maven.source.plugin.version>
-		<slf4j.version>1.7.25</slf4j.version>
-		<spring.version>5.0.7.RELEASE</spring.version>
-		<springboot.version>2.0.4.RELEASE</springboot.version>
-	</properties>
-
-
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
-			<version>${springboot.version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

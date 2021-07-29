@@ -3,168 +3,104 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.yuweix</groupId>
+	<parent>
+		<groupId>com.yuweix</groupId>
+		<artifactId>assist4j-parent</artifactId>
+		<version>1.1.13</version>
+	</parent>
+
 	<artifactId>assist4j-data</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1.13</version>
+	<version>${parent.version}</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>The Project of Assist4j</description>
 	<url>https://www.yuweix.com</url>
 
-	<properties>
-		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
-		<maven.compiler.encoding>utf-8</maven.compiler.encoding>
-		<activemq.core.version>5.7.0</activemq.core.version>
-		<activemq.pool.version>5.15.0</activemq.pool.version>
-		<aspectj.version>1.8.13</aspectj.version>
-		<fastjson.version>1.2.47</fastjson.version>
-		<hibernate.version>5.2.17.Final</hibernate.version>
-		<jdk.version>1.8</jdk.version>
-		<jedis.version>2.9.0</jedis.version>
-		<lettuce.version>5.0.4.RELEASE</lettuce.version>
-		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
-		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
-		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
-		<maven.source.plugin.version>3.0.1</maven.source.plugin.version>
-		<mongodb.driver.version>3.6.0</mongodb.driver.version>
-		<mybatis.spring.version>1.3.1</mybatis.spring.version>
-		<mybatis.version>3.4.5</mybatis.version>
-		<slf4j.version>1.7.25</slf4j.version>
-		<spring.mongodb.version>1.10.9.RELEASE</spring.mongodb.version>
-		<spring.redis.version>2.0.8.RELEASE</spring.redis.version>
-		<spring.version>5.0.7.RELEASE</spring.version>
-		<springboot.version>2.0.4.RELEASE</springboot.version>
-	</properties>
-
-
 	<dependencies>
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>${fastjson.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>${aspectj.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
-			<version>${jedis.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>io.lettuce</groupId>
 			<artifactId>lettuce-core</artifactId>
-			<version>${lettuce.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongo-java-driver</artifactId>
-			<version>${mongodb.driver.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-ehcache</artifactId>
-			<version>${hibernate.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-core</artifactId>
-			<version>${activemq.core.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-pool</artifactId>
-			<version>${activemq.pool.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
-			<version>${mybatis.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis-spring</artifactId>
-			<version>${mybatis.spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-mongodb</artifactId>
-			<version>${spring.mongodb.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-redis</artifactId>
-			<version>${spring.redis.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jms</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-autoconfigure</artifactId>
-			<version>${springboot.version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

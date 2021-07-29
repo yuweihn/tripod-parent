@@ -3,153 +3,94 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.yuweix</groupId>
+	<parent>
+		<groupId>com.yuweix</groupId>
+		<artifactId>assist4j-parent</artifactId>
+		<version>1.1.13</version>
+	</parent>
+
 	<artifactId>assist4j-core</artifactId>
 	<packaging>jar</packaging>
-	<version>1.1.13</version>
+	<version>${parent.version}</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>The Project of Assist4j</description>
 	<url>https://www.yuweix.com</url>
 
-	<properties>
-		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
-		<maven.compiler.encoding>utf-8</maven.compiler.encoding>
-		<activemq.core.version>5.7.0</activemq.core.version>
-		<activemq.pool.version>5.14.5</activemq.pool.version>
-		<aliyun.oss.version>3.12.0</aliyun.oss.version>
-		<qcloud.cos_api.version>5.6.35</qcloud.cos_api.version>
-		<fastjson.version>1.2.47</fastjson.version>
-		<javax.mail.version>1.4.7</javax.mail.version>
-		<jdk.version>1.8</jdk.version>
-		<jms.spec.version>1.1.1</jms.spec.version>
-		<guava.version>18.0</guava.version>
-		<maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
-		<maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
-		<maven.javadoc.plugin.version>3.0.0</maven.javadoc.plugin.version>
-		<maven.source.plugin.version>3.0.1</maven.source.plugin.version>
-		<poi.version>3.14</poi.version>
-		<servlet.version>3.1.0</servlet.version>
-		<slf4j.version>1.7.25</slf4j.version>
-		<spring.version>5.0.7.RELEASE</spring.version>
-		<zxing.version>3.3.0</zxing.version>
-	</properties>
-
-
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>${servlet.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
 			<artifactId>geronimo-jms_1.1_spec</artifactId>
-			<version>${jms.spec.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>${slf4j.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>${slf4j.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-			<version>${javax.mail.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba</groupId>
 			<artifactId>fastjson</artifactId>
-			<version>${fastjson.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-core</artifactId>
-			<version>${activemq.core.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-pool</artifactId>
-			<version>${activemq.pool.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jms</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
-			<version>${spring.version}</version>
-			<scope>provided</scope>
 		</dependency>
-		<!-- 阿里云OSS -->
 		<dependency>
 			<groupId>com.aliyun.oss</groupId>
 			<artifactId>aliyun-sdk-oss</artifactId>
-			<version>${aliyun.oss.version}</version>
-			<scope>provided</scope>
 		</dependency>
-		<!--腾讯云存储SDK-->
 		<dependency>
 			<groupId>com.qcloud</groupId>
 			<artifactId>cos_api</artifactId>
-			<version>${qcloud.cos_api.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<!-- poi -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-scratchpad</artifactId>
-			<version>${poi.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>${poi.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<!-- 二维码工具 -->
 		<dependency>
 			<groupId>com.google.zxing</groupId>
 			<artifactId>core</artifactId>
-			<version>${zxing.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.zxing</groupId>
 			<artifactId>javase</artifactId>
-			<version>${zxing.version}</version>
-			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>${guava.version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
