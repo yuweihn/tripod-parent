@@ -3,24 +3,16 @@ package com.yuweix.assist4j.boot.datasource;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.assist4j.data.springboot.MybatisConf;
-import com.yuweix.assist4j.sequence.base.DefaultSequence;
-import com.yuweix.assist4j.sequence.base.SequenceBeanFactory;
-import com.yuweix.assist4j.sequence.base.SequenceBeanHolder;
-import com.yuweix.assist4j.sequence.dao.SegmentSequenceDao;
-import com.yuweix.assist4j.sequence.dao.SequenceDao;
-import org.springframework.beans.factory.annotation.Qualifier;
+import com.yuweix.assist4j.sequence.springboot.SequenceConf;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -28,7 +20,7 @@ import java.util.Map;
  */
 @Configuration
 @ConditionalOnProperty(name = "assist4j.boot.mybatis.enabled")
-@Import({MybatisConf.class})
+@Import({MybatisConf.class, SequenceConf.class})
 public class MybatisAutoConfiguration {
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
@@ -76,47 +68,5 @@ public class MybatisAutoConfiguration {
 		dataSource.setMaxPoolPreparedStatementPerConnectionSize(maxPoolPreparedStatementPerConnectionSize);
 		dataSource.setMaxOpenPreparedStatements(maxOpenPreparedStatements);
 		return dataSource;
-	}
-
-	@ConditionalOnMissingBean(name = "sequenceDao")
-	@Bean(name = "sequenceDao", initMethod = "init", destroyMethod = "destroy")
-	public SequenceDao sequenceDao(@Qualifier("dataSource") DataSource dataSource
-			, @Value("${assist4j.sequence-setting.innerStep:100}") int innerStep
-			, @Value("${assist4j.sequence-setting.retryTimes:5}") int retryTimes
-			, @Value("${assist4j.sequence-setting.segmentCount:1}") int segmentCount
-			, @Value("${assist4j.sequence-setting.maxSkipCount:5}") int maxSkipCount
-			, @Value("${assist4j.sequence-setting.maxWaitMillis:5000}") long maxWaitMillis
-			, @Value("${assist4j.sequence-setting.ruleClassName:}") String ruleClassName
-			, @Value("${assist4j.sequence-setting.tableName:sequence}") String tableName) {
-		SegmentSequenceDao sequenceDao = new SegmentSequenceDao();
-		sequenceDao.setDataSource(dataSource);
-		sequenceDao.setInnerStep(innerStep);
-		sequenceDao.setRetryTimes(retryTimes);
-		sequenceDao.setSegmentCount(segmentCount);
-		sequenceDao.setMaxSkipCount(maxSkipCount);
-		sequenceDao.setMaxWaitMillis(maxWaitMillis);
-		sequenceDao.setRuleClassName(ruleClassName);
-		sequenceDao.setTableName(tableName);
-		return sequenceDao;
-	}
-
-	@ConditionalOnMissingBean(name = "sequenceBeanHolder")
-	@Bean(name = "sequenceBeanHolder")
-	@ConfigurationProperties(prefix = "assist4j", ignoreUnknownFields = true)
-	public SequenceBeanHolder sequenceBeanHolder() {
-		return new SequenceBeanHolder() {
-			private Map<String, String> sequence = new HashMap<String, String>();
-
-			@Override
-			public Map<String, String> getSequenceMap() {
-				return sequence;
-			}
-		};
-	}
-
-	@ConditionalOnMissingBean(name = "sequenceBeanFactory")
-	@Bean(name = "sequenceBeanFactory")
-	public SequenceBeanFactory sequenceBeanFactory() {
-		return new SequenceBeanFactory(DefaultSequence.class, "sequenceBeanHolder");
 	}
 }
