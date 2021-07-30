@@ -32,8 +32,6 @@ public abstract class MonitorUtil {
 	private static final String OS_NAME = System.getProperty("os.name");
 
 
-
-
 	/**
 	 * 获取cpu使用率
 	 * @param sleep            两次检测cpu的时间间隔(ms)
@@ -409,7 +407,7 @@ public abstract class MonitorUtil {
 	 * @param sleep            测网速时线程睡眠时间(ms)
 	 * @return
 	 */
-	public static NetSpeed getNetworkThroughput(long sleep) {
+	public static Network getNetworkThroughput(long sleep) {
 		Assert.isTrue(sleep > 0, "[sleep] must be larger than 0.");
 		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
 			return getNetworkThroughputForWindows(sleep);
@@ -418,7 +416,7 @@ public abstract class MonitorUtil {
 		}
 	}
 
-	private static NetSpeed getNetworkThroughputForWindows(long sleep) {
+	private static Network getNetworkThroughputForWindows(long sleep) {
 		Process pro1 = null;
 		Process pro2 = null;
 		Runtime r = Runtime.getRuntime();
@@ -435,10 +433,10 @@ public abstract class MonitorUtil {
 			NetDataBytes ndb2 = readInLine(input2, "windows");
 			double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, sleep);
 			double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, sleep);
-			return new NetSpeed(rx, tx);
+			return new Network(rx, tx);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new NetSpeed(0, 0);
+			return new Network(0, 0);
 		} finally {
 			try {
 				if (input1 != null) {
@@ -461,7 +459,7 @@ public abstract class MonitorUtil {
 		}
 	}
 
-	private static NetSpeed getNetworkThroughputForLinux(long sleep) {
+	private static Network getNetworkThroughputForLinux(long sleep) {
 		Process pro1 = null;
 		Process pro2 = null;
 		Runtime r = Runtime.getRuntime();
@@ -478,10 +476,10 @@ public abstract class MonitorUtil {
 			NetDataBytes ndb2 = readInLine(input2, "linux");
 			double rx = MathUtil.div((ndb2.down - ndb1.down) * 1000, sleep);
 			double tx = MathUtil.div((ndb2.up - ndb1.up) * 1000, sleep);
-			return new NetSpeed(rx, tx);
+			return new Network(rx, tx);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new NetSpeed(0, 0);
+			return new Network(0, 0);
 		} finally {
 			try {
 				if (input1 != null) {
@@ -551,11 +549,11 @@ public abstract class MonitorUtil {
 			this.down = down;
 		}
 	}
-	public static class NetSpeed {
+	public static class Network {
 		private Date time;
 		private double up;
 		private double down;
-		private NetSpeed(double up, double down) {
+		private Network(double up, double down) {
 			this.time = new Date();
 			this.up = up;
 			this.down = down;
@@ -571,7 +569,7 @@ public abstract class MonitorUtil {
 		}
 		@Override
 		public String toString() {
-			return JSON.toJSONString(NetSpeed.this);
+			return JSON.toJSONString(Network.this);
 		}
 	}
 }
