@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -37,13 +36,15 @@ public abstract class MonitorUtil {
 	 * @param sleep            两次检测cpu的时间间隔(ms)
 	 * @return
 	 */
-	public static double getCpuUsage(long sleep) {
+	public static Cpu getCpuInfo(long sleep) {
 		Assert.isTrue(sleep > 0, "[sleep] must be larger than 0.");
+		double percent = 0;
 		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
-			return getCpuUsageForWindows(sleep);
+			percent = getCpuUsageForWindows(sleep);
 		} else {
-			return getCpuUsageForLinux(sleep);
+			percent = getCpuUsageForLinux(sleep);
 		}
+		return new Cpu(Runtime.getRuntime().availableProcessors(), percent);
 	}
 
 	/**
@@ -238,13 +239,31 @@ public abstract class MonitorUtil {
 		}
 		return tgt.toString();
 	}
+	public static class Cpu {
+		private int count;
+		private double percent;
+		private Cpu(int count, double percent) {
+			this.count = count;
+			this.percent = percent;
+		}
+		public int getCount() {
+			return count;
+		}
+		public double getPercent() {
+			return percent;
+		}
+		@Override
+		public String toString() {
+			return JSON.toJSONString(Cpu.this);
+		}
+	}
 
 
 	/**
 	 * 获取内存使用率
 	 * @return
 	 */
-	public static Memory getMemUsage() {
+	public static Memory getMemoryInfo() {
 		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
 			return getMemUsageForWindows();
 		} else {
