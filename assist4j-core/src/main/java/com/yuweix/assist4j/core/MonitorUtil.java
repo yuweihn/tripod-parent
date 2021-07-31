@@ -569,23 +569,17 @@ public abstract class MonitorUtil {
 		StringTokenizer tokenStat = null;
 		try {
 			if ("linux".equalsIgnoreCase(osType)) {
-				String[] result = input.readLine().split(" ");
-				int j = 0, k = 0;
-				for (int i = 0; i < result.length; i++) {
-					if (result[i].contains("RX")) {
-						j++;
-						if (j == 2) {
-							rxResult = result[i + 1].split(":")[1];
-						}
-					}
-					if (result[i].contains("TX")) {
-						k++;
-						if (k == 2) {
-							txResult = result[i + 1].split(":")[1];
-							break;
-						}
+				long rx = 0, tx = 0;
+				String line = null;
+				while ((line = input.readLine()) != null) {
+					if (line.contains("RX packets")) {
+						rx += Long.parseLong(line.split("packets")[1].split("bytes")[0].trim()) * 1024;
+					} else if (line.contains("TX packets")) {
+						tx += Long.parseLong(line.split("packets")[1].split("bytes")[0].trim()) * 1024;
 					}
 				}
+				rxResult = "" + rx;
+				txResult = "" + tx;
 			} else {
 				input.readLine();
 				input.readLine();
