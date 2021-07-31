@@ -527,7 +527,7 @@ public abstract class MonitorUtil {
 		BufferedReader input1 = null;
 		BufferedReader input2 = null;
 		try {
-			String command = "watch ifconfig";
+			String command = "ifconfig";
 			pro1 = r.exec(command);
 			input1 = new BufferedReader(new InputStreamReader(pro1.getInputStream()));
 			NetDataBytes ndb1 = readInLine(input1, "linux");
