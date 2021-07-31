@@ -38,13 +38,13 @@ public abstract class MonitorUtil {
 	 */
 	public static Cpu getCpuInfo(long sleep) {
 		Assert.isTrue(sleep > 0, "[sleep] must be larger than 0.");
-		double percent = 0;
+		double usage = 0;
 		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
-			percent = getCpuUsageForWindows(sleep);
+			usage = getCpuUsageForWindows(sleep);
 		} else {
-			percent = getCpuUsageForLinux(sleep);
+			usage = getCpuUsageForLinux(sleep);
 		}
-		return new Cpu(Runtime.getRuntime().availableProcessors(), percent);
+		return new Cpu(Runtime.getRuntime().availableProcessors(), usage);
 	}
 
 	/**
@@ -241,16 +241,16 @@ public abstract class MonitorUtil {
 	}
 	public static class Cpu {
 		private int count;
-		private double percent;
-		private Cpu(int count, double percent) {
+		private double usage;
+		private Cpu(int count, double usage) {
 			this.count = count;
-			this.percent = percent;
+			this.usage = usage;
 		}
 		public int getCount() {
 			return count;
 		}
-		public double getPercent() {
-			return percent;
+		public double getUsage() {
+			return usage;
 		}
 		@Override
 		public String toString() {
@@ -348,7 +348,7 @@ public abstract class MonitorUtil {
 		public double getUsed() {
 			return used;
 		}
-		public double getPercent() {
+		public double getUsage() {
 			return MathUtil.div(used, total);
 		}
 		@Override
@@ -454,7 +454,7 @@ public abstract class MonitorUtil {
 		public double getUsed() {
 			return used;
 		}
-		public double getPercent() {
+		public double getUsage() {
 			return MathUtil.div(used, total);
 		}
 		@Override
