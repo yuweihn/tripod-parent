@@ -230,7 +230,7 @@ public abstract class MonitorUtil {
 		return null;
 	}
 
-	private static String substring(String src, int start_idx, int end_idx) throws UnsupportedEncodingException {
+	private static String substring(String src, int start_idx, int end_idx) {
 		byte[] b = src.getBytes(StandardCharsets.UTF_8);
 		StringBuilder tgt = new StringBuilder();
 		for (int i = start_idx; i <= end_idx; i++) {
@@ -244,7 +244,7 @@ public abstract class MonitorUtil {
 	 * 获取内存使用率
 	 * @return
 	 */
-	public static double getMemUsage() {
+	public static Memory getMemUsage() {
 		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
 			return getMemUsageForWindows();
 		} else {
@@ -252,21 +252,21 @@ public abstract class MonitorUtil {
 		}
 	}
 
-	private static double getMemUsageForWindows() {
+	private static Memory getMemUsageForWindows() {
 		try {
 			OperatingSystemMXBean osmxb = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
 			// 总的物理内存+虚拟内存
 			long totalVirtualMemory = osmxb.getTotalSwapSpaceSize();
 			// 剩余的物理内存
 			long freePhysicalMemorySize = osmxb.getFreePhysicalMemorySize();
-			return MathUtil.div(totalVirtualMemory - freePhysicalMemorySize, totalVirtualMemory);
+			return new Memory(totalVirtualMemory, totalVirtualMemory - freePhysicalMemorySize);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return 0;
+			return null;
 		}
 	}
 
-	private static double getMemUsageForLinux() {
+	private static Memory getMemUsageForLinux() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		InputStreamReader inputs = null;
 		BufferedReader buffer = null;
@@ -297,10 +297,10 @@ public abstract class MonitorUtil {
 			long buffers = Long.parseLong(map.get("Buffers").toString());
 			long cached = Long.parseLong(map.get("Cached").toString());
 
-			return MathUtil.div(memUsed - buffers - cached, memTotal);
+			return new Memory(memTotal, memUsed - buffers - cached);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return 0;
+			return null;
 		} finally {
 			try {
 				if (buffer != null) {
@@ -316,13 +316,34 @@ public abstract class MonitorUtil {
 			}
 		}
 	}
+	public static class Memory {
+		private double total;
+		private double used;
+		private Memory(double total, double used) {
+			this.total = total;
+			this.used = used;
+		}
+		public double getTotal() {
+			return total;
+		}
+		public double getUsed() {
+			return used;
+		}
+		public double getPercent() {
+			return MathUtil.div(used, total);
+		}
+		@Override
+		public String toString() {
+			return JSON.toJSONString(Memory.this);
+		}
+	}
 
 
 	/**
-	 * 获取磁盘使用率
+	 * 获取磁盘状态
 	 * @return
 	 */
-	public static double getDiskUsage() {
+	public static Disk getDiskInfo() {
 		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
 			return getDiskUsageForWindows();
 		} else {
@@ -330,7 +351,7 @@ public abstract class MonitorUtil {
 		}
 	}
 
-	private static double getDiskUsageForWindows() {
+	private static Disk getDiskUsageForWindows() {
 		long allTotal = 0;
 		long allFree = 0;
 		for (char c = 'A'; c <= 'Z'; c++) {
@@ -341,10 +362,10 @@ public abstract class MonitorUtil {
 				allFree = allFree + win.getFreeSpace();
 			}
 		}
-		return MathUtil.div(allTotal - allFree, allTotal);
+		return new Disk(allTotal, allTotal - allFree);
 	}
 
-	private static double getDiskUsageForLinux() {
+	private static Disk getDiskUsageForLinux() {
 		double totalHD = 0;
 		double usedHD = 0;
 		BufferedReader in = null;
@@ -365,12 +386,12 @@ public abstract class MonitorUtil {
 					if (tmp.contains("G")) {
 						if (m == 2) {
 							if (!tmp.equals("0")) {
-								totalHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1)) * 1024;
+								totalHD += MathUtil.mul(Double.parseDouble(tmp.substring(0, tmp.length() - 1)), 1024);
 							}
 						}
 						if (m == 3) {
 							if (!tmp.equals("none") && !tmp.equals("0")) {
-								usedHD += Double.parseDouble(tmp.substring(0, tmp.length() - 1)) * 1024;
+								usedHD += MathUtil.mul(Double.parseDouble(tmp.substring(0, tmp.length() - 1)), 1024);
 							}
 						}
 					}
@@ -388,10 +409,10 @@ public abstract class MonitorUtil {
 					}
 				}
 			}
-			return MathUtil.div(usedHD, totalHD);
+			return new Disk(totalHD, usedHD);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return 0;
+			return null;
 		} finally {
 			try {
 				if (in != null) {
@@ -399,6 +420,27 @@ public abstract class MonitorUtil {
 				}
 			} catch (IOException ignored) {
 			}
+		}
+	}
+	public static class Disk {
+		private double total;
+		private double used;
+		private Disk(double total, double used) {
+			this.total = total;
+			this.used = used;
+		}
+		public double getTotal() {
+			return total;
+		}
+		public double getUsed() {
+			return used;
+		}
+		public double getPercent() {
+			return MathUtil.div(used, total);
+		}
+		@Override
+		public String toString() {
+			return JSON.toJSONString(Disk.this);
 		}
 	}
 
