@@ -468,16 +468,16 @@ public abstract class MonitorUtil {
 	 * @param sleep            测网速时线程睡眠时间(ms)
 	 * @return
 	 */
-	public static Network getNetworkThroughput(long sleep) {
+	public static Network getNetworkInfo(long sleep) {
 		Assert.isTrue(sleep > 0, "[sleep] must be larger than 0.");
 		if (OS_NAME.toLowerCase().contains("windows") || OS_NAME.toLowerCase().contains("win")) {
-			return getNetworkThroughputForWindows(sleep);
+			return getNetworkInfoForWindows(sleep);
 		} else {
-			return getNetworkThroughputForLinux(sleep);
+			return getNetworkInfoForLinux(sleep);
 		}
 	}
 
-	private static Network getNetworkThroughputForWindows(long sleep) {
+	private static Network getNetworkInfoForWindows(long sleep) {
 		Process pro1 = null;
 		Process pro2 = null;
 		Runtime r = Runtime.getRuntime();
@@ -520,7 +520,7 @@ public abstract class MonitorUtil {
 		}
 	}
 
-	private static Network getNetworkThroughputForLinux(long sleep) {
+	private static Network getNetworkInfoForLinux(long sleep) {
 		Process pro1 = null;
 		Process pro2 = null;
 		Runtime r = Runtime.getRuntime();
