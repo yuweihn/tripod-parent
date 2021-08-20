@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -26,27 +24,16 @@ public class GuavaUtil {
 	private static final Logger log = LoggerFactory.getLogger(GuavaUtil.class);
 
 
-	/**
-	 * 默认缓存时间(单位：秒)
-	 */
-	private static final long DEFAULT_DURATION = 300L;
-
-	/**
-	 * 缓存操作对象
-	 */
 	private LoadingCache<String, String> LOADING_CACHE = null;
 
 
-	public GuavaUtil() {
-		this(DEFAULT_DURATION);
-	}
-	public GuavaUtil(long duration) {
+	private GuavaUtil(long duration) {
 		try {
 			LOADING_CACHE = loadCache(duration, new CacheLoader<String, String>() {
 				@Override
 				public String load(String key) throws Exception {
 					if (log.isDebugEnabled()) {
-						log.debug("Guava Cache缓存值不存在，初始化空值，键名：{}", key);
+						log.debug("缓存值不存在，初始化空值，Key：{}", key);
 					}
 					return null;
 				}
@@ -56,22 +43,12 @@ public class GuavaUtil {
 		}
 	}
 
-	private static GuavaUtil DEFAULT_INSTANCE = null;
-	private static final Lock LOCK = new ReentrantLock();
-	public static GuavaUtil getDefaultInstance() {
-		if (DEFAULT_INSTANCE == null) {
-			try {
-				LOCK.lock();
-				if (DEFAULT_INSTANCE == null) {
-					DEFAULT_INSTANCE = new GuavaUtil();
-				}
-			} finally {
-				LOCK.unlock();
-			}
-		}
-		return DEFAULT_INSTANCE;
+	/**
+	 * @param duration   缓存时间(单位：秒)
+	 */
+	public static GuavaUtil create(long duration) {
+		return new GuavaUtil(duration);
 	}
-
 
 	private static <K, V> LoadingCache<K, V> loadCache(long duration, CacheLoader<K, V> cacheLoader) throws Exception {
 		LoadingCache<K, V> cache = CacheBuilder.newBuilder().expireAfterAccess(duration, TimeUnit.SECONDS)
@@ -82,7 +59,7 @@ public class GuavaUtil {
 							log.debug("Guava Cache缓存回收成功，键：{}, 值：{}", rn.getKey(), rn.getValue());
 						}
 					}
-				}).recordStats().build(cacheLoader);
+				}).build(cacheLoader);
 		return cache;
 	}
 
