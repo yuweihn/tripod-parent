@@ -92,7 +92,17 @@
 		</dependency>
 		<dependency>
 			<groupId>com.yuweix</groupId>
+			<artifactId>assist4j-datasecure</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.yuweix</groupId>
 			<artifactId>assist4j-http</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.yuweix</groupId>
+			<artifactId>assist4j-schedule</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
@@ -108,11 +118,6 @@
 		<dependency>
 			<groupId>com.yuweix</groupId>
 			<artifactId>assist4j-web</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.yuweix</groupId>
-			<artifactId>assist4j-schedule</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
