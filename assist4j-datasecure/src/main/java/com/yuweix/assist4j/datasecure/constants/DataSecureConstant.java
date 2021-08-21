@@ -62,7 +62,7 @@ public class DataSecureConstant {
     // 等于符表示的正则表达式
     public final static String REGEX_EQUAL = "([^,\\s\\d-\\[\\]&?{}][\\s*\\w]+?)=([^,\"\\*\\[\\]{}<]\\s*\\w+)";
 
-    /** list-->json 正则 */
+    // list-->json 正则
     public final static String REGEX_LIST = "\\\\*\"([^\"\\\\]+)\\\\*\"";
 
     // 数据库记录中是否加密这段名
