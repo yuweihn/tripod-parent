@@ -350,6 +350,8 @@ public abstract class DateUtil {
 	 * @return
 	 */
 	public static int getDayDiff(Date date1, Date date2) {
+		date1 = parseDate(formatDate(date1, PATTERN_DATE4), PATTERN_DATE4);
+		date2 = parseDate(formatDate(date2, PATTERN_DATE4), PATTERN_DATE4);
 		long dif = (date2.getTime() - date1.getTime()) / (1000L * 60 * 60 * 24);
 		return (int) dif;
 	}
