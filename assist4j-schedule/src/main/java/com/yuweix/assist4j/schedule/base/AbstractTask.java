@@ -5,6 +5,11 @@ import com.yuweix.assist4j.schedule.LeaderElector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.ref.SoftReference;
+import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * @author yuwei
@@ -25,6 +30,8 @@ public abstract class AbstractTask {
 			return "local";
 		}
 	};
+
+	private static SoftReference<Map<Class<? extends AbstractTask>, LeaderElector>> ELECTOR_MAP_REF;
 
 	public AbstractTask() {
 
@@ -70,6 +77,30 @@ public abstract class AbstractTask {
 		return true;
 	}
 	protected LeaderElector getLeaderElector() {
-		return null;
+		Class<? extends AbstractTask> clz = this.getClass();
+		Map<Class<? extends AbstractTask>, LeaderElector> electorMap = null;
+		if (ELECTOR_MAP_REF == null || (electorMap = ELECTOR_MAP_REF.get()) == null) {
+			electorMap = new ConcurrentHashMap<>();
+			ELECTOR_MAP_REF = new SoftReference<>(electorMap);
+		}
+		LeaderElector elector = electorMap.get(clz);
+		if (elector == null) {
+			Field[] fields = clz.getDeclaredFields();
+			for (Field field: fields) {
+				if (field.getType() == LeaderElector.class) {
+					field.setAccessible(true);
+					try {
+						elector = (LeaderElector) field.get(this);
+					} catch (IllegalAccessException e) {
+						throw new RuntimeException(e);
+					}
+					break;
+				}
+			}
+			if (elector != null) {
+				electorMap.put(clz, elector);
+			}
+		}
+		return elector;
 	}
 }
