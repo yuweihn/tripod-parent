@@ -4,7 +4,6 @@ package com.yuweix.assist4j.dao.mybatis.provider;
 import com.yuweix.assist4j.dao.sharding.Sharding;
 import com.yuweix.assist4j.dao.sharding.Strategy;
 
-import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,11 +21,11 @@ import javax.persistence.Table;
  * @author yuwei
  */
 public abstract class AbstractProvider {
-	private static SoftReference<Map<String, String>> TABLE_NAME_REF;
-	private static SoftReference<Map<String, String>> SELECT_SQL_REF;
-	private static SoftReference<Map<String, String>> SELECT_SQL_WITH_TABLE_ALIAS_REF;
-	private static SoftReference<Map<String, List<FieldColumn>>> PERSIST_FIELD_REF;
-	private static SoftReference<Map<Class<? extends Strategy>, Strategy>> SHARD_STRATEGY_REF;
+	private static final Map<String, String> TABLE_NAME_REF = new ConcurrentHashMap<>();
+	private static final Map<String, String> SELECT_SQL_REF = new ConcurrentHashMap<>();
+	private static final Map<String, String> SELECT_SQL_WITH_TABLE_ALIAS_REF = new ConcurrentHashMap<>();
+	private static final Map<String, List<FieldColumn>> PERSIST_FIELD_REF = new ConcurrentHashMap<>();
+	private static final Map<Class<? extends Strategy>, Strategy> SHARD_STRATEGY_REF = new ConcurrentHashMap<>();
 
 
 	/**
@@ -58,12 +57,7 @@ public abstract class AbstractProvider {
 	 */
 	protected String getTableName(Class<?> clz) {
 		String className = clz.getName();
-		Map<String, String> tableNameMap = null;
-		if (TABLE_NAME_REF == null || (tableNameMap = TABLE_NAME_REF.get()) == null) {
-			tableNameMap = new ConcurrentHashMap<String, String>();
-			TABLE_NAME_REF = new SoftReference<Map<String, String>>(tableNameMap);
-		}
-		String tableName = tableNameMap.get(className);
+		String tableName = TABLE_NAME_REF.get(className);
 		if (tableName == null) {
 			Table table = clz.getAnnotation(Table.class);
 			if (table != null && !"".equals(table.name().trim())) {
@@ -74,7 +68,7 @@ public abstract class AbstractProvider {
 					throw new RuntimeException("Table name is not found.");
 				}
 			}
-			tableNameMap.put(className, tableName);
+			TABLE_NAME_REF.put(className, tableName);
 		}
 		return tableName;
 	}
@@ -87,12 +81,7 @@ public abstract class AbstractProvider {
 	 */
 	protected String getAllColumnSql(Class<?> clz) {
 		String className = clz.getName();
-		Map<String, String> selectSqlMap = null;
-		if (SELECT_SQL_REF == null || (selectSqlMap = SELECT_SQL_REF.get()) == null) {
-			selectSqlMap = new ConcurrentHashMap<String, String>();
-			SELECT_SQL_REF = new SoftReference<Map<String, String>>(selectSqlMap);
-		}
-		String selectSql = selectSqlMap.get(className);
+		String selectSql = SELECT_SQL_REF.get(className);
 		if (selectSql == null) {
 			StringBuilder builder = new StringBuilder("");
 			List<FieldColumn> fcList = getPersistFieldList(clz);
@@ -104,7 +93,7 @@ public abstract class AbstractProvider {
 				builder.append(fc.getColumnName()).append(" as ").append(fc.getField().getName());
 			}
 			selectSql = builder.toString();
-			selectSqlMap.put(className, selectSql);
+			SELECT_SQL_REF.put(className, selectSql);
 		}
 		return selectSql;
 	}
@@ -117,12 +106,7 @@ public abstract class AbstractProvider {
 	 */
 	protected String getAllColumnSql(Class<?> clz, String tableAlias) {
 		String className = clz.getName();
-		Map<String, String> selectSqlMap = null;
-		if (SELECT_SQL_WITH_TABLE_ALIAS_REF == null || (selectSqlMap = SELECT_SQL_WITH_TABLE_ALIAS_REF.get()) == null) {
-			selectSqlMap = new ConcurrentHashMap<String, String>();
-			SELECT_SQL_WITH_TABLE_ALIAS_REF = new SoftReference<Map<String, String>>(selectSqlMap);
-		}
-		String selectSql = selectSqlMap.get(className);
+		String selectSql = SELECT_SQL_WITH_TABLE_ALIAS_REF.get(className);
 		if (selectSql == null) {
 			StringBuilder builder = new StringBuilder("");
 			List<FieldColumn> fcList = getPersistFieldList(clz);
@@ -134,7 +118,7 @@ public abstract class AbstractProvider {
 				builder.append(tableAlias).append(".").append(fc.getColumnName()).append(" as ").append(fc.getField().getName());
 			}
 			selectSql = builder.toString();
-			selectSqlMap.put(className, selectSql);
+			SELECT_SQL_WITH_TABLE_ALIAS_REF.put(className, selectSql);
 		}
 		return selectSql;
 	}
@@ -146,15 +130,10 @@ public abstract class AbstractProvider {
 	 */
 	protected List<FieldColumn> getPersistFieldList(Class<?> clz) {
 		String className = clz.getName();
-		Map<String, List<FieldColumn>> persistFieldMap = null;
-		if (PERSIST_FIELD_REF == null || (persistFieldMap = PERSIST_FIELD_REF.get()) == null) {
-			persistFieldMap = new ConcurrentHashMap<String, List<FieldColumn>>();
-			PERSIST_FIELD_REF = new SoftReference<Map<String, List<FieldColumn>>>(persistFieldMap);
-		}
-		List<FieldColumn> fcList = persistFieldMap.get(className);
+		List<FieldColumn> fcList = PERSIST_FIELD_REF.get(className);
 		if (fcList == null) {
 			fcList = getPersistFieldList0(clz);
-			persistFieldMap.put(className, fcList);
+			PERSIST_FIELD_REF.put(className, fcList);
 		}
 		return fcList;
 	}
@@ -164,14 +143,14 @@ public abstract class AbstractProvider {
 	 * @return
 	 */
 	private static List<FieldColumn> getPersistFieldList0(Class<?> clz) {
-		final List<Field> allFields = new ArrayList<Field>();
+		final List<Field> allFields = new ArrayList<>();
 		Class<?> currentClass = clz;
 		while (currentClass != null) {
 			allFields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
 			currentClass = currentClass.getSuperclass();
 		}
 
-		List<FieldColumn> list = new ArrayList<FieldColumn>();
+		List<FieldColumn> list = new ArrayList<>();
 		for (Field field: allFields) {
 			Column column = field.getAnnotation(Column.class);
 			if (column == null) {
@@ -224,19 +203,14 @@ public abstract class AbstractProvider {
 		}
 		Class<? extends Strategy> strategyClz = sharding.strategy();
 
-		Map<Class<? extends Strategy>, Strategy> strategyMap = null;
-		if (SHARD_STRATEGY_REF == null || (strategyMap = SHARD_STRATEGY_REF.get()) == null) {
-			strategyMap = new ConcurrentHashMap<>();
-			SHARD_STRATEGY_REF = new SoftReference<>(strategyMap);
-		}
-		Strategy strategy = strategyMap.get(strategyClz);
+		Strategy strategy = SHARD_STRATEGY_REF.get(strategyClz);
 		if (strategy == null) {
 			try {
 				strategy = strategyClz.newInstance();
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
-			strategyMap.put(strategyClz, strategy);
+			SHARD_STRATEGY_REF.put(strategyClz, strategy);
 		}
 		return strategy.getShardingIndex(tableName, shardingVal);
 	}
