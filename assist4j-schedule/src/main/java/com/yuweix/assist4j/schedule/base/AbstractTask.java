@@ -111,15 +111,14 @@ public abstract class AbstractTask {
 		return elector;
 	}
 	private Field getElectorField(Class<?> clz) {
-		Class<?> clz0 = clz;
-		while (clz0 != null) {
-			Field[] fields = clz0.getDeclaredFields();
+		while (clz != null) {
+			Field[] fields = clz.getDeclaredFields();
 			for (Field f: fields) {
 				if (f.getType() == LeaderElector.class) {
 					return f;
 				}
 			}
-			clz0 = clz0.getSuperclass();
+			clz = clz.getSuperclass();
 		}
 		return null;
 	}
