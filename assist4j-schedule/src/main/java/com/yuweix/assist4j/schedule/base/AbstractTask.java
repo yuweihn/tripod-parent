@@ -95,16 +95,13 @@ public abstract class AbstractTask {
 		Map<Class<? extends AbstractTask>, LeaderElector> map = getElectorMap();
 		LeaderElector elector = map.get(clz);
 		if (elector == null) {
-			Field[] fields = clz.getDeclaredFields();
-			for (Field field: fields) {
-				if (field.getType() == LeaderElector.class) {
-					field.setAccessible(true);
-					try {
-						elector = (LeaderElector) field.get(this);
-					} catch (IllegalAccessException e) {
-						throw new RuntimeException(e);
-					}
-					break;
+			Field field = getElectorField(clz);
+			if (field != null) {
+				field.setAccessible(true);
+				try {
+					elector = (LeaderElector) field.get(this);
+				} catch (IllegalAccessException e) {
+					throw new RuntimeException(e);
 				}
 			}
 			if (elector != null) {
@@ -112,5 +109,18 @@ public abstract class AbstractTask {
 			}
 		}
 		return elector;
+	}
+	private Field getElectorField(Class<? extends AbstractTask> clz) {
+		Class<?> clz0 = clz;
+		while (clz0 != null) {
+			Field[] fields = clz0.getDeclaredFields();
+			for (Field f: fields) {
+				if (f.getType() == LeaderElector.class) {
+					return f;
+				}
+			}
+			clz0 = clz0.getSuperclass();
+		}
+		return null;
 	}
 }
