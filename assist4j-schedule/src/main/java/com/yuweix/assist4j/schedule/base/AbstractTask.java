@@ -100,7 +100,7 @@ public abstract class AbstractTask {
 		Map<Class<? extends AbstractTask>, LeaderElectorWrapper> map = getElectorWrapperMap();
 		LeaderElectorWrapper wrapper = map.get(clz);
 		if (wrapper == null) {
-			synchronized (clz) {
+			synchronized (this) {
 				wrapper = map.get(clz);
 				if (wrapper == null) {
 					wrapper = reflectElector(clz);
