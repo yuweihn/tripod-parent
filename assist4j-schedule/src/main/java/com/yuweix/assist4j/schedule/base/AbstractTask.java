@@ -5,6 +5,7 @@ import com.yuweix.assist4j.schedule.LeaderElector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +31,8 @@ public abstract class AbstractTask {
 		}
 	};
 
-	private static final Map<Class<? extends AbstractTask>, LeaderElector> ELECTOR_MAP_REF = new ConcurrentHashMap<>();
+	private static SoftReference<Map<Class<? extends AbstractTask>, LeaderElector>> ELECTOR_MAP_REF;
+	private static final Object electorLock = new Object();
 
 	public AbstractTask() {
 
@@ -76,9 +78,22 @@ public abstract class AbstractTask {
 		return true;
 	}
 
+	private static Map<Class<? extends AbstractTask>, LeaderElector> getElectorMap() {
+		Map<Class<? extends AbstractTask>, LeaderElector> map = null;
+		if (ELECTOR_MAP_REF == null || (map = ELECTOR_MAP_REF.get()) == null) {
+			synchronized (electorLock) {
+				if (ELECTOR_MAP_REF == null || (map = ELECTOR_MAP_REF.get()) == null) {
+					map = new ConcurrentHashMap<>();
+					ELECTOR_MAP_REF = new SoftReference<>(map);
+				}
+			}
+		}
+		return map;
+	}
 	protected LeaderElector getLeaderElector() {
 		Class<? extends AbstractTask> clz = this.getClass();
-		LeaderElector elector = ELECTOR_MAP_REF.get(clz);
+		Map<Class<? extends AbstractTask>, LeaderElector> map = getElectorMap();
+		LeaderElector elector = map.get(clz);
 		if (elector == null) {
 			Field[] fields = clz.getDeclaredFields();
 			for (Field field: fields) {
@@ -93,7 +108,7 @@ public abstract class AbstractTask {
 				}
 			}
 			if (elector != null) {
-				ELECTOR_MAP_REF.put(clz, elector);
+				map.put(clz, elector);
 			}
 		}
 		return elector;
