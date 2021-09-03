@@ -34,9 +34,10 @@ public abstract class AbstractTask {
 	private static SoftReference<Map<Class<? extends AbstractTask>, LeaderElectorWrapper>> ELECTOR_MAP_REF;
 	private static final Object electorLock = new Object();
 	private static final class LeaderElectorWrapper {
-		private boolean exists;
-		private LeaderElector elector;
+		private boolean exists = false;
+		private LeaderElector elector = null;
 	}
+	private static final LeaderElectorWrapper DEFAULT_ELECTOR_WRAPPER = new LeaderElectorWrapper();
 
 	public AbstractTask() {
 
@@ -100,14 +101,15 @@ public abstract class AbstractTask {
 		LeaderElectorWrapper wrapper = map.get(clz);
 		if (wrapper == null) {
 			wrapper = reflectElector(clz);
-			if (wrapper != null) {
-				map.put(clz, wrapper);
-			}
+			map.put(clz, wrapper);
+			return wrapper.elector;
+		} else if (!wrapper.exists) {
+			return null;
+		} else {
+			return wrapper.elector;
 		}
-		return wrapper == null ? null : wrapper.elector;
 	}
 	private LeaderElectorWrapper reflectElector(Class<?> clazz) {
-		LeaderElectorWrapper wrapper = new LeaderElectorWrapper();
 		while (clazz != null) {
 			Field[] fields = clazz.getDeclaredFields();
 			for (Field f: fields) {
@@ -115,6 +117,7 @@ public abstract class AbstractTask {
 					f.setAccessible(true);
 					try {
 						LeaderElector elector = (LeaderElector) f.get(this);
+						LeaderElectorWrapper wrapper = new LeaderElectorWrapper();
 						wrapper.exists = true;
 						wrapper.elector = elector;
 						return wrapper;
@@ -125,6 +128,6 @@ public abstract class AbstractTask {
 			}
 			clazz = clazz.getSuperclass();
 		}
-		return wrapper;
+		return DEFAULT_ELECTOR_WRAPPER;
 	}
 }
