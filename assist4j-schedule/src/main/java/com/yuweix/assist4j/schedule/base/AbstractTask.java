@@ -31,8 +31,12 @@ public abstract class AbstractTask {
 		}
 	};
 
-	private static SoftReference<Map<Class<? extends AbstractTask>, LeaderElector>> ELECTOR_MAP_REF;
+	private static SoftReference<Map<Class<? extends AbstractTask>, LeaderElectorWrapper>> ELECTOR_MAP_REF;
 	private static final Object electorLock = new Object();
+	private static final class LeaderElectorWrapper {
+		private boolean exists;
+		private LeaderElector elector;
+	}
 
 	public AbstractTask() {
 
@@ -78,8 +82,8 @@ public abstract class AbstractTask {
 		return true;
 	}
 
-	private static Map<Class<? extends AbstractTask>, LeaderElector> getElectorMap() {
-		Map<Class<? extends AbstractTask>, LeaderElector> map = null;
+	private static Map<Class<? extends AbstractTask>, LeaderElectorWrapper> getElectorWrapperMap() {
+		Map<Class<? extends AbstractTask>, LeaderElectorWrapper> map = null;
 		if (ELECTOR_MAP_REF == null || (map = ELECTOR_MAP_REF.get()) == null) {
 			synchronized (electorLock) {
 				if (ELECTOR_MAP_REF == null || (map = ELECTOR_MAP_REF.get()) == null) {
@@ -92,24 +96,28 @@ public abstract class AbstractTask {
 	}
 	protected LeaderElector getLeaderElector() {
 		Class<? extends AbstractTask> clz = this.getClass();
-		Map<Class<? extends AbstractTask>, LeaderElector> map = getElectorMap();
-		LeaderElector elector = map.get(clz);
-		if (elector == null) {
-			elector = reflectElector(clz);
-			if (elector != null) {
-				map.put(clz, elector);
+		Map<Class<? extends AbstractTask>, LeaderElectorWrapper> map = getElectorWrapperMap();
+		LeaderElectorWrapper wrapper = map.get(clz);
+		if (wrapper == null) {
+			wrapper = reflectElector(clz);
+			if (wrapper != null) {
+				map.put(clz, wrapper);
 			}
 		}
-		return elector;
+		return wrapper == null ? null : wrapper.elector;
 	}
-	private LeaderElector reflectElector(Class<?> clazz) {
+	private LeaderElectorWrapper reflectElector(Class<?> clazz) {
+		LeaderElectorWrapper wrapper = new LeaderElectorWrapper();
 		while (clazz != null) {
 			Field[] fields = clazz.getDeclaredFields();
 			for (Field f: fields) {
 				if (f.getType() == LeaderElector.class) {
 					f.setAccessible(true);
 					try {
-						return (LeaderElector) f.get(this);
+						LeaderElector elector = (LeaderElector) f.get(this);
+						wrapper.exists = true;
+						wrapper.elector = elector;
+						return wrapper;
 					} catch (IllegalAccessException e) {
 						throw new RuntimeException(e);
 					}
@@ -117,6 +125,6 @@ public abstract class AbstractTask {
 			}
 			clazz = clazz.getSuperclass();
 		}
-		return null;
+		return wrapper;
 	}
 }
