@@ -110,7 +110,7 @@ public abstract class AbstractTask {
 		}
 		return elector;
 	}
-	private Field getElectorField(Class<? extends AbstractTask> clz) {
+	private Field getElectorField(Class<?> clz) {
 		Class<?> clz0 = clz;
 		while (clz0 != null) {
 			Field[] fields = clz0.getDeclaredFields();
