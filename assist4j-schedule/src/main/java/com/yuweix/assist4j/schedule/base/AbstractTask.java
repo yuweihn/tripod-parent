@@ -34,10 +34,12 @@ public abstract class AbstractTask {
 	private static SoftReference<Map<Class<? extends AbstractTask>, LeaderElectorWrapper>> ELECTOR_MAP_REF;
 	private static final Object electorLock = new Object();
 	private static final class LeaderElectorWrapper {
-		private boolean exists = false;
 		private LeaderElector elector = null;
+		LeaderElectorWrapper(LeaderElector elector) {
+			this.elector = elector;
+		}
 	}
-	private static final LeaderElectorWrapper DEFAULT_ELECTOR_WRAPPER = new LeaderElectorWrapper();
+	private static final LeaderElectorWrapper EMPTY_ELECTOR = new LeaderElectorWrapper(null);
 
 	public AbstractTask() {
 
@@ -105,18 +107,10 @@ public abstract class AbstractTask {
 				if (wrapper == null) {
 					wrapper = reflectElector(clz);
 					map.put(clz, wrapper);
-					return wrapper.elector;
-				} else if (!wrapper.exists) {
-					return null;
-				} else {
-					return wrapper.elector;
 				}
 			}
-		} else if (!wrapper.exists) {
-			return null;
-		} else {
-			return wrapper.elector;
 		}
+		return wrapper.elector;
 	}
 	private LeaderElectorWrapper reflectElector(Class<?> clazz) {
 		while (clazz != null) {
@@ -125,11 +119,7 @@ public abstract class AbstractTask {
 				if (f.getType() == LeaderElector.class) {
 					f.setAccessible(true);
 					try {
-						LeaderElector elector = (LeaderElector) f.get(this);
-						LeaderElectorWrapper wrapper = new LeaderElectorWrapper();
-						wrapper.exists = true;
-						wrapper.elector = elector;
-						return wrapper;
+						return new LeaderElectorWrapper((LeaderElector) f.get(this));
 					} catch (IllegalAccessException e) {
 						throw new RuntimeException(e);
 					}
@@ -137,6 +127,6 @@ public abstract class AbstractTask {
 			}
 			clazz = clazz.getSuperclass();
 		}
-		return DEFAULT_ELECTOR_WRAPPER;
+		return EMPTY_ELECTOR;
 	}
 }
