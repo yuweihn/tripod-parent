@@ -29,11 +29,11 @@ public class DefaultEmailSender implements EmailSender<Mail> {
 	private static final Logger log = LoggerFactory.getLogger(DefaultEmailSender.class);
 
 
-	public String server;
-	public int sslPort;
-	public boolean auth;
-	public String user;
-	public String password;
+	private String server;
+	private int sslPort;
+	private boolean auth;
+	private String user;
+	private String password;
 
 
 	@Override
