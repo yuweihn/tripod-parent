@@ -347,7 +347,7 @@ public abstract class BeanUtil {
 
 	/**
 	 * 将源集合中的所有字符串，按指定符号分拆
-	 * eg.    {"abc,ef", "123,45"} ======>>>>> {"abc", "ef", "123", "45"}
+	 * eg.    {"abc,ef", "123,45"} ====== {"abc", "ef", "123", "45"}
 	 */
 	public static List<String> split(List<String> sources, String regex) {
 		List<String> targets = new ArrayList<>();
