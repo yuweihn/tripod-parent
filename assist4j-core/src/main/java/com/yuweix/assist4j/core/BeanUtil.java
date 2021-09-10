@@ -35,8 +35,6 @@ public abstract class BeanUtil {
 	private static final Pattern IP_PATTERN = Pattern.compile(IP_REG);
 
 
-
-
 	/**
 	 * 阿尔法排序后的键值对。
 	 * appkey=miutest[conn]force=true[conn]order_id=YC1603290001101T[conn]tp_customer_phone=17717601007
@@ -345,5 +343,30 @@ public abstract class BeanUtil {
 			res = res.substring(1);
 		}
 		return res;
+	}
+
+	/**
+	 * 将源集合中的所有字符串，按指定符号分拆
+	 * eg.    {"abc,ef", "123,45"} ======>>>>> {"abc", "ef", "123", "45"}
+	 */
+	public static List<String> split(List<String> sources, String regex) {
+		List<String> targets = new ArrayList<>();
+		if (sources == null || sources.size() <= 0) {
+			return targets;
+		}
+		for (String src: sources) {
+			if (src.contains(regex)) {
+				String[] arr = src.split(regex);
+				for (String s: arr) {
+					String s0 = s.trim();
+					if (!"".equals(s0)) {
+						targets.add(s0);
+					}
+				}
+			} else {
+				targets.add(src);
+			}
+		}
+		return targets;
 	}
 }
