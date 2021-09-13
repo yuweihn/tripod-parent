@@ -19,6 +19,10 @@ public abstract class AbstractLeaderElector implements LeaderElector {
 		return localNode;
 	}
 
-	abstract void init();
-	abstract void destroy();
+	public void init() {
+
+	}
+	public void destroy() {
+
+	}
 }
