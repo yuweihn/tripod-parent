@@ -42,7 +42,7 @@ public class HeaderSessionFilter extends SessionFilter {
 			sid = UUID.randomUUID().toString().replace("-", "");
 		}
 		response.setHeader(headerKey, sid);
-		response.setHeader("Access-Control-Expose-Headers", headerKey);
+		response.addHeader("Access-Control-Expose-Headers", headerKey);
 		return sid;
 	}
 }
