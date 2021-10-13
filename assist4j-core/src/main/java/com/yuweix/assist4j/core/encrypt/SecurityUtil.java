@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.Objects;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -77,12 +79,12 @@ public abstract class SecurityUtil {
 		}
 
 		try {
-			String[] arr = new String(decrypt(str)).split(",");
-			if (arr == null || arr.length != 2) {
+			String[] arr = Objects.requireNonNull(decrypt(str)).split(",");
+			if (arr.length != 2) {
 				return null;
 			}
 			if (arr[1].equals(getMd5(arr[0] + "," + getMd5(SECURITY_KEY)))) {
-				return new String(decrypt(arr[0]));
+				return decrypt(arr[0]);
 			} else {
 				return null;
 			}
@@ -96,7 +98,7 @@ public abstract class SecurityUtil {
 		try {
 			Cipher encrypt = Cipher.getInstance(Algor.DES.getCode());
 			encrypt.init(1, buildDESKey(getMd5(SECURITY_KEY)));
-			return bytesToHexStr(encrypt.doFinal(word.getBytes(Constant.ENCODING_UTF_8)));
+			return bytesToHexStr(encrypt.doFinal(word.getBytes(StandardCharsets.UTF_8)));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -107,7 +109,7 @@ public abstract class SecurityUtil {
 		try {
 			Cipher decrypt = Cipher.getInstance(Algor.DES.getCode());
 			decrypt.init(2, buildDESKey(getMd5(SECURITY_KEY)));
-			return new String(decrypt.doFinal(hexStrToBytes(word)), Constant.ENCODING_UTF_8);
+			return new String(decrypt.doFinal(hexStrToBytes(word)), StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -115,7 +117,7 @@ public abstract class SecurityUtil {
 	}
 
 	private static SecretKey buildDESKey(String value) throws UnsupportedEncodingException {
-		byte[] bval = value.getBytes(Constant.ENCODING_UTF_8);
+		byte[] bval = value.getBytes(StandardCharsets.UTF_8);
 		byte[] bt = new byte[8];
 		for (int i = 0; (i < bt.length) && (i < bval.length); i++) {
 			bt[i] = bval[i];

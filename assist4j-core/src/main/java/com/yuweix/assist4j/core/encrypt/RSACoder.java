@@ -1,9 +1,8 @@
 package com.yuweix.assist4j.core.encrypt;
 
 
-import com.yuweix.assist4j.core.Constant;
-
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -93,7 +92,7 @@ public abstract class RSACoder {
 		BigInteger n = pubKey.getModulus();
 
 		// 获取明文m
-		byte ptext[] = str.getBytes(Constant.ENCODING_UTF_8);
+		byte ptext[] = str.getBytes(StandardCharsets.UTF_8);
 		BigInteger m = new BigInteger(ptext);
 		// 计算密文c
 		BigInteger c = m.modPow(e, n);
@@ -119,7 +118,7 @@ public abstract class RSACoder {
 		BigInteger n = priKey.getModulus();
 		BigInteger m = c.modPow(d, n);
 		byte[] mt = m.toByteArray();
-		return new String(mt, Constant.ENCODING_UTF_8);
+		return new String(mt, StandardCharsets.UTF_8);
 	}
 
 
