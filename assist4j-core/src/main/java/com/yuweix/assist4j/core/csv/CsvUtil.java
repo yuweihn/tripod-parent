@@ -9,14 +9,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import com.yuweix.assist4j.core.Constant;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,12 +37,10 @@ public abstract class CsvUtil {
 		export(out, dataList);
 		byte[] data = out.toByteArray();
 
-		if (out != null) {
-			try {
-				out.close();
-			} catch (IOException e) {
-				log.error("", e);
-			}
+		try {
+			out.close();
+		} catch (IOException e) {
+			log.error("", e);
 		}
 		return data;
 	}
@@ -59,7 +55,7 @@ public abstract class CsvUtil {
 		OutputStreamWriter osw = null;
 		BufferedWriter bw = null;
 		try {
-			osw = new OutputStreamWriter(out, Constant.ENCODING_UTF_8);
+			osw = new OutputStreamWriter(out, StandardCharsets.UTF_8);
 			bw = new BufferedWriter(osw);
 			
 			/**
@@ -103,12 +99,11 @@ public abstract class CsvUtil {
 	}
 
 	private static<T> List<String> getOutputHeadList(T t) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
-			Iterator<?> itr = map.keySet().iterator();
-			while (itr.hasNext()) {
-				list.add(itr.next().toString());
+			for (Object key : map.keySet()) {
+				list.add(key.toString());
 			}
 		} else {
 			Field[] fields = t.getClass().getDeclaredFields();
@@ -121,17 +116,15 @@ public abstract class CsvUtil {
 				}
 			}
 		}
-
 		return list;
 	}
 
 	private static<T> List<String> getOutputKeyList(T t) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
-			Iterator<?> itr = map.keySet().iterator();
-			while (itr.hasNext()) {
-				list.add(itr.next().toString());
+			for (Object key : map.keySet()) {
+				list.add(key.toString());
 			}
 		} else {
 			Field[] fields = t.getClass().getDeclaredFields();
@@ -144,13 +137,12 @@ public abstract class CsvUtil {
 				}
 			}
 		}
-
 		return list;
 	}
 
 	private static<T> List<Object> getOutputDataList(List<String> keyList, T t) {
 		Assert.notEmpty(keyList, "[keyList] must not be empty.");
-		List<Object> list = new ArrayList<Object>();
+		List<Object> list = new ArrayList<>();
 		
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
