@@ -171,11 +171,11 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		return allLogMap;
 	}
 
-	protected LinkedHashMap<String, Object> addLogFirst(R request) {
+	protected LinkedHashMap<String, Object> addLogFirst(HttpServletRequest request) {
 		return null;
 	}
 
-	protected LinkedHashMap<String, Object> addLogLast(R request) {
+	protected LinkedHashMap<String, Object> addLogLast(HttpServletRequest request) {
 		return null;
 	}
 
