@@ -11,7 +11,7 @@
 
 	<artifactId>assist4j-sequence</artifactId>
 	<packaging>jar</packaging>
-	<version>${parent.version}</version>
+	<version>${project.parent.version}</version>
 
 	<name>${project.groupId}:${project.artifactId}</name>
 	<description>The Project of Assist4j</description>
