@@ -146,7 +146,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		String contentType = request.getContentType();
 		Map<String, String[]> params = request.getParameterMap();
 
-		LinkedHashMap<String, Object> baseLogMap = new LinkedHashMap<String, Object>();
+		LinkedHashMap<String, Object> baseLogMap = new LinkedHashMap<>();
 		baseLogMap.put("ip", ActionUtil.getRequestIP());
 		baseLogMap.put("method", request.getMethod().toLowerCase());
 		baseLogMap.put("url", url);
@@ -159,7 +159,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 		Map<String, Object> preLogMap = preLog(request);
 		Map<String, Object> postLogMap = postLog(request);
-		Map<String, Object> allLogMap = new LinkedHashMap<String, Object>();
+		Map<String, Object> allLogMap = new LinkedHashMap<>();
 		if (preLogMap != null) {
 			allLogMap.putAll(preLogMap);
 		}
