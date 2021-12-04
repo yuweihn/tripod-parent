@@ -86,7 +86,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 		filterChain.doFilter(req, resp);
 
-		Map<String, Object> logInfoMap = new LinkedHashMap<String, Object>();
+		Map<String, Object> logInfoMap = new LinkedHashMap<>();
 		if (allowLogRequest) {
 			Map<String, Object> map = logRequest(req);
 			if (map != null && !map.isEmpty()) {
