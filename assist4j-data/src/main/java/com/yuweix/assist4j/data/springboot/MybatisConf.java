@@ -43,6 +43,7 @@ public class MybatisConf {
 		return basePackage;
 	}
 
+	@ConditionalOnMissingBean(name = "sqlSessionFactory")
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactoryBean sqlSessionFactoryBean(@Qualifier("dataSource") DataSource dataSource
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
@@ -54,21 +55,23 @@ public class MybatisConf {
 		return sessionFactoryBean;
 	}
 
+	@ConditionalOnMissingBean(name = "sqlSessionTemplate")
 	@Bean(name = "sqlSessionTemplate")
 	public SqlSessionTemplate SqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
 		return new SqlSessionTemplate(sqlSessionFactory);
 	}
 
-	@ConditionalOnMissingBean
-	@Bean
-	public MapperScannerConfigurer mapperScannerConfigurer(@Qualifier("basePackage") String basePackage) {
-		MapperScannerConfigurer configurer = new MapperScannerConfigurer();
-//		configurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
-		configurer.setSqlSessionTemplateBeanName("sqlSessionTemplate");
-		configurer.setBasePackage(basePackage);
-		return configurer;
+	@ConditionalOnMissingBean(name = "mapperScannerConf")
+	@Bean(name = "mapperScannerConf")
+	public MapperScannerConfigurer mapperScannerConf(@Qualifier("basePackage") String basePackage) {
+		MapperScannerConfigurer conf = new MapperScannerConfigurer();
+//		conf.setSqlSessionFactoryBeanName("sqlSessionFactory");
+		conf.setSqlSessionTemplateBeanName("sqlSessionTemplate");
+		conf.setBasePackage(basePackage);
+		return conf;
 	}
 
+	@ConditionalOnMissingBean(name = "transactionManager")
 	@Bean(name = "transactionManager")
 	public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DataSource dataSource) {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
@@ -76,6 +79,7 @@ public class MybatisConf {
 		return transactionManager;
 	}
 
+	@ConditionalOnMissingBean(name = "transactionTemplate")
 	@Bean(name = "transactionTemplate")
 	public TransactionTemplate transactionTemplate(@Qualifier("transactionManager") PlatformTransactionManager transactionManager) {
 		return new TransactionTemplate(transactionManager);
