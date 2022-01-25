@@ -58,11 +58,14 @@ public abstract class AbstractTask {
 		String leaderNode = leaderElector.acquire(lockName);
 		if (localNode != null && localNode.equals(leaderNode)) {
 			before();
-			executeTask();
-			if (release) {
-				leaderElector.release(lockName);
+			try {
+				executeTask();
+				if (release) {
+					leaderElector.release(lockName);
+				}
+			} finally {
+				after();
 			}
-			after();
 			long timeCost = System.currentTimeMillis() - startTime;
 			log.info("Job executed here, JobName: {}, LocalNode: {}, TimeCost: {}"
 					, this.getClass().getName(), localNode, timeCost >= 1000 ? (timeCost / 1000.0) + "s" : timeCost + "ms");
