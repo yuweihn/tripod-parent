@@ -65,8 +65,9 @@ public abstract class AbstractTask {
 				}
 			} catch (Exception e) {
 				handle(e);
+			} finally {
+				after();
 			}
-			after();
 			long timeCost = System.currentTimeMillis() - startTime;
 			log.info("Job executed here, JobName: {}, LocalNode: {}, TimeCost: {}"
 					, this.getClass().getName(), localNode, timeCost >= 1000 ? (timeCost / 1000.0) + "s" : timeCost + "ms");
