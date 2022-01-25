@@ -64,7 +64,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 					failList.add(result.task);
 				}
 			} catch (Exception e) {
-				handle(e);
+				handleThreadException(e);
 			}
 		}
 		if (failList.size() > 0) {
@@ -72,7 +72,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 		}
 	}
 
-	protected void handle(Throwable t) {
+	protected void handleThreadException(Throwable t) {
 		log.error("{}", t.getMessage());
 	}
 	protected void failure(List<T> failList) {

@@ -79,8 +79,8 @@ public abstract class AbstractTask {
 	protected void before() {
 
 	}
-	protected void handle(Exception e) {
-
+	protected void handle(Throwable t) {
+		log.error("{}", t.getMessage());
 	}
 	protected void after() {
 
