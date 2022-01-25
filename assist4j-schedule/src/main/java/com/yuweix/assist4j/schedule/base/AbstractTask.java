@@ -63,6 +63,8 @@ public abstract class AbstractTask {
 				if (release) {
 					leaderElector.release(lockName);
 				}
+			} catch (Exception e){
+				handle(e);
 			} finally {
 				after();
 			}
@@ -75,6 +77,9 @@ public abstract class AbstractTask {
 	}
 
 	protected void before() {
+
+	}
+	protected void handle(Exception e) {
 
 	}
 	protected void after() {
