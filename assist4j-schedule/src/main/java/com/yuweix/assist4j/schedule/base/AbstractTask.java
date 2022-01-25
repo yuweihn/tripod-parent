@@ -52,27 +52,26 @@ public abstract class AbstractTask {
 			leaderElector = DEFAULT_LEADER_ELECTOR;
 		}
 
-		String lockName = getLockName();
-		boolean release = getRelease();
-		String localNode = leaderElector.getLocalNode();
-		String leaderNode = leaderElector.acquire(lockName);
-		if (localNode != null && localNode.equals(leaderNode)) {
-			try {
+		try {
+			String lockName = getLockName();
+			boolean release = getRelease();
+			String localNode = leaderElector.getLocalNode();
+			String leaderNode = leaderElector.acquire(lockName);
+			if (localNode != null && localNode.equals(leaderNode)) {
 				before();
 				executeTask();
 				if (release) {
 					leaderElector.release(lockName);
 				}
-			} catch (Exception e){
-				handle(e);
-			} finally {
 				after();
+				long timeCost = System.currentTimeMillis() - startTime;
+				log.info("Job executed here, JobName: {}, LocalNode: {}, TimeCost: {}"
+						, this.getClass().getName(), localNode, timeCost >= 1000 ? (timeCost / 1000.0) + "s" : timeCost + "ms");
+			} else {
+				log.warn("Not leader, job didn't execute! JobName: {}, Leader: {}", this.getClass().getName(), leaderNode);
 			}
-			long timeCost = System.currentTimeMillis() - startTime;
-			log.info("Job executed here, JobName: {}, LocalNode: {}, TimeCost: {}"
-					, this.getClass().getName(), localNode, timeCost >= 1000 ? (timeCost / 1000.0) + "s" : timeCost + "ms");
-		} else {
-			log.warn("Not leader, job didn't execute! JobName: {}, Leader: {}", this.getClass().getName(), leaderNode);
+		} catch (Exception e) {
+			handle(e);
 		}
 	}
 
