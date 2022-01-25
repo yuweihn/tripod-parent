@@ -57,8 +57,8 @@ public abstract class AbstractTask {
 		String localNode = leaderElector.getLocalNode();
 		String leaderNode = leaderElector.acquire(lockName);
 		if (localNode != null && localNode.equals(leaderNode)) {
-			before();
 			try {
+				before();
 				executeTask();
 				if (release) {
 					leaderElector.release(lockName);
