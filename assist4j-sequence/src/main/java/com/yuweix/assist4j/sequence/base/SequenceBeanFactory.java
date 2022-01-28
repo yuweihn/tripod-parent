@@ -19,7 +19,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.util.Assert;
 
 
 /**
@@ -41,7 +40,6 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	private List<Property> propertyList;
 	private String fieldSeqName;
 	private String fieldMinValue;
-	private String sequenceBeanHolderBeanName;
 	private String initMethod;
 	private String destroyMethod;
 
@@ -50,14 +48,14 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	private boolean done = false;
 
 
-	public SequenceBeanFactory(Class<? extends Sequence> sequenceClass, String sequenceBeanHolderBeanName) {
-		this(sequenceClass.getName(), sequenceBeanHolderBeanName);
+	public SequenceBeanFactory(Class<? extends Sequence> sequenceClass) {
+		this(sequenceClass.getName());
 	}
-	public SequenceBeanFactory(String sequenceClassName, String sequenceBeanHolderBeanName) {
-		this(sequenceClassName, null, null, sequenceBeanHolderBeanName);
+	public SequenceBeanFactory(String sequenceClassName) {
+		this(sequenceClassName, null, null);
 	}
-	public SequenceBeanFactory(String sequenceClassName, String fieldSeqName, String fieldMinValue, String sequenceBeanHolderBeanName) {
-		this(sequenceClassName, null, null, fieldSeqName, fieldMinValue, sequenceBeanHolderBeanName, null, null);
+	public SequenceBeanFactory(String sequenceClassName, String fieldSeqName, String fieldMinValue) {
+		this(sequenceClassName, null, null, fieldSeqName, fieldMinValue, null, null);
 	}
 	/**
 	 * @param sequenceClassName                       准备实例化的Sequence实现类
@@ -65,14 +63,12 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	 * @param propertyList                            Sequence实现类的属性列表
 	 * @param fieldSeqName                            Sequence实现类的seqName属性名
 	 * @param fieldMinValue                           Sequence实现类的seqName最小值对应的属性名
-	 * @param sequenceBeanHolderBeanName              准备实例化的bean列表的持有者
 	 * @param initMethod
 	 * @param destroyMethod
 	 */
 	@SuppressWarnings("unchecked")
 	public SequenceBeanFactory(String sequenceClassName, List<Property> constructorArgList, List<Property> propertyList
-			, String fieldSeqName, String fieldMinValue, String sequenceBeanHolderBeanName, String initMethod, String destroyMethod) {
-		Assert.notNull(sequenceBeanHolderBeanName, "[sequenceBeanHolderBeanName] is required.");
+			, String fieldSeqName, String fieldMinValue, String initMethod, String destroyMethod) {
 		try {
 			Class<?> clz = Class.forName(sequenceClassName);
 			if (!Sequence.class.isAssignableFrom(clz)) {
@@ -95,7 +91,6 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		} else {
 			this.fieldMinValue = fieldMinValue;
 		}
-		this.sequenceBeanHolderBeanName = sequenceBeanHolderBeanName;
 		this.initMethod = initMethod;
 		this.destroyMethod = destroyMethod;
 
@@ -175,11 +170,11 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	}
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (beanName.equals(sequenceBeanHolderBeanName)) {
+		if (bean instanceof SequenceBeanHolder) {
 			registerBeans(((SequenceBeanHolder) bean).getSequenceMap());
 			done = true;
 		} else if (!done) {
-			beanFactory.getBean(sequenceBeanHolderBeanName, SequenceBeanHolder.class);
+			beanFactory.getBean(SequenceBeanHolder.class);
 		}
 		return bean;
 	}

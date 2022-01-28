@@ -21,7 +21,7 @@ import java.util.Map;
  * @author yuwei
  */
 public class SequenceConf {
-	@ConditionalOnMissingBean(name = "sequenceDao")
+	@ConditionalOnMissingBean(SequenceDao.class)
 	@Bean(name = "sequenceDao", initMethod = "init", destroyMethod = "destroy")
 	public SequenceDao sequenceDao(@Qualifier("dataSource") DataSource dataSource
 			, @Value("${assist4j.sequence-setting.innerStep:100}") int innerStep
@@ -43,13 +43,12 @@ public class SequenceConf {
 		return sequenceDao;
 	}
 
-	@ConditionalOnMissingBean(name = "sequenceBeanHolder")
+	@ConditionalOnMissingBean(SequenceBeanHolder.class)
 	@Bean(name = "sequenceBeanHolder")
 	@ConfigurationProperties(prefix = "assist4j", ignoreUnknownFields = true)
 	public SequenceBeanHolder sequenceBeanHolder() {
 		return new SequenceBeanHolder() {
-			private Map<String, String> sequence = new HashMap<String, String>();
-
+			private Map<String, String> sequence = new HashMap<>();
 			@Override
 			public Map<String, String> getSequenceMap() {
 				return sequence;
@@ -57,9 +56,9 @@ public class SequenceConf {
 		};
 	}
 
-	@ConditionalOnMissingBean(name = "sequenceBeanFactory")
+	@ConditionalOnMissingBean(SequenceBeanFactory.class)
 	@Bean(name = "sequenceBeanFactory")
 	public SequenceBeanFactory sequenceBeanFactory() {
-		return new SequenceBeanFactory(DefaultSequence.class, "sequenceBeanHolder");
+		return new SequenceBeanFactory(DefaultSequence.class);
 	}
 }
