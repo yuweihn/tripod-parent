@@ -89,7 +89,7 @@ public abstract class AbstractTask {
 		return this.getClass().getName();
 	}
 	protected boolean getRelease() {
-		return false;
+		return true;
 	}
 
 	private static Map<Class<? extends AbstractTask>, LeaderElectorWrapper> getElectorWrapperMap() {
