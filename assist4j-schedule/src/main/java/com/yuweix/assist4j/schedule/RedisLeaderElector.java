@@ -26,7 +26,7 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 		super();
 		this.redis = redis;
 		this.timeout = timeout;
-		this.appName = appName;
+		this.appName = appName == null ? appName : appName.trim();
 	}
 
 	@Override
