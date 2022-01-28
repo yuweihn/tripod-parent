@@ -41,7 +41,7 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 		super();
 		this.zkConn = zkConn;
 		this.zkTimeout = zkTimeout;
-		this.appName = appName;
+		this.appName = appName == null ? null : appName.trim();
 	}
 
 	private ZooKeeper getZk() {
@@ -79,7 +79,7 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	@Override
 	public String acquire(String lock) {
 		String key = String.format(ZK_NODE_NAME_PRE
-				, this.appName == null || "".equals(this.appName.trim()) ? "" : "_" + this.appName.trim()) + lock;
+				, this.appName == null || "".equals(this.appName) ? "" : "_" + this.appName) + lock;
 		String node = getLocalNode();
 		String leaderNode = getNodeValue(key);
 		if (leaderNode == null) {
@@ -97,7 +97,7 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 	@Override
 	public void release(String lock) {
 		String key = String.format(ZK_NODE_NAME_PRE
-				, this.appName == null || "".equals(this.appName.trim()) ? "" : "_" + this.appName.trim()) + lock;
+				, this.appName == null || "".equals(this.appName) ? "" : "_" + this.appName) + lock;
 		if (zk == null) {
 			return;
 		}
