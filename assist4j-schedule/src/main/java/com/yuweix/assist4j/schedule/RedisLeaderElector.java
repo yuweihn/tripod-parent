@@ -26,20 +26,20 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 		super();
 		this.redis = redis;
 		this.timeout = timeout;
-		this.appName = appName == null ? appName : appName.trim();
+		this.appName = appName == null ? null : appName.trim();
 	}
 
 	@Override
 	public String acquire(String lock) {
 		String key = String.format(CACHE_LEADER_KEY_PRE
-				, this.appName == null || "".equals(this.appName.trim()) ? "" : "." + this.appName.trim()) + lock;
+				, this.appName == null || "".equals(this.appName) ? "" : "." + this.appName) + lock;
 		return redis.lock(key, getLocalNode(), timeout / 1000);
 	}
 
 	@Override
 	public void release(String lock) {
 		String key = String.format(CACHE_LEADER_KEY_PRE
-				, this.appName == null || "".equals(this.appName.trim()) ? "" : "." + this.appName.trim()) + lock;
+				, this.appName == null || "".equals(this.appName) ? "" : "." + this.appName) + lock;
 		redis.unlock(key, getLocalNode());
 	}
 
