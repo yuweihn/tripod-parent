@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 
 
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SensitiveInfo {
+public @interface Sensitive {
     SensitiveType value();
     /**
      * 附加值, 自定义正则表达式等

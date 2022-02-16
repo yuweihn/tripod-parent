@@ -2,7 +2,7 @@ package com.yuweix.assist4j.datasecure.filters;
 
 
 import com.alibaba.fastjson.serializer.ValueFilter;
-import com.yuweix.assist4j.datasecure.annotations.SensitiveInfo;
+import com.yuweix.assist4j.datasecure.annotations.Sensitive;
 import com.yuweix.assist4j.datasecure.utils.SensitiveProcessUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,12 +20,12 @@ public class FastJsonSensitiveFilter implements ValueFilter {
         }
         try {
             Field field = object.getClass().getDeclaredField(name);
-            SensitiveInfo desensitization;
-            if (String.class != field.getType() || (desensitization = field.getAnnotation(SensitiveInfo.class)) == null) {
+            Sensitive sensitive;
+            if (String.class != field.getType() || (sensitive = field.getAnnotation(Sensitive.class)) == null) {
                 return value;
             }
             
-            return SensitiveProcessUtil.shield(desensitization, (String) value);
+            return SensitiveProcessUtil.shield(sensitive, (String) value);
         } catch (NoSuchFieldException e) {
             log.error("The class {} has no field {}", object.getClass(), name);
         }

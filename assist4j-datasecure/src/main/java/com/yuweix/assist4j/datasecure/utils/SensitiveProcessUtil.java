@@ -1,7 +1,7 @@
 package com.yuweix.assist4j.datasecure.utils;
 
 
-import com.yuweix.assist4j.datasecure.annotations.SensitiveInfo;
+import com.yuweix.assist4j.datasecure.annotations.Sensitive;
 import com.yuweix.assist4j.datasecure.constants.DataSecureConstant;
 import com.yuweix.assist4j.datasecure.enums.SensitiveType;
 import org.slf4j.Logger;
@@ -27,19 +27,19 @@ public class SensitiveProcessUtil {
      * 按敏感信息格式化转换字符串信息
      * @return
      */
-    public static String shield(SensitiveInfo desensitization, String info) {
+    public static String shield(Sensitive sensitive, String info) {
         //默认不显示/不记录
-        if (desensitization == null || info == null || "".equals(info)) {
+        if (sensitive == null || info == null || "".equals(info)) {
             return info;
         }
         List<String> regular;
-        SensitiveType type = desensitization.value();
+        SensitiveType type = sensitive.value();
         switch (type) {
             case CUSTOM:
-                regular = Arrays.asList(desensitization.attach());
+                regular = Arrays.asList(sensitive.attach());
                 break;
             case TRUNCATE:
-                regular = truncateRender(desensitization.attach());
+                regular = truncateRender(sensitive.attach());
                 break;
             default:
                 regular = Arrays.asList(type.getRegular());
