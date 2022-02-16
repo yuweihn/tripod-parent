@@ -27,7 +27,7 @@ public class FastJsonSensitiveFilter implements ValueFilter {
             
             return SensitiveProcessUtil.shield(desensitization, (String) value);
         } catch (NoSuchFieldException e) {
-            log.warn("The class {} has no field {}", object.getClass(), name);
+            log.error("The class {} has no field {}", object.getClass(), name);
         }
         return value;
     }

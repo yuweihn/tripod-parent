@@ -91,7 +91,7 @@ public class SensitiveProcessUtil {
                     regular.add(1, result);
                 }
             } catch (Exception e) {
-            	log.warn("ValueDesensitizeFilter truncateRender size {} exception", size);
+            	log.error("ValueDesensitizeFilter truncateRender size {} exception", size);
             }
         }
         return regular;
@@ -124,7 +124,7 @@ public class SensitiveProcessUtil {
             }
             return jsonVal;
         } catch (Exception e) {
-            log.warn("[jsonShield]JSON字符串脱敏异常,注意JSON格式", e);
+            log.error("[jsonShield]JSON字符串脱敏异常,注意JSON格式", e);
             return jsonVal;
         }
     }
