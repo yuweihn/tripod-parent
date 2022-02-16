@@ -83,7 +83,8 @@ public class SensitiveProcessUtil {
                 Matcher matcher = Pattern.compile(fieldRegex).matcher(jsonVal);
                 while (matcher.find()) {
                     StringBuilder builder = new StringBuilder();
-                    builder.append(DataSecureConstant.DOUBLE_QUOTATION).append(matcher.group(1))
+                    builder.append(DataSecureConstant.DOUBLE_QUOTATION)
+                            .append(matcher.group(1))
                             .append(DataSecureConstant.MARK_JSON)
                             .append(shield(fields.get(fieldName), matcher.group(2)))
                             .append(DataSecureConstant.DOUBLE_QUOTATION);
@@ -114,7 +115,8 @@ public class SensitiveProcessUtil {
                 while (matcher.find()) {
                     if (matcher.group(1).trim().equals(fieldName)) {
                         StringBuilder builder = new StringBuilder();
-                        builder.append(matcher.group(1)).append(DataSecureConstant.MARK_EQUAL)
+                        builder.append(matcher.group(1))
+                                .append(DataSecureConstant.MARK_EQUAL)
                                 .append(SensitiveProcessUtil.shield(fields.get(fieldName), matcher.group(2)));
 //                        srcData = StringUtils.replace(srcData, matcher.group(0), builder.toString());
                         srcData = srcData.replace(matcher.group(0), builder.toString());
@@ -124,7 +126,8 @@ public class SensitiveProcessUtil {
                 matcher = Pattern.compile(fieldRegex).matcher(srcData);
                 while (matcher.find()) {
                     StringBuilder builder = new StringBuilder();
-                    builder.append(DataSecureConstant.DOUBLE_QUOTATION).append(matcher.group(1))
+                    builder.append(DataSecureConstant.DOUBLE_QUOTATION)
+                            .append(matcher.group(1))
                             .append(DataSecureConstant.MARK_JSON)
                             .append(SensitiveProcessUtil.shield(fields.get(fieldName), matcher.group(2)))
                             .append(DataSecureConstant.DOUBLE_QUOTATION);
