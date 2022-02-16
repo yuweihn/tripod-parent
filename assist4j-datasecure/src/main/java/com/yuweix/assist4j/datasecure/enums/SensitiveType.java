@@ -7,8 +7,7 @@ public enum SensitiveType {
 	ID_CARD("id_card", "16或者18身份证号", "^(\\d{4})\\d{8,10}(\\d{4})$", "$1****$2"),
     BANK_CARD_NO("bankCardNo", "银行卡号", "^(\\d{4})\\d*(\\d{4})$", "$1****$2"),
 
-    CUSTOM("custom", "自定义正则处理", ""),
-    TRUNCATE("truncate", "字符串截取处理", "");
+    CUSTOM("custom", "自定义正则处理", "");
 
     String type;
     String describe;
