@@ -72,7 +72,7 @@ public class SensitiveProcessUtil {
 
     private static List<String>  truncateRender(String[] attachs) {
         List<String> regular = new ArrayList<>();
-        if (null != attachs && attachs.length >1) {
+        if (null != attachs && attachs.length > 1) {
             String rule = attachs[0];
             String size = attachs[1];
             String template, result;
@@ -113,13 +113,13 @@ public class SensitiveProcessUtil {
                 String fieldRegex = MessageFormat.format(DataSecureConstant.REGEX_JSON, fieldName);
                 Matcher matcher = Pattern.compile(fieldRegex).matcher(jsonVal);
                 while (matcher.find()) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(DataSecureConstant.DOUBLE_QUOTATION).append(matcher.group(1))
+                    StringBuilder builder = new StringBuilder();
+                    builder.append(DataSecureConstant.DOUBLE_QUOTATION).append(matcher.group(1))
                             .append(DataSecureConstant.MARK_JSON)
                             .append(shield(fields.get(fieldName), matcher.group(2)))
                             .append(DataSecureConstant.DOUBLE_QUOTATION);
-//                    jsonVal = StringUtils.replace(jsonVal, matcher.group(0), sb.toString());
-                    jsonVal = jsonVal.replace(matcher.group(0), sb.toString());
+//                    jsonVal = StringUtils.replace(jsonVal, matcher.group(0), builder.toString());
+                    jsonVal = jsonVal.replace(matcher.group(0), builder.toString());
                 }
             }
             return jsonVal;
@@ -144,23 +144,23 @@ public class SensitiveProcessUtil {
                 Matcher matcher = Pattern.compile(DataSecureConstant.REGEX_EQUAL).matcher(srcData);
                 while (matcher.find()) {
                     if (matcher.group(1).trim().equals(fieldName)) {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(matcher.group(1)).append(DataSecureConstant.MARK_EQUAL)
+                        StringBuilder builder = new StringBuilder();
+                        builder.append(matcher.group(1)).append(DataSecureConstant.MARK_EQUAL)
                                 .append(SensitiveProcessUtil.shield(fields.get(fieldName), matcher.group(2)));
-//                        srcData = StringUtils.replace(srcData, matcher.group(0), sb.toString());
-                        srcData = srcData.replace(matcher.group(0), sb.toString());
+//                        srcData = StringUtils.replace(srcData, matcher.group(0), builder.toString());
+                        srcData = srcData.replace(matcher.group(0), builder.toString());
                     }
                 }
                 String fieldRegex = MessageFormat.format(DataSecureConstant.REGEX_JSON, fieldName);
                 matcher = Pattern.compile(fieldRegex).matcher(srcData);
                 while (matcher.find()) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(DataSecureConstant.DOUBLE_QUOTATION).append(matcher.group(1))
+                    StringBuilder builder = new StringBuilder();
+                    builder.append(DataSecureConstant.DOUBLE_QUOTATION).append(matcher.group(1))
                             .append(DataSecureConstant.MARK_JSON)
                             .append(SensitiveProcessUtil.shield(fields.get(fieldName), matcher.group(2)))
                             .append(DataSecureConstant.DOUBLE_QUOTATION);
-//                    srcData = StringUtils.replace(srcData, matcher.group(0), sb.toString());
-                    srcData = srcData.replace(matcher.group(0), sb.toString());
+//                    srcData = StringUtils.replace(srcData, matcher.group(0), builder.toString());
+                    srcData = srcData.replace(matcher.group(0), builder.toString());
                 }
             }
             return srcData;
