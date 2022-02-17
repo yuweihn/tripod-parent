@@ -50,7 +50,7 @@ public class SensitiveProcessUtil {
         return info;
     }
     
-    public static String shield(SensitiveType type, String info) {
+    public static String shield(String info, SensitiveType type) {
         //默认不显示/不记录
         if (type == null || info == null || "".equals(info)) {
             return info;
@@ -86,7 +86,7 @@ public class SensitiveProcessUtil {
                     builder.append(DataSecureConstant.DOUBLE_QUOTATION)
                             .append(matcher.group(1))
                             .append(DataSecureConstant.MARK_JSON)
-                            .append(shield(fields.get(fieldName), matcher.group(2)))
+                            .append(shield(matcher.group(2), fields.get(fieldName)))
                             .append(DataSecureConstant.DOUBLE_QUOTATION);
                     jsonVal = jsonVal.replace(matcher.group(0), builder.toString());
                 }
@@ -116,7 +116,7 @@ public class SensitiveProcessUtil {
                         StringBuilder builder = new StringBuilder();
                         builder.append(matcher.group(1))
                                 .append(DataSecureConstant.MARK_EQUAL)
-                                .append(SensitiveProcessUtil.shield(fields.get(fieldName), matcher.group(2)));
+                                .append(SensitiveProcessUtil.shield(matcher.group(2), fields.get(fieldName)));
                         srcData = srcData.replace(matcher.group(0), builder.toString());
                     }
                 }
@@ -127,7 +127,7 @@ public class SensitiveProcessUtil {
                     builder.append(DataSecureConstant.DOUBLE_QUOTATION)
                             .append(matcher.group(1))
                             .append(DataSecureConstant.MARK_JSON)
-                            .append(SensitiveProcessUtil.shield(fields.get(fieldName), matcher.group(2)))
+                            .append(SensitiveProcessUtil.shield(matcher.group(2), fields.get(fieldName)))
                             .append(DataSecureConstant.DOUBLE_QUOTATION);
                     srcData = srcData.replace(matcher.group(0), builder.toString());
                 }
