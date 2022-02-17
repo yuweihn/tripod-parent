@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.datasecure.annotations;
+package com.yuweix.assist4j.datasecure;
 
 
 import java.lang.annotation.Retention;
