@@ -15,10 +15,12 @@ public class SensitiveUtil {
         if (sensitive == null || info == null || "".equals(info)) {
             return info;
         }
+        return shield(info, sensitive.regex(), sensitive.replacement());
+    }
 
-        String regex = sensitive.regex();
-        String replacement = sensitive.replacement();
-        if (regex == null || "".equals(regex.trim())
+    public static String shield(String info, String regex, String replacement) {
+        if (info == null || "".equals(info)
+                || regex == null || "".equals(regex.trim())
                 || replacement == null || "".equals(replacement.trim())) {
             return info;
         }
