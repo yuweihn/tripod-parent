@@ -16,6 +16,6 @@ public class DataSecureConstant {
     /** JSON格式key:value正则 */
     public static final String REGEX_JSON = "\\\\*\"({0})\\\\*\":\\\\*\"([^\"\\\\]+)\\\\*\"";
 
-    // 等于符表示的正则表达式
+    /** 等于符表示的正则表达式 */
     public static final String REGEX_EQUAL = "([^,\\s\\d-\\[\\]&?{}][\\s*\\w]+?)=([^,\"\\*\\[\\]{}<]\\s*\\w+)";
 }
