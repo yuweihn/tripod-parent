@@ -88,13 +88,12 @@ public class SensitiveProcessUtil {
                             .append(DataSecureConstant.MARK_JSON)
                             .append(shield(fields.get(fieldName), matcher.group(2)))
                             .append(DataSecureConstant.DOUBLE_QUOTATION);
-//                    jsonVal = StringUtils.replace(jsonVal, matcher.group(0), builder.toString());
                     jsonVal = jsonVal.replace(matcher.group(0), builder.toString());
                 }
             }
             return jsonVal;
         } catch (Exception e) {
-            log.warn("[jsonShield]JSON字符串脱敏异常,注意JSON格式", e);
+            log.warn("JSON字符串脱敏格式异常。", e);
             return jsonVal;
         }
     }
@@ -118,7 +117,6 @@ public class SensitiveProcessUtil {
                         builder.append(matcher.group(1))
                                 .append(DataSecureConstant.MARK_EQUAL)
                                 .append(SensitiveProcessUtil.shield(fields.get(fieldName), matcher.group(2)));
-//                        srcData = StringUtils.replace(srcData, matcher.group(0), builder.toString());
                         srcData = srcData.replace(matcher.group(0), builder.toString());
                     }
                 }
@@ -131,7 +129,6 @@ public class SensitiveProcessUtil {
                             .append(DataSecureConstant.MARK_JSON)
                             .append(SensitiveProcessUtil.shield(fields.get(fieldName), matcher.group(2)))
                             .append(DataSecureConstant.DOUBLE_QUOTATION);
-//                    srcData = StringUtils.replace(srcData, matcher.group(0), builder.toString());
                     srcData = srcData.replace(matcher.group(0), builder.toString());
                 }
             }
