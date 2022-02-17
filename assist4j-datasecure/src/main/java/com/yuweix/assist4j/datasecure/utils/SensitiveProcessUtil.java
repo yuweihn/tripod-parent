@@ -94,7 +94,7 @@ public class SensitiveProcessUtil {
             }
             return jsonVal;
         } catch (Exception e) {
-            log.error("[jsonShield]JSON字符串脱敏异常,注意JSON格式", e);
+            log.warn("[jsonShield]JSON字符串脱敏异常,注意JSON格式", e);
             return jsonVal;
         }
     }
