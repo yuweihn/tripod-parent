@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.datasecure;
+package com.yuweix.assist4j.data.datasecure;
 
 
 import com.alibaba.fastjson.serializer.ValueFilter;
