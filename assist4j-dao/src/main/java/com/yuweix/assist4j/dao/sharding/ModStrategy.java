@@ -8,7 +8,7 @@ package com.yuweix.assist4j.dao.sharding;
 public class ModStrategy implements Strategy {
     @Override
     public String getShardingIndex(String tableName, Object shardingVal) {
-        Config conf = CONF_MAP.get(tableName);
+        Config conf = TABLE_CONF_MAP.get(tableName);
         if (conf == null) {
             throw new RuntimeException("[" + tableName + "]'s sharding-conf is required.");
         }

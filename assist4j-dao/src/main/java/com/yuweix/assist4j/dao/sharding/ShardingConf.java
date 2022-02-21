@@ -32,9 +32,9 @@ public class ShardingConf {
 	public Map<String, Config> initTableConfMap(@Qualifier("shardingTableHolder") ShardingTableHolder shardingTableHolder) {
 		Map<String, Config> conf = shardingTableHolder.getShardingConf();
 
-		Strategy.CONF_MAP.clear();
+		Strategy.TABLE_CONF_MAP.clear();
 		if (conf != null) {
-			Strategy.CONF_MAP.putAll(conf);
+			Strategy.TABLE_CONF_MAP.putAll(conf);
 		}
 		return conf;
 	}
