@@ -25,8 +25,8 @@ public class SensitiveUtil {
             }
 
             return shield((String) val, sensitive.regex(), sensitive.replacement());
-        } catch (NoSuchFieldException e) {
-            log.warn("The class {} has no field {}", object.getClass(), fieldName);
+        } catch (NoSuchFieldException ignored) {
+
         }
         return val;
     }
