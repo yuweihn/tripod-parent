@@ -117,7 +117,7 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 	}
 
 	@SuppressWarnings("unchecked")
-	public T connectionKeepAliveStrategy(ConnectionKeepAliveStrategy keepAliveStrategy) {
+	public T keepAliveStrategy(ConnectionKeepAliveStrategy keepAliveStrategy) {
 		this.keepAliveStrategy = keepAliveStrategy;
 		return (T) this;
 	}
