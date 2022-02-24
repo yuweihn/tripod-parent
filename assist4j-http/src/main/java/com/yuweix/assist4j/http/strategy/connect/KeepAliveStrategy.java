@@ -42,10 +42,10 @@ public class KeepAliveStrategy extends DefaultConnectionKeepAliveStrategy {
 
 
 	/**
+	 * 返回超时时间(ms)；
+	 *
 	 * 服务器端配置（以tomcat为例）：keepAliveTimeout=60000，表示在60s内内，服务器会一直保持连接状态。
 	 * 也就是说，如果客户端一直请求服务器，且间隔未超过60s，则该连接将一直保持，如果60s内未请求，则超时。
-	 * 
-	 * getKeepAliveDuration返回超时时间；
 	 */
 	@Override
 	public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
