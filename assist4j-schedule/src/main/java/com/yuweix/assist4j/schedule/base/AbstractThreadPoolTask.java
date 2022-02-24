@@ -45,7 +45,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 	}
 
 	protected void executeInThreadPool(ExecutorService executor, List<T> taskList) {
-		log.info("Size: {}", taskList == null ? 0 : taskList.size());
+		log.info("JobName: {}, Size: {}", this.getClass().getName(), taskList == null ? 0 : taskList.size());
 		if (taskList == null || taskList.size() <= 0) {
 			return;
 		}
