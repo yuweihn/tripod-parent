@@ -163,7 +163,6 @@ public class OssUtil {
 		if (ossObj == null || (objContent = ossObj.getObjectContent()) == null) {
 			return null;
 		}
-
 		return StreamUtil.read(objContent);
 	}
 

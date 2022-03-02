@@ -64,7 +64,6 @@ public class CosUtil {
 				cosClientLock.unlock();
 			}
 		}
-
 		return cosClient;
 	}
 
@@ -84,7 +83,6 @@ public class CosUtil {
 				cosClientWithBucketLock.unlock();
 			}
 		}
-
 		return cosClient;
 	}
 
@@ -161,7 +159,6 @@ public class CosUtil {
 		if (cosObj == null || (objContent = cosObj.getObjectContent()) == null) {
 			return null;
 		}
-
 		return StreamUtil.read(objContent);
 	}
 
@@ -173,5 +170,3 @@ public class CosUtil {
 		getCosClientWithBucket().deleteObject(bucketName, key);
 	}
 }
-
-
