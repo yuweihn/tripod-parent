@@ -118,8 +118,8 @@ public class CosUtil {
 			return list;
 		}
 
-		ObjectListing objectListing = getCosClient().listObjects(bucketName);
-		List<COSObjectSummary> summaryList = objectListing.getObjectSummaries();
+		ObjectListing objListing = getCosClient().listObjects(bucketName);
+		List<COSObjectSummary> summaryList = objListing.getObjectSummaries();
 		if (summaryList == null || summaryList.size() <= 0) {
 			return list;
 		}
@@ -138,9 +138,9 @@ public class CosUtil {
 	public String uploadFile(byte[] content, String key) {
 		log.info("COS upload file: key[{}]", key);
 		ByteArrayInputStream bis = new ByteArrayInputStream(content);
-		ObjectMetadata objectMeta = new ObjectMetadata();
-		objectMeta.setContentLength(bis.available());
-		getCosClientWithBucket().putObject(bucketName, key, bis, objectMeta);
+		ObjectMetadata objMeta = new ObjectMetadata();
+		objMeta.setContentLength(bis.available());
+		getCosClientWithBucket().putObject(bucketName, key, bis, objMeta);
 		String url = endpoint + "/" + key;
 		log.info("URL: {}", url);
 		try {
@@ -156,13 +156,13 @@ public class CosUtil {
 	 * @param key
 	 */
 	public byte[] downloadFile(String key) {
-		COSObject cosObject = getCosClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
-		InputStream objectContent;
-		if (cosObject == null || (objectContent = cosObject.getObjectContent()) == null) {
+		COSObject cosObj = getCosClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
+		InputStream objContent;
+		if (cosObj == null || (objContent = cosObj.getObjectContent()) == null) {
 			return null;
 		}
 
-		return StreamUtil.read(objectContent);
+		return StreamUtil.read(objContent);
 	}
 
 	/**

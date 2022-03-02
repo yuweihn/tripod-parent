@@ -111,8 +111,8 @@ public class OssUtil {
 			return list;
 		}
 
-		ObjectListing objectListing = getOSSClient().listObjects(bucketName);
-		List<OSSObjectSummary> summaryList = objectListing.getObjectSummaries();
+		ObjectListing objListing = getOSSClient().listObjects(bucketName);
+		List<OSSObjectSummary> summaryList = objListing.getObjectSummaries();
 		if (summaryList == null || summaryList.size() <= 0) {
 			return list;
 		}
@@ -133,9 +133,9 @@ public class OssUtil {
 		String protocol = getProtocol(endpoint);
 		ByteArrayInputStream bis = new ByteArrayInputStream(content);
 
-		ObjectMetadata objectMeta = new ObjectMetadata();
-		objectMeta.setContentLength(bis.available());
-		getOSSClientWithBucket().putObject(bucketName, key, bis, objectMeta);
+		ObjectMetadata objMeta = new ObjectMetadata();
+		objMeta.setContentLength(bis.available());
+		getOSSClientWithBucket().putObject(bucketName, key, bis, objMeta);
 		String url = protocol + bucketName + "." + endpoint.substring(protocol.length()) + "/" + key;
 		log.info("URL: {}", url);
 		try {
@@ -158,13 +158,13 @@ public class OssUtil {
 	 * @param key
 	 */
 	public byte[] downloadFile(String key) {
-		OSSObject ossObject = getOSSClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
-		InputStream objectContent;
-		if (ossObject == null || (objectContent = ossObject.getObjectContent()) == null) {
+		OSSObject ossObj = getOSSClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
+		InputStream objContent;
+		if (ossObj == null || (objContent = ossObj.getObjectContent()) == null) {
 			return null;
 		}
 
-		return StreamUtil.read(objectContent);
+		return StreamUtil.read(objContent);
 	}
 
 	/**
