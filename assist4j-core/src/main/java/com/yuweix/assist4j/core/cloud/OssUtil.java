@@ -3,12 +3,7 @@ package com.yuweix.assist4j.core.cloud;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
-import com.aliyun.oss.model.CannedAccessControlList;
-import com.aliyun.oss.model.GetObjectRequest;
-import com.aliyun.oss.model.OSSObject;
-import com.aliyun.oss.model.OSSObjectSummary;
-import com.aliyun.oss.model.ObjectListing;
-import com.aliyun.oss.model.ObjectMetadata;
+import com.aliyun.oss.model.*;
 import com.yuweix.assist4j.core.io.StreamUtil;
 
 import java.io.ByteArrayInputStream;
@@ -70,7 +65,9 @@ public class OssUtil {
 			try {
 				if (!ossClientWithBucketLockInit) {
 					if (!ossClient.doesBucketExist(bucketName)) {
-						ossClient.createBucket(bucketName);
+						CreateBucketRequest bucketRequest = new CreateBucketRequest(bucketName);
+						bucketRequest.setCannedACL(CannedAccessControlList.PublicRead);
+						ossClient.createBucket(bucketRequest);
 					}
 					ossClient.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
 					ossClientWithBucketLockInit = true;

@@ -75,7 +75,9 @@ public class CosUtil {
 			try {
 				if (!cosClientWithBucketLockInit) {
 					if (!cosClient.doesBucketExist(bucketName)) {
-						cosClient.createBucket(bucketName);
+						CreateBucketRequest bucketRequest = new CreateBucketRequest(bucketName);
+						bucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+						cosClient.createBucket(bucketRequest);
 					}
 					cosClient.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
 					cosClientWithBucketLockInit = true;
