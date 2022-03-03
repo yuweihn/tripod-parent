@@ -69,7 +69,6 @@ public class OssUtil {
 						bucketRequest.setCannedACL(CannedAccessControlList.PublicRead);
 						ossClient.createBucket(bucketRequest);
 					}
-					ossClient.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
 					ossClientWithBucketLockInit = true;
 				}
 			} finally {

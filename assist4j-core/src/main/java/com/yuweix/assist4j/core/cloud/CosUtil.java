@@ -79,7 +79,6 @@ public class CosUtil {
 						bucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
 						cosClient.createBucket(bucketRequest);
 					}
-					cosClient.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
 					cosClientWithBucketLockInit = true;
 				}
 			} finally {
