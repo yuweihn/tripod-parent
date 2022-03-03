@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -26,73 +25,41 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class CosUtil {
 	private static final Logger log = LoggerFactory.getLogger(CosUtil.class);
-	private String secretId;
-	private String secretKey;
-	private String region;
 	private String endpoint;
 	private String bucketName;
 
 	private COSClient cosClient = null;
-	private boolean cosClientWithBucketLockInit = false;
-	private final ReentrantLock cosClientLock = new ReentrantLock();
-	private final ReentrantLock cosClientWithBucketLock = new ReentrantLock();
 
 
 	public CosUtil(String secretId, String secretKey, String region, String bucketName) {
 		this(secretId, secretKey, region, null, bucketName);
 	}
 	public CosUtil(String secretId, String secretKey, String region, String protocol, String bucketName) {
-		this.secretId = secretId;
-		this.secretKey = secretKey;
-		this.region = region;
 		if (protocol == null || "".equals(protocol)) {
 			protocol = "http";
 		}
 		this.endpoint = protocol + "://" + bucketName + ".cos." + region + ".myqcloud.com";
 		this.bucketName = bucketName;
-	}
 
-	private COSClient getCosClient() {
-		if (cosClient == null) {
-			cosClientLock.lock();
-			try {
-				if (cosClient == null) {
-					COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);
-					ClientConfig clientConfig = new ClientConfig(new Region(region));
-					cosClient = new COSClient(cred, clientConfig);
-				}
-			} finally {
-				cosClientLock.unlock();
+		COSCredentials cred = new BasicCOSCredentials(secretId, secretKey);
+		ClientConfig clientConfig = new ClientConfig(new Region(region));
+		cosClient = new COSClient(cred, clientConfig);
+		try {
+			if (!cosClient.doesBucketExist(bucketName)) {
+				CreateBucketRequest bucketRequest = new CreateBucketRequest(bucketName);
+				bucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+				cosClient.createBucket(bucketRequest);
 			}
+		} catch (Exception e) {
+			log.warn(e.getMessage());
 		}
-		return cosClient;
-	}
-
-	private COSClient getCosClientWithBucket() {
-		COSClient cosClient = getCosClient();
-		if (!cosClientWithBucketLockInit) {
-			cosClientWithBucketLock.lock();
-			try {
-				if (!cosClientWithBucketLockInit) {
-					if (!cosClient.doesBucketExist(bucketName)) {
-						CreateBucketRequest bucketRequest = new CreateBucketRequest(bucketName);
-						bucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
-						cosClient.createBucket(bucketRequest);
-					}
-					cosClientWithBucketLockInit = true;
-				}
-			} finally {
-				cosClientWithBucketLock.unlock();
-			}
-		}
-		return cosClient;
 	}
 
 	/**
 	 * 删除一个Bucket和其中的文件
 	 */
 	public void deleteBucket() {
-		if (!getCosClient().doesBucketExist(bucketName)) {
+		if (!cosClient.doesBucketExist(bucketName)) {
 			return;
 		}
 
@@ -101,11 +68,10 @@ public class CosUtil {
 			if (keyList != null && keyList.size() > 0) {
 				for (String key: keyList) {
 					//先删除bucket下的文件
-					getCosClient().deleteObject(bucketName, key);
+					cosClient.deleteObject(bucketName, key);
 				}
 			}
-			getCosClient().deleteBucket(bucketName);
-			cosClientWithBucketLockInit = false;
+			cosClient.deleteBucket(bucketName);
 		}
 	}
 
@@ -114,11 +80,11 @@ public class CosUtil {
 	 */
 	public List<String> queryBucketKeyList() {
 		List<String> list = new ArrayList<String>();
-		if (!getCosClient().doesBucketExist(bucketName)) {
+		if (!cosClient.doesBucketExist(bucketName)) {
 			return list;
 		}
 
-		ObjectListing objListing = getCosClient().listObjects(bucketName);
+		ObjectListing objListing = cosClient.listObjects(bucketName);
 		List<COSObjectSummary> summaryList = objListing.getObjectSummaries();
 		if (summaryList == null || summaryList.size() <= 0) {
 			return list;
@@ -140,7 +106,7 @@ public class CosUtil {
 		ByteArrayInputStream bis = new ByteArrayInputStream(content);
 		ObjectMetadata objMeta = new ObjectMetadata();
 		objMeta.setContentLength(bis.available());
-		getCosClientWithBucket().putObject(bucketName, key, bis, objMeta);
+		cosClient.putObject(bucketName, key, bis, objMeta);
 		String url = endpoint + "/" + key;
 		log.info("URL: {}", url);
 		try {
@@ -156,7 +122,7 @@ public class CosUtil {
 	 * @param key
 	 */
 	public byte[] downloadFile(String key) {
-		COSObject cosObj = getCosClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
+		COSObject cosObj = cosClient.getObject(new GetObjectRequest(bucketName, key));
 		InputStream in;
 		if (cosObj == null || (in = cosObj.getObjectContent()) == null) {
 			return null;
@@ -170,7 +136,7 @@ public class CosUtil {
 		return bytes;
 	}
 	public void downloadFile(String key, OutputStream out) {
-		COSObject cosObj = getCosClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
+		COSObject cosObj = cosClient.getObject(new GetObjectRequest(bucketName, key));
 		InputStream in;
 		if (cosObj == null || (in = cosObj.getObjectContent()) == null) {
 			return;
@@ -188,6 +154,6 @@ public class CosUtil {
 	 * @param key
 	 */
 	public void deleteFile(String key) {
-		getCosClientWithBucket().deleteObject(bucketName, key);
+		cosClient.deleteObject(bucketName, key);
 	}
 }

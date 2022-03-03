@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,64 +24,33 @@ import org.slf4j.LoggerFactory;
 public class OssUtil {
 	private static final Logger log = LoggerFactory.getLogger(OssUtil.class);
 	private String endpoint;
-	private String accessKey;
-	private String accessSecret;
 	private String bucketName;
 
 	private OSSClient ossClient = null;
-	private boolean ossClientWithBucketLockInit = false;
-	private final ReentrantLock ossClientLock = new ReentrantLock();
-	private final ReentrantLock ossClientWithBucketLock = new ReentrantLock();
 
 
 	public OssUtil(String endpoint, String accessKey, String accessSecret, String bucketName) {
 		this.endpoint = endpoint;
-		this.accessKey = accessKey;
-		this.accessSecret = accessSecret;
 		this.bucketName = bucketName;
-	}
 
-	private OSSClient getOSSClient() {
-		if (ossClient == null) {
-			ossClientLock.lock();
-			try {
-				if (ossClient == null) {
-					ossClient = new OSSClient(this.endpoint
-							, new DefaultCredentialProvider(this.accessKey, this.accessSecret), null);
-				}
-			} finally {
-				ossClientLock.unlock();
+		ossClient = new OSSClient(this.endpoint
+				, new DefaultCredentialProvider(accessKey, accessSecret), null);
+		try {
+			if (!ossClient.doesBucketExist(bucketName)) {
+				CreateBucketRequest bucketRequest = new CreateBucketRequest(bucketName);
+				bucketRequest.setCannedACL(CannedAccessControlList.PublicRead);
+				ossClient.createBucket(bucketRequest);
 			}
+		} catch (Exception e) {
+			log.warn(e.getMessage());
 		}
-
-		return ossClient;
-	}
-
-	private OSSClient getOSSClientWithBucket() {
-		OSSClient ossClient = getOSSClient();
-		if (!ossClientWithBucketLockInit) {
-			ossClientWithBucketLock.lock();
-			try {
-				if (!ossClientWithBucketLockInit) {
-					if (!ossClient.doesBucketExist(bucketName)) {
-						CreateBucketRequest bucketRequest = new CreateBucketRequest(bucketName);
-						bucketRequest.setCannedACL(CannedAccessControlList.PublicRead);
-						ossClient.createBucket(bucketRequest);
-					}
-					ossClientWithBucketLockInit = true;
-				}
-			} finally {
-				ossClientWithBucketLock.unlock();
-			}
-		}
-		return ossClient;
 	}
 
 	/**
 	 * 删除一个Bucket和其中的文件
 	 */
 	public void deleteBucket() {
-		if (!getOSSClient().doesBucketExist(bucketName)) {
+		if (!ossClient.doesBucketExist(bucketName)) {
 			return;
 		}
 
@@ -91,11 +59,10 @@ public class OssUtil {
 			if (keyList != null && keyList.size() > 0) {
 				for (String key: keyList) {
 					//先删除bucket下的文件
-					getOSSClient().deleteObject(bucketName, key);
+					ossClient.deleteObject(bucketName, key);
 				}
 			}
-			getOSSClient().deleteBucket(bucketName);
-			ossClientWithBucketLockInit = false;
+			ossClient.deleteBucket(bucketName);
 		}
 	}
 
@@ -104,11 +71,11 @@ public class OssUtil {
 	 */
 	public List<String> queryBucketKeyList() {
 		List<String> list = new ArrayList<String>();
-		if (!getOSSClient().doesBucketExist(bucketName)) {
+		if (!ossClient.doesBucketExist(bucketName)) {
 			return list;
 		}
 
-		ObjectListing objListing = getOSSClient().listObjects(bucketName);
+		ObjectListing objListing = ossClient.listObjects(bucketName);
 		List<OSSObjectSummary> summaryList = objListing.getObjectSummaries();
 		if (summaryList == null || summaryList.size() <= 0) {
 			return list;
@@ -132,7 +99,7 @@ public class OssUtil {
 
 		ObjectMetadata objMeta = new ObjectMetadata();
 		objMeta.setContentLength(bis.available());
-		getOSSClientWithBucket().putObject(bucketName, key, bis, objMeta);
+		ossClient.putObject(bucketName, key, bis, objMeta);
 		String url = protocol + bucketName + "." + endpoint.substring(protocol.length()) + "/" + key;
 		log.info("URL: {}", url);
 		try {
@@ -155,7 +122,7 @@ public class OssUtil {
 	 * @param key
 	 */
 	public byte[] downloadFile(String key) {
-		OSSObject ossObj = getOSSClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
+		OSSObject ossObj = ossClient.getObject(new GetObjectRequest(bucketName, key));
 		InputStream in;
 		if (ossObj == null || (in = ossObj.getObjectContent()) == null) {
 			return null;
@@ -169,7 +136,7 @@ public class OssUtil {
 		return bytes;
 	}
 	public void downloadFile(String key, OutputStream out) {
-		OSSObject ossObj = getOSSClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
+		OSSObject ossObj = ossClient.getObject(new GetObjectRequest(bucketName, key));
 		InputStream in;
 		if (ossObj == null || (in = ossObj.getObjectContent()) == null) {
 			return;
@@ -187,6 +154,6 @@ public class OssUtil {
 	 * @param key
 	 */
 	public void deleteFile(String key) {
-		getOSSClientWithBucket().deleteObject(bucketName, key);
+		ossClient.deleteObject(bucketName, key);
 	}
 }
