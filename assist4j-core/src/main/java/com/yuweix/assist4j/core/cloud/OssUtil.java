@@ -14,6 +14,7 @@ import com.yuweix.assist4j.core.io.StreamUtil;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -159,11 +160,30 @@ public class OssUtil {
 	 */
 	public byte[] downloadFile(String key) {
 		OSSObject ossObj = getOSSClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
-		InputStream objContent;
-		if (ossObj == null || (objContent = ossObj.getObjectContent()) == null) {
+		InputStream in;
+		if (ossObj == null || (in = ossObj.getObjectContent()) == null) {
 			return null;
 		}
-		return StreamUtil.read(objContent);
+		byte[] bytes = StreamUtil.read(in);
+		try {
+			ossObj.close();
+		} catch (IOException e) {
+			log.warn(e.getMessage());
+		}
+		return bytes;
+	}
+	public void downloadFile(String key, OutputStream out) {
+		OSSObject ossObj = getOSSClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
+		InputStream in;
+		if (ossObj == null || (in = ossObj.getObjectContent()) == null) {
+			return;
+		}
+		StreamUtil.write(in, out);
+		try {
+			ossObj.close();
+		} catch (IOException e) {
+			log.warn(e.getMessage());
+		}
 	}
 
 	/**

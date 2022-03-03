@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -155,11 +156,30 @@ public class CosUtil {
 	 */
 	public byte[] downloadFile(String key) {
 		COSObject cosObj = getCosClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
-		InputStream objContent;
-		if (cosObj == null || (objContent = cosObj.getObjectContent()) == null) {
+		InputStream in;
+		if (cosObj == null || (in = cosObj.getObjectContent()) == null) {
 			return null;
 		}
-		return StreamUtil.read(objContent);
+		byte[] bytes = StreamUtil.read(in);
+		try {
+			cosObj.close();
+		} catch (IOException e) {
+			log.warn(e.getMessage());
+		}
+		return bytes;
+	}
+	public void downloadFile(String key, OutputStream out) {
+		COSObject cosObj = getCosClientWithBucket().getObject(new GetObjectRequest(bucketName, key));
+		InputStream in;
+		if (cosObj == null || (in = cosObj.getObjectContent()) == null) {
+			return;
+		}
+		StreamUtil.write(in, out);
+		try {
+			cosObj.close();
+		} catch (IOException e) {
+			log.warn(e.getMessage());
+		}
 	}
 
 	/**
