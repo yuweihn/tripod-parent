@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.BufferedOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public abstract class FileUtil extends StreamUtil {
 		BufferedReader bf = null;
 		try {
 			fis = new FileInputStream(filePath);
-			isr = new InputStreamReader(fis, "UTF-8");
+			isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
 			bf = new BufferedReader(isr);
 			StringBuilder builder = new StringBuilder("");
 			String line;
