@@ -148,6 +148,14 @@ public abstract class DateUtil {
 			throw new RuntimeException(e);
 		}
 	}
+	public static Date parseDateIgnoreE(String dateStr, String pattern) {
+		DateFormat df = new SimpleDateFormat(pattern);
+		try {
+			return df.parse(dateStr);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
 
 	/**
 	 * 获取指定日期在指定时间长度之后的日期。
