@@ -153,9 +153,9 @@ public abstract class AbstractProvider {
 	 * @return
 	 */
 	protected String getAllColumnSql(Class<?> clz, String tableAlias) {
-		String className = clz.getName();
+		String key = clz.getName() + "_" + tableAlias;
 		Map<String, String> map = getSelectSqlWithTableAliasMap();
-		String selectSql = map.get(className);
+		String selectSql = map.get(key);
 		if (selectSql == null) {
 			StringBuilder builder = new StringBuilder("");
 			List<FieldColumn> fcList = getPersistFieldList(clz);
@@ -167,7 +167,7 @@ public abstract class AbstractProvider {
 				builder.append(tableAlias).append(".").append(fc.getColumnName()).append(" as ").append(fc.getField().getName());
 			}
 			selectSql = builder.toString();
-			map.put(className, selectSql);
+			map.put(key, selectSql);
 		}
 		return selectSql;
 	}
