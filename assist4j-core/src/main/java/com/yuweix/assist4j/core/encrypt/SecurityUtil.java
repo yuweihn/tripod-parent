@@ -1,7 +1,6 @@
 package com.yuweix.assist4j.core.encrypt;
 
 
-import com.yuweix.assist4j.core.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,17 +21,18 @@ public abstract class SecurityUtil {
 	private static final Logger log = LoggerFactory.getLogger(SecurityUtil.class);
 	private static final String SECURITY_KEY = "sfdfyu8**((^$$$SDSDhHJlSDDsdsvcx234ex,,,cjv.xckv...";
 	private static final char HEX_DIGIT[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+	private static final String UTF_8 = "utf-8";
 
 
 	public static final String getMd5(String str) {
-		return getMd5(str, Constant.ENCODING_UTF_8);
+		return getMd5(str, UTF_8);
 	}
 	public static final String getMd5(String str, String charset) {
 		return getSecurityByAlgor(Algor.MD5.getCode(), str, charset);
 	}
 
 	public static final String getSha1(String str) {
-		return getSha1(str, Constant.ENCODING_UTF_8);
+		return getSha1(str, UTF_8);
 	}
 	public static final String getSha1(String str, String charset) {
 		return getSecurityByAlgor(Algor.SHA1.getCode(), str, charset);
@@ -40,7 +40,7 @@ public abstract class SecurityUtil {
 
 	public static String getSecurityByAlgor(String algor, String str, String charset) {
 		try {
-			byte[] tmp = str.getBytes(charset == null ? Constant.ENCODING_UTF_8 : charset);
+			byte[] tmp = str.getBytes(charset == null ? UTF_8 : charset);
 			MessageDigest mdTemp = MessageDigest.getInstance(algor);
 			mdTemp.update(tmp);
 			byte[] md = mdTemp.digest();
