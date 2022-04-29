@@ -365,18 +365,17 @@ public abstract class DateUtil {
 	}
 
 //	public static String showTime(Date date) {
-//		String resp = "";
 //		if (date == null) {
-//			return resp;
+//			return "";
 //		}
-//		
+//
 //		Date now = Calendar.getInstance().getTime();
-//		if (DateUtil.isSameDay(now, date)) {
+//		if (isSameDay(now, date)) {
 //			long sec = (now.getTime() - date.getTime()) / 1000;
 //			if (sec < 0) {
 //				return "";
 //			}
-//			
+//
 //			if (sec < 60) {
 //				/**
 //				 * 1分钟内
@@ -396,8 +395,8 @@ public abstract class DateUtil {
 //			int h = (int) (sec / (60 * 60));
 //			return h + "小时前";
 //		}
-//		
-//		int diff = DateUtil.getDayDiff(DateUtil.getStartOfDate(date), DateUtil.getStartOfDate(now));
+//
+//		int diff = getDayDiff(getStartOfDate(date), getStartOfDate(now));
 //		if (diff <= 0) {
 //			return "";
 //		}
@@ -407,7 +406,7 @@ public abstract class DateUtil {
 //		if (diff < 7) {
 //			return diff + "天前";
 //		}
-//		
-//		return DateUtil.formatDate(date, "yyyy-MM-dd");
+//
+//		return formatDate(date, "yyyy-MM-dd");
 //	}
 }
