@@ -1,6 +1,7 @@
 package com.yuweix.assist4j.session;
 
 
+import com.yuweix.assist4j.core.json.Json;
 import com.yuweix.assist4j.session.conf.SessionConf;
 
 import java.util.Date;
@@ -19,7 +20,8 @@ public abstract class SessionUtil {
 		if (sessionId == null) {
 			return null;
 		}
-		SessionAttribute attribute = SessionAttribute.deserialize(SessionConf.getInstance().getCache().get(sessionId));
+		Json json = SessionConf.getInstance().getJson();
+		SessionAttribute attribute = json.toObject(SessionConf.getInstance().getCache().get(sessionId));
 		return attribute == null ? null : attribute.getCreateTime();
 	}
 
@@ -31,7 +33,8 @@ public abstract class SessionUtil {
 		if (sessionId == null) {
 			return null;
 		}
-		SessionAttribute attribute = SessionAttribute.deserialize(SessionConf.getInstance().getCache().get(sessionId));
+		Json json = SessionConf.getInstance().getJson();
+		SessionAttribute attribute = json.toObject(SessionConf.getInstance().getCache().get(sessionId));
 		if (attribute == null) {
 			return null;
 		}

@@ -6,6 +6,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
+import com.yuweix.assist4j.core.json.Json;
 import com.yuweix.assist4j.session.cache.SessionCache;
 import com.yuweix.assist4j.session.conf.SessionConf;
 import org.springframework.util.CollectionUtils;
@@ -221,7 +222,8 @@ public class CacheHttpSession implements HttpSession {
 		SessionCache sessionCache = SessionConf.getInstance().getCache();
 		long timeSec = SessionConf.getInstance().getMaxInactiveInterval() * 60L;
 
-		sessionCache.put(fullSessionId, SessionAttribute.serialize(sessionAttribute), timeSec);
+		Json json = SessionConf.getInstance().getJson();
+		sessionCache.put(fullSessionId, json.toString(sessionAttribute), timeSec);
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -256,7 +258,8 @@ public class CacheHttpSession implements HttpSession {
 			return;
 		}
 
-		sessionAttribute = SessionAttribute.deserialize(SessionConf.getInstance().getCache().get(fullSessionId));
+		Json json = SessionConf.getInstance().getJson();
+		sessionAttribute = json.toObject(SessionConf.getInstance().getCache().get(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new SessionAttribute();

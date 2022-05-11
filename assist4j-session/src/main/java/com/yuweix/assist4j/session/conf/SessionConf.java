@@ -1,6 +1,7 @@
 package com.yuweix.assist4j.session.conf;
 
 
+import com.yuweix.assist4j.core.json.Json;
 import com.yuweix.assist4j.session.SessionConstant;
 import com.yuweix.assist4j.session.cache.SessionCache;
 import org.springframework.util.Assert;
@@ -20,6 +21,7 @@ public class SessionConf {
 	private int maxInactiveInterval;
 	private String applicationName;
 	private SessionCache cache;
+	private Json json;
 
 	private SessionConf() {
 
@@ -49,6 +51,16 @@ public class SessionConf {
 	public SessionCache getCache() {
 		Assert.notNull(cache, "[cache] is required.");
 		return cache;
+	}
+
+	public void setJson(Json json) {
+		Assert.notNull(json, "[json] is required.");
+		this.json = json;
+	}
+
+	public Json getJson() {
+		Assert.notNull(json, "[json] is required.");
+		return json;
 	}
 
 	public void setMaxInactiveInterval(int maxInactiveInterval) {

@@ -1,6 +1,7 @@
 package com.yuweix.assist4j.session.filter;
 
 
+import com.yuweix.assist4j.core.json.Json;
 import com.yuweix.assist4j.session.CacheHttpServletRequest;
 import com.yuweix.assist4j.session.cache.SessionCache;
 import com.yuweix.assist4j.session.conf.PathPattern;
@@ -34,6 +35,10 @@ public abstract class SessionFilter implements Filter {
 
 	public void setCache(SessionCache cache) {
 		SessionConf.getInstance().setCache(cache);
+	}
+	
+	public void setJson(Json json) {
+		SessionConf.getInstance().setJson(json);
 	}
 	/**
 	 * 设置session失效时间(分钟)

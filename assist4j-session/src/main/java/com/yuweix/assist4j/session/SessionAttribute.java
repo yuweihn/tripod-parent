@@ -7,11 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
-import com.alibaba.fastjson.parser.ParserConfig;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-
 
 /**
  * @author yuwei
@@ -97,17 +92,5 @@ public class SessionAttribute implements Serializable {
 
 	public Object getAttribute(String name) {
 		return attributes.get(name);
-	}
-
-
-	public static String serialize(SessionAttribute attr) {
-		return JSONObject.toJSONString(attr, SerializerFeature.WriteClassName);
-	}
-
-	public static SessionAttribute deserialize(String value) {
-		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
-			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
-		}
-		return JSONObject.parseObject(value, new TypeReference<SessionAttribute>() {});
 	}
 }
