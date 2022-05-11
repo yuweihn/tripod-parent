@@ -1,8 +1,8 @@
 package com.yuweix.assist4j.boot.exception;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.support.spring.FastJsonJsonView;
 import com.yuweix.assist4j.core.Response;
 import com.yuweix.assist4j.core.exception.ExceptionHandler;
 import com.yuweix.assist4j.core.exception.ExceptionViewResolver;
@@ -17,8 +17,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.AbstractView;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -57,7 +61,18 @@ public class ExceptionAutoConfiguration {
 				@SuppressWarnings("unchecked")
 				@Override
 				public ModelAndView createView(String content) {
-					FastJsonJsonView view = new FastJsonJsonView();
+					AbstractView view = new AbstractView() {
+						@Override
+						protected void renderMergedOutputModel(Map<String, Object> map, HttpServletRequest req, HttpServletResponse resp) throws Exception {
+							resp.setContentType("application/json; charset=utf-8");
+							ByteArrayOutputStream bos = new ByteArrayOutputStream();
+							JSON.writeJSONString(bos, JSON.toJSONString(map));
+							ServletOutputStream out = resp.getOutputStream();
+							bos.writeTo(out);
+							bos.close();
+							out.flush();
+						}
+					};
 					String text = JSONObject.toJSONString(
 							new Response<String, Void>(errorCode == null || "".equals(errorCode) ? "500" : errorCode, content));
 					Map<String, Object> attributes = JSONObject.parseObject(text, Map.class);
