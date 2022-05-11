@@ -44,9 +44,8 @@ public class ExceptionAutoConfiguration {
 				int status = response.getStatus();
 				HttpStatus httpStatus = HttpStatus.valueOf(status);
 
-				Response<String, Void> resp = new Response<String, Void>(
-						errorCode == null || "".equals(errorCode) ? "" + status : errorCode,
-						httpStatus.getReasonPhrase() + "[" + status + "]");
+				Response<String, Void> resp = new Response<String, Void>(errorCode == null || "".equals(errorCode) ? "" + status : errorCode
+						, httpStatus.getReasonPhrase() + "[" + status + "]");
 				return JSONObject.toJSONString(resp);
 			}
 		}
