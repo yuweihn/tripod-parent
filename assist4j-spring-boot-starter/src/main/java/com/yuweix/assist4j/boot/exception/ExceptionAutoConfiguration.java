@@ -2,7 +2,6 @@ package com.yuweix.assist4j.boot.exception;
 
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.yuweix.assist4j.core.Response;
 import com.yuweix.assist4j.core.exception.ExceptionHandler;
 import com.yuweix.assist4j.core.exception.ExceptionViewResolver;
@@ -50,7 +49,7 @@ public class ExceptionAutoConfiguration {
 
 				Response<String, Void> resp = new Response<String, Void>(errorCode == null || "".equals(errorCode) ? "" + status : errorCode
 						, httpStatus.getReasonPhrase() + "[" + status + "]");
-				return JSONObject.toJSONString(resp);
+				return JSON.toJSONString(resp);
 			}
 		}
 
@@ -70,9 +69,9 @@ public class ExceptionAutoConfiguration {
 							out.flush();
 						}
 					};
-					String text = JSONObject.toJSONString(
+					String text = JSON.toJSONString(
 							new Response<String, Void>(errorCode == null || "".equals(errorCode) ? "500" : errorCode, content));
-					Map<String, Object> attributes = JSONObject.parseObject(text, Map.class);
+					Map<String, Object> attributes = JSON.parseObject(text, Map.class);
 					view.setAttributesMap(attributes);
 					return new ModelAndView(view);
 				}
