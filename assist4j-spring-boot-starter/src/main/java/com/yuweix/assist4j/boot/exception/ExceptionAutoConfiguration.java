@@ -22,7 +22,7 @@ import org.springframework.web.servlet.view.AbstractView;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -64,12 +64,9 @@ public class ExceptionAutoConfiguration {
 					AbstractView view = new AbstractView() {
 						@Override
 						protected void renderMergedOutputModel(Map<String, Object> map, HttpServletRequest req, HttpServletResponse resp) throws Exception {
-							resp.setContentType("application/json; charset=utf-8");
-							ByteArrayOutputStream bos = new ByteArrayOutputStream();
-							JSON.writeJSONString(bos, JSON.toJSONString(map));
+							resp.setContentType("application/json; charset=" + StandardCharsets.UTF_8);
 							ServletOutputStream out = resp.getOutputStream();
-							bos.writeTo(out);
-							bos.close();
+							out.write(JSON.toJSONString(map).getBytes(StandardCharsets.UTF_8));
 							out.flush();
 						}
 					};
