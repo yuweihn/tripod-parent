@@ -48,11 +48,9 @@ public class ExceptionHandler implements HandlerExceptionResolver {
 		if (msg != null && !"".equals(msg)) {
 			return showExceptionName ? aClz.getName() + ": " + msg : msg;
 		}
-
 		if (defaultMsg != null && !"".equals(defaultMsg)) {
 			return showExceptionName ? aClz.getName() + ": " + defaultMsg : defaultMsg;
 		}
-
 		return aClz.getName();
 	}
 }
