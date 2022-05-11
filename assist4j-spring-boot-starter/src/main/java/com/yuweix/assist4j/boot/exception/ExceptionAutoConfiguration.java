@@ -95,7 +95,7 @@ public class ExceptionAutoConfiguration {
 			for (Map.Entry<String, String> entry : entrySet) {
 				try {
 					errorMsgMap.put(Class.forName(entry.getKey()), entry.getValue());
-				} catch (ClassNotFoundException e) {
+				} catch (ClassNotFoundException ignored) {
 				}
 			}
 		}
