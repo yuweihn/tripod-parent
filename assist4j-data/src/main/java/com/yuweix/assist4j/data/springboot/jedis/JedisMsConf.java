@@ -1,6 +1,7 @@
 package com.yuweix.assist4j.data.springboot.jedis;
 
 
+import com.yuweix.assist4j.core.json.Json;
 import com.yuweix.assist4j.data.cache.redis.jedis.JedisCache;
 import com.yuweix.assist4j.data.serializer.JsonSerializer;
 import com.yuweix.assist4j.data.serializer.Serializer;
@@ -71,7 +72,7 @@ public class JedisMsConf {
 
 	@Bean(name = "redisTemplate")
 	public RedisTemplate<String, Object> redisTemplate(@Qualifier("jedisConnectionFactory") RedisConnectionFactory connFactory) {
-		RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(connFactory);
 		template.setKeySerializer(new StringRedisSerializer());
 		template.setValueSerializer(new StringRedisSerializer());
@@ -82,17 +83,16 @@ public class JedisMsConf {
 
 	@ConditionalOnMissingBean(Serializer.class)
 	@Bean
-	public Serializer cacheSerializer() {
-		return new JsonSerializer();
+	public Serializer cacheSerializer(Json json) {
+		return new JsonSerializer(json);
 	}
 
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public JedisCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
 			, Serializer serializer) {
-		JedisCache cache = new JedisCache();
+		JedisCache cache = new JedisCache(serializer);
 		cache.setRedisTemplate(template);
-		cache.setSerializer(serializer);
 		return cache;
 	}
 }

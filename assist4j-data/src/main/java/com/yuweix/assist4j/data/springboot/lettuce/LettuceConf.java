@@ -1,6 +1,7 @@
 package com.yuweix.assist4j.data.springboot.lettuce;
 
 
+import com.yuweix.assist4j.core.json.Json;
 import com.yuweix.assist4j.data.cache.redis.lettuce.LettuceCache;
 import com.yuweix.assist4j.data.serializer.JsonSerializer;
 import com.yuweix.assist4j.data.serializer.Serializer;
@@ -83,7 +84,7 @@ public class LettuceConf {
 	@Bean(name = "redisTemplate")
 	public RedisTemplate<String, Object> redisTemplate(@Qualifier("lettuceConnectionFactory") LettuceConnectionFactory connFactory) {
 		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
-		RedisTemplate<String, Object> template = new RedisTemplate<String, Object>();
+		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(connFactory);
 		template.setKeySerializer(redisSerializer);
 		template.setValueSerializer(redisSerializer);
@@ -94,17 +95,16 @@ public class LettuceConf {
 
 	@ConditionalOnMissingBean(Serializer.class)
 	@Bean
-	public Serializer cacheSerializer() {
-		return new JsonSerializer();
+	public Serializer cacheSerializer(Json json) {
+		return new JsonSerializer(json);
 	}
 
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
 			, Serializer serializer) {
-		LettuceCache cache = new LettuceCache();
+		LettuceCache cache = new LettuceCache(serializer);
 		cache.setRedisTemplate(template);
-		cache.setSerializer(serializer);
 		return cache;
 	}
 }

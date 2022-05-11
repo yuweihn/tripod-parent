@@ -2,12 +2,13 @@ package com.yuweix.assist4j.boot;
 
 
 import com.yuweix.assist4j.core.SpringContext;
+import com.yuweix.assist4j.core.json.Fastjson;
+import com.yuweix.assist4j.core.json.Json;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.lang.reflect.Constructor;
 
 
@@ -30,5 +31,11 @@ public class DefaultAutoConfiguration {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@ConditionalOnMissingBean(Json.class)
+	@Bean
+	public Json json() {
+		return new Fastjson();
 	}
 }

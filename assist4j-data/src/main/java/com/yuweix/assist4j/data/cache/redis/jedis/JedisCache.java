@@ -4,7 +4,6 @@ package com.yuweix.assist4j.data.cache.redis.jedis;
 import com.yuweix.assist4j.data.cache.AbstractCache;
 import com.yuweix.assist4j.data.cache.MessageHandler;
 import com.yuweix.assist4j.data.cache.redis.RedisCache;
-import com.yuweix.assist4j.data.serializer.JsonSerializer;
 import com.yuweix.assist4j.data.serializer.Serializer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
@@ -30,8 +29,8 @@ public class JedisCache extends AbstractCache implements RedisCache {
 	protected Serializer serializer;
 
 
-	public JedisCache() {
-		serializer = new JsonSerializer();
+	public JedisCache(Serializer serializer) {
+		this.serializer = serializer;
 	}
 
 

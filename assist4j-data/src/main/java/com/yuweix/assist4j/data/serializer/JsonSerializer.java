@@ -1,12 +1,7 @@
 package com.yuweix.assist4j.data.serializer;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
-import com.alibaba.fastjson.parser.ParserConfig;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.yuweix.assist4j.core.json.Json;
 
 
 /**
@@ -14,8 +9,13 @@ import org.slf4j.LoggerFactory;
  * @author yuwei
  */
 public class JsonSerializer implements Serializer {
-	private static final Logger log = LoggerFactory.getLogger(JsonSerializer.class);
+//	private static final Logger log = LoggerFactory.getLogger(JsonSerializer.class);
 
+	private Json json;
+
+	public JsonSerializer(Json json) {
+		this.json = json;
+	}
 
 	/**
 	 * 序列化
@@ -24,8 +24,7 @@ public class JsonSerializer implements Serializer {
 		if (t == null) {
 			return null;
 		}
-
-		return JSONObject.toJSONString(t, SerializerFeature.WriteClassName);
+		return json.toString(t);
 	}
 
 	/**
@@ -35,10 +34,6 @@ public class JsonSerializer implements Serializer {
 		if (str == null) {
 			return null;
 		}
-
-		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
-			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
-		}
-		return JSONObject.parseObject(str, new TypeReference<T>() {});
+		return json.toObject(str);
 	}
 }

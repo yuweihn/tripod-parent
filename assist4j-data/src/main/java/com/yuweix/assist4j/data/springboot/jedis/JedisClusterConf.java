@@ -1,6 +1,7 @@
 package com.yuweix.assist4j.data.springboot.jedis;
 
 
+import com.yuweix.assist4j.core.json.Json;
 import com.yuweix.assist4j.data.cache.redis.jedis.JedisClusterCache;
 import com.yuweix.assist4j.data.cache.redis.jedis.JedisClusterFactory;
 import com.yuweix.assist4j.data.serializer.JsonSerializer;
@@ -52,17 +53,16 @@ public class JedisClusterConf {
 
 	@ConditionalOnMissingBean(Serializer.class)
 	@Bean
-	public Serializer cacheSerializer() {
-		return new JsonSerializer();
+	public Serializer cacheSerializer(Json json) {
+		return new JsonSerializer(json);
 	}
 
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public JedisClusterCache redisClusterCache(@Qualifier("jedisCluster") JedisCluster jedisCluster
 			, Serializer serializer) {
-		JedisClusterCache cache = new JedisClusterCache();
+		JedisClusterCache cache = new JedisClusterCache(serializer);
 		cache.setJedisCluster(jedisCluster);
-		cache.setSerializer(serializer);
 		return cache;
 	}
 }
