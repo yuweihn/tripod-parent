@@ -1,10 +1,10 @@
 package com.yuweix.assist4j.boot.exception;
 
 
-import com.alibaba.fastjson.JSON;
 import com.yuweix.assist4j.core.Response;
 import com.yuweix.assist4j.core.exception.ExceptionHandler;
 import com.yuweix.assist4j.core.exception.ExceptionViewResolver;
+import com.yuweix.assist4j.core.json.Json;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.AbstractView;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +34,13 @@ import java.util.Set;
 @Configuration
 @ConditionalOnProperty(name = "assist4j.boot.exception.enabled")
 public class ExceptionAutoConfiguration {
+	private static Json json;
+
+	@Resource
+	public void setJson(Json json) {
+		ExceptionAutoConfiguration.json = json;
+	}
+
 	@Configuration
 	@ConditionalOnProperty(name = "assist4j.boot.exception.handler.enabled", matchIfMissing = true)
 	protected static class ErrorControllerConfiguration {
@@ -49,7 +57,7 @@ public class ExceptionAutoConfiguration {
 
 				Response<String, Void> resp = new Response<String, Void>(errorCode == null || "".equals(errorCode) ? "" + status : errorCode
 						, httpStatus.getReasonPhrase() + "[" + status + "]");
-				return JSON.toJSONString(resp);
+				return json.toJSONString(resp);
 			}
 		}
 
@@ -65,13 +73,13 @@ public class ExceptionAutoConfiguration {
 						protected void renderMergedOutputModel(Map<String, Object> map, HttpServletRequest req, HttpServletResponse resp) throws Exception {
 							resp.setContentType("application/json; charset=" + StandardCharsets.UTF_8);
 							ServletOutputStream out = resp.getOutputStream();
-							out.write(JSON.toJSONString(map).getBytes(StandardCharsets.UTF_8));
+							out.write(json.toJSONString(map).getBytes(StandardCharsets.UTF_8));
 							out.flush();
 						}
 					};
-					String text = JSON.toJSONString(
+					String text = json.toJSONString(
 							new Response<String, Void>(errorCode == null || "".equals(errorCode) ? "500" : errorCode, content));
-					Map<String, Object> attributes = JSON.parseObject(text, Map.class);
+					Map<String, Object> attributes = json.parseObject(text, Map.class);
 					view.setAttributesMap(attributes);
 					return new ModelAndView(view);
 				}

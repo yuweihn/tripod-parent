@@ -1,7 +1,7 @@
 package com.yuweix.assist4j.core;
 
 
-import com.alibaba.fastjson.JSON;
+import com.yuweix.assist4j.core.json.JsonUtil;
 import java.io.Serializable;
 
 
@@ -37,7 +37,7 @@ public class Response<C, D> implements Serializable {
 
 	@Override
 	public String toString() {
-		return JSON.toJSONString(this);
+		return JsonUtil.toJSONString(this);
 	}
 
 

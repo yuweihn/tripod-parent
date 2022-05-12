@@ -29,4 +29,19 @@ public class Fastjson implements Json {
 		}
 		return JSON.parseObject(str, new TypeReference<T>() {});
 	}
+
+	@Override
+	public String toJSONString(Object object) {
+		return JSON.toJSONString(object);
+	}
+
+	@Override
+	public <T> T parseObject(String text, TypeReference<T> type) {
+		return JSON.parseObject(text, type);
+	}
+
+	@Override
+	public <T> T parseObject(String text, Class<T> clazz) {
+		return JSON.parseObject(text, clazz);
+	}
 }

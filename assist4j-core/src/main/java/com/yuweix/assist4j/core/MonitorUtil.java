@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import com.yuweix.assist4j.core.json.JsonUtil;
 import org.springframework.util.Assert;
 
-import com.alibaba.fastjson.JSON;
 import com.sun.management.OperatingSystemMXBean;
 
 
@@ -254,7 +254,7 @@ public abstract class MonitorUtil {
 		}
 		@Override
 		public String toString() {
-			return JSON.toJSONString(Cpu.this);
+			return JsonUtil.toJSONString(Cpu.this);
 		}
 	}
 
@@ -353,7 +353,7 @@ public abstract class MonitorUtil {
 		}
 		@Override
 		public String toString() {
-			return JSON.toJSONString(Memory.this);
+			return JsonUtil.toJSONString(Memory.this);
 		}
 	}
 
@@ -459,7 +459,7 @@ public abstract class MonitorUtil {
 		}
 		@Override
 		public String toString() {
-			return JSON.toJSONString(Disk.this);
+			return JsonUtil.toJSONString(Disk.this);
 		}
 	}
 
@@ -624,7 +624,7 @@ public abstract class MonitorUtil {
 		}
 		@Override
 		public String toString() {
-			return JSON.toJSONString(Network.this);
+			return JsonUtil.toJSONString(Network.this);
 		}
 	}
 }

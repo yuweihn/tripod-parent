@@ -1,10 +1,10 @@
 package com.yuweix.assist4j.web.filter;
 
 
-import com.alibaba.fastjson.JSON;
 import com.yuweix.assist4j.core.ActionUtil;
 import com.yuweix.assist4j.core.Constant;
 
+import com.yuweix.assist4j.core.json.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -97,7 +97,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		long endTimeMillis = System.currentTimeMillis();
 		logInfoMap.put("status", resp.getStatus());
 		logInfoMap.put("timeCost", (endTimeMillis - startTimeMillis) + "ms");
-		log.info("{}", JSON.toJSONString(logInfoMap));
+		log.info("{}", JsonUtil.toJSONString(logInfoMap));
 	}
 
 

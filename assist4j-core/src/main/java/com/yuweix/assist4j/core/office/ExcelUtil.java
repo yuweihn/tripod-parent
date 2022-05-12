@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
+import com.yuweix.assist4j.core.json.JsonUtil;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -105,7 +105,7 @@ public abstract class ExcelUtil {
 				}
 				fieldValueMap.put(field.getName(), v);
 			}
-			T t = JSON.parseObject(JSON.toJSONString(fieldValueMap), clz);
+			T t = JsonUtil.parseObject(JsonUtil.toJSONString(fieldValueMap), clz);
 			list.add(t);
 		}
 		return list;

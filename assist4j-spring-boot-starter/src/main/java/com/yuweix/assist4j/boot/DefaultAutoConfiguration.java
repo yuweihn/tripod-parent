@@ -4,6 +4,7 @@ package com.yuweix.assist4j.boot;
 import com.yuweix.assist4j.core.SpringContext;
 import com.yuweix.assist4j.core.json.Fastjson;
 import com.yuweix.assist4j.core.json.Json;
+import com.yuweix.assist4j.core.json.JsonUtil;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -37,5 +38,17 @@ public class DefaultAutoConfiguration {
 	@Bean
 	public Json json() {
 		return new Fastjson();
+	}
+
+	@Bean("assist4j#jsonUtil")
+	public JsonUtil jsonUtil(Json json) {
+		try {
+			Class<?> clz = Class.forName(JsonUtil.class.getName());
+			Constructor<?> constructor = clz.getDeclaredConstructor(Json.class);
+			constructor.setAccessible(true);
+			return (JsonUtil) constructor.newInstance(json);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

@@ -10,6 +10,7 @@ import java.util.*;
 import javax.servlet.http.Cookie;
 
 import com.alibaba.fastjson.TypeReference;
+import com.yuweix.assist4j.core.json.JsonUtil;
 import com.yuweix.assist4j.http.response.HttpResponse;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -19,8 +20,6 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.util.EntityUtils;
-
-import com.alibaba.fastjson.JSON;
 
 
 /**
@@ -127,7 +126,7 @@ public class CallbackResponseHandler<B> implements ResponseHandler<HttpResponse<
 		if (typeReference != null) {
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 			if (HttpStatus.SC_OK == status) {
-				body = (B) JSON.parseObject(txt, typeReference);
+				body = (B) JsonUtil.parseObject(txt, typeReference);
 			} else {
 				errorMessage.append(". ").append(txt);
 			}
@@ -157,7 +156,7 @@ public class CallbackResponseHandler<B> implements ResponseHandler<HttpResponse<
 			 **/
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 			if (HttpStatus.SC_OK == status) {
-				body = (B) JSON.parseObject(txt, typeClass);
+				body = (B) JsonUtil.parseObject(txt, typeClass);
 			} else {
 				errorMessage.append(". ").append(txt);
 			}
@@ -263,7 +262,7 @@ public class CallbackResponseHandler<B> implements ResponseHandler<HttpResponse<
 
 		@Override
 		public String toString() {
-			return JSON.toJSONString(this);
+			return JsonUtil.toJSONString(this);
 		}
 	}
 }
