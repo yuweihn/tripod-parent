@@ -20,7 +20,7 @@ import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.util.EntityUtils;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 
 
 /**
@@ -127,7 +127,7 @@ public class CallbackResponseHandler<B> implements ResponseHandler<HttpResponse<
 		if (typeReference != null) {
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 			if (HttpStatus.SC_OK == status) {
-				body = (B) JSONObject.parseObject(txt, typeReference);
+				body = (B) JSON.parseObject(txt, typeReference);
 			} else {
 				errorMessage.append(". ").append(txt);
 			}
@@ -157,7 +157,7 @@ public class CallbackResponseHandler<B> implements ResponseHandler<HttpResponse<
 			 **/
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 			if (HttpStatus.SC_OK == status) {
-				body = (B) JSONObject.parseObject(txt, typeClass);
+				body = (B) JSON.parseObject(txt, typeClass);
 			} else {
 				errorMessage.append(". ").append(txt);
 			}
@@ -263,7 +263,7 @@ public class CallbackResponseHandler<B> implements ResponseHandler<HttpResponse<
 
 		@Override
 		public String toString() {
-			return JSONObject.toJSONString(this);
+			return JSON.toJSONString(this);
 		}
 	}
 }
