@@ -21,19 +21,13 @@ public class JsonSerializer implements Serializer {
 	 * 序列化
 	 */
 	public <T>String serialize(T t) {
-		if (t == null) {
-			return null;
-		}
-		return json.toString(t);
+		return t == null ? null : json.serialize(t);
 	}
 
 	/**
 	 * 反序列化
 	 */
 	public <T>T deserialize(String str) {
-		if (str == null) {
-			return null;
-		}
-		return json.toObject(str);
+		return str == null ? null : json.deserialize(str);
 	}
 }

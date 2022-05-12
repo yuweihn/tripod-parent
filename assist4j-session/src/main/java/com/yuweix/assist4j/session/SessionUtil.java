@@ -21,7 +21,7 @@ public abstract class SessionUtil {
 			return null;
 		}
 		Json json = SessionConf.getInstance().getJson();
-		SessionAttribute attribute = json.toObject(SessionConf.getInstance().getCache().get(sessionId));
+		SessionAttribute attribute = json.deserialize(SessionConf.getInstance().getCache().get(sessionId));
 		return attribute == null ? null : attribute.getCreateTime();
 	}
 
@@ -34,7 +34,7 @@ public abstract class SessionUtil {
 			return null;
 		}
 		Json json = SessionConf.getInstance().getJson();
-		SessionAttribute attribute = json.toObject(SessionConf.getInstance().getCache().get(sessionId));
+		SessionAttribute attribute = json.deserialize(SessionConf.getInstance().getCache().get(sessionId));
 		if (attribute == null) {
 			return null;
 		}

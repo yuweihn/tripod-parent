@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -91,7 +91,7 @@ public abstract class ExcelUtil {
 			return list;
 		}
 		for (Map<String, Object> map: mapList) {
-			Map<String, Object> fieldValueMap = new HashMap<String, Object>();
+			Map<String, Object> fieldValueMap = new HashMap<>();
 			for (Field field: fields) {
 				ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
 				if (excelKeyAno == null) {
@@ -103,10 +103,9 @@ public abstract class ExcelUtil {
 				if (v == null) {
 					continue;
 				}
-
 				fieldValueMap.put(field.getName(), v);
 			}
-			T t = JSONObject.parseObject(JSONObject.toJSONString(fieldValueMap), clz);
+			T t = JSON.parseObject(JSON.toJSONString(fieldValueMap), clz);
 			list.add(t);
 		}
 		return list;
@@ -197,7 +196,7 @@ public abstract class ExcelUtil {
 	}
 
 	private static<T> List<String> getOutputHeadList(T t) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
 			Iterator<?> itr = map.keySet().iterator();
@@ -220,7 +219,7 @@ public abstract class ExcelUtil {
 	}
 
 	private static<T> List<String> getOutputKeyList(T t) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
 			Iterator<?> itr = map.keySet().iterator();
@@ -244,7 +243,7 @@ public abstract class ExcelUtil {
 
 	private static<T> List<Object> getOutputDataList(List<String> keyList, T t) {
 		Assert.notEmpty(keyList, "[keyList] is required.");
-		List<Object> list = new ArrayList<Object>();
+		List<Object> list = new ArrayList<>();
 
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
@@ -268,7 +267,7 @@ public abstract class ExcelUtil {
 	}
 	
 	private static List<String> getInputHeadList(Row row) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		for (Cell cell: row) {
 			String head = cell.toString();
 			if (head == null || "".equals(head.trim())) {
@@ -280,13 +279,13 @@ public abstract class ExcelUtil {
 	}
 	
 	private static List<Map<String, Object>> getInputDataList(Sheet sheet, List<String> keyList) {
-		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> list = new ArrayList<>();
 		for (Row row: sheet) {
 			if (row.getRowNum() <= 0) {
 				continue;
 			}
 			
-			Map<String, Object> map = new HashMap<String, Object>();
+			Map<String, Object> map = new HashMap<>();
 			int i = 0;
 			for (Cell cell: row) {
 				map.put(keyList.get(i++), getCellValue(cell));
@@ -300,7 +299,7 @@ public abstract class ExcelUtil {
 		if (value instanceof Number) {
 			cell.setCellValue(value == null ? 0 : Double.parseDouble(value.toString()));
 		} else if (value instanceof Boolean) {
-			cell.setCellValue(value == null ? false : Boolean.valueOf(value.toString()));
+			cell.setCellValue(value != null && Boolean.parseBoolean(value.toString()));
 		} else if (value instanceof Date) {
 			cell.setCellValue(value == null ? "" : new SimpleDateFormat(DEFAULT_DATE_FORMAT).format(value));
 		} else {

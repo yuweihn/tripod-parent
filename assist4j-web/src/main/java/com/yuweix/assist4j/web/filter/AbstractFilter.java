@@ -1,7 +1,7 @@
 package com.yuweix.assist4j.web.filter;
 
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import com.yuweix.assist4j.core.ActionUtil;
 import com.yuweix.assist4j.core.Constant;
 
@@ -97,7 +97,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		long endTimeMillis = System.currentTimeMillis();
 		logInfoMap.put("status", resp.getStatus());
 		logInfoMap.put("timeCost", (endTimeMillis - startTimeMillis) + "ms");
-		log.info("{}", JSONObject.toJSONString(logInfoMap));
+		log.info("{}", JSON.toJSONString(logInfoMap));
 	}
 
 

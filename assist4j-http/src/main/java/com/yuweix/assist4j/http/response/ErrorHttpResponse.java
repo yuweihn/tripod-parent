@@ -1,7 +1,7 @@
 package com.yuweix.assist4j.http.response;
 
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import org.apache.http.Header;
 import javax.servlet.http.Cookie;
 import java.util.List;
@@ -50,6 +50,6 @@ public class ErrorHttpResponse<B> implements HttpResponse<B> {
 
 	@Override
 	public String toString() {
-		return JSONObject.toJSONString(this);
+		return JSON.toJSONString(this);
 	}
 }

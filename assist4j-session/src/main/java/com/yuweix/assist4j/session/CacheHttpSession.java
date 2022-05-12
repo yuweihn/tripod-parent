@@ -223,7 +223,7 @@ public class CacheHttpSession implements HttpSession {
 		long timeSec = SessionConf.getInstance().getMaxInactiveInterval() * 60L;
 
 		Json json = SessionConf.getInstance().getJson();
-		sessionCache.put(fullSessionId, json.toString(sessionAttribute), timeSec);
+		sessionCache.put(fullSessionId, json.serialize(sessionAttribute), timeSec);
 		/**
 		 * 如果sessionIdKey不为空，表明需要避免重复登录
 		 */
@@ -259,7 +259,7 @@ public class CacheHttpSession implements HttpSession {
 		}
 
 		Json json = SessionConf.getInstance().getJson();
-		sessionAttribute = json.toObject(SessionConf.getInstance().getCache().get(fullSessionId));
+		sessionAttribute = json.deserialize(SessionConf.getInstance().getCache().get(fullSessionId));
 		if (sessionAttribute == null) {
 			removeSessionFromCache();
 			sessionAttribute = new SessionAttribute();
