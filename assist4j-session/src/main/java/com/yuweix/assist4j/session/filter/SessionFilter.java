@@ -1,6 +1,7 @@
 package com.yuweix.assist4j.session.filter;
 
 
+import com.yuweix.assist4j.core.json.Fastjson;
 import com.yuweix.assist4j.core.json.Json;
 import com.yuweix.assist4j.session.CacheHttpServletRequest;
 import com.yuweix.assist4j.session.cache.SessionCache;
@@ -24,13 +25,14 @@ public abstract class SessionFilter implements Filter {
 
 
 	/**
-	 * @param cache                           缓存引擎
+	 * @param cache
 	 */
 	public SessionFilter(SessionCache cache) {
 		setCache(cache);
+		setJson(new Fastjson());
 	}
 	public SessionFilter() {
-
+		this(null);
 	}
 
 	public void setCache(SessionCache cache) {

@@ -89,6 +89,7 @@ public class SessionConf {
 
 	public void check() {
 		Assert.notNull(cache, "[cache] is required.");
+		Assert.notNull(json, "[json] is required.");
 		Assert.notNull(applicationName, "[applicationName] is required.");
 	}
 }
