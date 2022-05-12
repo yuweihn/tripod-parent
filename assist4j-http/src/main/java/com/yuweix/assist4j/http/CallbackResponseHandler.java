@@ -27,7 +27,7 @@ import com.alibaba.fastjson.JSONObject;
  * 以回调方式处理返回结果
  * @author yuwei
  */
-public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? extends Object>> {
+public class CallbackResponseHandler<B> implements ResponseHandler<HttpResponse<B>> {
 	private Class<?> typeClass;
 	private TypeReference<?> typeReference;
 	private HttpClientContext context;
@@ -38,34 +38,34 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		this.typeClass = String.class;
 	}
 
-	public static CallbackResponseHandler create() {
-		return new CallbackResponseHandler();
+	public static<B> CallbackResponseHandler<B> create() {
+		return new CallbackResponseHandler<>();
 	}
 
-	public CallbackResponseHandler responseType(Class<?> typeClass) {
+	public CallbackResponseHandler<B> responseType(Class<?> typeClass) {
 		this.typeClass = typeClass;
 		return this;
 	}
 
-	public CallbackResponseHandler responseType(TypeReference<?> typeReference) {
+	public CallbackResponseHandler<B> responseType(TypeReference<?> typeReference) {
 		this.typeReference = typeReference;
 		return this;
 	}
 
-	public CallbackResponseHandler context(HttpClientContext context) {
+	public CallbackResponseHandler<B> context(HttpClientContext context) {
 		this.context = context;
 		return this;
 	}
 
-	public CallbackResponseHandler charset(String charset) {
+	public CallbackResponseHandler<B> charset(String charset) {
 		this.charset = charset;
 		return this;
 	}
 
 
-
+	@SuppressWarnings("unchecked")
 	@Override
-	public HttpResponse<? extends Object> handleResponse(org.apache.http.HttpResponse response) throws IOException {
+	public HttpResponse<B> handleResponse(org.apache.http.HttpResponse response) throws IOException {
 		StatusLine statusLine = response.getStatusLine();
 
 		/**
@@ -74,7 +74,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		int status = statusLine.getStatusCode();
 		HttpEntity entity = response.getEntity();
 		if (entity == null) {
-			BasicHttpResponse<Object> res = new BasicHttpResponse<Object>();
+			BasicHttpResponse<B> res = new BasicHttpResponse<>();
 			res.setStatus(status);
 			res.setErrorMessage("Entity is null.");
 			return res;
@@ -84,12 +84,12 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		 * headerList
 		 */
 		Header[] headerArr = response.getAllHeaders();
-		List<Header> headerList = headerArr == null ? new ArrayList<Header>() : Arrays.asList(headerArr);
+		List<Header> headerList = headerArr == null ? new ArrayList<>() : Arrays.asList(headerArr);
 
 		/**
 		 * cookieList
 		 */
-		List<Cookie> cookieList = new ArrayList<Cookie>();
+		List<Cookie> cookieList = new ArrayList<>();
 		List<org.apache.http.cookie.Cookie> cookies = null;
 		if (context != null) {
 			CookieStore cookieStore = context.getCookieStore();
@@ -123,11 +123,11 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		Header contentType = entity.getContentType();
 
 		StringBuilder errorMessage = new StringBuilder(statusLine.toString());
-		Object body = null;
+		B body = null;
 		if (typeReference != null) {
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 			if (HttpStatus.SC_OK == status) {
-				body = JSONObject.parseObject(txt, typeReference);
+				body = (B) JSONObject.parseObject(txt, typeReference);
 			} else {
 				errorMessage.append(". ").append(txt);
 			}
@@ -135,19 +135,19 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			/**
 			 * 返回字符串类型
 			 **/
-			body = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
+			body = (B) EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 		} else if (byte[].class.isAssignableFrom(typeClass)) {
 			/**
 			 * 返回字节数组类型
 			 **/
-			body = read(entity.getContent());
+			body = (B) read(entity.getContent());
 		} else if (Decoder.class.isAssignableFrom(typeClass)) {
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 			try {
 				Constructor<?> constructor = typeClass.getDeclaredConstructor();
 				constructor.setAccessible(true);
 				Decoder<?> decoder = (Decoder<?>) constructor.newInstance();
-				body = decoder.decode(txt);
+				body = (B) decoder.decode(txt);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -157,7 +157,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 			 **/
 			String txt = EntityUtils.toString(entity, charset != null ? charset : HttpConstant.ENCODING_UTF_8);
 			if (HttpStatus.SC_OK == status) {
-				body = JSONObject.parseObject(txt, typeClass);
+				body = (B) JSONObject.parseObject(txt, typeClass);
 			} else {
 				errorMessage.append(". ").append(txt);
 			}
@@ -188,9 +188,9 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		}
 	}
 
-	private <T>BasicHttpResponse<T> createBasicHttpResponse(int status, String errorMessage, T body
+	private BasicHttpResponse<B> createBasicHttpResponse(int status, String errorMessage, B body
 			, List<Header> headerList, List<Cookie> cookieList, Header contentType) {
-		BasicHttpResponse<T> res = new BasicHttpResponse<T>();
+		BasicHttpResponse<B> res = new BasicHttpResponse<>();
 		res.setStatus(status);
 		res.setErrorMessage(errorMessage);
 		res.setBody(body);
@@ -200,7 +200,7 @@ public class CallbackResponseHandler implements ResponseHandler<HttpResponse<? e
 		return res;
 	}
 
-	private class BasicHttpResponse<B> implements HttpResponse<B> {
+	private static class BasicHttpResponse<B> implements HttpResponse<B> {
 		private int status;
 		private String errorMessage;
 		private B body;

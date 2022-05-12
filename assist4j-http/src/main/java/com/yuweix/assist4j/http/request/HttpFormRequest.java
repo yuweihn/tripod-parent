@@ -32,7 +32,7 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 
 	private HttpFormRequest() {
 		super();
-		fieldList = new ArrayList<FormField>();
+		fieldList = new ArrayList<>();
 		method(HttpMethod.GET);
 	}
 	public static HttpFormRequest create() {
@@ -45,7 +45,7 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 			return this;
 		}
 
-		List<FormField> fieldList = new ArrayList<FormField>();
+		List<FormField> fieldList = new ArrayList<>();
 		for (Map.Entry<String, ?> entry: map.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();
@@ -89,12 +89,12 @@ public class HttpFormRequest extends AbstractHttpRequest<HttpFormRequest> {
 			this.setHttpUriRequest(new HttpGet(uri));
 			return execute0();
 		} catch (URISyntaxException e) {
-			return new ErrorHttpResponse<B>(HttpStatus.SC_NOT_FOUND, e.getMessage());
+			return new ErrorHttpResponse<>(HttpStatus.SC_NOT_FOUND, e.getMessage());
 		}
 	}
 
 	private static List<NameValuePair> toNameValuePairList(List<FormField> fieldList) {
-		List<NameValuePair> list = new ArrayList<NameValuePair>();
+		List<NameValuePair> list = new ArrayList<>();
 		if (fieldList == null || fieldList.size() <= 0) {
 			return list;
 		}

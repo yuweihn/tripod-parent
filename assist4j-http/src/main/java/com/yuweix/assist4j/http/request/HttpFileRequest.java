@@ -27,8 +27,8 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 
 	private HttpFileRequest() {
 		super();
-		fileFieldList = new ArrayList<FileField>();
-		formFieldList = new ArrayList<FormField>();
+		fileFieldList = new ArrayList<>();
+		formFieldList = new ArrayList<>();
 		method(HttpMethod.POST);
 	}
 	public static HttpFileRequest create() {
@@ -60,7 +60,7 @@ public class HttpFileRequest extends AbstractHttpRequest<HttpFileRequest> {
 			return this;
 		}
 
-		List<FormField> formFieldList = new ArrayList<FormField>();
+		List<FormField> formFieldList = new ArrayList<>();
 		for (Map.Entry<String, ?> entry: map.entrySet()) {
 			String key = entry.getKey();
 			Object value = entry.getValue();

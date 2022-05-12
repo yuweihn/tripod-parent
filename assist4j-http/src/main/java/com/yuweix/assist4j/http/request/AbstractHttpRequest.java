@@ -189,7 +189,6 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	protected <B>HttpResponse<B> execute0() {
 		/**
 		 * header
@@ -264,15 +263,15 @@ public abstract class AbstractHttpRequest<T extends AbstractHttpRequest<T>> impl
 		}
 
 		CloseableHttpClient client = builder.build();
-		CallbackResponseHandler handler = CallbackResponseHandler.create()
+		CallbackResponseHandler<B> handler = CallbackResponseHandler.<B>create()
 																.responseType(responseTypeClass)
 																.responseType(responseTypeReference)
 																.context(context)
 																.charset(charset);
 		try {
-			return (HttpResponse<B>) client.execute(httpUriRequest, handler, context);
+			return client.execute(httpUriRequest, handler, context);
 		} catch (Exception e) {
-			return new ErrorHttpResponse<B>(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.toString());
+			return new ErrorHttpResponse<>(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.toString());
 		}
 	}
 }
