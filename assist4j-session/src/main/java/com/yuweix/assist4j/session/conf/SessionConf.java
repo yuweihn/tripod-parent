@@ -44,7 +44,6 @@ public class SessionConf {
 	}
 
 	public void setCache(SessionCache cache) {
-		Assert.notNull(cache, "[cache] is required.");
 		this.cache = cache;
 	}
 
@@ -54,7 +53,6 @@ public class SessionConf {
 	}
 
 	public void setJson(Json json) {
-		Assert.notNull(json, "[json] is required.");
 		this.json = json;
 	}
 
