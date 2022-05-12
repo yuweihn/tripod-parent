@@ -24,15 +24,15 @@ public abstract class SessionFilter implements Filter {
 	private static final String EXCLUSIVE = "exclusive";
 
 
+	public SessionFilter() {
+		this(null);
+	}
 	/**
 	 * @param cache
 	 */
 	public SessionFilter(SessionCache cache) {
 		setCache(cache);
 		setJson(new Fastjson());
-	}
-	public SessionFilter() {
-		this(null);
 	}
 
 	public void setCache(SessionCache cache) {
