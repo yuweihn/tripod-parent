@@ -34,13 +34,6 @@ import java.util.Set;
 @Configuration
 @ConditionalOnProperty(name = "assist4j.boot.exception.enabled")
 public class ExceptionAutoConfiguration {
-	private static Json json;
-
-	@Resource
-	public void setJson(Json json) {
-		ExceptionAutoConfiguration.json = json;
-	}
-
 	@Configuration
 	@ConditionalOnProperty(name = "assist4j.boot.exception.handler.enabled", matchIfMissing = true)
 	protected static class ErrorControllerConfiguration {
@@ -49,21 +42,24 @@ public class ExceptionAutoConfiguration {
 
 		@Controller
 		public class ErrorController {
+			@Resource
+			private Json json;
+
 			@RequestMapping(value = { "/error", "/error/**" })
 			@ResponseBody
 			public String toErrorPage(HttpServletResponse response) {
 				int status = response.getStatus();
 				HttpStatus httpStatus = HttpStatus.valueOf(status);
 
-				Response<String, Void> resp = new Response<String, Void>(errorCode == null || "".equals(errorCode) ? "" + status : errorCode
+				Response<String, Void> resp = new Response<>(errorCode == null || "".equals(errorCode) ? "" + status : errorCode
 						, httpStatus.getReasonPhrase() + "[" + status + "]");
 				return json.toJSONString(resp);
 			}
 		}
 
-		@Bean
 		@ConditionalOnMissingBean(ExceptionViewResolver.class)
-		public ExceptionViewResolver exceptionViewResolver() {
+		@Bean
+		public ExceptionViewResolver exceptionViewResolver(Json json) {
 			return new ExceptionViewResolver() {
 				@SuppressWarnings("unchecked")
 				@Override
@@ -87,12 +83,12 @@ public class ExceptionAutoConfiguration {
 		}
 	}
 
-	@Bean
 	@ConditionalOnMissingBean(ClassMessagePair.class)
 	@ConfigurationProperties(prefix = "assist4j.boot.exception", ignoreUnknownFields = true)
+	@Bean
 	public ClassMessagePair classMessagePair() {
 		return new ClassMessagePair() {
-			private Map<String, String> map = new HashMap<String, String>();
+			private Map<String, String> map = new HashMap<>();
 
 			@Override
 			public Map<String, String> getDefaultMessage() {
@@ -101,11 +97,11 @@ public class ExceptionAutoConfiguration {
 		};
 	}
 
-	@Bean
 	@ConditionalOnMissingBean(ExceptionHandler.class)
-	public ExceptionHandler exceptionHandler(ClassMessagePair classMessagePair, ExceptionViewResolver viewResolver,
-			@Value("${assist4j.boot.exception.showExceptionName:false}") boolean showExceptionName) {
-		Map<Class<?>, String> errorMsgMap = new HashMap<Class<?>, String>();
+	@Bean
+	public ExceptionHandler exceptionHandler(ClassMessagePair classMessagePair, ExceptionViewResolver viewResolver
+			, @Value("${assist4j.boot.exception.showExceptionName:false}") boolean showExceptionName) {
+		Map<Class<?>, String> errorMsgMap = new HashMap<>();
 
 		Map<String, String> classMessageMap = classMessagePair.getDefaultMessage();
 		if (classMessageMap != null) {
