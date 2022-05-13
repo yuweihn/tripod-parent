@@ -73,8 +73,7 @@ public class ExceptionAutoConfiguration {
 							out.flush();
 						}
 					};
-					String text = json.toJSONString(
-							new Response<String, Void>(errorCode == null || "".equals(errorCode) ? "500" : errorCode, content));
+					String text = json.toJSONString(new Response<String, Void>(errorCode == null || "".equals(errorCode) ? "500" : errorCode, content));
 					Map<String, Object> attributes = json.parseObject(text, Map.class);
 					view.setAttributesMap(attributes);
 					return new ModelAndView(view);
