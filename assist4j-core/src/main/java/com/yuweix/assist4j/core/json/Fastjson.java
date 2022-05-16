@@ -20,7 +20,7 @@ public class Fastjson implements Json {
 	}
 
 	@Override
-	public <T> T deserialize(String str) {
+	public <T>T deserialize(String str) {
 		if (str == null) {
 			return null;
 		}
@@ -36,12 +36,12 @@ public class Fastjson implements Json {
 	}
 
 	@Override
-	public <T> T parseObject(String text, TypeReference<T> type) {
+	public <T>T parseObject(String text, TypeReference<T> type) {
 		return JSON.parseObject(text, type);
 	}
 
 	@Override
-	public <T> T parseObject(String text, Class<T> clz) {
+	public <T>T parseObject(String text, Class<T> clz) {
 		return JSON.parseObject(text, clz);
 	}
 }
