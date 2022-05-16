@@ -41,7 +41,7 @@ public class Fastjson implements Json {
 	}
 
 	@Override
-	public <T> T parseObject(String text, Class<T> clazz) {
-		return JSON.parseObject(text, clazz);
+	public <T> T parseObject(String text, Class<T> clz) {
+		return JSON.parseObject(text, clz);
 	}
 }
