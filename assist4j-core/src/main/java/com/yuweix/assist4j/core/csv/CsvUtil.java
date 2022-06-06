@@ -70,6 +70,11 @@ public abstract class CsvUtil {
 		OutputStreamWriter osw = null;
 		BufferedWriter bw = null;
 		try {
+			//追加BOM标识，防止Excel打开时乱码
+			out.write(0xef);
+			out.write(0xbb);
+			out.write(0xbf);
+
 			osw = new OutputStreamWriter(out, StandardCharsets.UTF_8);
 			bw = new BufferedWriter(osw);
 			
