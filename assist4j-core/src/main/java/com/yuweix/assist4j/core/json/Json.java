@@ -8,6 +8,8 @@ import com.alibaba.fastjson.TypeReference;
  * @author yuwei
  */
 public interface Json {
+	void addAccept(String name);
+	void addDeny(String name);
 	<T>String serialize(T t);
 	<T>T deserialize(String str);
 

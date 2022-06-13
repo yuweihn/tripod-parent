@@ -12,6 +12,16 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
  */
 public class Fastjson implements Json {
 	@Override
+	public void addAccept(String name) {
+		ParserConfig.getGlobalInstance().addAccept(name);
+	}
+
+	@Override
+	public void addDeny(String name) {
+		ParserConfig.getGlobalInstance().addDeny(name);
+	}
+
+	@Override
 	public <T> String serialize(T t) {
 		if (t == null) {
 			return null;
@@ -23,9 +33,6 @@ public class Fastjson implements Json {
 	public <T>T deserialize(String str) {
 		if (str == null) {
 			return null;
-		}
-		if (!ParserConfig.getGlobalInstance().isAutoTypeSupport()) {
-			ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
 		}
 		return JSON.parseObject(str, new TypeReference<T>() {});
 	}

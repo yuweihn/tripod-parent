@@ -23,4 +23,11 @@ public class JsonUtil {
 	public static<T> T parseObject(String text, Class<T> clazz) {
 		return json.parseObject(text, clazz);
 	}
+
+	public static void addAccept(String name) {
+		json.addAccept(name);
+	}
+	public static void addDeny(String name) {
+		json.addDeny(name);
+	}
 }

@@ -1,4 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.yuweix.assist4j.boot.DefaultAutoConfiguration,\
+  com.yuweix.assist4j.boot.core.JsonAutoConfiguration,\
   com.yuweix.assist4j.boot.datasource.SequenceAutoConfiguration,\
   com.yuweix.assist4j.boot.datasource.HibernateAutoConfiguration,\
   com.yuweix.assist4j.boot.datasource.MybatisAutoConfiguration,\
