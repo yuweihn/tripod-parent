@@ -22,7 +22,7 @@ public class SessionAttribute implements Serializable {
 	private Date lastAccessTime;
 	private Date createTime;
 	private String repeatKey;
-	private Object repeatValue;
+	private String repeatValue;
 	private Map<String, Object> attributes;
 
 
@@ -74,11 +74,11 @@ public class SessionAttribute implements Serializable {
 		this.repeatKey = repeatKey;
 	}
 
-	public Object getRepeatValue() {
+	public String getRepeatValue() {
 		return repeatValue;
 	}
 
-	public void setRepeatValue(Object repeatValue) {
+	public void setRepeatValue(String repeatValue) {
 		this.repeatValue = repeatValue;
 	}
 

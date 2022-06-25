@@ -247,8 +247,8 @@ public class CacheHttpSession implements HttpSession {
 	 */
 	private void init() {
 		initSessionAttribute();
-		Object repeatValue = sessionAttribute.getRepeatValue();
-		if (repeatValue != null && !"".equals(repeatValue.toString())) {
+		String repeatValue = sessionAttribute.getRepeatValue();
+		if (repeatValue != null && !"".equals(repeatValue)) {
 			this.sessionIdKey = sessionIdKeyPre + "." + repeatValue;
 		}
 		this.access();
