@@ -127,11 +127,11 @@ public class CacheHttpSession implements HttpSession {
 	@Override
 	public void setAttribute(String attributeName, Object attributeValue) {
 		if (attributeValue instanceof RepeatKey) {
-			RepeatKey rlk = (RepeatKey) attributeValue;
-			sessionAttribute.putAttribute(attributeName, rlk.getValue());
-			this.sessionIdKey = sessionIdKeyPre + "." + rlk.getValue();
+			String rVal = ((RepeatKey) attributeValue).getValue();
+			sessionAttribute.putAttribute(attributeName, rVal);
+			this.sessionIdKey = sessionIdKeyPre + "." + rVal;
 			sessionAttribute.setRepeatKey(attributeName);
-			sessionAttribute.setRepeatValue(rlk.getValue());
+			sessionAttribute.setRepeatValue(rVal);
 		} else {
 			sessionAttribute.putAttribute(attributeName, attributeValue);
 		}

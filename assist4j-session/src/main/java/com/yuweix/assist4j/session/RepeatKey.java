@@ -8,12 +8,12 @@ package com.yuweix.assist4j.session;
  * @author yuwei
  */
 public class RepeatKey {
-	private Object value;
+	private String value;
 
-	public RepeatKey(Object value) {
+	public RepeatKey(String value) {
 		this.value = value;
 	}
-	public Object getValue() {
+	public String getValue() {
 		return value;
 	}
 }
