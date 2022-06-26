@@ -36,7 +36,7 @@ public class CacheHttpSession implements HttpSession {
 	 * 其中cache.assist4j.session.current.1001即为sessionIdKey
 	 */
 	private String sessionIdKey;
-	private String sessionIdKeyPre;
+	private final String sessionIdKeyPre;
 	private SessionAttribute sessionAttribute;
 
 
