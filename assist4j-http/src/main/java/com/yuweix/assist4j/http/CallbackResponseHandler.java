@@ -9,7 +9,7 @@ import java.util.*;
 
 import javax.servlet.http.Cookie;
 
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.TypeReference;
 import com.yuweix.assist4j.core.json.JsonUtil;
 import com.yuweix.assist4j.http.response.HttpResponse;
 import org.apache.http.Header;

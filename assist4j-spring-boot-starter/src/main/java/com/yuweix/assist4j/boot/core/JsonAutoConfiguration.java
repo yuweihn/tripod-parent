@@ -21,8 +21,7 @@ import java.lang.reflect.Constructor;
 public class JsonAutoConfiguration {
 	@ConditionalOnMissingBean(Json.class)
 	@Bean
-	public Json json(@Value("${assist4j.boot.json.accept:}") String accepts
-			, @Value("${assist4j.boot.json.deny:}") String denies) {
+	public Json json(@Value("${assist4j.boot.json.accept:}") String accepts) {
 		Json json = new Fastjson();
 		json.addAccept("com.yuweix.assist4j.session.SessionAttribute");
 		if (accepts != null && !"".equals(accepts.trim())) {
@@ -30,14 +29,6 @@ public class JsonAutoConfiguration {
 			for (String accept: arr) {
 				if (accept != null && !"".equals(accept.trim())) {
 					json.addAccept(accept.trim());
-				}
-			}
-		}
-		if (denies != null && !"".equals(denies.trim())) {
-			String[] arr = denies.trim().split(",");
-			for (String deny: arr) {
-				if (deny != null && !"".equals(deny.trim())) {
-					json.addDeny(deny.trim());
 				}
 			}
 		}

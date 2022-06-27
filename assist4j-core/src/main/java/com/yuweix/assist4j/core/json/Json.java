@@ -1,7 +1,7 @@
 package com.yuweix.assist4j.core.json;
 
 
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.TypeReference;
 
 
 /**
@@ -9,7 +9,6 @@ import com.alibaba.fastjson.TypeReference;
  */
 public interface Json {
 	void addAccept(String name);
-	void addDeny(String name);
 	<T>String serialize(T t);
 	<T>T deserialize(String str);
 

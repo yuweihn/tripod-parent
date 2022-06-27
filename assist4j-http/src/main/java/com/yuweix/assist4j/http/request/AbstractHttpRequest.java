@@ -4,7 +4,7 @@ package com.yuweix.assist4j.http.request;
 import java.util.List;
 import javax.servlet.http.Cookie;
 
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.TypeReference;
 import com.yuweix.assist4j.http.CallbackResponseHandler;
 import com.yuweix.assist4j.http.DefaultHttpDelete;
 import com.yuweix.assist4j.http.HttpContextAdaptor;

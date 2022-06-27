@@ -1,7 +1,7 @@
 package com.yuweix.assist4j.core.json;
 
 
-import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson2.TypeReference;
 
 
 /**
@@ -26,8 +26,5 @@ public class JsonUtil {
 
 	public static void addAccept(String name) {
 		json.addAccept(name);
-	}
-	public static void addDeny(String name) {
-		json.addDeny(name);
 	}
 }
