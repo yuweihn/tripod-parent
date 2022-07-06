@@ -14,6 +14,8 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.scripting.support.ResourceScriptSource;
 
 import java.nio.charset.StandardCharsets;
@@ -27,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 public class JedisCache extends AbstractCache implements RedisCache {
 	protected RedisTemplate<String, Object> redisTemplate;
 	protected Serializer serializer;
+	protected RedisMessageListenerContainer messageContainer;
 
 
 	public JedisCache(Serializer serializer) {
@@ -42,22 +45,20 @@ public class JedisCache extends AbstractCache implements RedisCache {
 		this.serializer = serializer;
 	}
 
+	public void setMessageContainer(RedisMessageListenerContainer messageContainer) {
+		this.messageContainer = messageContainer;
+	}
+
 	@Override
 	public void subscribe(final String channel, final MessageHandler handler) {
-		redisTemplate.execute(new RedisCallback<Object>() {
+		messageContainer.addMessageListener(new MessageListener() {
 			@Override
-			public Object doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.subscribe(new MessageListener() {
-					@Override
-					public void onMessage(Message message, byte[] bytes) {
-						String channel = new String(message.getChannel(), StandardCharsets.UTF_8);
-						String msg = new String(message.getBody(), StandardCharsets.UTF_8);
-						handler.handle(channel, msg);
-					}
-				}, channel.getBytes(StandardCharsets.UTF_8));
-				return null;
+			public void onMessage(Message message, byte[] bytes) {
+				String channel = new String(message.getChannel(), StandardCharsets.UTF_8);
+				String msg = new String(message.getBody(), StandardCharsets.UTF_8);
+				handler.handle(channel, msg);
 			}
-		});
+		}, new ChannelTopic(channel));
 	}
 
 	@Override
