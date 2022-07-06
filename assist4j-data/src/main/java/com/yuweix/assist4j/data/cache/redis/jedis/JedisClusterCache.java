@@ -43,19 +43,17 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public void subscribe(List<String> channels, final MessageHandler handler) {
-		for (String channel: channels) {
-			new Thread() {
-				@Override
-				public void run() {
-					jedisCluster.subscribe(new JedisPubSub() {
-						@Override
-						public void onMessage(String channel, String message) {
-							handler.handle(channel, message);
-						}
-					}, channel);
-				}
-			}.start();
-		}
+		new Thread() {
+			@Override
+			public void run() {
+				jedisCluster.subscribe(new JedisPubSub() {
+					@Override
+					public void onMessage(String channel, String message) {
+						handler.handle(channel, message);
+					}
+				}, channels.toArray(new String[0]));
+			}
+		}.start();
 	}
 
 	@Override
