@@ -15,18 +15,18 @@ import com.yuweix.assist4j.data.cache.MessageHandler;
  */
 public interface RedisCache extends Cache {
 	/**
-	 * 发布消息
-	 * @param channel
-	 * @param message
-	 */
-	void publish(String channel, String message);
-
-	/**
 	 * 订阅消息
 	 * @param channel
 	 * @param handler
 	 */
 	void subscribe(String channel, MessageHandler handler);
+
+	/**
+	 * 发布消息
+	 * @param channel
+	 * @param message
+	 */
+	void publish(String channel, String message);
 
 	/**
 	 * timeout 过期时间(s)。

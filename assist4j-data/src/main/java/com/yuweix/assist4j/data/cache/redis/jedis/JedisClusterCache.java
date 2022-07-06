@@ -37,11 +37,6 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 	}
 
 	@Override
-	public void publish(String channel, String message) {
-		jedisCluster.publish(channel, message);
-	}
-
-	@Override
 	public void subscribe(String channel, final MessageHandler handler) {
 		new Thread() {
 			@Override
@@ -54,6 +49,11 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 				}, channel);
 			}
 		}.start();
+	}
+
+	@Override
+	public void publish(String channel, String message) {
+		jedisCluster.publish(channel, message);
 	}
 
 	@Override

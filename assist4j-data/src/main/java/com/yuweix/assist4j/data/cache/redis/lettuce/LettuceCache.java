@@ -43,17 +43,6 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 	}
 
 	@Override
-	public void publish(final String channel, final String message) {
-		redisTemplate.execute(new RedisCallback<Object>() {
-			@Override
-			public Object doInRedis(RedisConnection connection) throws DataAccessException {
-				connection.publish(channel.getBytes(StandardCharsets.UTF_8), message.getBytes(StandardCharsets.UTF_8));
-				return null;
-			}
-		});
-	}
-
-	@Override
 	public void subscribe(final String channel, final MessageHandler handler) {
 		redisTemplate.execute(new RedisCallback<Object>() {
 			@Override
@@ -66,6 +55,17 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 						handler.handle(channel, msg);
 					}
 				}, channel.getBytes(StandardCharsets.UTF_8));
+				return null;
+			}
+		});
+	}
+
+	@Override
+	public void publish(final String channel, final String message) {
+		redisTemplate.execute(new RedisCallback<Object>() {
+			@Override
+			public Object doInRedis(RedisConnection connection) throws DataAccessException {
+				connection.publish(channel.getBytes(StandardCharsets.UTF_8), message.getBytes(StandardCharsets.UTF_8));
 				return null;
 			}
 		});
