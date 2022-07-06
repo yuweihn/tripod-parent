@@ -14,7 +14,7 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.scripting.support.ResourceScriptSource;
 
@@ -58,7 +58,7 @@ public class JedisCache extends AbstractCache implements RedisCache {
 				String msg = new String(message.getBody(), StandardCharsets.UTF_8);
 				handler.handle(channel, msg);
 			}
-		}, new ChannelTopic(channel));
+		}, new PatternTopic(channel));
 	}
 
 	@Override
