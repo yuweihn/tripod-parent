@@ -20,6 +20,7 @@ public interface RedisCache extends Cache {
 	 * @param handler
 	 */
 	void subscribe(String channel, MessageHandler handler);
+	void subscribe(List<String> channels, MessageHandler handler);
 
 	/**
 	 * 发布消息

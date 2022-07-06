@@ -51,6 +51,15 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public void subscribe(final String channel, final MessageHandler handler) {
+		subscribe(Collections.singletonList(channel), handler);
+	}
+
+	@Override
+	public void subscribe(List<String> channels, final MessageHandler handler) {
+		List<PatternTopic> topics = new ArrayList<>();
+		for (String channel: channels) {
+			topics.add(new PatternTopic(channel));
+		}
 		messageContainer.addMessageListener(new MessageListener() {
 			@Override
 			public void onMessage(Message message, byte[] bytes) {
@@ -58,7 +67,7 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 				String msg = new String(message.getBody(), StandardCharsets.UTF_8);
 				handler.handle(channel, msg);
 			}
-		}, new PatternTopic(channel));
+		}, topics);
 	}
 
 	@Override
