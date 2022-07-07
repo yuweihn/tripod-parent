@@ -15,6 +15,7 @@ import org.springframework.data.redis.connection.RedisPassword;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -81,6 +82,14 @@ public class JedisMsConf {
 		return template;
 	}
 
+	@ConditionalOnMissingBean(RedisMessageListenerContainer.class)
+	@Bean
+	public RedisMessageListenerContainer messageContainer(@Qualifier("jedisConnectionFactory") RedisConnectionFactory connFactory) {
+		RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+		container.setConnectionFactory(connFactory);
+		return container;
+	}
+
 	@ConditionalOnMissingBean(Serializer.class)
 	@Bean
 	public Serializer cacheSerializer(Json json) {
@@ -90,9 +99,11 @@ public class JedisMsConf {
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public JedisCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
+			, RedisMessageListenerContainer messageContainer
 			, Serializer serializer) {
 		JedisCache cache = new JedisCache(serializer);
 		cache.setRedisTemplate(template);
+		cache.setMessageContainer(messageContainer);
 		return cache;
 	}
 }
