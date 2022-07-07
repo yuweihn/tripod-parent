@@ -62,7 +62,7 @@ public class JedisCache extends AbstractCache implements RedisCache {
 		}
 		messageContainer.addMessageListener(new MessageListener() {
 			@Override
-			public void onMessage(Message message, byte[] bytes) {
+			public void onMessage(Message message, byte[] pattern) {
 				String channel = new String(message.getChannel(), StandardCharsets.UTF_8);
 				String msg = new String(message.getBody(), StandardCharsets.UTF_8);
 				handler.handle(channel, msg);
