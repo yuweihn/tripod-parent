@@ -42,12 +42,10 @@ public class LettuceConf {
 		poolConfig.setMinIdle(minIdle);
 		poolConfig.setMaxWaitMillis(maxWaitMillis);
 		poolConfig.setTestOnBorrow(testOnBorrow);
-		
 		LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
 				.commandTimeout(Duration.ofMillis(timeoutMillis))
 				.poolConfig(poolConfig)
 				.build();
-		
 		return clientConfig;
 	}
 

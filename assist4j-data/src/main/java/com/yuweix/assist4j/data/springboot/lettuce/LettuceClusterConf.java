@@ -16,6 +16,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
@@ -40,12 +41,10 @@ public class LettuceClusterConf {
 		poolConfig.setMinIdle(minIdle);
 		poolConfig.setMaxWaitMillis(maxWaitMillis);
 		poolConfig.setTestOnBorrow(testOnBorrow);
-
 		LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
 				.commandTimeout(Duration.ofMillis(timeoutMillis))
 				.poolConfig(poolConfig)
 				.build();
-
 		return clientConfig;
 	}
 
@@ -69,10 +68,11 @@ public class LettuceClusterConf {
 
 	@Bean(name = "redisTemplate")
 	public RedisTemplate<String, Object> redisTemplate(@Qualifier("lettuceConnectionFactory") LettuceConnectionFactory connFactory) {
+		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
 		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(connFactory);
-		template.setKeySerializer(new StringRedisSerializer());
-		template.setValueSerializer(new StringRedisSerializer());
+		template.setKeySerializer(redisSerializer);
+		template.setValueSerializer(redisSerializer);
 		template.setEnableDefaultSerializer(true);
 //		template.setEnableTransactionSupport(true);
 		return template;

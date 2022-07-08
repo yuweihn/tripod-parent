@@ -16,6 +16,7 @@ import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -67,16 +68,16 @@ public class JedisMsConf {
 	@Bean(name = "jedisConnectionFactory")
 	public JedisConnectionFactory jedisConnectionFactory(@Qualifier("jedisPoolConfig") JedisPoolConfig jedisPoolConfig
 			, @Qualifier("redisSentinelConfiguration") RedisSentinelConfiguration sentinelConfig) {
-		JedisConnectionFactory factory = new JedisConnectionFactory(sentinelConfig, jedisPoolConfig);
-		return factory;
+		return new JedisConnectionFactory(sentinelConfig, jedisPoolConfig);
 	}
 
 	@Bean(name = "redisTemplate")
 	public RedisTemplate<String, Object> redisTemplate(@Qualifier("jedisConnectionFactory") RedisConnectionFactory connFactory) {
+		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
 		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(connFactory);
-		template.setKeySerializer(new StringRedisSerializer());
-		template.setValueSerializer(new StringRedisSerializer());
+		template.setKeySerializer(redisSerializer);
+		template.setValueSerializer(redisSerializer);
 		template.setEnableDefaultSerializer(true);
 //		template.setEnableTransactionSupport(true);
 		return template;
