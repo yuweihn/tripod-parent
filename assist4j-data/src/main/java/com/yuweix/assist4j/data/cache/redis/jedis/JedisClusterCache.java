@@ -43,17 +43,12 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public void subscribe(List<String> channels, final MessageHandler handler) {
-		new Thread() {
+		new Thread(() -> jedisCluster.subscribe(new JedisPubSub() {
 			@Override
-			public void run() {
-				jedisCluster.subscribe(new JedisPubSub() {
-					@Override
-					public void onMessage(String channel, String message) {
-						handler.handle(channel, message);
-					}
-				}, channels.toArray(new String[0]));
+			public void onMessage(String channel, String message) {
+				handler.handle(channel, message);
 			}
-		}.start();
+		}, channels.toArray(new String[0]))).start();
 	}
 
 	@Override
@@ -84,7 +79,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>T get(String key) {
-		return (T) serializer.deserialize(jedisCluster.get(key));
+		return serializer.deserialize(jedisCluster.get(key));
 	}
 
 	@Override
@@ -104,7 +99,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 		if (entries == null || entries.isEmpty()) {
 			return true;
 		}
-		Map<String, String> strMap = new HashMap<String, String>();
+		Map<String, String> strMap = new HashMap<>();
 		for (Map.Entry<String, T> entry: entries.entrySet()) {
 			strMap.put(entry.getKey(), serializer.serialize(entry.getValue()));
 		}
@@ -115,13 +110,13 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>T hget(String key, String field) {
-		return (T) serializer.deserialize(jedisCluster.hget(key, field));
+		return serializer.deserialize(jedisCluster.hget(key, field));
 	}
 
 	@Override
 	public <T>Map<String, T> hgetAll(String key) {
 		Map<String, String> strMap = jedisCluster.hgetAll(key);
-		Map<String, T> resMap = new HashMap<String, T>();
+		Map<String, T> resMap = new HashMap<>();
 		if (strMap == null || strMap.isEmpty()) {
 			return resMap;
 		}
@@ -148,7 +143,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 		if (valList == null || valList.size() <= 0) {
 			return true;
 		}
-		List<String> strList = new ArrayList<String>();
+		List<String> strList = new ArrayList<>();
 		for (T t: valList) {
 			strList.add(serializer.serialize(t));
 		}
@@ -169,7 +164,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 		if (valList == null || valList.size() <= 0) {
 			return true;
 		}
-		List<String> strList = new ArrayList<String>();
+		List<String> strList = new ArrayList<>();
 		for (T t: valList) {
 			strList.add(serializer.serialize(t));
 		}
@@ -191,7 +186,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 	@Override
 	public <T>List<T> lrange(String key, long start, long end) {
 		List<String> strList = jedisCluster.lrange(key, start, end);
-		List<T> tList = new ArrayList<T>();
+		List<T> tList = new ArrayList<>();
 		if (strList == null || strList.size() <= 0) {
 			return tList;
 		}
@@ -232,7 +227,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 		if (valList == null || valList.size() <= 0) {
 			return;
 		}
-		List<String> strList = new ArrayList<String>();
+		List<String> strList = new ArrayList<>();
 		for (T t: valList) {
 			strList.add(serializer.serialize(t));
 		}
@@ -247,11 +242,11 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>Set<T> sdiff(String key, Collection<String> otherKeys) {
-		List<String> keyList = new ArrayList<String>();
+		List<String> keyList = new ArrayList<>();
 		keyList.add(key);
 		keyList.addAll(otherKeys);
 		Set<String> strSet = jedisCluster.sdiff(keyList.toArray(new String[0]));
-		Set<T> tSet = new HashSet<T>();
+		Set<T> tSet = new HashSet<>();
 		if (strSet == null || strSet.isEmpty()) {
 			return tSet;
 		}
@@ -263,7 +258,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public void sdiffStore(String key, Collection<String> otherKeys, String destKey) {
-		List<String> keyList = new ArrayList<String>();
+		List<String> keyList = new ArrayList<>();
 		keyList.add(key);
 		keyList.addAll(otherKeys);
 		jedisCluster.sdiffstore(destKey, keyList.toArray(new String[0]));
@@ -271,11 +266,11 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>Set<T> sinter(String key, Collection<String> otherKeys) {
-		List<String> keyList = new ArrayList<String>();
+		List<String> keyList = new ArrayList<>();
 		keyList.add(key);
 		keyList.addAll(otherKeys);
 		Set<String> strSet = jedisCluster.sinter(keyList.toArray(new String[0]));
-		Set<T> tSet = new HashSet<T>();
+		Set<T> tSet = new HashSet<>();
 		if (strSet == null || strSet.isEmpty()) {
 			return tSet;
 		}
@@ -299,11 +294,11 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 
 	@Override
 	public <T>Set<T> sunion(String key, Collection<String> otherKeys) {
-		List<String> keyList = new ArrayList<String>();
+		List<String> keyList = new ArrayList<>();
 		keyList.add(key);
 		keyList.addAll(otherKeys);
 		Set<String> strSet = jedisCluster.sunion(keyList.toArray(new String[0]));
-		Set<T> tSet = new HashSet<T>();
+		Set<T> tSet = new HashSet<>();
 		if (strSet == null || strSet.isEmpty()) {
 			return tSet;
 		}
@@ -333,7 +328,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 	@Override
 	public <T>Set<T> smembers(String key) {
 		Set<String> strSet = jedisCluster.smembers(key);
-		Set<T> tSet = new HashSet<T>();
+		Set<T> tSet = new HashSet<>();
 		if (strSet == null || strSet.isEmpty()) {
 			return tSet;
 		}
@@ -353,7 +348,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 		if (members == null || members.size() <= 0) {
 			return false;
 		}
-		List<String> strList = new ArrayList<String>();
+		List<String> strList = new ArrayList<>();
 		for (T t: members) {
 			strList.add(serializer.serialize(t));
 		}
@@ -371,7 +366,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 		if (memScore == null || memScore.isEmpty()) {
 			return;
 		}
-		Map<String, Double> strMap = new HashMap<String, Double>();
+		Map<String, Double> strMap = new HashMap<>();
 		for (Map.Entry<T, Double> entry: memScore.entrySet()) {
 			strMap.put(serializer.serialize(entry.getKey()), entry.getValue());
 		}
@@ -423,7 +418,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 		if (members == null || members.size() <= 0) {
 			return false;
 		}
-		List<String> strList = new ArrayList<String>();
+		List<String> strList = new ArrayList<>();
 		for (T t: members) {
 			strList.add(serializer.serialize(t));
 		}
@@ -499,7 +494,7 @@ public class JedisClusterCache extends AbstractCache implements RedisCache {
 				strArgList.add(serializer.serialize(t));
 			}
 		}
-		DefaultRedisScript<S> redisScript = new DefaultRedisScript<S>();
+		DefaultRedisScript<S> redisScript = new DefaultRedisScript<>();
 		redisScript.setResultType(returnType);
 		redisScript.setScriptText(script);
 		return (S) jedisCluster.eval(redisScript.getScriptAsString(), keyList, strArgList);

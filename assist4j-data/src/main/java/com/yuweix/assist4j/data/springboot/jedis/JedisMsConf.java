@@ -100,10 +100,9 @@ public class JedisMsConf {
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public JedisCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
-			, RedisMessageListenerContainer messageContainer
-			, Serializer serializer) {
-		JedisCache cache = new JedisCache(serializer);
-		cache.setRedisTemplate(template);
+			, Serializer serializer
+			, RedisMessageListenerContainer messageContainer) {
+		JedisCache cache = new JedisCache(template, serializer);
 		cache.setMessageContainer(messageContainer);
 		return cache;
 	}

@@ -109,10 +109,9 @@ public class LettuceConf {
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
-			, RedisMessageListenerContainer messageContainer
-			, Serializer serializer) {
-		LettuceCache cache = new LettuceCache(serializer);
-		cache.setRedisTemplate(template);
+			, Serializer serializer
+			, RedisMessageListenerContainer messageContainer) {
+		LettuceCache cache = new LettuceCache(template, serializer);
 		cache.setMessageContainer(messageContainer);
 		return cache;
 	}
