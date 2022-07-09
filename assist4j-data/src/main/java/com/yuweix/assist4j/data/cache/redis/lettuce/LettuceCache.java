@@ -443,7 +443,7 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 		if (owner == null) {
 			return false;
 		}
-		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLock.lua")));
 		String result = redisTemplate.execute(redisScript, Collections.singletonList(key)
@@ -456,7 +456,7 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 		if (owner == null) {
 			return null;
 		}
-		DefaultRedisScript<String> redisScript = new DefaultRedisScript<String>();
+		DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
 		redisScript.setResultType(String.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/getLockt.lua")));
 		String result = redisTemplate.execute(redisScript, Collections.singletonList(key)
@@ -472,7 +472,7 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 		if (!contains(key)) {
 			return true;
 		}
-		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<Long>();
+		DefaultRedisScript<Long> redisScript = new DefaultRedisScript<>();
 		redisScript.setResultType(Long.class);
 		redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("script/releaseLock.lua")));
 		Long result = redisTemplate.execute(redisScript, Collections.singletonList(key), serializer.serialize(owner));
@@ -485,8 +485,8 @@ public class LettuceCache extends AbstractCache implements RedisCache {
 	}
 
 	@Override
-	public <T, S> S execute(String script, List<String> keyList, List<T> argList, Class<S> returnType) {
-		List<String> strArgList = new ArrayList<String>();
+	public <T, S>S execute(String script, List<String> keyList, List<T> argList, Class<S> returnType) {
+		List<String> strArgList = new ArrayList<>();
 		if (argList != null && argList.size() > 0) {
 			for (T t: argList) {
 				strArgList.add(serializer.serialize(t));
