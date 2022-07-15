@@ -1,10 +1,7 @@
 package com.yuweix.assist4j.core.json;
 
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONFactory;
-import com.alibaba.fastjson2.JSONWriter;
-import com.alibaba.fastjson2.TypeReference;
+import com.alibaba.fastjson2.*;
 
 
 /**
@@ -29,7 +26,7 @@ public class Fastjson implements Json {
 		if (str == null) {
 			return null;
 		}
-		return JSON.parseObject(str, new TypeReference<T>() {});
+		return JSON.parseObject(str, new TypeReference<T>() {}, JSONReader.Feature.SupportAutoType);
 	}
 
 	@Override
