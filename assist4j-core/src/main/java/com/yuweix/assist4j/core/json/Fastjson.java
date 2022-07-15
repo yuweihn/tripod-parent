@@ -12,8 +12,8 @@ import java.util.List;
  * @author yuwei
  */
 public class Fastjson implements Json {
-	private final List<String> autoTypes = new LinkedList<>();
-	private Filter autoTypeFilter;
+	private static final List<String> autoTypes = new LinkedList<>();
+	private static Filter autoTypeFilter;
 
 	@Override
 	public void addAccept(String name) {
