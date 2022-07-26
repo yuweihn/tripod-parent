@@ -136,4 +136,38 @@ public abstract class FileUtil extends StreamUtil {
 			}
 		}
 	}
+
+	/**
+	 * /.     ===>   /
+	 * /..    ===>   /
+	 * /path/.   ===>   /path
+	 * /path/..  ===>   /
+	 */
+	public static String simplifyPath(String path) {
+		if (path == null) {
+			return null;
+		}
+		path = path.trim();
+		if (!path.startsWith("/")) {
+			path = "/" + path;
+		}
+		if ("/".equals(path)) {
+			return path;
+		}
+		if ("/.".equals(path) || "/..".equals(path)) {
+			return "/";
+		}
+		if (path.endsWith("/.")) {
+			return path.substring(0, path.lastIndexOf("/."));
+		}
+		if (path.endsWith("/..")) {
+			String tempPath = path.substring(0, path.lastIndexOf("/.."));
+			if (tempPath.lastIndexOf("/") <= 0) {
+				return "/";
+			} else {
+				return tempPath.substring(0, tempPath.lastIndexOf("/"));
+			}
+		}
+		return path;
+	}
 }
