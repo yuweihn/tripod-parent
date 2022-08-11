@@ -47,10 +47,15 @@ public class OssUtil {
 				if (ossClient == null) {
 					ossClient = new OSSClient(this.endpoint
 							, new DefaultCredentialProvider(accessKey, accessSecret), null);
-					CreateBucketRequest bucketRequest = new CreateBucketRequest(bucketName);
-					bucketRequest.setCannedACL(CannedAccessControlList.PublicRead);
-					ossClient.createBucket(bucketRequest);
+
+					if (!ossClient.doesBucketExist(bucketName)) {
+						CreateBucketRequest bucketRequest = new CreateBucketRequest(bucketName);
+						bucketRequest.setCannedACL(CannedAccessControlList.PublicRead);
+						ossClient.createBucket(bucketRequest);
+					}
 				}
+			} catch (Exception e) {
+				log.error("Error on getOssClient: {}", e.getMessage());
 			} finally {
 				ossClientLock.unlock();
 			}

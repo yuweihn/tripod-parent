@@ -59,10 +59,14 @@ public class CosUtil {
 					ClientConfig clientConfig = new ClientConfig(new Region(region));
 					cosClient = new COSClient(cred, clientConfig);
 
-					CreateBucketRequest bucketRequest = new CreateBucketRequest(bucketName);
-					bucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
-					cosClient.createBucket(bucketRequest);
+					if (!cosClient.doesBucketExist(bucketName)) {
+						CreateBucketRequest bucketRequest = new CreateBucketRequest(bucketName);
+						bucketRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+						cosClient.createBucket(bucketRequest);
+					}
 				}
+			} catch (Exception e) {
+				log.error("Error on getCosClient: {}", e.getMessage());
 			} finally {
 				cosClientLock.unlock();
 			}
