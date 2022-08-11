@@ -382,6 +382,7 @@
                 <version>${maven.javadoc.plugin.version}</version>
                 <configuration>
                     <aggregate>true</aggregate>
+                    <doclint>none</doclint>
                     <show>public</show>
                     <charset>utf-8</charset>
                     <encoding>utf-8</encoding>
