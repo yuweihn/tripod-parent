@@ -60,11 +60,15 @@ public abstract class AbstractTask {
 			before();
 			try {
 				executeTask();
-				if (release) {
-					leaderElector.release(lockName);
-				}
 			} catch (Exception e) {
 				handle(e);
+			} finally {
+				if (release) {
+					try {
+						leaderElector.release(lockName);
+					} catch (Exception ignored) {
+					}
+				}
 			}
 			after();
 			long timeCost = System.currentTimeMillis() - startTime;
