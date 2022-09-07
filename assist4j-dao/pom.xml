@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.yuweix</groupId>
 		<artifactId>assist4j-parent</artifactId>
-		<version>1.1.24</version>
+		<version>1.1.25</version>
 	</parent>
 
 	<artifactId>assist4j-dao</artifactId>
