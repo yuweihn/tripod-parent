@@ -18,14 +18,22 @@ import java.util.Map;
  */
 public class UpdateSqlProvider extends AbstractProvider {
 	public <T>String updateByPrimaryKey(T t) throws IllegalAccessException {
-		return toUpdateByPrimaryKeySql(t, false);
+		return toUpdateByPrimaryKeySql(t, false, false);
+	}
+
+	public <T>String updateExcludeVersionByPrimaryKey(T t) throws IllegalAccessException {
+		return toUpdateByPrimaryKeySql(t, false, true);
 	}
 
 	public <T>String updateByPrimaryKeySelective(T t) throws IllegalAccessException {
-		return toUpdateByPrimaryKeySql(t, true);
+		return toUpdateByPrimaryKeySql(t, true, false);
 	}
 
-	private <T>String toUpdateByPrimaryKeySql(T t, boolean selective) throws IllegalAccessException {
+	public <T>String updateExcludeVersionByPrimaryKeySelective(T t) throws IllegalAccessException {
+		return toUpdateByPrimaryKeySql(t, true, true);
+	}
+
+	private <T>String toUpdateByPrimaryKeySql(T t, boolean selective, boolean excludeVersion) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
 		String tbName = getTableName(entityClass);
 		StringBuilder tableNameBuilder = new StringBuilder(tbName);
@@ -63,9 +71,11 @@ public class UpdateSqlProvider extends AbstractProvider {
 					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
 					whereSet = true;
 				} else if (version != null) {
-					int val = field.getInt(t);
-					SET("`" + fc.getColumnName() + "`" + " = " + (val + 1));
-					WHERE("`" + fc.getColumnName() + "` = " + val);
+					if (!excludeVersion) {
+						int val = field.getInt(t);
+						SET("`" + fc.getColumnName() + "`" + " = " + (val + 1));
+						WHERE("`" + fc.getColumnName() + "` = " + val);
+					}
 				} else {
 					SET("`" + fc.getColumnName() + "`" + " = #{" + field.getName() + "} ");
 				}
