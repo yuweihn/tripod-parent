@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import com.yuweix.assist4j.dao.Dao;
 import org.hibernate.query.Query;
 
 import javax.annotation.Resource;

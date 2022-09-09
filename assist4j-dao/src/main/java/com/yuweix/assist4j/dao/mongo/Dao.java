@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.dao;
+package com.yuweix.assist4j.dao.mongo;
 
 
 import java.io.Serializable;

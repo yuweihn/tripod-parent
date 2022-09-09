@@ -1,7 +1,6 @@
 package com.yuweix.assist4j.dao.mongo;
 
 
-import com.yuweix.assist4j.dao.Dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import java.io.Serializable;
