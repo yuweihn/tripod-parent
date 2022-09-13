@@ -22,15 +22,15 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 
 	@Override
 	public T get(PK id) {
-		String key = getCachePreKey() + clz.getSimpleName() + "." + id;
-		T t = getFromCache(key);
+		String key = getCacheKeyPre() + clz.getSimpleName() + "." + id;
+		T t = getByCacheKey(key);
 		if (t != null) {
 			return t;
 		}
 
 		t = getMapper().selectOneById(id, clz);
 		if (t != null) {
-			putToCache(key, t);
+			putByCacheKey(key, t);
 			return t;
 		} else {
 			return null;
@@ -38,21 +38,21 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	public void deleteByIdFromCache(PK id) {
-		String key = getCachePreKey() + clz.getSimpleName() + "." + id;
-		removeFromCache(key);
+		String key = getCacheKeyPre() + clz.getSimpleName() + "." + id;
+		deleteByCacheKey(key);
 	}
 
-	protected String getCachePreKey() {
+	protected String getCacheKeyPre() {
 		return "cache." + clz.getName() + ".by.pk.";
 	}
-	protected abstract T getFromCache(String key);
+	protected abstract T getByCacheKey(String key);
 	/**
 	 * @param key
 	 * @param value
 	 * @return
 	 */
-	protected abstract void putToCache(String key, T value);
-	protected abstract void removeFromCache(String key);
+	protected abstract void putByCacheKey(String key, T value);
+	protected abstract void deleteByCacheKey(String key);
 
 	private Field getPKField() {
 		Field f = CLASS_PK_FIELD_ID_MAP.get(clz);
