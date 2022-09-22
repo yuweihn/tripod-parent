@@ -48,10 +48,10 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	protected abstract T getByCacheKey(String key);
 	/**
 	 * @param key
-	 * @param value
+	 * @param t
 	 * @return
 	 */
-	protected abstract void putByCacheKey(String key, T value);
+	protected abstract void putByCacheKey(String key, T t);
 	protected abstract void deleteByCacheKey(String key);
 
 	private Field getPKField() {
