@@ -21,7 +21,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 		return toUpdateByPrimaryKeySql(t, false, false);
 	}
 
-	public <T>String updateExcludeVersionByPrimaryKey(T t) throws IllegalAccessException {
+	public <T>String updateByPrimaryKeyExcludeVersion(T t) throws IllegalAccessException {
 		return toUpdateByPrimaryKeySql(t, false, true);
 	}
 
@@ -29,7 +29,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 		return toUpdateByPrimaryKeySql(t, true, false);
 	}
 
-	public <T>String updateExcludeVersionByPrimaryKeySelective(T t) throws IllegalAccessException {
+	public <T>String updateByPrimaryKeySelectiveExcludeVersion(T t) throws IllegalAccessException {
 		return toUpdateByPrimaryKeySql(t, true, true);
 	}
 

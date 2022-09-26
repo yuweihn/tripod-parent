@@ -21,9 +21,9 @@ public interface Dao<T extends Serializable, PK extends Serializable> {
 	int insert(T t);
 	int insertSelective(T t);
 	int updateByPrimaryKey(T t);
-	int updateExcludeVersionByPrimaryKey(T t);
+	int updateByPrimaryKeyExcludeVersion(T t);
 	int updateByPrimaryKeySelective(T t);
-	int updateExcludeVersionByPrimaryKeySelective(T t);
+	int updateByPrimaryKeySelectiveExcludeVersion(T t);
 	int delete(T t);
 	int deleteByKey(PK id);
 }

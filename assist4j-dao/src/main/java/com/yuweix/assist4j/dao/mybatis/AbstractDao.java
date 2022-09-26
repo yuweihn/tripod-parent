@@ -64,8 +64,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public int updateExcludeVersionByPrimaryKey(T t) {
-		return getMapper().updateExcludeVersionByPrimaryKey(t);
+	public int updateByPrimaryKeyExcludeVersion(T t) {
+		return getMapper().updateByPrimaryKeyExcludeVersion(t);
 	}
 
 	@Override
@@ -74,8 +74,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public int updateExcludeVersionByPrimaryKeySelective(T t) {
-		return getMapper().updateExcludeVersionByPrimaryKeySelective(t);
+	public int updateByPrimaryKeySelectiveExcludeVersion(T t) {
+		return getMapper().updateByPrimaryKeySelectiveExcludeVersion(t);
 	}
 
 	@Override

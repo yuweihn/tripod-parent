@@ -17,14 +17,14 @@ public interface UpdateMapper<T extends Serializable, PK extends Serializable> {
 	@UpdateProvider(type = UpdateSqlProvider.class, method = "updateByPrimaryKey")
 	int updateByPrimaryKey(T t);
 
-	@UpdateProvider(type = UpdateSqlProvider.class, method = "updateExcludeVersionByPrimaryKey")
-	int updateExcludeVersionByPrimaryKey(T t);
+	@UpdateProvider(type = UpdateSqlProvider.class, method = "updateByPrimaryKeyExcludeVersion")
+	int updateByPrimaryKeyExcludeVersion(T t);
 
 	@UpdateProvider(type = UpdateSqlProvider.class, method = "updateByPrimaryKeySelective")
 	int updateByPrimaryKeySelective(T t);
 
-	@UpdateProvider(type = UpdateSqlProvider.class, method = "updateExcludeVersionByPrimaryKeySelective")
-	int updateExcludeVersionByPrimaryKeySelective(T t);
+	@UpdateProvider(type = UpdateSqlProvider.class, method = "updateByPrimaryKeySelectiveExcludeVersion")
+	int updateByPrimaryKeySelectiveExcludeVersion(T t);
 
 	@UpdateProvider(type = UpdateSqlProvider.class, method = "updateByCriteria")
 	int updateByCriteria(@Param("t") T t, @Param("excludeFields") List<String> excludeFields, @Param("criteria") Criteria criteria);
