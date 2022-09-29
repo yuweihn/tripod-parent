@@ -14,6 +14,9 @@ public interface LeaderElector {
 	 * @return
 	 */
 	String acquire(String lock);
+	default boolean tryAcquire(String lock) {
+		return getLocalNode().equals(acquire(lock));
+	}
 	void release(String lock);
 	String getLocalNode();
 }
