@@ -48,13 +48,13 @@ public abstract class ActionUtil {
 	 * 获取本机内网IP
 	 */
 	public static String getLocalInnerIP() {
-		String reqIp = null;
+		String innerIp = null;
 		try {
-			reqIp = InetAddress.getLocalHost().getHostAddress();
+			innerIp = InetAddress.getLocalHost().getHostAddress();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		return reqIp;
+		return innerIp;
 	}
 
 	/**

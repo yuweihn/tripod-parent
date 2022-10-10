@@ -16,15 +16,15 @@ public abstract class ActionUtil {
 	public static String getRequestIP(ServerHttpRequest request) {
 		HttpHeaders headers = request.getHeaders();
 
-		String ip = headers.getFirst("X-Real-IP");
-		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-			ip = headers.getFirst("x-forwarded-for");
-		}
+		String ip = headers.getFirst("x-forwarded-for");
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
 			ip = headers.getFirst("Proxy-Client-IP");
 		}
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
 			ip = headers.getFirst("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+			ip = headers.getFirst("X-Real-IP");
 		}
 		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
 			ip = request.getRemoteAddress().toString();
