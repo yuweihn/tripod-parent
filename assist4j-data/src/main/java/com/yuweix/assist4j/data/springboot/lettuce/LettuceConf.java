@@ -4,7 +4,6 @@ package com.yuweix.assist4j.data.springboot.lettuce;
 import com.yuweix.assist4j.core.json.Json;
 import com.yuweix.assist4j.data.cache.redis.lettuce.LettuceCache;
 import com.yuweix.assist4j.data.serializer.JsonSerializer;
-import com.yuweix.assist4j.data.serializer.Serializer;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,10 +41,12 @@ public class LettuceConf {
 		poolConfig.setMinIdle(minIdle);
 		poolConfig.setMaxWaitMillis(maxWaitMillis);
 		poolConfig.setTestOnBorrow(testOnBorrow);
+		
 		LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
 				.commandTimeout(Duration.ofMillis(timeoutMillis))
 				.poolConfig(poolConfig)
 				.build();
+		
 		return clientConfig;
 	}
 
@@ -80,13 +81,19 @@ public class LettuceConf {
 		return connFactory;
 	}
 
+	@ConditionalOnMissingBean(name = "redisValueSerializer")
+	@Bean(name = "redisValueSerializer")
+	public RedisSerializer<Object> redisValueSerializer(Json json) {
+		return new JsonSerializer(json);
+	}
+
 	@Bean(name = "redisTemplate")
-	public RedisTemplate<String, Object> redisTemplate(@Qualifier("lettuceConnectionFactory") LettuceConnectionFactory connFactory) {
-		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
+	public RedisTemplate<String, Object> redisTemplate(@Qualifier("lettuceConnectionFactory") LettuceConnectionFactory connFactory
+			, @Qualifier("redisValueSerializer") RedisSerializer<Object> redisValueSerializer) {
 		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(connFactory);
-		template.setKeySerializer(redisSerializer);
-		template.setValueSerializer(redisSerializer);
+		template.setKeySerializer(new StringRedisSerializer());
+		template.setValueSerializer(redisValueSerializer);
 		template.setEnableDefaultSerializer(true);
 //		template.setEnableTransactionSupport(true);
 		return template;
@@ -100,18 +107,11 @@ public class LettuceConf {
 		return container;
 	}
 
-	@ConditionalOnMissingBean(Serializer.class)
-	@Bean
-	public Serializer cacheSerializer(Json json) {
-		return new JsonSerializer(json);
-	}
-
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public LettuceCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
-			, Serializer serializer
 			, RedisMessageListenerContainer messageContainer) {
-		LettuceCache cache = new LettuceCache(template, serializer);
+		LettuceCache cache = new LettuceCache(template);
 		cache.setMessageContainer(messageContainer);
 		return cache;
 	}
