@@ -4,6 +4,7 @@ package com.yuweix.assist4j.data.springboot.jedis;
 import com.yuweix.assist4j.core.json.Json;
 import com.yuweix.assist4j.data.cache.redis.jedis.JedisCache;
 import com.yuweix.assist4j.data.serializer.JsonSerializer;
+import com.yuweix.assist4j.data.serializer.Serializer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -58,7 +59,7 @@ public class JedisMsConf {
 			conf.setPassword(RedisPassword.of(password));
 		}
 
-		Set<RedisNode> sentinels = new HashSet<>();
+		Set<RedisNode> sentinels = new HashSet<RedisNode>();
 		sentinels.add(new RedisNode(host, port));
 		conf.setSentinels(sentinels);
 		return conf;
@@ -70,19 +71,13 @@ public class JedisMsConf {
 		return new JedisConnectionFactory(sentinelConfig, jedisPoolConfig);
 	}
 
-	@ConditionalOnMissingBean(name = "redisValueSerializer")
-	@Bean(name = "redisValueSerializer")
-	public RedisSerializer<Object> redisValueSerializer(Json json) {
-		return new JsonSerializer(json);
-	}
-
 	@Bean(name = "redisTemplate")
-	public RedisTemplate<String, Object> redisTemplate(@Qualifier("jedisConnectionFactory") RedisConnectionFactory connFactory
-			, @Qualifier("redisValueSerializer") RedisSerializer<Object> redisValueSerializer) {
+	public RedisTemplate<String, Object> redisTemplate(@Qualifier("jedisConnectionFactory") RedisConnectionFactory connFactory) {
+		RedisSerializer<?> redisSerializer = new StringRedisSerializer();
 		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(connFactory);
-		template.setKeySerializer(new StringRedisSerializer());
-		template.setValueSerializer(redisValueSerializer);
+		template.setKeySerializer(redisSerializer);
+		template.setValueSerializer(redisSerializer);
 		template.setEnableDefaultSerializer(true);
 //		template.setEnableTransactionSupport(true);
 		return template;
@@ -96,11 +91,18 @@ public class JedisMsConf {
 		return container;
 	}
 
+	@ConditionalOnMissingBean(Serializer.class)
+	@Bean
+	public Serializer cacheSerializer(Json json) {
+		return new JsonSerializer(json);
+	}
+
 	@ConditionalOnMissingBean(name = "redisCache")
 	@Bean(name = "redisCache")
 	public JedisCache redisCache(@Qualifier("redisTemplate") RedisTemplate<String, Object> template
+			, Serializer serializer
 			, RedisMessageListenerContainer messageContainer) {
-		JedisCache cache = new JedisCache(template);
+		JedisCache cache = new JedisCache(template, serializer);
 		cache.setMessageContainer(messageContainer);
 		return cache;
 	}

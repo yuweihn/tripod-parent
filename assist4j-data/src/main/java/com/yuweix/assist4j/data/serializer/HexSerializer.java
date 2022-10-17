@@ -3,36 +3,23 @@ package com.yuweix.assist4j.data.serializer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.util.Assert;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 
 /**
  * 序列化工具
  * @author yuwei
  */
-public class HexSerializer implements RedisSerializer<Object> {
+public class HexSerializer implements Serializer {
 	private static final Logger log = LoggerFactory.getLogger(HexSerializer.class);
-	private final Charset charset;
-
-	public HexSerializer() {
-		this(StandardCharsets.UTF_8);
-	}
-	public HexSerializer(Charset charset) {
-		Assert.notNull(charset, "[Charset] must not be null!");
-		this.charset = charset;
-	}
 
 
 	/**
 	 * 序列化
 	 */
-	public byte[] serialize(Object obj) {
-		if (obj == null) {
+	public <T>String serialize(T t) {
+		if (t == null) {
 			return null;
 		}
 		ByteArrayOutputStream baos = null;
@@ -40,9 +27,8 @@ public class HexSerializer implements RedisSerializer<Object> {
 		try {
 			baos = new ByteArrayOutputStream();
 			oos = new ObjectOutputStream(baos);
-			oos.writeObject(obj);
-			String str = toHexString(baos.toByteArray());
-			return str == null ? null : str.getBytes(charset);
+			oos.writeObject(t);
+			return toHexString(baos.toByteArray());
 		} catch (Exception e) {
 			log.error("", e);
 			return null;
@@ -67,17 +53,18 @@ public class HexSerializer implements RedisSerializer<Object> {
 	/**
 	 * 反序列化
 	 */
-	public Object deserialize(byte[] bytes) {
-		if (bytes == null) {
+	@SuppressWarnings("unchecked")
+	public <T>T deserialize(String str) {
+		if (str == null) {
 			return null;
 		}
-		byte[] bt = toByteArray(new String(bytes, charset));
+		byte[] bt = toByteArray(str);
 		ByteArrayInputStream bais = null;
 		ObjectInputStream ois = null;
 		try {
 			bais = new ByteArrayInputStream(bt);
 			ois = new ObjectInputStream(bais);
-			return ois.readObject();
+			return (T) ois.readObject();
 		} catch (Exception e) {
 			log.error("", e);
 			return null;
