@@ -13,22 +13,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.yuweix.assist4j.core.json.JsonUtil;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -120,12 +109,10 @@ public abstract class ExcelUtil {
 		export(out, dataList);
 		byte[] data = out.toByteArray();
 
-		if (out != null) {
-			try {
-				out.close();
-			} catch (IOException e) {
-				log.error("", e);
-			}
+		try {
+			out.close();
+		} catch (IOException e) {
+			log.error("", e);
 		}
 		return data;
 	}
@@ -145,10 +132,10 @@ public abstract class ExcelUtil {
 			 * 表头样式
 			 */
 			CellStyle titleStyle = workbook.createCellStyle();
-			titleStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+			titleStyle.setAlignment(HorizontalAlignment.CENTER);
 			Font titleFont = workbook.createFont();
 			titleFont.setFontHeightInPoints((short) 20);
-			titleFont.setBoldweight((short) 700);
+			titleFont.setBold(true);
 			titleStyle.setFont(titleFont);
 
 			SXSSFSheet sheet = workbook.createSheet();
@@ -199,9 +186,8 @@ public abstract class ExcelUtil {
 		List<String> list = new ArrayList<>();
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
-			Iterator<?> itr = map.keySet().iterator();
-			while (itr.hasNext()) {
-				list.add(itr.next().toString());
+			for (Object o : map.keySet()) {
+				list.add(o.toString());
 			}
 		} else {
 			Field[] fields = t.getClass().getDeclaredFields();
@@ -222,9 +208,8 @@ public abstract class ExcelUtil {
 		List<String> list = new ArrayList<>();
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
-			Iterator<?> itr = map.keySet().iterator();
-			while (itr.hasNext()) {
-				list.add(itr.next().toString());
+			for (Object o : map.keySet()) {
+				list.add(o.toString());
 			}
 		} else {
 			Field[] fields = t.getClass().getDeclaredFields();
@@ -308,8 +293,8 @@ public abstract class ExcelUtil {
 	}
 
 	private static Object getCellValue(Cell cell) {
-		int ct = cell.getCellType();
-		if (Cell.CELL_TYPE_NUMERIC == ct) {
+		CellType ct = cell.getCellType();
+		if (CellType.NUMERIC == ct) {
 			if (DateUtil.isCellDateFormatted(cell)) {
 				return cell.getDateCellValue();
 			}
@@ -317,28 +302,28 @@ public abstract class ExcelUtil {
 			double d = cell.getNumericCellValue();
 			int i = (int) d;
 			if (d == i) {
-				return Integer.valueOf(i);
+				return i;
 			} else {
-				return Double.valueOf(d);
+				return d;
 			}
 //			return NumberToTextConverter.toText(cell.getNumericCellValue());
 		}
-		if (Cell.CELL_TYPE_STRING == ct) {
+		if (CellType.STRING == ct) {
 			return cell.getRichStringCellValue().getString();
 		}
-		if (Cell.CELL_TYPE_FORMULA == ct) {
+		if (CellType.FORMULA == ct) {
 			Workbook wb = cell.getSheet().getWorkbook();
 			CreationHelper crateHelper = wb.getCreationHelper();
 			FormulaEvaluator evaluator = crateHelper.createFormulaEvaluator();
 			return getCellValue(evaluator.evaluateInCell(cell));
 		}
-		if (Cell.CELL_TYPE_BLANK == ct) {
+		if (CellType.BLANK == ct) {
 			return null;
 		}
-		if (Cell.CELL_TYPE_BOOLEAN == ct) {
+		if (CellType.BOOLEAN == ct) {
 			return cell.getBooleanCellValue();
 		}
-		if (Cell.CELL_TYPE_ERROR == ct) {
+		if (CellType.ERROR == ct) {
 			return null;
 		}
 		return null;
