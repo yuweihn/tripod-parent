@@ -21,6 +21,7 @@ public interface LeaderElector {
 		R r = new R();
 		r.setSuccess(localNode.equals(leader));
 		r.setLeader(leader);
+		r.setLocal(localNode);
 		return r;
 	}
 
@@ -31,6 +32,7 @@ public interface LeaderElector {
 		private static final long serialVersionUID = 1L;
 		private boolean success;
 		private String leader;
+		private String local;
 
 		public boolean isSuccess() {
 			return success;
@@ -46,6 +48,14 @@ public interface LeaderElector {
 
 		public void setLeader(String leader) {
 			this.leader = leader;
+		}
+
+		public void setLocal(String local) {
+			this.local = local;
+		}
+
+		public String getLocal() {
+			return local;
 		}
 	}
 }
