@@ -1,7 +1,7 @@
 package com.yuweix.assist4j.schedule.base;
 
 
-import com.yuweix.assist4j.schedule.LeaderElector;
+import com.yuweix.assist4j.data.elect.Elector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class AbstractTask {
 	private static final Logger log = LoggerFactory.getLogger(AbstractTask.class);
-	private static final LeaderElector DEFAULT_LEADER_ELECTOR = new LeaderElector() {
+	private static final Elector DEFAULT_LEADER_ELECTOR = new Elector() {
 		@Override
 		public String acquire(String lock) {
 			return getLocalNode();
@@ -31,15 +31,15 @@ public abstract class AbstractTask {
 		}
 	};
 
-	private static SoftReference<Map<Class<? extends AbstractTask>, LeaderElectorWrapper>> ELECTOR_MAP_REF;
+	private static SoftReference<Map<Class<? extends AbstractTask>, ElectorWrapper>> ELECTOR_MAP_REF;
 	private static final Object electorLock = new Object();
-	private static final class LeaderElectorWrapper {
-		private LeaderElector elector = null;
-		LeaderElectorWrapper(LeaderElector elector) {
+	private static final class ElectorWrapper {
+		private Elector elector = null;
+		ElectorWrapper(Elector elector) {
 			this.elector = elector;
 		}
 	}
-	private static final LeaderElectorWrapper EMPTY_ELECTOR = new LeaderElectorWrapper(null);
+	private static final ElectorWrapper EMPTY_ELECTOR = new ElectorWrapper(null);
 
 	public AbstractTask() {
 
@@ -47,14 +47,14 @@ public abstract class AbstractTask {
 
 	public void execute() {
 		long startTime = System.currentTimeMillis();
-		LeaderElector leaderElector = getLeaderElector();
-		if (leaderElector == null) {
-			leaderElector = DEFAULT_LEADER_ELECTOR;
+		Elector elector = getLeaderElector();
+		if (elector == null) {
+			elector = DEFAULT_LEADER_ELECTOR;
 		}
 
 		String lockName = getLockName();
 		boolean release = getRelease();
-		LeaderElector.R res = leaderElector.tryAcquire(lockName);
+		Elector.R res = elector.tryAcquire(lockName);
 		if (res.isSuccess()) {
 			before();
 			try {
@@ -64,7 +64,7 @@ public abstract class AbstractTask {
 			} finally {
 				if (release) {
 					try {
-						leaderElector.release(lockName);
+						elector.release(lockName);
 					} catch (Exception ignored) {
 					}
 				}
@@ -95,8 +95,8 @@ public abstract class AbstractTask {
 		return true;
 	}
 
-	private static Map<Class<? extends AbstractTask>, LeaderElectorWrapper> getElectorWrapperMap() {
-		Map<Class<? extends AbstractTask>, LeaderElectorWrapper> map = null;
+	private static Map<Class<? extends AbstractTask>, ElectorWrapper> getElectorWrapperMap() {
+		Map<Class<? extends AbstractTask>, ElectorWrapper> map = null;
 		if (ELECTOR_MAP_REF == null || (map = ELECTOR_MAP_REF.get()) == null) {
 			synchronized (electorLock) {
 				if (ELECTOR_MAP_REF == null || (map = ELECTOR_MAP_REF.get()) == null) {
@@ -107,10 +107,10 @@ public abstract class AbstractTask {
 		}
 		return map;
 	}
-	protected LeaderElector getLeaderElector() {
+	protected Elector getLeaderElector() {
 		Class<? extends AbstractTask> clz = this.getClass();
-		Map<Class<? extends AbstractTask>, LeaderElectorWrapper> map = getElectorWrapperMap();
-		LeaderElectorWrapper wrapper = map.get(clz);
+		Map<Class<? extends AbstractTask>, ElectorWrapper> map = getElectorWrapperMap();
+		ElectorWrapper wrapper = map.get(clz);
 		if (wrapper == null) {
 			synchronized (this) {
 				wrapper = map.get(clz);
@@ -122,14 +122,14 @@ public abstract class AbstractTask {
 		}
 		return wrapper.elector;
 	}
-	private LeaderElectorWrapper reflectElector(Class<?> clazz) {
+	private ElectorWrapper reflectElector(Class<?> clazz) {
 		while (clazz != null) {
 			Field[] fields = clazz.getDeclaredFields();
 			for (Field f: fields) {
-				if (f.getType() == LeaderElector.class) {
+				if (f.getType() == Elector.class) {
 					f.setAccessible(true);
 					try {
-						return new LeaderElectorWrapper((LeaderElector) f.get(this));
+						return new ElectorWrapper((Elector) f.get(this));
 					} catch (IllegalAccessException e) {
 						throw new RuntimeException(e);
 					}

@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.schedule;
+package com.yuweix.assist4j.data.elect;
 
 
 

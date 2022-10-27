@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.schedule;
+package com.yuweix.assist4j.data.elect;
 
 
 import java.util.concurrent.CountDownLatch;
@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 /**
  * @author yuwei
  */
-public class ZkLeaderElector extends AbstractLeaderElector {
-	private static final Logger log = LoggerFactory.getLogger(ZkLeaderElector.class);
+public class ZkElector extends AbstractElector {
+	private static final Logger log = LoggerFactory.getLogger(ZkElector.class);
 	private static final String ZK_NODE_NAME_PRE = "/Schedule_leader%s_";
 
 	private static ZooKeeper zk;
@@ -34,10 +34,10 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 
 
 
-	public ZkLeaderElector(String zkConn, int zkTimeout) {
+	public ZkElector(String zkConn, int zkTimeout) {
 		this(zkConn, zkTimeout, null);
 	}
-	public ZkLeaderElector(String zkConn, int zkTimeout, String appName) {
+	public ZkElector(String zkConn, int zkTimeout, String appName) {
 		super();
 		this.zkConn = zkConn;
 		this.zkTimeout = zkTimeout;
@@ -46,7 +46,7 @@ public class ZkLeaderElector extends AbstractLeaderElector {
 
 	private ZooKeeper getZk() {
 		if (null == zk) {
-			synchronized (ZkLeaderElector.class) {
+			synchronized (ZkElector.class) {
 				if (null == zk) {
 					final CountDownLatch latch = new CountDownLatch(1);
 					try {

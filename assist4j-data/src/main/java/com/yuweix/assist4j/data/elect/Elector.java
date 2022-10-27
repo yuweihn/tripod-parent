@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.schedule;
+package com.yuweix.assist4j.data.elect;
 
 
 import java.io.Serializable;
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Leader选择器
  * @author yuwei
  */
-public interface LeaderElector {
+public interface Elector {
 	/**
 	 * 尝试获取锁，返回锁的持有者。
 	 * @param lock

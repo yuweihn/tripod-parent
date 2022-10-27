@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.schedule;
+package com.yuweix.assist4j.data.elect;
 
 
 
@@ -6,8 +6,8 @@ package com.yuweix.assist4j.schedule;
 /**
  * @author yuwei
  */
-public class RedisLeaderElector extends AbstractLeaderElector {
-	private static final String CACHE_LEADER_KEY_PRE = "cache%s.schedule.leader.";
+public class RedisElector extends AbstractElector {
+	private static final String CACHE_LEADER_KEY_PRE = "cache%s.elect.leader.";
 
 	private Redis redis;
 
@@ -19,10 +19,10 @@ public class RedisLeaderElector extends AbstractLeaderElector {
 	private String appName;
 
 
-	public RedisLeaderElector(Redis redis, int timeout) {
+	public RedisElector(Redis redis, int timeout) {
 		this(redis, timeout, null);
 	}
-	public RedisLeaderElector(Redis redis, int timeout, String appName) {
+	public RedisElector(Redis redis, int timeout, String appName) {
 		super();
 		this.redis = redis;
 		this.timeout = timeout;
