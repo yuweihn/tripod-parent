@@ -43,8 +43,14 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	protected String getPkCacheKeyPre() {
-		return "cache." + clz.getName() + ".by.pk.";
+		String appName = getAppName();
+		String str = appName == null || "".equals(appName.trim()) ? "" : "." + appName.trim();
+		return "cache" + str + "." + clz.getName() + ".by.pk.";
 	}
+	protected String getAppName() {
+		return null;
+	}
+
 	protected abstract T getByCacheKey(String key);
 	/**
 	 * @param key
