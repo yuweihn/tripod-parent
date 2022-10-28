@@ -22,7 +22,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 
 	@Override
 	public T get(PK id) {
-		String key = getCacheKeyPre() + id;
+		String key = getPkCacheKeyPre() + id;
 		T t = getByCacheKey(key);
 		if (t != null) {
 			return t;
@@ -38,11 +38,11 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	public void deleteByIdFromCache(PK id) {
-		String key = getCacheKeyPre() + id;
+		String key = getPkCacheKeyPre() + id;
 		deleteByCacheKey(key);
 	}
 
-	protected String getCacheKeyPre() {
+	protected String getPkCacheKeyPre() {
 		return "cache." + clz.getName() + ".by.pk.";
 	}
 	protected abstract T getByCacheKey(String key);
