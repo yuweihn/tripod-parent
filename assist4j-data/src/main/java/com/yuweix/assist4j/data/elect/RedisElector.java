@@ -42,14 +42,4 @@ public class RedisElector extends AbstractElector {
 				, this.appName == null || "".equals(this.appName) ? "" : "." + this.appName) + lock;
 		redis.unlock(key, getLocalNode());
 	}
-
-	@Override
-	public void init() {
-
-	}
-
-	@Override
-	public void destroy() {
-
-	}
 }

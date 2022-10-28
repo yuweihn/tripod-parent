@@ -131,11 +131,6 @@ public class ZkElector extends AbstractElector {
 	}
 
 	@Override
-	public void init() {
-
-	}
-
-	@Override
 	public void destroy() {
 		if (zk != null) {
 			try {

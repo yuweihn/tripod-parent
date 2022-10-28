@@ -1,6 +1,8 @@
 package com.yuweix.assist4j.data.elect;
 
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -20,9 +22,12 @@ public abstract class AbstractElector implements Elector {
 		return localNode;
 	}
 
+	@PostConstruct
 	public void init() {
 
 	}
+
+	@PreDestroy
 	public void destroy() {
 
 	}
