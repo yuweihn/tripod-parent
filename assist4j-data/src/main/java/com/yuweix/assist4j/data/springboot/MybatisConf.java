@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -33,14 +34,13 @@ public class MybatisConf {
 			return new Resource[0];
 		}
 		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-		Resource[] resources = resolver.getResources(locationPattern);
-		return resources;
+		return resolver.getResources(locationPattern);
 	}
 
 	@ConditionalOnMissingBean(name = "basePackage")
 	@Bean(name = "basePackage")
-	public String basePackage(@Value("${assist4j.mybatis.basePackage:}") String basePackage) {
-		return basePackage;
+	public String basePackage(Environment env) {
+		return env.getProperty("assist4j.mybatis.basePackage");
 	}
 
 	@ConditionalOnMissingBean(name = "sqlSessionFactory")
