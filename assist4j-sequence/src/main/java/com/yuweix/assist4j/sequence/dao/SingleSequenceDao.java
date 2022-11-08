@@ -55,7 +55,7 @@ public class SingleSequenceDao extends AbstractSequenceDao {
 				throw new SequenceException("Invalid value, seqName = " + seqName + ", value = " + oldValue + ".");
 			}
 
-			Long newValue = oldValue + getInnerStep();
+			long newValue = oldValue + getInnerStep();
 			try {
 				updateSeqValue(0, seqName, oldValue, newValue);
 			} catch(Exception e) {

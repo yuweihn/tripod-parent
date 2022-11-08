@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.sql.DataSource;
 
 import com.yuweix.assist4j.sequence.exception.SequenceException;
@@ -63,10 +65,13 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 	}
 
 	@Override
+	@PostConstruct
 	public void init() {
 
 	}
+
 	@Override
+	@PreDestroy
 	public void destroy() {
 
 	}

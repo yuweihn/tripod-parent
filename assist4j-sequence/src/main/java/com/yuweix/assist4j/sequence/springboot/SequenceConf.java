@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class SequenceConf {
 	@ConditionalOnMissingBean(SequenceDao.class)
-	@Bean(name = "sequenceDao", initMethod = "init", destroyMethod = "destroy")
+	@Bean(name = "sequenceDao")
 	public SequenceDao sequenceDao(@Qualifier("dataSource") DataSource dataSource
 			, @Value("${assist4j.sequence-setting.innerStep:100}") int innerStep
 			, @Value("${assist4j.sequence-setting.retryTimes:5}") int retryTimes

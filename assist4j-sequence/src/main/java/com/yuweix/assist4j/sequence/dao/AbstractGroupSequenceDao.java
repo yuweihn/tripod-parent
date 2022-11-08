@@ -22,7 +22,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	private static final Logger log = LoggerFactory.getLogger(AbstractGroupSequenceDao.class);
 
 
-	private Map<Integer, AtomicInteger> excludedSegment;
+	private final Map<Integer, AtomicInteger> excludedSegment;
 	/**
 	 * 一旦被剔除，最多被忽略的次数
 	 */
@@ -31,19 +31,20 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	 * 同步等待的最大时长(毫秒)
 	 */
 	private long maxWaitMillis = 3000L;
-	private ExecutorService threadPool;
+	private final ExecutorService threadPool;
 	private IRule rule;
 	private String ruleClassName;
 
 
 	public AbstractGroupSequenceDao() {
-		this.excludedSegment = new ConcurrentHashMap<Integer, AtomicInteger>();
+		this.excludedSegment = new ConcurrentHashMap<>();
 		this.threadPool = Executors.newFixedThreadPool(1);
 	}
 	
 	@Override
 	public void init() {
 		initDataSourceRouteRule();
+		super.init();
 	}
 	
 	private void initDataSourceRouteRule() {
@@ -108,7 +109,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 			}
 			
 			long adjustOldValue = adjustValue(segment, oldValue);
-			long newValue = adjustOldValue + (long)(segCount * getInnerStep());
+			long newValue = adjustOldValue + ((long) segCount * getInnerStep());
 			try {
 				updateSeqValue(segment, seqName, oldValue, newValue);
 			} catch(Exception e) {
@@ -120,7 +121,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 				cleanExcludedSegment();
 			}
 			
-			return new SequenceHolder(adjustOldValue + 1L, adjustOldValue + (long)getInnerStep());
+			return new SequenceHolder(adjustOldValue + 1L, adjustOldValue + (long) getInnerStep());
 		}
 		throw new SequenceException("Retried too many times, retryTimes = " + retryTimes);
 	}
@@ -169,9 +170,8 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 		if (currentValue < 0) {
 			currentValue = 0;
 		}
-		
 		int outStep = getSegmentCount() * getInnerStep();
-		long standardValue = currentValue - currentValue % (long)outStep + (long)(segment * getInnerStep());
+		long standardValue = currentValue - currentValue % (long) outStep + ((long) segment * getInnerStep());
 		return currentValue <= standardValue ? standardValue : (standardValue + outStep);
 	}
 	
