@@ -24,7 +24,7 @@ public class SegmentSequenceDao extends AbstractGroupSequenceDao {
 
 	@Override
 	public void init() {
-		Assert.notNull(dataSource, "The dataSource is null.");
+		Assert.notNull(dataSource, "The dataSource is required.");
 		super.init();
 	}
 
