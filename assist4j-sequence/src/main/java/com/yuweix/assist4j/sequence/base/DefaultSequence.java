@@ -7,6 +7,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.yuweix.assist4j.sequence.bean.SequenceHolder;
 import com.yuweix.assist4j.sequence.dao.SequenceDao;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 
 /**
  * @author yuwei
@@ -22,7 +25,7 @@ public class DefaultSequence implements Sequence {
 
 	}
 
-	@Override
+	@PostConstruct
 	public void init() {
 		synchronized(this) {
 			sequenceDao.ensure(name, minValue);
@@ -58,7 +61,7 @@ public class DefaultSequence implements Sequence {
 		return value;
 	}
 
-	@Override
+	@PreDestroy
 	public void destroy() {
 
 	}
