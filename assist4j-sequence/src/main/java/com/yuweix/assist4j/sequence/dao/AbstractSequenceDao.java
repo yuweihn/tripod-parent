@@ -64,13 +64,11 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 		this.innerStep = innerStep;
 	}
 
-	@Override
 	@PostConstruct
 	public void init() {
 
 	}
 
-	@Override
 	@PreDestroy
 	public void destroy() {
 
