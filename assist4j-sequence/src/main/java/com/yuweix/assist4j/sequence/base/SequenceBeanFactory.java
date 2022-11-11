@@ -28,90 +28,26 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	private static final Logger log = LoggerFactory.getLogger(SequenceBeanFactory.class);
 
 	private static final String DELIMITER = ",";
-	private static final String DEFAULT_FIELD_SEQUENCE_DAO = "sequenceDao";
-	private static final String DEFAULT_FIELD_SEQ_NAME = "name";
-	private static final String DEFAULT_FIELD_MIN_VALUE = "minValue";
 
-	private Class<? extends Sequence> sequenceClass;
-	private List<Property> constructorArgList;
-	private List<Property> propertyList;
-	private String fieldSeqName;
-	private String fieldMinValue;
+	private Class<? extends Sequence> sequenceClz;
+	private List<Property> constructArgList;
 
 	private ConfigurableListableBeanFactory beanFactory;
 	private BeanDefinitionRegistry registry;
 	private boolean done = false;
 
 
-	public SequenceBeanFactory(Class<? extends Sequence> sequenceClass) {
-		this(sequenceClass.getName());
-	}
-	public SequenceBeanFactory(String sequenceClassName) {
-		this(sequenceClassName, null, null);
-	}
-	public SequenceBeanFactory(String sequenceClassName, String fieldSeqName, String fieldMinValue) {
-		this(sequenceClassName, null, null, fieldSeqName, fieldMinValue);
-	}
-	/**
-	 * @param sequenceClassName                       准备实例化的Sequence实现类
-	 * @param constructorArgList                      Sequence实现类的构造函数参数序列
-	 * @param propertyList                            Sequence实现类的属性列表
-	 * @param fieldSeqName                            Sequence实现类的seqName属性名
-	 * @param fieldMinValue                           Sequence实现类的seqName最小值对应的属性名
-	 */
-	@SuppressWarnings("unchecked")
-	public SequenceBeanFactory(String sequenceClassName, List<Property> constructorArgList, List<Property> propertyList
-			, String fieldSeqName, String fieldMinValue) {
-		try {
-			Class<?> clz = Class.forName(sequenceClassName);
-			if (!Sequence.class.isAssignableFrom(clz)) {
-				throw new SequenceException("[sequenceClassName] must be a subclass of " + Sequence.class.getName() + ".");
-			}
-			this.sequenceClass = (Class<? extends Sequence>) clz;
-		} catch (ClassNotFoundException e) {
-			throw new SequenceException(e);
-		}
-
-		this.constructorArgList = constructorArgList;
-		this.propertyList = propertyList;
-		if (fieldSeqName == null || "".equals(fieldSeqName)) {
-			this.fieldSeqName = DEFAULT_FIELD_SEQ_NAME;
-		} else {
-			this.fieldSeqName = fieldSeqName;
-		}
-		if (fieldMinValue == null || "".equals(fieldMinValue)) {
-			this.fieldMinValue = DEFAULT_FIELD_MIN_VALUE;
-		} else {
-			this.fieldMinValue = fieldMinValue;
-		}
-
-		prepareSequenceClass();
+	public SequenceBeanFactory(Class<? extends Sequence> sequenceClz) {
+		this(sequenceClz, null);
 	}
 
 	/**
-	 * 检查sequenceClass，必须含有fieldSeqName和fieldMinValue指定的属性名和propertyList中的所有属性名。
+	 * @param sequenceClz                             准备实例化的Sequence实现类
+	 * @param constructArgList                        Sequence实现类的构造函数参数序列
 	 */
-	private void prepareSequenceClass() {
-		try {
-			Field seqNameField = this.sequenceClass.getDeclaredField(this.fieldSeqName);
-			if (seqNameField == null) {
-				throw new NoSuchFieldException(this.fieldSeqName);
-			}
-			Field minValueField = this.sequenceClass.getDeclaredField(this.fieldMinValue);
-			if (minValueField == null) {
-				throw new NoSuchFieldException(this.fieldMinValue);
-			}
-			if (this.propertyList != null && this.propertyList.size() > 0) {
-				for (Property prop: this.propertyList) {
-					Field field = this.sequenceClass.getDeclaredField(prop.getPropertyName());
-					if (field == null) {
-						throw new NoSuchFieldException(prop.getPropertyName());
-					}
-				}
-			}
-		} catch (NoSuchFieldException | SecurityException e) {
-			throw new SequenceException(e);
-		}
+	public SequenceBeanFactory(Class<? extends Sequence> sequenceClz, List<Property> constructArgList) {
+		this.sequenceClz = sequenceClz;
+		this.constructArgList = constructArgList;
 	}
 
 	@Override
@@ -146,7 +82,15 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		if (seqMap == null || seqMap.isEmpty()) {
 			return;
 		}
-		ensureSequenceDao();
+
+		Field seqDaoField = checkSequenceDao();
+		Field seqNameField = checkSequenceName();
+		Field seqMinValField = checkSequenceMinValue();
+		String[] seqDaoBeanNames = beanFactory.getBeanNamesForType(SequenceDao.class);
+		if (seqDaoBeanNames.length != 1) {
+			throw new SequenceException("SequenceDao not found in spring context.");
+		}
+		Property seqDaoProperty = new Property(seqDaoField.getName(), seqDaoBeanNames[0], Property.TYPE_REFERENCE);
 
 		for (Entry<String, String> entry : seqMap.entrySet()) {
 			String beanName = entry.getKey();
@@ -168,16 +112,14 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 			long minValue = arr.length == 2 ? Long.parseLong(arr[1]) : 0;
 
 			List<Property> propList = new ArrayList<>();
-			if (this.propertyList != null && this.propertyList.size() > 0) {
-				propList.addAll(this.propertyList);
-			}
-			propList.add(new Property(fieldSeqName, seqName, Property.TYPE_VALUE));
-			propList.add(new Property(fieldMinValue, minValue, Property.TYPE_VALUE));
-			registerBean(beanName, this.constructorArgList, propList);
+			propList.add(seqDaoProperty);
+			propList.add(new Property(seqNameField.getName(), seqName, Property.TYPE_VALUE));
+			propList.add(new Property(seqMinValField.getName(), minValue, Property.TYPE_VALUE));
+			registerBean(beanName, this.constructArgList, propList);
 		}
 	}
 	private void registerBean(String beanName, List<Property> constArgList, List<Property> propList) {
-		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(sequenceClass);
+		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(sequenceClz);
 		if (constArgList != null && constArgList.size() > 0) {
 			for (Property constructorArg: constArgList) {
 				if (Property.TYPE_VALUE == constructorArg.getType()) {
@@ -205,47 +147,61 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	}
 
 	/**
-	 * this.propertyList中必须有一个SequenceDao类型的属性
+	 * 检查注解：{@link AnnSequenceDao}
 	 */
-	private void ensureSequenceDao() {
-		if (this.propertyList == null) {
-			this.propertyList = new ArrayList<>();
+	private Field checkSequenceDao() {
+		Field[] fields = this.sequenceClz.getDeclaredFields();
+		if (fields == null || fields.length <= 0) {
+			throw new SequenceException("Field SequenceDao not Found.");
 		}
-
-		for (Property property: this.propertyList) {
-			try {
-				Field field = this.sequenceClass.getDeclaredField(property.getPropertyName());
-				if (SequenceDao.class.isAssignableFrom(field.getType())) {
-					return;
-				}
-			} catch (Exception ignored) {
+		for (Field f: fields) {
+			AnnSequenceDao annSeqDao = f.getAnnotation(AnnSequenceDao.class);
+			if (annSeqDao != null) {
+				return f;
 			}
 		}
-
-		try {
-			Field defaultSequenceDaoField = this.sequenceClass.getDeclaredField(DEFAULT_FIELD_SEQUENCE_DAO);
-			if (defaultSequenceDaoField == null) {
-				throw new NoSuchFieldException(DEFAULT_FIELD_SEQUENCE_DAO);
+		throw new SequenceException("Field SequenceDao not Found.");
+	}
+	/**
+	 * 检查注解：{@link AnnSequenceName}
+	 */
+	private Field checkSequenceName() {
+		Field[] fields = this.sequenceClz.getDeclaredFields();
+		if (fields == null || fields.length <= 0) {
+			throw new SequenceException("Field Name not Found.");
+		}
+		for (Field f: fields) {
+			AnnSequenceName annSeqName = f.getAnnotation(AnnSequenceName.class);
+			if (annSeqName != null) {
+				return f;
 			}
-		} catch (Exception e) {
-			throw new SequenceException(e);
 		}
-
-		String[] beanNamesForSequenceDao = beanFactory.getBeanNamesForType(SequenceDao.class);
-		if (beanNamesForSequenceDao.length != 1) {
-			throw new SequenceException("Error happens while inject field SequenceDao.");
+		throw new SequenceException("Field Name not Found.");
+	}
+	/**
+	 * 检查注解：{@link AnnSequenceMinValue}
+	 */
+	private Field checkSequenceMinValue() {
+		Field[] fields = this.sequenceClz.getDeclaredFields();
+		if (fields == null || fields.length <= 0) {
+			throw new SequenceException("Field MinValue not Found.");
 		}
-
-		this.propertyList.add(new Property(DEFAULT_FIELD_SEQUENCE_DAO, beanNamesForSequenceDao[0], Property.TYPE_REFERENCE));
+		for (Field f: fields) {
+			AnnSequenceMinValue annSeqMinVal = f.getAnnotation(AnnSequenceMinValue.class);
+			if (annSeqMinVal != null) {
+				return f;
+			}
+		}
+		throw new SequenceException("Field MinValue not Found.");
 	}
 
-	private static class Property {
+	public static class Property {
 		private String propertyName;
 		private Object value;
 		private byte type;
 
-		static final byte TYPE_VALUE = 0;
-		static final byte TYPE_REFERENCE = 1;
+		public static final byte TYPE_VALUE = 0;
+		public static final byte TYPE_REFERENCE = 1;
 
 		public Property(String propertyName, Object value, byte type) {
 			this.propertyName = propertyName;

@@ -16,8 +16,11 @@ import javax.annotation.PreDestroy;
  */
 public class DefaultSequence implements Sequence {
 	private final Lock lock = new ReentrantLock();
+	@AnnSequenceDao
 	private SequenceDao sequenceDao;
+	@AnnSequenceName
 	private String name;
+	@AnnSequenceMinValue
 	private long minValue;
 	private volatile SequenceHolder sequenceHolder;
 
