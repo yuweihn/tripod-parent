@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -59,12 +58,7 @@ public class SequenceConf {
 
 	@ConditionalOnMissingBean(SequenceBeanFactory.class)
 	@Bean(name = "sequenceBeanFactory")
-	public SequenceBeanFactory sequenceBeanFactory(Environment env) {
-		String sequenceClz = env.getProperty("assist4j.sequence.clz");
-		if (sequenceClz != null && !"".equals(sequenceClz)) {
-			return new SequenceBeanFactory(sequenceClz);
-		} else {
-			return new SequenceBeanFactory(DefaultSequence.class);
-		}
+	public SequenceBeanFactory sequenceBeanFactory() {
+		return new SequenceBeanFactory(DefaultSequence.class);
 	}
 }
