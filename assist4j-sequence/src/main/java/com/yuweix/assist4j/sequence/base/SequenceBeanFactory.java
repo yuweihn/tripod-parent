@@ -3,7 +3,6 @@ package com.yuweix.assist4j.sequence.base;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +10,7 @@ import java.util.Map.Entry;
 import com.yuweix.assist4j.sequence.dao.SequenceDao;
 import com.yuweix.assist4j.sequence.exception.SequenceException;
 
+import com.yuweix.assist4j.sequence.utils.FieldUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -151,7 +151,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	 * 检查注解：{@link AnnSequenceDao}
 	 */
 	private Field checkSequenceDao() {
-		List<Field> fields = getAllFieldsList(this.sequenceClz);
+		List<Field> fields = FieldUtil.getAllFieldsList(this.sequenceClz);
 		if (fields == null || fields.size() <= 0) {
 			throw new SequenceException("Field SequenceDao not Found.");
 		}
@@ -167,7 +167,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	 * 检查注解：{@link AnnSequenceName}
 	 */
 	private Field checkSequenceName() {
-		List<Field> fields = getAllFieldsList(this.sequenceClz);
+		List<Field> fields = FieldUtil.getAllFieldsList(this.sequenceClz);
 		if (fields == null || fields.size() <= 0) {
 			throw new SequenceException("Field Name not Found.");
 		}
@@ -183,7 +183,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	 * 检查注解：{@link AnnSequenceMinValue}
 	 */
 	private Field checkSequenceMinValue() {
-		List<Field> fields = getAllFieldsList(this.sequenceClz);
+		List<Field> fields = FieldUtil.getAllFieldsList(this.sequenceClz);
 		if (fields == null || fields.size() <= 0) {
 			throw new SequenceException("Field MinValue not Found.");
 		}
@@ -194,20 +194,6 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 			}
 		}
 		throw new SequenceException("Field MinValue not Found.");
-	}
-	/**
-	 * Gets all fields of the given class and its parents (if any).
-	 * @return
-	 */
-	private static List<Field> getAllFieldsList(Class<?> clz) {
-		final List<Field> allFields = new ArrayList<>();
-		Class<?> currentClass = clz;
-		while (currentClass != null) {
-			final Field[] declaredFields = currentClass.getDeclaredFields();
-			allFields.addAll(Arrays.asList(declaredFields));
-			currentClass = currentClass.getSuperclass();
-		}
-		return allFields;
 	}
 
 	public static class Property {
