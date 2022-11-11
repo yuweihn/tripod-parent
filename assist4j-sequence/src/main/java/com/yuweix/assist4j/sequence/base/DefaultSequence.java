@@ -19,13 +19,6 @@ public class DefaultSequence extends AbstractSequence {
 	}
 
 	@Override
-	public void init() {
-		synchronized(this) {
-			sequenceDao.ensure(name, minValue);
-		}
-	}
-
-	@Override
 	public long nextValue() {
 		if (sequenceHolder == null) {
 			lock.lock();

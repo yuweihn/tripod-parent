@@ -25,7 +25,9 @@ public abstract class AbstractSequence implements Sequence {
 
 	@PostConstruct
 	public void init() {
-
+		synchronized(this) {
+			sequenceDao.ensure(name, minValue);
+		}
 	}
 
 	@PreDestroy
