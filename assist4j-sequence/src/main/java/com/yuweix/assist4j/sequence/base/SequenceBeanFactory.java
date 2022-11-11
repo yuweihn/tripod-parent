@@ -139,13 +139,16 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		return bean;
 	}
 
-	private void registerBeans(Map<String, String> beanSeqMap) {
-		if (beanSeqMap == null || beanSeqMap.isEmpty()) {
+	/**
+	 * 注册一系列[Sequence Bean]
+	 */
+	private void registerBeans(Map<String, String> seqMap) {
+		if (seqMap == null || seqMap.isEmpty()) {
 			return;
 		}
-		checkPropertyList();
+		ensureSequenceDao();
 
-		for (Entry<String, String> entry : beanSeqMap.entrySet()) {
+		for (Entry<String, String> entry : seqMap.entrySet()) {
 			String beanName = entry.getKey();
 			String seqNameValue = entry.getValue();
 
@@ -204,7 +207,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	/**
 	 * this.propertyList中必须有一个SequenceDao类型的属性
 	 */
-	private void checkPropertyList() {
+	private void ensureSequenceDao() {
 		if (this.propertyList == null) {
 			this.propertyList = new ArrayList<>();
 		}
@@ -236,13 +239,13 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		this.propertyList.add(new Property(DEFAULT_FIELD_SEQUENCE_DAO, beanNamesForSequenceDao[0], Property.TYPE_REFERENCE));
 	}
 
-	public static class Property {
+	private static class Property {
 		private String propertyName;
 		private Object value;
 		private byte type;
 
-		public static final byte TYPE_VALUE = 0;
-		public static final byte TYPE_REFERENCE = 1;
+		static final byte TYPE_VALUE = 0;
+		static final byte TYPE_REFERENCE = 1;
 
 		public Property(String propertyName, Object value, byte type) {
 			this.propertyName = propertyName;
