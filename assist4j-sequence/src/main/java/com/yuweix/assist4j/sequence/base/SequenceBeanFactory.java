@@ -29,7 +29,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 
 	private static final String DELIMITER = ",";
 
-	private Class<? extends Sequence> sequenceClz;
+	private Class<? extends AbstractSequence> sequenceClz;
 	private List<Property> constructArgList;
 
 	private ConfigurableListableBeanFactory beanFactory;
@@ -37,7 +37,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	private boolean done = false;
 
 
-	public SequenceBeanFactory(Class<? extends Sequence> sequenceClz) {
+	public SequenceBeanFactory(Class<? extends AbstractSequence> sequenceClz) {
 		this(sequenceClz, null);
 	}
 
@@ -45,7 +45,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	 * @param sequenceClz                             准备实例化的Sequence实现类
 	 * @param constructArgList                        Sequence实现类的构造函数参数序列
 	 */
-	public SequenceBeanFactory(Class<? extends Sequence> sequenceClz, List<Property> constructArgList) {
+	public SequenceBeanFactory(Class<? extends AbstractSequence> sequenceClz, List<Property> constructArgList) {
 		this.sequenceClz = sequenceClz;
 		this.constructArgList = constructArgList;
 	}

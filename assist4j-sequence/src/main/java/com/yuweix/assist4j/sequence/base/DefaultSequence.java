@@ -5,30 +5,20 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.yuweix.assist4j.sequence.bean.SequenceHolder;
-import com.yuweix.assist4j.sequence.dao.SequenceDao;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 
 /**
  * @author yuwei
  */
-public class DefaultSequence implements Sequence {
+public class DefaultSequence extends AbstractSequence {
 	private final Lock lock = new ReentrantLock();
-	@AnnSequenceDao
-	private SequenceDao sequenceDao;
-	@AnnSequenceName
-	private String name;
-	@AnnSequenceMinValue
-	private long minValue;
 	private volatile SequenceHolder sequenceHolder;
 
 	public DefaultSequence() {
 
 	}
 
-	@PostConstruct
+	@Override
 	public void init() {
 		synchronized(this) {
 			sequenceDao.ensure(name, minValue);
@@ -62,22 +52,5 @@ public class DefaultSequence implements Sequence {
 		}
 		
 		return value;
-	}
-
-	@PreDestroy
-	public void destroy() {
-
-	}
-
-	public void setSequenceDao(SequenceDao sequenceDao) {
-		this.sequenceDao = sequenceDao;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setMinValue(long minValue) {
-		this.minValue = minValue;
 	}
 }
