@@ -291,13 +291,11 @@ public abstract class BeanUtil {
 	 * @return
 	 */
 	public static List<Field> getAllFieldsList(Class<?> clz) {
-		final List<Field> allFields = new ArrayList<Field>();
+		final List<Field> allFields = new ArrayList<>();
 		Class<?> currentClass = clz;
 		while (currentClass != null) {
 			final Field[] declaredFields = currentClass.getDeclaredFields();
-			for (Field field : declaredFields) {
-				allFields.add(field);
-			}
+			allFields.addAll(Arrays.asList(declaredFields));
 			currentClass = currentClass.getSuperclass();
 		}
 		return allFields;

@@ -3,6 +3,7 @@ package com.yuweix.assist4j.sequence.base;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -150,8 +151,8 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	 * 检查注解：{@link AnnSequenceDao}
 	 */
 	private Field checkSequenceDao() {
-		Field[] fields = this.sequenceClz.getDeclaredFields();
-		if (fields == null || fields.length <= 0) {
+		List<Field> fields = getAllFieldsList(this.sequenceClz);
+		if (fields == null || fields.size() <= 0) {
 			throw new SequenceException("Field SequenceDao not Found.");
 		}
 		for (Field f: fields) {
@@ -166,8 +167,8 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	 * 检查注解：{@link AnnSequenceName}
 	 */
 	private Field checkSequenceName() {
-		Field[] fields = this.sequenceClz.getDeclaredFields();
-		if (fields == null || fields.length <= 0) {
+		List<Field> fields = getAllFieldsList(this.sequenceClz);
+		if (fields == null || fields.size() <= 0) {
 			throw new SequenceException("Field Name not Found.");
 		}
 		for (Field f: fields) {
@@ -182,8 +183,8 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	 * 检查注解：{@link AnnSequenceMinValue}
 	 */
 	private Field checkSequenceMinValue() {
-		Field[] fields = this.sequenceClz.getDeclaredFields();
-		if (fields == null || fields.length <= 0) {
+		List<Field> fields = getAllFieldsList(this.sequenceClz);
+		if (fields == null || fields.size() <= 0) {
 			throw new SequenceException("Field MinValue not Found.");
 		}
 		for (Field f: fields) {
@@ -193,6 +194,20 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 			}
 		}
 		throw new SequenceException("Field MinValue not Found.");
+	}
+	/**
+	 * Gets all fields of the given class and its parents (if any).
+	 * @return
+	 */
+	private static List<Field> getAllFieldsList(Class<?> clz) {
+		final List<Field> allFields = new ArrayList<>();
+		Class<?> currentClass = clz;
+		while (currentClass != null) {
+			final Field[] declaredFields = currentClass.getDeclaredFields();
+			allFields.addAll(Arrays.asList(declaredFields));
+			currentClass = currentClass.getSuperclass();
+		}
+		return allFields;
 	}
 
 	public static class Property {
