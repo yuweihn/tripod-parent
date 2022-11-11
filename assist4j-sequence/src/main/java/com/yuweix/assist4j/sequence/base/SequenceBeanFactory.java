@@ -41,13 +41,27 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	public SequenceBeanFactory(Class<? extends AbstractSequence> sequenceClz) {
 		this(sequenceClz, null);
 	}
-
+	public SequenceBeanFactory(String sequenceClzName) {
+		this(sequenceClzName, null);
+	}
+	public SequenceBeanFactory(Class<? extends AbstractSequence> sequenceClz, List<Property> constructArgList) {
+		this(sequenceClz.getName(), constructArgList);
+	}
 	/**
-	 * @param sequenceClz                             准备实例化的Sequence实现类
+	 * @param sequenceClzName                         准备实例化的Sequence实现类
 	 * @param constructArgList                        Sequence实现类的构造函数参数序列
 	 */
-	public SequenceBeanFactory(Class<? extends AbstractSequence> sequenceClz, List<Property> constructArgList) {
-		this.sequenceClz = sequenceClz;
+	@SuppressWarnings("unchecked")
+	public SequenceBeanFactory(String sequenceClzName, List<Property> constructArgList) {
+		try {
+			Class<?> clz = Class.forName(sequenceClzName);
+			if (!AbstractSequence.class.isAssignableFrom(clz)) {
+				throw new SequenceException("[sequenceClassName] must be a subclass of " + AbstractSequence.class.getName() + ".");
+			}
+			this.sequenceClz = (Class<? extends AbstractSequence>) clz;
+		} catch (ClassNotFoundException e) {
+			throw new SequenceException(e);
+		}
 		this.constructArgList = constructArgList;
 	}
 

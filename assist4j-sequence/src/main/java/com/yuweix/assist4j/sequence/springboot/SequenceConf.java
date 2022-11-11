@@ -58,7 +58,11 @@ public class SequenceConf {
 
 	@ConditionalOnMissingBean(SequenceBeanFactory.class)
 	@Bean(name = "sequenceBeanFactory")
-	public SequenceBeanFactory sequenceBeanFactory() {
-		return new SequenceBeanFactory(DefaultSequence.class);
+	public SequenceBeanFactory sequenceBeanFactory(@Value("${assist4j.sequence.clz:}") String sequenceClz) {
+		if (sequenceClz != null && !"".equals(sequenceClz)) {
+			return new SequenceBeanFactory(sequenceClz);
+		} else {
+			return new SequenceBeanFactory(DefaultSequence.class);
+		}
 	}
 }
