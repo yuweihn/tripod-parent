@@ -15,7 +15,7 @@ public class DefaultSequence extends AbstractSequence {
 				do {
 					sequenceHolder = sequenceDao.nextRange(name);
 					value = sequenceHolder.getAndIncrement();
-				} while(value <= 0L);
+				} while (value <= 0L);
 			} finally {
 				lock.unlock();
 			}
