@@ -59,7 +59,7 @@ public class SingleSequenceDao extends AbstractSequenceDao {
 			try {
 				updateSeqValue(0, seqName, oldValue, newValue);
 			} catch(Exception e) {
-				log.error("", e);
+				log.warn("Failure to get next range of [{}], err: {}", seqName, e.getMessage());
 				continue;
 			}
 			return new SequenceHolder(oldValue + 1L, newValue);
