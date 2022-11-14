@@ -32,7 +32,7 @@ public class CosUtil {
 	private String endpoint;
 	private String bucketName;
 
-	private COSClient cosClient = null;
+	private volatile COSClient cosClient = null;
 	private final ReentrantLock cosClientLock = new ReentrantLock();
 
 

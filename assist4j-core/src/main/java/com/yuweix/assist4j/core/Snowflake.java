@@ -67,7 +67,7 @@ public class Snowflake {
 	public static Snowflake create(long workerId, long dataCenterId) {
 		return new Snowflake(workerId, dataCenterId);
 	}
-	private static Snowflake DEFAULT_INSTANCE = null;
+	private static volatile Snowflake DEFAULT_INSTANCE = null;
 	private static final Lock LOCK = new ReentrantLock();
 	private static Snowflake get() {
 		if (DEFAULT_INSTANCE == null) {

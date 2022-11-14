@@ -29,7 +29,7 @@ public class OssUtil {
 	private String accessSecret;
 	private String bucketName;
 
-	private OSSClient ossClient = null;
+	private volatile OSSClient ossClient = null;
 	private final ReentrantLock ossClientLock = new ReentrantLock();
 
 

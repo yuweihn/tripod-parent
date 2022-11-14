@@ -26,7 +26,7 @@ public abstract class AbstractThreadPoolTask<T> extends AbstractTask {
 	 **/
 	private static final int DEFAULT_CORE_POOL_SIZE = 10;
 
-	private static ExecutorService defaultExecutorService = null;
+	private static volatile ExecutorService defaultExecutorService = null;
 	private static final ReentrantLock lock = new ReentrantLock();
 
 
