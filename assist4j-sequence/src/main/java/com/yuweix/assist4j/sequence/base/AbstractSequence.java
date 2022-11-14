@@ -1,16 +1,22 @@
 package com.yuweix.assist4j.sequence.base;
 
 
+import com.yuweix.assist4j.sequence.bean.SequenceHolder;
 import com.yuweix.assist4j.sequence.dao.SequenceDao;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
  * @author yuwei
  */
 public abstract class AbstractSequence implements Sequence {
+	protected final Lock lock = new ReentrantLock();
+	protected volatile SequenceHolder sequenceHolder;
+
 	@AnnSequenceDao
 	protected SequenceDao sequenceDao;
 	@AnnSequenceName
@@ -33,6 +39,28 @@ public abstract class AbstractSequence implements Sequence {
 	@PreDestroy
 	public void destroy() {
 
+	}
+
+	@Override
+	public long nextValue() {
+		ensureSequenceHolder();
+		return nextVal();
+	}
+
+	protected abstract long nextVal();
+
+	private void ensureSequenceHolder() {
+		if (sequenceHolder != null) {
+			return;
+		}
+		lock.lock();
+		try {
+			if (sequenceHolder == null) {
+				sequenceHolder = sequenceDao.nextRange(name);
+			}
+		} finally {
+			lock.unlock();
+		}
 	}
 
 	public void setSequenceDao(SequenceDao sequenceDao) {
