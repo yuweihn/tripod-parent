@@ -42,7 +42,7 @@ public abstract class AbstractSequence implements Sequence {
 	}
 
 	@Override
-	public long nextValue() {
+	public long next() {
 		ensureSequenceHolder();
 		return nextVal();
 	}
