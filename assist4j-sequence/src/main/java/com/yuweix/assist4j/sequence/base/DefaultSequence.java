@@ -40,7 +40,6 @@ public class DefaultSequence extends AbstractSequence {
 				lock.unlock();
 			}
 		}
-		
 		return value;
 	}
 }
