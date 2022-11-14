@@ -12,7 +12,7 @@ import com.yuweix.assist4j.sequence.bean.SequenceHolder;
  */
 public class DefaultSequence extends AbstractSequence {
 	private final Lock lock = new ReentrantLock();
-	private volatile SequenceHolder sequenceHolder;
+	private SequenceHolder sequenceHolder;
 
 
 	@Override

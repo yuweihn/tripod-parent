@@ -10,7 +10,7 @@ import com.yuweix.assist4j.sequence.exception.SequenceException;
  */
 public class SequenceHolder {
 	private final long ceil;
-	private final AtomicLong currentValue;
+	private volatile AtomicLong currentValue;
 	
 	public SequenceHolder(long min, long max) {
 		if (min <= 0) {
