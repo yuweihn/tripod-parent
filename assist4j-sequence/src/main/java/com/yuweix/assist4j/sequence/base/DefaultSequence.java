@@ -14,9 +14,6 @@ public class DefaultSequence extends AbstractSequence {
 	private final Lock lock = new ReentrantLock();
 	private volatile SequenceHolder sequenceHolder;
 
-	public DefaultSequence() {
-
-	}
 
 	@Override
 	public long nextValue() {
