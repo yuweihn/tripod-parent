@@ -9,7 +9,7 @@
     <version>1.0.0</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>The Project of Assist4j</description>
+    <description>A Tripod</description>
     <url>https://www.yuweix.com</url>
 
     <properties>
