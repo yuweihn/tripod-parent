@@ -60,8 +60,8 @@
         <module>tripod-schedule</module>
         <module>tripod-sequence</module>
         <module>tripod-session</module>
-        <module>tripod-spring-boot-starter</module>
         <module>tripod-web</module>
+        <module>tripod-spring-boot-starter</module>
     </modules>
 
     <dependencyManagement>
