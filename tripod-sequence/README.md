@@ -13,6 +13,14 @@ For example:
 	) engine=innodb default charset=utf8mb4;
 ------------------------------------------------------------------------------------------------------------------
 	tripod:
+      sequence-setting:
+        innerStep: 100
+        retryTimes: 5
+        segmentCount: 1
+        maxSkipCount: 5
+        maxWaitMillis: 5000
+        ruleClassName: 
+        tableName: 
 	  sequence-map:
 	    seqAppKeySecret: seq_app_key_secret,100
         seqSysAdmin: seq_sys_admin,200
