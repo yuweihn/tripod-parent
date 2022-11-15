@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.yuweix</groupId>
-    <artifactId>assist4j-parent</artifactId>
+    <artifactId>tripod-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.1.28</version>
+    <version>1.0.0</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>The Project of Assist4j</description>
@@ -53,15 +53,15 @@
     </properties>
 
     <modules>
-        <module>assist4j-core</module>
-        <module>assist4j-dao</module>
-        <module>assist4j-data</module>
-        <module>assist4j-http</module>
-        <module>assist4j-schedule</module>
-        <module>assist4j-sequence</module>
-        <module>assist4j-session</module>
-        <module>assist4j-spring-boot-starter</module>
-        <module>assist4j-web</module>
+        <module>tripod-core</module>
+        <module>tripod-dao</module>
+        <module>tripod-data</module>
+        <module>tripod-http</module>
+        <module>tripod-schedule</module>
+        <module>tripod-sequence</module>
+        <module>tripod-session</module>
+        <module>tripod-spring-boot-starter</module>
+        <module>tripod-web</module>
     </modules>
 
     <dependencyManagement>
@@ -320,9 +320,9 @@
         </license>
     </licenses>
     <scm>
-        <connection>scm:git:https://github.com/yuweihn/assist4j.git</connection>
-        <developerConnection>scm:git:https://github.com/yuweihn/assist4j.git</developerConnection>
-        <url>https://github.com/yuweihn/assist4j</url>
+        <connection>scm:git:https://github.com/yuweihn/tripod.git</connection>
+        <developerConnection>scm:git:https://github.com/yuweihn/tripod.git</developerConnection>
+        <url>https://github.com/yuweihn/tripod</url>
     </scm>
     <developers>
         <developer>

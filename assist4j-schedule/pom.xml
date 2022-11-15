@@ -5,11 +5,11 @@
 
 	<parent>
 		<groupId>com.yuweix</groupId>
-		<artifactId>assist4j-parent</artifactId>
-		<version>1.1.28</version>
+		<artifactId>tripod-parent</artifactId>
+		<version>1.0.0</version>
 	</parent>
 
-	<artifactId>assist4j-schedule</artifactId>
+	<artifactId>tripod-schedule</artifactId>
 	<packaging>jar</packaging>
 	<version>${project.parent.version}</version>
 
@@ -32,7 +32,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.yuweix</groupId>
-			<artifactId>assist4j-data</artifactId>
+			<artifactId>tripod-data</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
@@ -60,9 +60,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:https://github.com/yuweihn/assist4j.git</connection>
-		<developerConnection>scm:git:https://github.com/yuweihn/assist4j.git</developerConnection>
-		<url>https://github.com/yuweihn/assist4j</url>
+		<connection>scm:git:https://github.com/yuweihn/tripod.git</connection>
+		<developerConnection>scm:git:https://github.com/yuweihn/tripod.git</developerConnection>
+		<url>https://github.com/yuweihn/tripod</url>
 	</scm>
 	<developers>
 		<developer>

@@ -5,12 +5,12 @@
 
 	<parent>
 		<groupId>com.yuweix</groupId>
-		<artifactId>assist4j-parent</artifactId>
-		<version>1.1.28</version>
+		<artifactId>tripod-parent</artifactId>
+		<version>1.0.0</version>
 	</parent>
 
 	<groupId>com.yuweix.boot</groupId>
-	<artifactId>assist4j-spring-boot-starter</artifactId>
+	<artifactId>tripod-spring-boot-starter</artifactId>
 	<packaging>jar</packaging>
 	<version>${project.parent.version}</version>
 
@@ -77,42 +77,42 @@
 
 		<dependency>
 			<groupId>com.yuweix</groupId>
-			<artifactId>assist4j-core</artifactId>
+			<artifactId>tripod-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.yuweix</groupId>
-			<artifactId>assist4j-dao</artifactId>
+			<artifactId>tripod-dao</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.yuweix</groupId>
-			<artifactId>assist4j-data</artifactId>
+			<artifactId>tripod-data</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.yuweix</groupId>
-			<artifactId>assist4j-http</artifactId>
+			<artifactId>tripod-http</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.yuweix</groupId>
-			<artifactId>assist4j-schedule</artifactId>
+			<artifactId>tripod-schedule</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.yuweix</groupId>
-			<artifactId>assist4j-sequence</artifactId>
+			<artifactId>tripod-sequence</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.yuweix</groupId>
-			<artifactId>assist4j-session</artifactId>
+			<artifactId>tripod-session</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.yuweix</groupId>
-			<artifactId>assist4j-web</artifactId>
+			<artifactId>tripod-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
@@ -140,9 +140,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:git:https://github.com/yuweihn/assist4j.git</connection>
-		<developerConnection>scm:git:https://github.com/yuweihn/assist4j.git</developerConnection>
-		<url>https://github.com/yuweihn/assist4j</url>
+		<connection>scm:git:https://github.com/yuweihn/tripod.git</connection>
+		<developerConnection>scm:git:https://github.com/yuweihn/tripod.git</developerConnection>
+		<url>https://github.com/yuweihn/tripod</url>
 	</scm>
 	<developers>
 		<developer>
