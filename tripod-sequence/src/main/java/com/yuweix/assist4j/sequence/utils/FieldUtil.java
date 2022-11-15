@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.sequence.utils;
+package com.yuweix.tripod.sequence.utils;
 
 
 import java.lang.ref.SoftReference;

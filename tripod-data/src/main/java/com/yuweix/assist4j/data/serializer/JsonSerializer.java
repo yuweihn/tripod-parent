@@ -1,7 +1,7 @@
-package com.yuweix.assist4j.data.serializer;
+package com.yuweix.tripod.data.serializer;
 
 
-import com.yuweix.assist4j.core.json.Json;
+import com.yuweix.tripod.core.json.Json;
 
 
 /**

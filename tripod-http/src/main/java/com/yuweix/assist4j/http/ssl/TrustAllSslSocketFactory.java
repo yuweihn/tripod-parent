@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.http.ssl;
+package com.yuweix.tripod.http.ssl;
 
 
 import java.security.cert.X509Certificate;

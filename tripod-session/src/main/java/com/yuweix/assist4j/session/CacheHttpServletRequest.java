@@ -1,16 +1,16 @@
-package com.yuweix.assist4j.session;
+package com.yuweix.tripod.session;
 
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
-import com.yuweix.assist4j.session.conf.SessionConf;
+import com.yuweix.tripod.session.conf.SessionConf;
 
 
 /**
  * HttpServletRequest的包装器，修改了获取Session方法的行为。
- * 现在将返回一个实际型别是{@link com.yuweix.assist4j.session.CacheHttpSession}的HttpSession实例。
+ * 现在将返回一个实际型别是{@link com.yuweix.tripod.session.CacheHttpSession}的HttpSession实例。
  *
  * 判断Session是否为失效超过最大不活动时间的时机是每次获取Session时。
  * 比如getSession()和getSession(true)都将造成更新最后访问时间。

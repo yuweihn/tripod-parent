@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.schedule.base;
+package com.yuweix.tripod.schedule.base;
 
 
 import java.util.List;

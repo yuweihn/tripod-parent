@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.boot.exception;
+package com.yuweix.tripod.boot.exception;
 
 
 import java.util.Map;

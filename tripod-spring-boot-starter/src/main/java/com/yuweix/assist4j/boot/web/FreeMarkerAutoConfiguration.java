@@ -1,12 +1,12 @@
-package com.yuweix.assist4j.boot.web;
+package com.yuweix.tripod.boot.web;
 
 
 import cn.org.rapid_framework.freemarker.directive.BlockDirective;
 import cn.org.rapid_framework.freemarker.directive.ExtendsDirective;
 import cn.org.rapid_framework.freemarker.directive.OverrideDirective;
 import cn.org.rapid_framework.freemarker.directive.SuperDirective;
-import com.yuweix.assist4j.web.Page;
-import com.yuweix.assist4j.web.freemarker.FreemarkerUtil;
+import com.yuweix.tripod.web.Page;
+import com.yuweix.tripod.web.freemarker.FreemarkerUtil;
 import freemarker.cache.ClassTemplateLoader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +28,7 @@ import java.util.Properties;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.freemarker.enabled")
+@ConditionalOnProperty(name = "tripod.boot.freemarker.enabled")
 public class FreeMarkerAutoConfiguration {
 	@ConditionalOnMissingBean
 	@Bean(name = "freemarkerViewResolver")

@@ -1,10 +1,10 @@
-package com.yuweix.assist4j.boot.exception;
+package com.yuweix.tripod.boot.exception;
 
 
-import com.yuweix.assist4j.core.Response;
-import com.yuweix.assist4j.core.exception.ExceptionHandler;
-import com.yuweix.assist4j.core.exception.ExceptionViewResolver;
-import com.yuweix.assist4j.core.json.Json;
+import com.yuweix.tripod.core.Response;
+import com.yuweix.tripod.core.exception.ExceptionHandler;
+import com.yuweix.tripod.core.exception.ExceptionViewResolver;
+import com.yuweix.tripod.core.json.Json;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -32,12 +32,12 @@ import java.util.Set;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.exception.enabled")
+@ConditionalOnProperty(name = "tripod.boot.exception.enabled")
 public class ExceptionAutoConfiguration {
 	@Configuration
-	@ConditionalOnProperty(name = "assist4j.boot.exception.handler.enabled", matchIfMissing = true)
+	@ConditionalOnProperty(name = "tripod.boot.exception.handler.enabled", matchIfMissing = true)
 	protected static class ErrorControllerConfiguration {
-		@Value("${assist4j.boot.exception.errorCode:}")
+		@Value("${tripod.boot.exception.errorCode:}")
 		private String errorCode;
 
 		@Controller
@@ -83,7 +83,7 @@ public class ExceptionAutoConfiguration {
 	}
 
 	@ConditionalOnMissingBean(ClassMessagePair.class)
-	@ConfigurationProperties(prefix = "assist4j.boot.exception", ignoreUnknownFields = true)
+	@ConfigurationProperties(prefix = "tripod.boot.exception", ignoreUnknownFields = true)
 	@Bean
 	public ClassMessagePair classMessagePair() {
 		return new ClassMessagePair() {
@@ -99,7 +99,7 @@ public class ExceptionAutoConfiguration {
 	@ConditionalOnMissingBean(ExceptionHandler.class)
 	@Bean
 	public ExceptionHandler exceptionHandler(ClassMessagePair classMessagePair, ExceptionViewResolver viewResolver
-			, @Value("${assist4j.boot.exception.showExceptionName:false}") boolean showExceptionName) {
+			, @Value("${tripod.boot.exception.showExceptionName:false}") boolean showExceptionName) {
 		Map<Class<?>, String> errorMsgMap = new HashMap<>();
 
 		Map<String, String> classMessageMap = classMessagePair.getDefaultMessage();

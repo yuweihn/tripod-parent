@@ -35,7 +35,7 @@
 		<!-- 这个connectionFactory对应的是我们定义的Spring提供的那个ConnectionFactory对象 -->
 		<property name="connectionFactory" ref="connectionFactory" />
 	</bean>
-	<bean id="textSender" class="com.yuweix.assist4j.core.mq.activemq.message.TextSender">
+	<bean id="textSender" class="com.yuweix.tripod.core.mq.activemq.message.TextSender">
 		<property name="jmsTemplate" ref="activeMqJmsTemplate" />
 	</bean>
 </beans>

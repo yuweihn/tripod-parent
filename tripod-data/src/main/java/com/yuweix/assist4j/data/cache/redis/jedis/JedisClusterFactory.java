@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.data.cache.redis.jedis;
+package com.yuweix.tripod.data.cache.redis.jedis;
 
 
 import java.util.HashSet;

@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.http.request;
+package com.yuweix.tripod.http.request;
 
 
 import java.util.ArrayList;

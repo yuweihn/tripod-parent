@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.web.filter;
+package com.yuweix.tripod.web.filter;
 
 
 import javax.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.sequence.exception;
+package com.yuweix.tripod.sequence.exception;
 
 
 /**

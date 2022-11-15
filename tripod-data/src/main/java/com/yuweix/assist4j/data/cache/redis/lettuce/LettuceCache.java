@@ -1,14 +1,14 @@
-package com.yuweix.assist4j.data.cache.redis.lettuce;
+package com.yuweix.tripod.data.cache.redis.lettuce;
 
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-import com.yuweix.assist4j.data.cache.AbstractCache;
-import com.yuweix.assist4j.data.cache.MessageHandler;
-import com.yuweix.assist4j.data.cache.redis.RedisCache;
-import com.yuweix.assist4j.data.serializer.Serializer;
+import com.yuweix.tripod.data.cache.AbstractCache;
+import com.yuweix.tripod.data.cache.MessageHandler;
+import com.yuweix.tripod.data.cache.redis.RedisCache;
+import com.yuweix.tripod.data.serializer.Serializer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.Message;

@@ -1,4 +1,4 @@
-# assist4j-sequence
+# tripod-sequence
 
 For example:
 ------------------------------------------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ For example:
 		primary      key(segment, name)
 	) engine=innodb default charset=utf8;
 ------------------------------------------------------------------------------------------------------------------
-	assist4j:
+	tripod:
 	  sequence:
 	    seqAppKeySecret: seq_app_key_secret
 	    seqFeedback: seq_feedback
@@ -26,12 +26,12 @@ For example:
 ------------------------------------------------------------------------------------------------------------------
 	@Bean(name = "sequenceDao", initMethod = "init", destroyMethod = "destroy")
 	public SequenceDao sequenceDao(@Qualifier("dataSource") DataSource dataSource
-			, @Value("${assist4j.sequence-setting.innerStep:100}") int innerStep
-			, @Value("${assist4j.sequence-setting.retryTimes:5}") int retryTimes
-			, @Value("${assist4j.sequence-setting.segmentCount:1}") int segmentCount
-			, @Value("${assist4j.sequence-setting.maxSkipCount:5}") int maxSkipCount
-			, @Value("${assist4j.sequence-setting.maxWaitMillis:5000}") long maxWaitMillis
-			, @Value("${assist4j.sequence-setting.ruleClassName:}") String ruleClassName) {
+			, @Value("${tripod.sequence-setting.innerStep:100}") int innerStep
+			, @Value("${tripod.sequence-setting.retryTimes:5}") int retryTimes
+			, @Value("${tripod.sequence-setting.segmentCount:1}") int segmentCount
+			, @Value("${tripod.sequence-setting.maxSkipCount:5}") int maxSkipCount
+			, @Value("${tripod.sequence-setting.maxWaitMillis:5000}") long maxWaitMillis
+			, @Value("${tripod.sequence-setting.ruleClassName:}") String ruleClassName) {
 		SegmentSequenceDao sequenceDao = new SegmentSequenceDao();
 		sequenceDao.setDataSource(dataSource);
 		sequenceDao.setInnerStep(innerStep);
@@ -44,7 +44,7 @@ For example:
 	}
 
 	@Bean(name = "sequenceBeanHolder")
-    @ConfigurationProperties(prefix = "assist4j", ignoreUnknownFields = true)
+    @ConfigurationProperties(prefix = "tripod", ignoreUnknownFields = true)
     public SequenceBeanHolder sequenceBeanHolder() {
         return new SequenceBeanHolder() {
             private Map<String, String> sequence = new HashMap<String, String>();

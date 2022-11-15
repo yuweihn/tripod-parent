@@ -1,8 +1,8 @@
-package com.yuweix.assist4j.session;
+package com.yuweix.tripod.session;
 
 
-import com.yuweix.assist4j.core.json.Json;
-import com.yuweix.assist4j.session.conf.SessionConf;
+import com.yuweix.tripod.core.json.Json;
+import com.yuweix.tripod.session.conf.SessionConf;
 
 import java.util.Date;
 
@@ -13,7 +13,7 @@ import java.util.Date;
 public abstract class SessionUtil {
 	/**
 	 * 根据指定sessionId获得登录时间
-	 * eg.  sessionId:  cache.assist4j.session.9ee627c1a0d14d17a5c794ad2dd8421d
+	 * eg.  sessionId:  cache.tripod.session.9ee627c1a0d14d17a5c794ad2dd8421d
 	 * @return
 	 */
 	public static Date getCreateTimeBySessionId(String sessionId) {

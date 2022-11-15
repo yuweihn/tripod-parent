@@ -1,9 +1,9 @@
-package com.yuweix.assist4j.boot.core;
+package com.yuweix.tripod.boot.core;
 
 
-import com.yuweix.assist4j.core.json.Fastjson;
-import com.yuweix.assist4j.core.json.Json;
-import com.yuweix.assist4j.core.json.JsonUtil;
+import com.yuweix.tripod.core.json.Fastjson;
+import com.yuweix.tripod.core.json.Json;
+import com.yuweix.tripod.core.json.JsonUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,13 +17,13 @@ import java.lang.reflect.Constructor;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.json.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "tripod.boot.json.enabled", matchIfMissing = true)
 public class JsonAutoConfiguration {
 	@ConditionalOnMissingBean(Json.class)
 	@Bean
-	public Json json(@Value("${assist4j.boot.json.accept:}") String accepts) {
+	public Json json(@Value("${tripod.boot.json.accept:}") String accepts) {
 		Json json = new Fastjson();
-		json.addAccept("com.yuweix.assist4j.session.SessionAttribute");
+		json.addAccept("com.yuweix.tripod.session.SessionAttribute");
 		if (accepts != null && !"".equals(accepts.trim())) {
 			String[] arr = accepts.trim().split(",");
 			for (String accept: arr) {
@@ -35,7 +35,7 @@ public class JsonAutoConfiguration {
 		return json;
 	}
 
-	@Bean("assist4j#jsonUtil")
+	@Bean("tripod#jsonUtil")
 	public JsonUtil jsonUtil(Json json) {
 		try {
 			Class<?> clz = Class.forName(JsonUtil.class.getName());

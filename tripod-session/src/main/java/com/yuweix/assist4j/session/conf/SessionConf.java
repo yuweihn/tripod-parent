@@ -1,9 +1,9 @@
-package com.yuweix.assist4j.session.conf;
+package com.yuweix.tripod.session.conf;
 
 
-import com.yuweix.assist4j.core.json.Json;
-import com.yuweix.assist4j.session.SessionConstant;
-import com.yuweix.assist4j.session.cache.SessionCache;
+import com.yuweix.tripod.core.json.Json;
+import com.yuweix.tripod.session.SessionConstant;
+import com.yuweix.tripod.session.cache.SessionCache;
 import org.springframework.util.Assert;
 
 import java.util.regex.Matcher;

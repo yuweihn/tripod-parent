@@ -1,14 +1,14 @@
-package com.yuweix.assist4j.sequence.dao;
+package com.yuweix.tripod.sequence.dao;
 
 
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.yuweix.assist4j.sequence.bean.SequenceHolder;
-import com.yuweix.assist4j.sequence.dao.loadbalancer.IRule;
-import com.yuweix.assist4j.sequence.dao.loadbalancer.RoundRobinRule;
-import com.yuweix.assist4j.sequence.exception.SequenceException;
+import com.yuweix.tripod.sequence.bean.SequenceHolder;
+import com.yuweix.tripod.sequence.dao.loadbalancer.IRule;
+import com.yuweix.tripod.sequence.dao.loadbalancer.RoundRobinRule;
+import com.yuweix.tripod.sequence.exception.SequenceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

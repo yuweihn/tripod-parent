@@ -1,8 +1,8 @@
-package com.yuweix.assist4j.sequence.base;
+package com.yuweix.tripod.sequence.base;
 
 
-import com.yuweix.assist4j.sequence.bean.SequenceHolder;
-import com.yuweix.assist4j.sequence.dao.SequenceDao;
+import com.yuweix.tripod.sequence.bean.SequenceHolder;
+import com.yuweix.tripod.sequence.dao.SequenceDao;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;

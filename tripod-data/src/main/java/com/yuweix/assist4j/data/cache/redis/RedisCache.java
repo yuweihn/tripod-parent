@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.data.cache.redis;
+package com.yuweix.tripod.data.cache.redis;
 
 
 import java.util.Collection;
@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.yuweix.assist4j.data.cache.Cache;
-import com.yuweix.assist4j.data.cache.MessageHandler;
+import com.yuweix.tripod.data.cache.Cache;
+import com.yuweix.tripod.data.cache.MessageHandler;
 
 
 /**

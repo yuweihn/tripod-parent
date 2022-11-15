@@ -1,7 +1,7 @@
-package com.yuweix.assist4j.http.request;
+package com.yuweix.tripod.http.request;
 
 
-import com.yuweix.assist4j.http.response.HttpResponse;
+import com.yuweix.tripod.http.response.HttpResponse;
 
 
 /**

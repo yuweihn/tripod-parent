@@ -1,9 +1,9 @@
-package com.yuweix.assist4j.boot.datasource;
+package com.yuweix.tripod.boot.datasource;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.yuweix.assist4j.data.springboot.MybatisConf;
-import com.yuweix.assist4j.sequence.springboot.SequenceConf;
+import com.yuweix.tripod.data.springboot.MybatisConf;
+import com.yuweix.tripod.sequence.springboot.SequenceConf;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,7 +19,7 @@ import java.sql.SQLException;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.mybatis.enabled")
+@ConditionalOnProperty(name = "tripod.boot.mybatis.enabled")
 @Import({MybatisConf.class, SequenceConf.class})
 public class MybatisAutoConfiguration {
 	@ConditionalOnMissingBean(name = "dataSource")

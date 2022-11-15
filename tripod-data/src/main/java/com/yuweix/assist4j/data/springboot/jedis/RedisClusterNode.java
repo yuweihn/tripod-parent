@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.data.springboot.jedis;
+package com.yuweix.tripod.data.springboot.jedis;
 
 
 import redis.clients.jedis.HostAndPort;

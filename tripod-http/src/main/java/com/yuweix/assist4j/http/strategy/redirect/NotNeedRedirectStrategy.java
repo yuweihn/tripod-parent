@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.http.strategy.redirect;
+package com.yuweix.tripod.http.strategy.redirect;
 
 
 import java.util.concurrent.locks.Lock;

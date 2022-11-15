@@ -1,10 +1,10 @@
-package com.yuweix.assist4j.web.filter;
+package com.yuweix.tripod.web.filter;
 
 
-import com.yuweix.assist4j.core.ActionUtil;
-import com.yuweix.assist4j.core.Constant;
+import com.yuweix.tripod.core.ActionUtil;
+import com.yuweix.tripod.core.Constant;
 
-import com.yuweix.assist4j.core.json.JsonUtil;
+import com.yuweix.tripod.core.json.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;

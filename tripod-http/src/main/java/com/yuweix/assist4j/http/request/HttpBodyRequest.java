@@ -1,12 +1,12 @@
-package com.yuweix.assist4j.http.request;
+package com.yuweix.tripod.http.request;
 
 
-import com.yuweix.assist4j.http.HttpConstant;
-import com.yuweix.assist4j.http.HttpMethod;
+import com.yuweix.tripod.http.HttpConstant;
+import com.yuweix.tripod.http.HttpMethod;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import com.yuweix.assist4j.http.response.HttpResponse;
+import com.yuweix.tripod.http.response.HttpResponse;
 
 
 /**

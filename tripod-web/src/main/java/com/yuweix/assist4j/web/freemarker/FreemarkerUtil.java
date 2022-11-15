@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.web.freemarker;
+package com.yuweix.tripod.web.freemarker;
 
 
 import java.io.StringWriter;

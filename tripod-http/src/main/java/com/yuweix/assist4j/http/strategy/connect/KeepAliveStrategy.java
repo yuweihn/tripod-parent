@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.http.strategy.connect;
+package com.yuweix.tripod.http.strategy.connect;
 
 
 import java.util.concurrent.locks.Lock;

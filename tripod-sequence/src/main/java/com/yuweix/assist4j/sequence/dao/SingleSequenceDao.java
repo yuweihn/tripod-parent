@@ -1,9 +1,9 @@
-package com.yuweix.assist4j.sequence.dao;
+package com.yuweix.tripod.sequence.dao;
 
 
 import javax.sql.DataSource;
-import com.yuweix.assist4j.sequence.bean.SequenceHolder;
-import com.yuweix.assist4j.sequence.exception.SequenceException;
+import com.yuweix.tripod.sequence.bean.SequenceHolder;
+import com.yuweix.tripod.sequence.exception.SequenceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

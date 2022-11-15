@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.http.request;
+package com.yuweix.tripod.http.request;
 
 
 import java.net.URI;
@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.yuweix.assist4j.http.HttpConstant;
-import com.yuweix.assist4j.http.HttpMethod;
-import com.yuweix.assist4j.http.response.ErrorHttpResponse;
+import com.yuweix.tripod.http.HttpConstant;
+import com.yuweix.tripod.http.HttpMethod;
+import com.yuweix.tripod.http.response.ErrorHttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -19,7 +19,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicNameValuePair;
-import com.yuweix.assist4j.http.response.HttpResponse;
+import com.yuweix.tripod.http.response.HttpResponse;
 
 
 /**

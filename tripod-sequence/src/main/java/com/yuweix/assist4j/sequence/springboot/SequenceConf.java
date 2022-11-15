@@ -1,11 +1,11 @@
-package com.yuweix.assist4j.sequence.springboot;
+package com.yuweix.tripod.sequence.springboot;
 
 
-import com.yuweix.assist4j.sequence.base.DefaultSequence;
-import com.yuweix.assist4j.sequence.base.SequenceBeanFactory;
-import com.yuweix.assist4j.sequence.base.SequenceBeanHolder;
-import com.yuweix.assist4j.sequence.dao.SegmentSequenceDao;
-import com.yuweix.assist4j.sequence.dao.SequenceDao;
+import com.yuweix.tripod.sequence.base.DefaultSequence;
+import com.yuweix.tripod.sequence.base.SequenceBeanFactory;
+import com.yuweix.tripod.sequence.base.SequenceBeanHolder;
+import com.yuweix.tripod.sequence.dao.SegmentSequenceDao;
+import com.yuweix.tripod.sequence.dao.SequenceDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,13 +25,13 @@ public class SequenceConf {
 	@ConditionalOnMissingBean(SequenceDao.class)
 	@Bean(name = "sequenceDao")
 	public SequenceDao sequenceDao(@Qualifier("dataSource") DataSource dataSource
-			, @Value("${assist4j.sequence-setting.innerStep:100}") int innerStep
-			, @Value("${assist4j.sequence-setting.retryTimes:5}") int retryTimes
-			, @Value("${assist4j.sequence-setting.segmentCount:1}") int segmentCount
-			, @Value("${assist4j.sequence-setting.maxSkipCount:5}") int maxSkipCount
-			, @Value("${assist4j.sequence-setting.maxWaitMillis:5000}") long maxWaitMillis
-			, @Value("${assist4j.sequence-setting.ruleClassName:}") String ruleClassName
-			, @Value("${assist4j.sequence-setting.tableName:sequence}") String tableName) {
+			, @Value("${tripod.sequence-setting.innerStep:100}") int innerStep
+			, @Value("${tripod.sequence-setting.retryTimes:5}") int retryTimes
+			, @Value("${tripod.sequence-setting.segmentCount:1}") int segmentCount
+			, @Value("${tripod.sequence-setting.maxSkipCount:5}") int maxSkipCount
+			, @Value("${tripod.sequence-setting.maxWaitMillis:5000}") long maxWaitMillis
+			, @Value("${tripod.sequence-setting.ruleClassName:}") String ruleClassName
+			, @Value("${tripod.sequence-setting.tableName:sequence}") String tableName) {
 		SegmentSequenceDao sequenceDao = new SegmentSequenceDao();
 		sequenceDao.setDataSource(dataSource);
 		sequenceDao.setInnerStep(innerStep);
@@ -46,7 +46,7 @@ public class SequenceConf {
 
 	@ConditionalOnMissingBean(SequenceBeanHolder.class)
 	@Bean(name = "sequenceBeanHolder")
-	@ConfigurationProperties(prefix = "assist4j", ignoreUnknownFields = true)
+	@ConfigurationProperties(prefix = "tripod", ignoreUnknownFields = true)
 	public SequenceBeanHolder sequenceBeanHolder() {
 		return new SequenceBeanHolder() {
 			private Map<String, String> sequence = new HashMap<>();
@@ -60,7 +60,7 @@ public class SequenceConf {
 	@ConditionalOnMissingBean(SequenceBeanFactory.class)
 	@Bean(name = "sequenceBeanFactory")
 	public SequenceBeanFactory sequenceBeanFactory(Environment env) {
-		String sequenceClz = env.getProperty("assist4j.sequence.clz");
+		String sequenceClz = env.getProperty("tripod.sequence.clz");
 		if (sequenceClz != null && !"".equals(sequenceClz)) {
 			return new SequenceBeanFactory(sequenceClz);
 		} else {

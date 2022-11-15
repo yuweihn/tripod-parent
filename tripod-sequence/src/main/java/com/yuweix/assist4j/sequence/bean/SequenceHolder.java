@@ -1,8 +1,8 @@
-package com.yuweix.assist4j.sequence.bean;
+package com.yuweix.tripod.sequence.bean;
 
 
 import java.util.concurrent.atomic.AtomicLong;
-import com.yuweix.assist4j.sequence.exception.SequenceException;
+import com.yuweix.tripod.sequence.exception.SequenceException;
 
 
 /**

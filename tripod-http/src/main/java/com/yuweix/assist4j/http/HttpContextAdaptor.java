@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.http;
+package com.yuweix.tripod.http;
 
 
 import org.apache.http.client.protocol.HttpClientContext;

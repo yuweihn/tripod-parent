@@ -1,15 +1,15 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.yuweix.assist4j.boot.DefaultAutoConfiguration,\
-  com.yuweix.assist4j.boot.core.JsonAutoConfiguration,\
-  com.yuweix.assist4j.boot.datasource.SequenceAutoConfiguration,\
-  com.yuweix.assist4j.boot.datasource.HibernateAutoConfiguration,\
-  com.yuweix.assist4j.boot.datasource.MybatisAutoConfiguration,\
-  com.yuweix.assist4j.boot.redis.JedisAutoConfiguration,\
-  com.yuweix.assist4j.boot.redis.JedisMsAutoConfiguration,\
-  com.yuweix.assist4j.boot.redis.JedisClusterAutoConfiguration,\
-  com.yuweix.assist4j.boot.redis.LettuceAutoConfiguration,\
-  com.yuweix.assist4j.boot.redis.LettuceMsAutoConfiguration,\
-  com.yuweix.assist4j.boot.redis.LettuceClusterAutoConfiguration,\
-  com.yuweix.assist4j.boot.web.I18nAutoConfiguration,\
-  com.yuweix.assist4j.boot.web.FreeMarkerAutoConfiguration,\
-  com.yuweix.assist4j.boot.exception.ExceptionAutoConfiguration,\
-  com.yuweix.assist4j.boot.dao.ShardingAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.yuweix.tripod.boot.DefaultAutoConfiguration,\
+  com.yuweix.tripod.boot.core.JsonAutoConfiguration,\
+  com.yuweix.tripod.boot.datasource.SequenceAutoConfiguration,\
+  com.yuweix.tripod.boot.datasource.HibernateAutoConfiguration,\
+  com.yuweix.tripod.boot.datasource.MybatisAutoConfiguration,\
+  com.yuweix.tripod.boot.redis.JedisAutoConfiguration,\
+  com.yuweix.tripod.boot.redis.JedisMsAutoConfiguration,\
+  com.yuweix.tripod.boot.redis.JedisClusterAutoConfiguration,\
+  com.yuweix.tripod.boot.redis.LettuceAutoConfiguration,\
+  com.yuweix.tripod.boot.redis.LettuceMsAutoConfiguration,\
+  com.yuweix.tripod.boot.redis.LettuceClusterAutoConfiguration,\
+  com.yuweix.tripod.boot.web.I18nAutoConfiguration,\
+  com.yuweix.tripod.boot.web.FreeMarkerAutoConfiguration,\
+  com.yuweix.tripod.boot.exception.ExceptionAutoConfiguration,\
+  com.yuweix.tripod.boot.dao.ShardingAutoConfiguration

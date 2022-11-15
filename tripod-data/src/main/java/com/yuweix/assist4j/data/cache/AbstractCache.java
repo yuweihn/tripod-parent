@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.data.cache;
+package com.yuweix.tripod.data.cache;
 
 
 import java.util.ArrayList;

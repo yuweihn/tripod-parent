@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.session;
+package com.yuweix.tripod.session;
 
 
 

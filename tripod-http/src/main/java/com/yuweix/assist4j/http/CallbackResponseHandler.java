@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.http;
+package com.yuweix.tripod.http;
 
 
 import java.io.ByteArrayOutputStream;
@@ -10,8 +10,8 @@ import java.util.*;
 import javax.servlet.http.Cookie;
 
 import com.alibaba.fastjson2.TypeReference;
-import com.yuweix.assist4j.core.json.JsonUtil;
-import com.yuweix.assist4j.http.response.HttpResponse;
+import com.yuweix.tripod.core.json.JsonUtil;
+import com.yuweix.tripod.http.response.HttpResponse;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;

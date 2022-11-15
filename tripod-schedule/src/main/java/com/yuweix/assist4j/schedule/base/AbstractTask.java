@@ -1,7 +1,7 @@
-package com.yuweix.assist4j.schedule.base;
+package com.yuweix.tripod.schedule.base;
 
 
-import com.yuweix.assist4j.data.elect.Elector;
+import com.yuweix.tripod.data.elect.Elector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

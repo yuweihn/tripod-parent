@@ -1,10 +1,10 @@
-package com.yuweix.assist4j.data.springboot.lettuce;
+package com.yuweix.tripod.data.springboot.lettuce;
 
 
-import com.yuweix.assist4j.core.json.Json;
-import com.yuweix.assist4j.data.cache.redis.lettuce.LettuceCache;
-import com.yuweix.assist4j.data.serializer.JsonSerializer;
-import com.yuweix.assist4j.data.serializer.Serializer;
+import com.yuweix.tripod.core.json.Json;
+import com.yuweix.tripod.data.cache.redis.lettuce.LettuceCache;
+import com.yuweix.tripod.data.serializer.JsonSerializer;
+import com.yuweix.tripod.data.serializer.Serializer;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;

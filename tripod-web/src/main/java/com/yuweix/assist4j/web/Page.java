@@ -1,7 +1,7 @@
-package com.yuweix.assist4j.web;
+package com.yuweix.tripod.web;
 
 
-import com.yuweix.assist4j.core.Constant;
+import com.yuweix.tripod.core.Constant;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

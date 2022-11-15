@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.session;
+package com.yuweix.tripod.session;
 
 
 import java.util.*;
@@ -6,9 +6,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
-import com.yuweix.assist4j.core.json.Json;
-import com.yuweix.assist4j.session.cache.SessionCache;
-import com.yuweix.assist4j.session.conf.SessionConf;
+import com.yuweix.tripod.core.json.Json;
+import com.yuweix.tripod.session.cache.SessionCache;
+import com.yuweix.tripod.session.conf.SessionConf;
 import org.springframework.util.CollectionUtils;
 
 
@@ -31,9 +31,9 @@ public class CacheHttpSession implements HttpSession {
 	 * 如果要避免重复登录，后登录的覆盖之前登录的，如果sessionIdKey为空，表明不需要处理重复登录的问题。
 	 * sessionIdKey用于记录存入cache的session的key。
 	 * 如用户编号为1001，登录成功后在cache中存入两条数据：
-	 * 1、cache.assist4j.session.008c203973554062b2b04cd3535661f1={......}，
-	 * 2、cache.assist4j.session.current.1001=cache.assist4j.session.008c203973554062b2b04cd3535661f1
-	 * 其中cache.assist4j.session.current.1001即为sessionIdKey
+	 * 1、cache.tripod.session.008c203973554062b2b04cd3535661f1={......}，
+	 * 2、cache.tripod.session.current.1001=cache.tripod.session.008c203973554062b2b04cd3535661f1
+	 * 其中cache.tripod.session.current.1001即为sessionIdKey
 	 */
 	private String sessionIdKey;
 	private final String sessionIdKeyPre;

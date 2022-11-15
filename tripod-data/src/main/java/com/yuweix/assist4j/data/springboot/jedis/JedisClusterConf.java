@@ -1,11 +1,11 @@
-package com.yuweix.assist4j.data.springboot.jedis;
+package com.yuweix.tripod.data.springboot.jedis;
 
 
-import com.yuweix.assist4j.core.json.Json;
-import com.yuweix.assist4j.data.cache.redis.jedis.JedisClusterCache;
-import com.yuweix.assist4j.data.cache.redis.jedis.JedisClusterFactory;
-import com.yuweix.assist4j.data.serializer.JsonSerializer;
-import com.yuweix.assist4j.data.serializer.Serializer;
+import com.yuweix.tripod.core.json.Json;
+import com.yuweix.tripod.data.cache.redis.jedis.JedisClusterCache;
+import com.yuweix.tripod.data.cache.redis.jedis.JedisClusterFactory;
+import com.yuweix.tripod.data.serializer.JsonSerializer;
+import com.yuweix.tripod.data.serializer.Serializer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

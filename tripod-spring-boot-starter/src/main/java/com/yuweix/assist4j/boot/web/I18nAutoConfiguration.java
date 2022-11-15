@@ -1,7 +1,7 @@
-package com.yuweix.assist4j.boot.web;
+package com.yuweix.tripod.boot.web;
 
 
-import com.yuweix.assist4j.web.TextUtil;
+import com.yuweix.tripod.web.TextUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,7 +20,7 @@ import java.lang.reflect.Constructor;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "assist4j.boot.i18n.enabled")
+@ConditionalOnProperty(name = "tripod.boot.i18n.enabled")
 public class I18nAutoConfiguration {
 	@ConditionalOnBean(name = "messageSource")
 	@ConditionalOnMissingBean

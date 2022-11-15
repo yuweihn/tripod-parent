@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.http.strategy.retry;
+package com.yuweix.tripod.http.strategy.retry;
 
 
 import java.io.IOException;

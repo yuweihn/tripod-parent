@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.data.serializer;
+package com.yuweix.tripod.data.serializer;
 
 
 import org.slf4j.Logger;

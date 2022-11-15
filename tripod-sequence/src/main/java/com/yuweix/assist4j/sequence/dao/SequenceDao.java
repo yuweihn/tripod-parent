@@ -1,7 +1,7 @@
-package com.yuweix.assist4j.sequence.dao;
+package com.yuweix.tripod.sequence.dao;
 
 
-import com.yuweix.assist4j.sequence.bean.SequenceHolder;
+import com.yuweix.tripod.sequence.bean.SequenceHolder;
 
 
 /**

@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.data.springboot;
+package com.yuweix.tripod.data.springboot;
 
 
 import org.hibernate.SessionFactory;
@@ -29,7 +29,7 @@ public class HibernateConf {
 
 	@ConditionalOnMissingBean(name = "packagesToScan")
 	@Bean(name = "packagesToScan")
-	public String[] packagesToScan(@Value("${assist4j.hibernate.scan.packages:}") String packages) {
+	public String[] packagesToScan(@Value("${tripod.hibernate.scan.packages:}") String packages) {
 		if (packages == null || "".equals(packages)) {
 			return new String[0];
 		}

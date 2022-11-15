@@ -1,12 +1,12 @@
-package com.yuweix.assist4j.session.filter;
+package com.yuweix.tripod.session.filter;
 
 
-import com.yuweix.assist4j.core.json.Fastjson;
-import com.yuweix.assist4j.core.json.Json;
-import com.yuweix.assist4j.session.CacheHttpServletRequest;
-import com.yuweix.assist4j.session.cache.SessionCache;
-import com.yuweix.assist4j.session.conf.PathPattern;
-import com.yuweix.assist4j.session.conf.SessionConf;
+import com.yuweix.tripod.core.json.Fastjson;
+import com.yuweix.tripod.core.json.Json;
+import com.yuweix.tripod.session.CacheHttpServletRequest;
+import com.yuweix.tripod.session.cache.SessionCache;
+import com.yuweix.tripod.session.conf.PathPattern;
+import com.yuweix.tripod.session.conf.SessionConf;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

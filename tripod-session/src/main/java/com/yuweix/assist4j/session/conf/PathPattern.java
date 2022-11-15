@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.session.conf;
+package com.yuweix.tripod.session.conf;
 
 
 import javax.servlet.http.HttpServletRequest;

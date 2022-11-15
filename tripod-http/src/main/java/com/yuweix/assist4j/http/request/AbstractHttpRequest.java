@@ -1,18 +1,18 @@
-package com.yuweix.assist4j.http.request;
+package com.yuweix.tripod.http.request;
 
 
 import java.util.List;
 import javax.servlet.http.Cookie;
 
 import com.alibaba.fastjson2.TypeReference;
-import com.yuweix.assist4j.http.CallbackResponseHandler;
-import com.yuweix.assist4j.http.DefaultHttpDelete;
-import com.yuweix.assist4j.http.HttpContextAdaptor;
-import com.yuweix.assist4j.http.HttpMethod;
-import com.yuweix.assist4j.http.response.ErrorHttpResponse;
-import com.yuweix.assist4j.http.strategy.connect.KeepAliveStrategy;
-import com.yuweix.assist4j.http.strategy.redirect.NeedRedirectStrategy;
-import com.yuweix.assist4j.http.strategy.retry.NotNeedRetryHandler;
+import com.yuweix.tripod.http.CallbackResponseHandler;
+import com.yuweix.tripod.http.DefaultHttpDelete;
+import com.yuweix.tripod.http.HttpContextAdaptor;
+import com.yuweix.tripod.http.HttpMethod;
+import com.yuweix.tripod.http.response.ErrorHttpResponse;
+import com.yuweix.tripod.http.strategy.connect.KeepAliveStrategy;
+import com.yuweix.tripod.http.strategy.redirect.NeedRedirectStrategy;
+import com.yuweix.tripod.http.strategy.retry.NotNeedRetryHandler;
 import org.apache.http.Header;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;
@@ -32,8 +32,8 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
-import com.yuweix.assist4j.http.ssl.TrustAllSslSocketFactory;
-import com.yuweix.assist4j.http.response.HttpResponse;
+import com.yuweix.tripod.http.ssl.TrustAllSslSocketFactory;
+import com.yuweix.tripod.http.response.HttpResponse;
 
 
 /**

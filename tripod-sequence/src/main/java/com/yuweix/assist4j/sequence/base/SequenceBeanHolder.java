@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.sequence.base;
+package com.yuweix.tripod.sequence.base;
 
 
 import java.util.Map;

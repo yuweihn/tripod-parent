@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.data.elect;
+package com.yuweix.tripod.data.elect;
 
 
 import javax.annotation.PostConstruct;

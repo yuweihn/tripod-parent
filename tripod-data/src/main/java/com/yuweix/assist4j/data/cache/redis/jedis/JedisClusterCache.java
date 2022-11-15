@@ -1,13 +1,13 @@
-package com.yuweix.assist4j.data.cache.redis.jedis;
+package com.yuweix.tripod.data.cache.redis.jedis;
 
 
 import java.util.*;
 
-import com.yuweix.assist4j.data.cache.AbstractCache;
-import com.yuweix.assist4j.data.cache.MessageHandler;
-import com.yuweix.assist4j.data.cache.redis.RedisCache;
+import com.yuweix.tripod.data.cache.AbstractCache;
+import com.yuweix.tripod.data.cache.MessageHandler;
+import com.yuweix.tripod.data.cache.redis.RedisCache;
 
-import com.yuweix.assist4j.data.serializer.Serializer;
+import com.yuweix.tripod.data.serializer.Serializer;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;

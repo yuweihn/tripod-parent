@@ -1,13 +1,13 @@
-package com.yuweix.assist4j.session.filter;
+package com.yuweix.tripod.session.filter;
 
 
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.yuweix.assist4j.session.CookiesUtil;
-import com.yuweix.assist4j.session.SessionConstant;
-import com.yuweix.assist4j.session.cache.SessionCache;
-import com.yuweix.assist4j.session.conf.SessionConf;
+import com.yuweix.tripod.session.CookiesUtil;
+import com.yuweix.tripod.session.SessionConstant;
+import com.yuweix.tripod.session.cache.SessionCache;
+import com.yuweix.tripod.session.conf.SessionConf;
 
 
 /**

@@ -1,7 +1,7 @@
-package com.yuweix.assist4j.boot;
+package com.yuweix.tripod.boot;
 
 
-import com.yuweix.assist4j.core.SpringContext;
+import com.yuweix.tripod.core.SpringContext;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -15,7 +15,7 @@ import java.lang.reflect.Constructor;
  */
 @Configuration
 @AutoConfigureOrder(Integer.MIN_VALUE)
-@ConditionalOnProperty(name = "assist4j.boot.default.enabled", matchIfMissing = true)
+@ConditionalOnProperty(name = "tripod.boot.default.enabled", matchIfMissing = true)
 public class DefaultAutoConfiguration {
 
 	@ConditionalOnMissingBean(name = "springContext")

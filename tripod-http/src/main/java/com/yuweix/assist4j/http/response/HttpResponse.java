@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.http.response;
+package com.yuweix.tripod.http.response;
 
 
 import org.apache.http.Header;

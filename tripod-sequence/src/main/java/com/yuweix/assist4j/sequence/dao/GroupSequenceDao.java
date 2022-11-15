@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.sequence.dao;
+package com.yuweix.tripod.sequence.dao;
 
 
 import java.util.List;

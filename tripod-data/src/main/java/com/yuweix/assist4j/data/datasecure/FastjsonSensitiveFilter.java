@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.data.datasecure;
+package com.yuweix.tripod.data.datasecure;
 
 
 import com.alibaba.fastjson2.filter.ValueFilter;

@@ -1,4 +1,4 @@
-package com.yuweix.assist4j.web;
+package com.yuweix.tripod.web;
 
 
 import java.util.Locale;
