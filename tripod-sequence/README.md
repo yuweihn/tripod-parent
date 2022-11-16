@@ -70,9 +70,9 @@ For example:
 	@ConditionalOnMissingBean(SequenceBeanFactory.class)
 	@Bean(name = "sequenceBeanFactory")
 	public SequenceBeanFactory sequenceBeanFactory(Environment env) {
-		String sequenceClz = env.getProperty("tripod.sequence.className");
-		if (sequenceClz != null && !"".equals(sequenceClz)) {
-			return new SequenceBeanFactory(sequenceClz);
+		String clzName = env.getProperty("tripod.sequence.className");
+		if (clzName != null && !"".equals(clzName)) {
+			return new SequenceBeanFactory(clzName);
 		} else {
 			return new SequenceBeanFactory(DefaultSequence.class);
 		}
