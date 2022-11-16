@@ -82,7 +82,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean instanceof SequenceBeanHolder) {
-			registerBeans(((SequenceBeanHolder) bean).getSequenceMap());
+			registerBeans(((SequenceBeanHolder) bean).getBeans());
 			done = true;
 		} else if (!done) {
 			beanFactory.getBean(SequenceBeanHolder.class);
@@ -93,8 +93,8 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	/**
 	 * 注册一系列[Sequence Bean]
 	 */
-	private void registerBeans(Map<String, String> seqMap) {
-		if (seqMap == null || seqMap.isEmpty()) {
+	private void registerBeans(Map<String, String> beans) {
+		if (beans == null || beans.isEmpty()) {
 			return;
 		}
 
@@ -107,7 +107,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		}
 		Property seqDaoProperty = new Property(seqDaoField.getName(), seqDaoBeanNames[0], Property.TYPE_REFERENCE);
 
-		for (Entry<String, String> entry : seqMap.entrySet()) {
+		for (Entry<String, String> entry : beans.entrySet()) {
 			String beanName = entry.getKey();
 			String seqNameValue = entry.getValue();
 

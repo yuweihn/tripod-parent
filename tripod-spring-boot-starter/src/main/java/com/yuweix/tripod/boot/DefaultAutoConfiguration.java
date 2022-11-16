@@ -17,8 +17,7 @@ import java.lang.reflect.Constructor;
 @AutoConfigureOrder(Integer.MIN_VALUE)
 @ConditionalOnProperty(name = "tripod.boot.default.enabled", matchIfMissing = true)
 public class DefaultAutoConfiguration {
-
-	@ConditionalOnMissingBean(name = "springContext")
+	@ConditionalOnMissingBean(SpringContext.class)
 	@Bean(name = "springContext")
 	public SpringContext springContext() {
 		try {
