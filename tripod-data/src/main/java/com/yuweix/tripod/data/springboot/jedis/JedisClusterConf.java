@@ -24,11 +24,11 @@ import java.util.List;
 public class JedisClusterConf {
 
 	@Bean(name = "jedisPoolConfig")
-	public JedisPoolConfig jedisPoolConfig(@Value("${redis.pool.maxTotal:1024}") int maxTotal
-			, @Value("${redis.pool.maxIdle:100}") int maxIdle
-			, @Value("${redis.pool.minIdle:100}") int minIdle
-			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
-			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow) {
+	public JedisPoolConfig jedisPoolConfig(@Value("${tripod.redis.pool.maxTotal:1024}") int maxTotal
+			, @Value("${tripod.redis.pool.maxIdle:100}") int maxIdle
+			, @Value("${tripod.redis.pool.minIdle:100}") int minIdle
+			, @Value("${tripod.redis.pool.maxWaitMillis:10000}") long maxWaitMillis
+			, @Value("${tripod.redis.pool.testOnBorrow:false}") boolean testOnBorrow) {
 		JedisPoolConfig config = new JedisPoolConfig();
 		config.setMaxTotal(maxTotal);
 		config.setMaxIdle(maxIdle);
@@ -41,8 +41,8 @@ public class JedisClusterConf {
 	@Bean(name = "jedisCluster", initMethod = "init")
 	public JedisClusterFactory jedisClusterFactory(@Qualifier("jedisPoolConfig") JedisPoolConfig jedisPoolConfig
 			, @Qualifier("redisNodeList") List<HostAndPort> redisNodeList
-			, @Value("${redis.cluster.timeout:300000}") int timeout
-			, @Value("${redis.cluster.maxRedirections:6}") int maxRedirections) {
+			, @Value("${tripod.redis.cluster.timeout:300000}") int timeout
+			, @Value("${tripod.redis.cluster.maxRedirections:6}") int maxRedirections) {
 		JedisClusterFactory factory = new JedisClusterFactory();
 		factory.setJedisPoolConfig(jedisPoolConfig);
 		factory.setRedisNodeList(redisNodeList);

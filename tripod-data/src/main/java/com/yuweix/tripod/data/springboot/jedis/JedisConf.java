@@ -27,11 +27,11 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 public class JedisConf {
 	@Bean(name = "jedisPoolConfig")
-	public JedisPoolConfig jedisPoolConfig(@Value("${redis.pool.maxTotal:1024}") int maxTotal
-			, @Value("${redis.pool.maxIdle:100}") int maxIdle
-			, @Value("${redis.pool.minIdle:100}") int minIdle
-			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
-			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow) {
+	public JedisPoolConfig jedisPoolConfig(@Value("${tripod.redis.pool.maxTotal:1024}") int maxTotal
+			, @Value("${tripod.redis.pool.maxIdle:100}") int maxIdle
+			, @Value("${tripod.redis.pool.minIdle:100}") int minIdle
+			, @Value("${tripod.redis.pool.maxWaitMillis:10000}") long maxWaitMillis
+			, @Value("${tripod.redis.pool.testOnBorrow:false}") boolean testOnBorrow) {
 		JedisPoolConfig config = new JedisPoolConfig();
 		config.setMaxTotal(maxTotal);
 		config.setMaxIdle(maxIdle);
@@ -42,11 +42,11 @@ public class JedisConf {
 	}
 
 	@Bean(name = "redisStandaloneConfiguration")
-	public RedisStandaloneConfiguration redisStandaloneConfiguration(@Value("${redis.host:}") String host
-			, @Value("${redis.port:0}") int port
-			, @Value("${redis.dbIndex:0}") int dbIndex
-			, @Value("${redis.needPassword:false}") boolean needPassword
-			, @Value("${redis.password:}") String password) {
+	public RedisStandaloneConfiguration redisStandaloneConfiguration(@Value("${tripod.redis.host:}") String host
+			, @Value("${tripod.redis.port:0}") int port
+			, @Value("${tripod.redis.dbIndex:0}") int dbIndex
+			, @Value("${tripod.redis.needPassword:false}") boolean needPassword
+			, @Value("${tripod.redis.password:}") String password) {
 		RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration();
 		conf.setHostName(host);
 		if (port > 0) {

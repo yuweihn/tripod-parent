@@ -32,12 +32,12 @@ import java.util.Set;
  */
 public class LettuceMsConf {
 	@Bean(name = "lettuceClientConfiguration")
-	public LettuceClientConfiguration clientConfiguration(@Value("${redis.pool.maxTotal:1024}") int maxTotal
-			, @Value("${redis.pool.maxIdle:100}") int maxIdle
-			, @Value("${redis.pool.minIdle:100}") int minIdle
-			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
-			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow
-			, @Value("${redis.timeoutMillis:5000}") long timeoutMillis) {
+	public LettuceClientConfiguration clientConfiguration(@Value("${tripod.redis.pool.maxTotal:1024}") int maxTotal
+			, @Value("${tripod.redis.pool.maxIdle:100}") int maxIdle
+			, @Value("${tripod.redis.pool.minIdle:100}") int minIdle
+			, @Value("${tripod.redis.pool.maxWaitMillis:10000}") long maxWaitMillis
+			, @Value("${tripod.redis.pool.testOnBorrow:false}") boolean testOnBorrow
+			, @Value("${tripod.redis.timeoutMillis:5000}") long timeoutMillis) {
 		GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
 		poolConfig.setMaxTotal(maxTotal);
 		poolConfig.setMaxIdle(maxIdle);
@@ -52,12 +52,12 @@ public class LettuceMsConf {
 	}
 
 	@Bean(name = "redisSentinelConfiguration")
-	public RedisSentinelConfiguration redisSentinelConfiguration(@Value("${redis.master.name}") String masterName
-			, @Value("${redis.sentinel.ip}") String host
-			, @Value("${redis.sentinel.port}") int port
-			, @Value("${redis.dbIndex:0}") int dbIndex
-			, @Value("${redis.needPassword:false}") boolean needPassword
-			, @Value("${redis.password:}") String password) {
+	public RedisSentinelConfiguration redisSentinelConfiguration(@Value("${tripod.redis.master.name}") String masterName
+			, @Value("${tripod.redis.sentinel.ip}") String host
+			, @Value("${tripod.redis.sentinel.port}") int port
+			, @Value("${tripod.redis.dbIndex:0}") int dbIndex
+			, @Value("${tripod.redis.needPassword:false}") boolean needPassword
+			, @Value("${tripod.redis.password:}") String password) {
 		RedisSentinelConfiguration conf = new RedisSentinelConfiguration();
 		RedisNode redisNode = new RedisNode.RedisNodeBuilder().withName(masterName).build();
 		conf.setMaster(redisNode);

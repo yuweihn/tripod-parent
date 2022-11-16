@@ -29,12 +29,12 @@ import java.util.List;
  */
 public class LettuceClusterConf {
 	@Bean(name = "lettuceClientConfiguration")
-	public LettuceClientConfiguration clientConfiguration(@Value("${redis.pool.maxTotal:1024}") int maxTotal
-			, @Value("${redis.pool.maxIdle:100}") int maxIdle
-			, @Value("${redis.pool.minIdle:100}") int minIdle
-			, @Value("${redis.pool.maxWaitMillis:10000}") long maxWaitMillis
-			, @Value("${redis.pool.testOnBorrow:false}") boolean testOnBorrow
-			, @Value("${redis.timeoutMillis:5000}") long timeoutMillis) {
+	public LettuceClientConfiguration clientConfiguration(@Value("${tripod.redis.pool.maxTotal:1024}") int maxTotal
+			, @Value("${tripod.redis.pool.maxIdle:100}") int maxIdle
+			, @Value("${tripod.redis.pool.minIdle:100}") int minIdle
+			, @Value("${tripod.redis.pool.maxWaitMillis:10000}") long maxWaitMillis
+			, @Value("${tripod.redis.pool.testOnBorrow:false}") boolean testOnBorrow
+			, @Value("${tripod.redis.timeoutMillis:5000}") long timeoutMillis) {
 		GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
 		poolConfig.setMaxTotal(maxTotal);
 		poolConfig.setMaxIdle(maxIdle);
@@ -50,8 +50,8 @@ public class LettuceClusterConf {
 
 	@Bean(name = "redisClusterConfiguration")
 	public RedisClusterConfiguration redisClusterConfiguration(@Qualifier("redisNodeList") List<String> redisNodeList
-			, @Value("${redis.cluster.timeout:300000}") int timeout
-			, @Value("${redis.cluster.maxRedirections:6}") int maxRedirections) {
+			, @Value("${tripod.redis.cluster.timeout:300000}") int timeout
+			, @Value("${tripod.redis.cluster.maxRedirections:6}") int maxRedirections) {
 		RedisClusterConfiguration conf = new RedisClusterConfiguration(redisNodeList);
 		conf.setMaxRedirects(maxRedirections);
 		return conf;

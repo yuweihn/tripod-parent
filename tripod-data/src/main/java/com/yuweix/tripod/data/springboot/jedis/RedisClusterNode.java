@@ -16,7 +16,7 @@ public abstract class RedisClusterNode {
 	protected abstract List<String> getNodeList();
 
 	public List<HostAndPort> getHostAndPortList() {
-		List<HostAndPort> list = new ArrayList<HostAndPort>();
+		List<HostAndPort> list = new ArrayList<>();
 		List<String> nodes = getNodeList();
 		if (nodes == null || nodes.size() <= 0) {
 			return list;

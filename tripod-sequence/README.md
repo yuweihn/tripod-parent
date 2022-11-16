@@ -13,33 +13,35 @@ For example:
 	) engine=innodb default charset=utf8mb4;
 ------------------------------------------------------------------------------------------------------------------
 	tripod:
-      sequence-setting:
-        innerStep: 100
-        retryTimes: 5
-        segmentCount: 1
-        maxSkipCount: 5
-        maxWaitMillis: 5000
-        ruleClassName: 
-        tableName: 
-	  sequence-map:
-	    seqAppKeySecret: seq_app_key_secret,100
-        seqSysAdmin: seq_sys_admin,200
-        seqSysPermission: seq_sys_permission,200
-        seqSysRole: seq_sys_role,200
-        seqSysRolePermissionRel: seq_sys_role_permission_rel,200
-        seqSysAdminRoleRel: seq_sys_admin_role_rel,200
-        seqBasic: seq_basic
-        seqHttp: seq_http
+      sequence:
+        setting:
+          innerStep: 100
+          retryTimes: 5
+          segmentCount: 1
+          maxSkipCount: 5
+          maxWaitMillis: 5000
+          ruleClassName: com.yuweix.tripod.sequence.dao.loadbalancer.RoundRobinRule
+          tableName:
+        beans:
+	      seqAppKeySecret: seq_app_key_secret,100
+          seqSysAdmin: seq_sys_admin,200
+          seqSysPermission: seq_sys_permission,200
+          seqSysRole: seq_sys_role,200
+          seqSysRolePermissionRel: seq_sys_role_permission_rel,200
+          seqSysAdminRoleRel: seq_sys_admin_role_rel,200
+          seqBasic: seq_basic
+          seqHttp: seq_http
 ------------------------------------------------------------------------------------------------------------------
+	@ConditionalOnMissingBean(SequenceDao.class)
 	@Bean(name = "sequenceDao")
 	public SequenceDao sequenceDao(@Qualifier("dataSource") DataSource dataSource
-			, @Value("${tripod.sequence-setting.innerStep:100}") int innerStep
-			, @Value("${tripod.sequence-setting.retryTimes:5}") int retryTimes
-			, @Value("${tripod.sequence-setting.segmentCount:1}") int segmentCount
-			, @Value("${tripod.sequence-setting.maxSkipCount:5}") int maxSkipCount
-			, @Value("${tripod.sequence-setting.maxWaitMillis:5000}") long maxWaitMillis
-			, @Value("${tripod.sequence-setting.ruleClassName:}") String ruleClassName
-			, @Value("${tripod.sequence-setting.tableName:sequence}") String tableName) {
+			, @Value("${tripod.sequence.setting.innerStep:100}") int innerStep
+			, @Value("${tripod.sequence.setting.retryTimes:5}") int retryTimes
+			, @Value("${tripod.sequence.setting.segmentCount:1}") int segmentCount
+			, @Value("${tripod.sequence.setting.maxSkipCount:5}") int maxSkipCount
+			, @Value("${tripod.sequence.setting.maxWaitMillis:5000}") long maxWaitMillis
+			, @Value("${tripod.sequence.setting.ruleClassName:}") String ruleClassName
+			, @Value("${tripod.sequence.setting.tableName:sequence}") String tableName) {
 		SegmentSequenceDao sequenceDao = new SegmentSequenceDao();
 		sequenceDao.setDataSource(dataSource);
 		sequenceDao.setInnerStep(innerStep);
@@ -54,12 +56,12 @@ For example:
 
 	@ConditionalOnMissingBean(SequenceBeanHolder.class)
 	@Bean(name = "sequenceBeanHolder")
-	@ConfigurationProperties(prefix = "tripod", ignoreUnknownFields = true)
+	@ConfigurationProperties(prefix = "tripod.sequence", ignoreUnknownFields = true)
 	public SequenceBeanHolder sequenceBeanHolder() {
 		return new SequenceBeanHolder() {
 			private Map<String, String> sequence = new HashMap<>();
 			@Override
-			public Map<String, String> getSequenceMap() {
+			public Map<String, String> getBeans() {
 				return sequence;
 			}
 		};
@@ -68,7 +70,7 @@ For example:
 	@ConditionalOnMissingBean(SequenceBeanFactory.class)
 	@Bean(name = "sequenceBeanFactory")
 	public SequenceBeanFactory sequenceBeanFactory(Environment env) {
-		String sequenceClz = env.getProperty("tripod.sequence.clz");
+		String sequenceClz = env.getProperty("tripod.sequence.className");
 		if (sequenceClz != null && !"".equals(sequenceClz)) {
 			return new SequenceBeanFactory(sequenceClz);
 		} else {
