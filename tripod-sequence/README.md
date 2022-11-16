@@ -59,10 +59,10 @@ For example:
 	@ConfigurationProperties(prefix = "tripod.sequence", ignoreUnknownFields = true)
 	public SequenceBeanHolder sequenceBeanHolder() {
 		return new SequenceBeanHolder() {
-			private Map<String, String> sequence = new HashMap<>();
+			private Map<String, String> map = new HashMap<>();
 			@Override
 			public Map<String, String> getBeans() {
-				return sequence;
+				return map;
 			}
 		};
 	}
