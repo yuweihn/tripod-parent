@@ -34,7 +34,7 @@ public class SpringContext implements ApplicationContextAware {
 		registerBean(beanName, clz, null);
 	}
 	public static<T> void registerBean(String beanName, Class<T> clz, List<Property> constructorArgList) {
-		registerBean(beanName, clz, null, null);
+		registerBean(beanName, clz, constructorArgList, null);
 	}
 	public static<T> void registerBean(String beanName, Class<T> clz, List<Property> constructorArgList, List<Property> propertyList) {
 		registerBean(beanName, clz, constructorArgList, propertyList, null, null);
