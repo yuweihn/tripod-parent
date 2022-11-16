@@ -1,7 +1,6 @@
 package com.yuweix.tripod.core;
 
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,8 +18,6 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 public class SpringContext implements ApplicationContextAware {
 	private static final Logger log = LoggerFactory.getLogger(SpringContext.class);
-	private static final String DEFAULT_INIT_METHOD = "init";
-	private static final String DEFAULT_DESTROY_METHOD = "destroy";
 	
 	private static ConfigurableApplicationContext applicationContext;
 	
@@ -67,36 +64,16 @@ public class SpringContext implements ApplicationContextAware {
 				}
 			}
 		}
-		
-		/**
-		 * 如果有initMethod，直接使用，否则反射clz的init
-		 */
+
 		if (initMethod != null && !"".equals(initMethod)) {
 			builder.setInitMethodName(initMethod);
-		} else {
-			try {
-				Method defaultInitMethod = clz.getMethod(DEFAULT_INIT_METHOD);
-				builder.setInitMethodName(defaultInitMethod.getName());
-			} catch (NoSuchMethodException | SecurityException e) {
-				log.warn(e.toString());
-			}
 		}
-		/**
-		 * 如果有destroyMethod，直接使用，否则反射clz的destroy
-		 */
 		if (destroyMethod != null && !"".equals(destroyMethod)) {
 			builder.setDestroyMethodName(destroyMethod);
-		} else {
-			try {
-				Method defaultDestroyMethod = clz.getMethod(DEFAULT_DESTROY_METHOD);
-				builder.setDestroyMethodName(defaultDestroyMethod.getName());
-			} catch (NoSuchMethodException | SecurityException e) {
-				log.warn(e.toString());
-			}
 		}
 		beanDefRegistry.registerBeanDefinition(beanName, builder.getBeanDefinition());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static<T> T getBean(String beanName) {
 		return (T) applicationContext.getBean(beanName);
