@@ -31,7 +31,7 @@ public class GuavaUtil {
 		try {
 			LOADING_CACHE = loadCache(duration, new CacheLoader<String, String>() {
 				@Override
-				public String load(String key) throws Exception {
+				public String load(String key) {
 					if (log.isDebugEnabled()) {
 						log.debug("缓存值不存在，初始化空值，Key：{}", key);
 					}
@@ -50,7 +50,7 @@ public class GuavaUtil {
 		return new GuavaUtil(duration);
 	}
 
-	private static <K, V> LoadingCache<K, V> loadCache(long duration, CacheLoader<K, V> cacheLoader) throws Exception {
+	private static <K, V> LoadingCache<K, V> loadCache(long duration, CacheLoader<K, V> cacheLoader) {
 		LoadingCache<K, V> cache = CacheBuilder.newBuilder().expireAfterAccess(duration, TimeUnit.SECONDS)
 				.removalListener(new RemovalListener<K, V>() {
 					@Override
@@ -180,7 +180,7 @@ public class GuavaUtil {
 	 * 获取所有缓存项的键
 	 */
 	public List<String> keys() {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		try {
 			ConcurrentMap<String, String> map = LOADING_CACHE.asMap();
 			for (Map.Entry<String, String> item : map.entrySet()) {
