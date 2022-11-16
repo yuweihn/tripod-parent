@@ -133,13 +133,13 @@ public class SpringContext implements ApplicationContextAware {
 	}
 	
 	
-	public static class Property {
+	private static class Property {
 		private String propertyName;
 		private Object value;
 		private byte type;
 		
-		public static final byte TYPE_VALUE = 0;
-		public static final byte TYPE_REFERENCE = 1;
+		static final byte TYPE_VALUE = 0;
+		static final byte TYPE_REFERENCE = 1;
 		
 		public Property() {
 
