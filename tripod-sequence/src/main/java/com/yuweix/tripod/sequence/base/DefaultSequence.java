@@ -7,7 +7,7 @@ package com.yuweix.tripod.sequence.base;
  */
 public class DefaultSequence extends AbstractSequence {
 	@Override
-	public long nextVal() {
+	protected long nextVal() {
 		long value = sequenceHolder.getAndIncrement();
 		if (value <= 0L) {
 			lock.lock();
