@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
  */
 public class RoundRobinRule implements IRule {
 	private int segmentCount;
-	private Map<String, AtomicInteger> curSegment = new ConcurrentHashMap<String, AtomicInteger>();
+	private Map<String, AtomicInteger> curSegment = new ConcurrentHashMap<>();
 	
 	
 	public RoundRobinRule() {
@@ -25,7 +25,7 @@ public class RoundRobinRule implements IRule {
 	
 	@Override
 	public int chooseSegment(String seqName) {
-		Assert.isTrue(segmentCount > 0, "Field segmentCount cannot be less than 1, segmentCount = " + segmentCount);
+		Assert.isTrue(segmentCount > 0, "Field [segmentCount] cannot be less than 1, segmentCount = " + segmentCount);
 
 		AtomicInteger seg = curSegment.get(seqName);
 		if (seg == null) {
@@ -47,7 +47,7 @@ public class RoundRobinRule implements IRule {
 	
 	@Override
 	public void setSegmentCount(int segmentCount) {
-		Assert.isTrue(segmentCount > 0, "Parameter segmentCount cannot be less than 1, segmentCount = " + segmentCount);
+		Assert.isTrue(segmentCount > 0, "Parameter [segmentCount] cannot be less than 1, segmentCount = " + segmentCount);
 		this.segmentCount = segmentCount;
 	}
 }

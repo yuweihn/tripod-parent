@@ -1,6 +1,7 @@
 package com.yuweix.tripod.sequence.dao.loadbalancer;
 
 
+import java.security.SecureRandom;
 import java.util.Random;
 import org.springframework.util.Assert;
 
@@ -9,7 +10,7 @@ import org.springframework.util.Assert;
  * @author yuwei
  */
 public class RandomRule implements IRule {
-	private Random rand = new Random();
+	private Random rand = new SecureRandom();
 	private int segmentCount;
 	
 	
