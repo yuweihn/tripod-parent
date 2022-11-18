@@ -31,8 +31,8 @@ public class ShardingConf {
 		};
 	}
 
-	@Bean(name = "ShardingConf$tableConf")
-	public Map<String, TableConfig> initTableConfMap(ShardingTableHolder shardingTableHolder) {
+	@Bean(name = "shardingTableConf")
+	public Map<String, TableConfig> shardingTableConf(ShardingTableHolder shardingTableHolder) {
 		Map<String, TableConfig> map = shardingTableHolder.getTables();
 		Strategy.TABLE_CONF_MAP.clear();
 		if (map != null) {
