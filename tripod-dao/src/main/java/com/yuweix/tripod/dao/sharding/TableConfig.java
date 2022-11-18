@@ -4,7 +4,7 @@ package com.yuweix.tripod.dao.sharding;
 /**
  * @author yuwei
  **/
-public class Config {
+public class TableConfig {
 	/**
 	 * 逻辑表后占位符长度
 	 * eg.

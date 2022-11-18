@@ -10,7 +10,7 @@ import java.util.Map;
  * @author yuwei
  */
 public interface Strategy {
-    Map<String, Config> TABLE_CONF_MAP = new HashMap<>();
+    Map<String, TableConfig> TABLE_CONF_MAP = new HashMap<>();
 
     /**
      * @param shardingVal                分片字段的值

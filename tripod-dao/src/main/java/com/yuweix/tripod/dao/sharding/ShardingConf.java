@@ -16,26 +16,26 @@ import java.util.Map;
 public class ShardingConf {
 	@ConditionalOnMissingBean(name = "shardingTableHolder")
 	@Bean(name = "shardingTableHolder")
-	@ConfigurationProperties(prefix = "tripod", ignoreUnknownFields = true)
+	@ConfigurationProperties(prefix = "tripod.sharding", ignoreUnknownFields = true)
 	public ShardingTableHolder shardingTableHolder() {
 		return new ShardingTableHolder() {
-			private Map<String, Config> conf = new HashMap<>();
+			private Map<String, TableConfig> map = new HashMap<>();
 
 			@Override
-			public Map<String, Config> getShardingConf() {
-				return conf;
+			public Map<String, TableConfig> getTables() {
+				return map;
 			}
 		};
 	}
 
 	@Bean(name = "ShardingConf$tableConf")
-	public Map<String, Config> initTableConfMap(@Qualifier("shardingTableHolder") ShardingTableHolder shardingTableHolder) {
-		Map<String, Config> conf = shardingTableHolder.getShardingConf();
+	public Map<String, TableConfig> initTableConfMap(@Qualifier("shardingTableHolder") ShardingTableHolder shardingTableHolder) {
+		Map<String, TableConfig> map = shardingTableHolder.getTables();
 
 		Strategy.TABLE_CONF_MAP.clear();
-		if (conf != null) {
-			Strategy.TABLE_CONF_MAP.putAll(conf);
+		if (map != null) {
+			Strategy.TABLE_CONF_MAP.putAll(map);
 		}
-		return conf;
+		return map;
 	}
 }
