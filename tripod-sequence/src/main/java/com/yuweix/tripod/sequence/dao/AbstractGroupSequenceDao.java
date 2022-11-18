@@ -44,7 +44,6 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	@Override
 	public void init() {
 		initDataSourceRouteRule();
-		super.init();
 	}
 	
 	private void initDataSourceRouteRule() {
