@@ -12,6 +12,10 @@ import java.util.Map;
 public interface Strategy {
     Map<String, TableConfig> TABLE_CONF_MAP = new HashMap<>();
 
+    default TableConfig getTableConf(String tableName) {
+        return TABLE_CONF_MAP.get(tableName);
+    }
+
     /**
      * @param shardingVal                分片字段的值
      * @return   返回分片。如：0000,0001等等

@@ -1,6 +1,7 @@
 package com.yuweix.tripod.dao.sharding;
 
 
+
 /**
  * 分片策略-取模
  * @author yuwei
@@ -8,7 +9,7 @@ package com.yuweix.tripod.dao.sharding;
 public class ModStrategy implements Strategy {
     @Override
     public String getShardingIndex(String tableName, Object shardingVal) {
-        TableConfig conf = TABLE_CONF_MAP.get(tableName);
+        TableConfig conf = getTableConf(tableName);
         if (conf == null) {
             throw new RuntimeException("[" + tableName + "]'s sharding-conf is required.");
         }

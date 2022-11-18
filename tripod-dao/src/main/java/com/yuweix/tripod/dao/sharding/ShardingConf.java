@@ -14,6 +14,10 @@ import java.util.Map;
  * @author yuwei
  */
 public class ShardingConf {
+	interface ShardingTableHolder {
+		Map<String, TableConfig> getTables();
+	}
+
 	@ConditionalOnMissingBean(ShardingTableHolder.class)
 	@Bean
 	@ConfigurationProperties(prefix = "tripod.sharding", ignoreUnknownFields = true)
