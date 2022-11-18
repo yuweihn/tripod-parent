@@ -14,7 +14,7 @@ import java.util.Map;
  * @author yuwei
  */
 public class ShardingConf {
-	@ConditionalOnMissingBean(name = "shardingTableHolder")
+	@ConditionalOnMissingBean(ShardingTableHolder.class)
 	@Bean(name = "shardingTableHolder")
 	@ConfigurationProperties(prefix = "tripod.sharding", ignoreUnknownFields = true)
 	public ShardingTableHolder shardingTableHolder() {
