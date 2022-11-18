@@ -75,8 +75,8 @@ public class LettuceConf {
 	public LettuceConnectionFactory lettuceConnectionFactory(@Qualifier("lettuceClientConfiguration") LettuceClientConfiguration clientConfig
 			, @Qualifier("redisStandaloneConfiguration") RedisStandaloneConfiguration config) {
 		LettuceConnectionFactory connFactory = new LettuceConnectionFactory(config, clientConfig);
-		connFactory.setValidateConnection(true);
-		connFactory.setShareNativeConnection(false);
+		connFactory.setValidateConnection(false);
+		connFactory.setShareNativeConnection(true);
 		return connFactory;
 	}
 
