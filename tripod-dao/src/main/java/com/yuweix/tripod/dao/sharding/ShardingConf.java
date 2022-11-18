@@ -19,7 +19,7 @@ public class ShardingConf {
 	@ConfigurationProperties(prefix = "tripod", ignoreUnknownFields = true)
 	public ShardingTableHolder shardingTableHolder() {
 		return new ShardingTableHolder() {
-			private Map<String, Config> conf = new HashMap<String, Config>();
+			private Map<String, Config> conf = new HashMap<>();
 
 			@Override
 			public Map<String, Config> getShardingConf() {
