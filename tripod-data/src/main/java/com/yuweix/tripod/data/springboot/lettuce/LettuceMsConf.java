@@ -76,8 +76,8 @@ public class LettuceMsConf {
 	public LettuceConnectionFactory lettuceConnectionFactory(@Qualifier("lettuceClientConfiguration") LettuceClientConfiguration clientConfig
 			, @Qualifier("redisSentinelConfiguration") RedisSentinelConfiguration config) {
 		LettuceConnectionFactory connFactory = new LettuceConnectionFactory(config, clientConfig);
-		connFactory.setValidateConnection(true);
-		connFactory.setShareNativeConnection(false);
+		connFactory.setValidateConnection(false);
+		connFactory.setShareNativeConnection(true);
 		return connFactory;
 	}
 

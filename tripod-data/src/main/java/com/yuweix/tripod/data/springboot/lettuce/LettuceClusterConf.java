@@ -61,8 +61,8 @@ public class LettuceClusterConf {
 	public LettuceConnectionFactory lettuceConnectionFactory(@Qualifier("lettuceClientConfiguration") LettuceClientConfiguration clientConfig
 			, @Qualifier("redisClusterConfiguration") RedisClusterConfiguration config) {
 		LettuceConnectionFactory connFactory = new LettuceConnectionFactory(config, clientConfig);
-		connFactory.setValidateConnection(true);
-		connFactory.setShareNativeConnection(false);
+		connFactory.setValidateConnection(false);
+		connFactory.setShareNativeConnection(true);
 		return connFactory;
 	}
 
