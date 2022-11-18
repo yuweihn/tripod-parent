@@ -8,7 +8,7 @@ package com.yuweix.tripod.dao.sharding;
  */
 public class ModStrategy implements Strategy {
     @Override
-    public String getShardingIndex(String tableName, Object shardingVal) {
+    public <T>String getShardingIndex(String tableName, T shardingVal) {
         TableConfig conf = getTableConf(tableName);
         if (conf == null) {
             throw new RuntimeException("[" + tableName + "]'s sharding-conf is required.");

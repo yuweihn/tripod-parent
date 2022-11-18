@@ -1,7 +1,6 @@
 package com.yuweix.tripod.dao.sharding;
 
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
@@ -17,7 +16,6 @@ public class ShardingConf {
 		Map<String, TableConfig> getTables();
 	}
 
-	@ConditionalOnMissingBean(ShardingTableHolder.class)
 	@Bean
 	@ConfigurationProperties(prefix = "tripod.sharding", ignoreUnknownFields = true)
 	public ShardingTableHolder shardingTableHolder() {
@@ -34,10 +32,7 @@ public class ShardingConf {
 	@Bean(name = "shardingTableConf")
 	public Map<String, TableConfig> shardingTableConf(ShardingTableHolder shardingTableHolder) {
 		Map<String, TableConfig> map = shardingTableHolder.getTables();
-		Strategy.TABLE_CONF_MAP.clear();
-		if (map != null) {
-			Strategy.TABLE_CONF_MAP.putAll(map);
-		}
+		Constant.putTableConf(map);
 		return map;
 	}
 }
