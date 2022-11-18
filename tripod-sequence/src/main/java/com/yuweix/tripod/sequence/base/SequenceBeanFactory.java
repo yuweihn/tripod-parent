@@ -105,11 +105,11 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		Field defaultSeqDaoField = checkSequenceDao(defaultClz);
 		Field defaultSeqNameField = checkSequenceName(defaultClz);
 		Field defaultSeqMinValField = checkSequenceMinValue(defaultClz);
-		String[] defaultSeqDaoBeanNames = beanFactory.getBeanNamesForType(SequenceDao.class);
-		if (defaultSeqDaoBeanNames.length != 1) {
+		String[] seqDaoBeanNames = beanFactory.getBeanNamesForType(SequenceDao.class);
+		if (seqDaoBeanNames.length != 1) {
 			throw new SequenceException("[SequenceDao] not found in spring context.");
 		}
-		Property defaultSeqDaoProperty = new Property(defaultSeqDaoField.getName(), defaultSeqDaoBeanNames[0], Property.TYPE_REFERENCE);
+		Property defaultSeqDaoProperty = new Property(defaultSeqDaoField.getName(), seqDaoBeanNames[0], Property.TYPE_REFERENCE);
 
 		for (Entry<String, String> entry : beans.entrySet()) {
 			String beanName = entry.getKey();
@@ -139,10 +139,6 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 				Field seqDaoField = checkSequenceDao(clz);
 				seqNameField = checkSequenceName(clz);
 				seqMinValField = checkSequenceMinValue(clz);
-				String[] seqDaoBeanNames = beanFactory.getBeanNamesForType(SequenceDao.class);
-				if (seqDaoBeanNames.length != 1) {
-					throw new SequenceException("[SequenceDao] not found in spring context.");
-				}
 				seqDaoProperty = new Property(seqDaoField.getName(), seqDaoBeanNames[0], Property.TYPE_REFERENCE);
 			} else {
 				clz = defaultClz;
