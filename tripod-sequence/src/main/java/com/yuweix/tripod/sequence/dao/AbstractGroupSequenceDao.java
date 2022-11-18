@@ -6,8 +6,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.yuweix.tripod.sequence.bean.SequenceHolder;
-import com.yuweix.tripod.sequence.dao.loadbalancer.IRule;
-import com.yuweix.tripod.sequence.dao.loadbalancer.RoundRobinRule;
+import com.yuweix.tripod.sequence.dao.lb.IRule;
+import com.yuweix.tripod.sequence.dao.lb.RoundRobinRule;
 import com.yuweix.tripod.sequence.exception.SequenceException;
 
 import org.slf4j.Logger;

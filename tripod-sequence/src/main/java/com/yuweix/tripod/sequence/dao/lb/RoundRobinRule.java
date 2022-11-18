@@ -1,4 +1,4 @@
-package com.yuweix.tripod.sequence.dao.loadbalancer;
+package com.yuweix.tripod.sequence.dao.lb;
 
 
 import java.util.Map;

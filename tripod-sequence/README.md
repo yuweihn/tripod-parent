@@ -20,7 +20,7 @@ For example:
           segmentCount: 1
           maxSkipCount: 5
           maxWaitMillis: 5000
-          ruleClassName: com.yuweix.tripod.sequence.dao.loadbalancer.RoundRobinRule
+          ruleClassName: com.yuweix.tripod.sequence.dao.lb.RoundRobinRule
           tableName:
         beans:
 	      seqAppKeySecret: seq_app_key_secret,100
