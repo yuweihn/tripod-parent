@@ -51,18 +51,22 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	 * @param sequenceClzName                         准备实例化的Sequence实现类
 	 * @param constructArgList                        Sequence实现类的构造函数参数序列
 	 */
-	@SuppressWarnings("unchecked")
 	public SequenceBeanFactory(String sequenceClzName, List<Property> constructArgList) {
+		this.sequenceClz = forName(sequenceClzName);
+		this.constructArgList = constructArgList;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Class<? extends AbstractSequence> forName(String clzName) {
 		try {
-			Class<?> clz = Class.forName(sequenceClzName);
+			Class<?> clz = Class.forName(clzName);
 			if (!AbstractSequence.class.isAssignableFrom(clz)) {
-				throw new SequenceException("[sequenceClzName] must be a subclass of " + AbstractSequence.class.getName() + ".");
+				throw new SequenceException("[clzName] must be a subclass of " + AbstractSequence.class.getName() + ".");
 			}
-			this.sequenceClz = (Class<? extends AbstractSequence>) clz;
+			return (Class<? extends AbstractSequence>) clz;
 		} catch (ClassNotFoundException e) {
 			throw new SequenceException(e);
 		}
-		this.constructArgList = constructArgList;
 	}
 
 	@Override
@@ -93,19 +97,19 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	/**
 	 * 注册一系列[Sequence Bean]
 	 */
-	private void registerBeans(Class<?> clz, Map<String, String> beans) {
+	private void registerBeans(Class<? extends AbstractSequence> defaultClz, Map<String, String> beans) {
 		if (beans == null || beans.isEmpty()) {
 			return;
 		}
 
-		Field seqDaoField = checkSequenceDao(clz);
-		Field seqNameField = checkSequenceName(clz);
-		Field seqMinValField = checkSequenceMinValue(clz);
-		String[] seqDaoBeanNames = beanFactory.getBeanNamesForType(SequenceDao.class);
-		if (seqDaoBeanNames.length != 1) {
-			throw new SequenceException("SequenceDao not found in spring context.");
+		Field defaultSeqDaoField = checkSequenceDao(defaultClz);
+		Field defaultSeqNameField = checkSequenceName(defaultClz);
+		Field defaultSeqMinValField = checkSequenceMinValue(defaultClz);
+		String[] defaultSeqDaoBeanNames = beanFactory.getBeanNamesForType(SequenceDao.class);
+		if (defaultSeqDaoBeanNames.length != 1) {
+			throw new SequenceException("[SequenceDao] not found in spring context.");
 		}
-		Property seqDaoProperty = new Property(seqDaoField.getName(), seqDaoBeanNames[0], Property.TYPE_REFERENCE);
+		Property defaultSeqDaoProperty = new Property(defaultSeqDaoField.getName(), defaultSeqDaoBeanNames[0], Property.TYPE_REFERENCE);
 
 		for (Entry<String, String> entry : beans.entrySet()) {
 			String beanName = entry.getKey();
@@ -124,7 +128,28 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 
 			String[] arr = seqNameValue.split(DELIMITER);
 			String seqName = arr[0];
-			long minValue = arr.length == 2 ? Long.parseLong(arr[1]) : 0;
+			long minValue = arr.length >= 2 ? Long.parseLong(arr[1]) : 0;
+
+			Class<? extends AbstractSequence> clz = null;
+			Property seqDaoProperty = null;
+			Field seqNameField = null;
+			Field seqMinValField = null;
+			if (arr.length >= 3) {
+				clz = forName(arr[2]);
+				Field seqDaoField = checkSequenceDao(clz);
+				seqNameField = checkSequenceName(clz);
+				seqMinValField = checkSequenceMinValue(clz);
+				String[] seqDaoBeanNames = beanFactory.getBeanNamesForType(SequenceDao.class);
+				if (seqDaoBeanNames.length != 1) {
+					throw new SequenceException("[SequenceDao] not found in spring context.");
+				}
+				seqDaoProperty = new Property(seqDaoField.getName(), seqDaoBeanNames[0], Property.TYPE_REFERENCE);
+			} else {
+				clz = defaultClz;
+				seqDaoProperty = defaultSeqDaoProperty;
+				seqNameField = defaultSeqNameField;
+				seqMinValField = defaultSeqMinValField;
+			}
 
 			List<Property> propList = new ArrayList<>();
 			propList.add(seqDaoProperty);
@@ -133,7 +158,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 			registerBean(clz, beanName, this.constructArgList, propList);
 		}
 	}
-	private void registerBean(Class<?> clz, String beanName, List<Property> constArgList, List<Property> propList) {
+	private void registerBean(Class<? extends AbstractSequence> clz, String beanName, List<Property> constArgList, List<Property> propList) {
 		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(clz);
 		if (constArgList != null && constArgList.size() > 0) {
 			for (Property constructorArg: constArgList) {
@@ -164,10 +189,10 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	/**
 	 * 检查注解：{@link AnnSequenceDao}
 	 */
-	private Field checkSequenceDao(Class<?> clz) {
+	private Field checkSequenceDao(Class<? extends AbstractSequence> clz) {
 		List<Field> fields = FieldUtil.getAllFieldsList(clz);
 		if (fields == null || fields.size() <= 0) {
-			throw new SequenceException("Field SequenceDao not Found.");
+			throw new SequenceException("Field [sequenceDao] not Found.");
 		}
 		for (Field f: fields) {
 			AnnSequenceDao annSeqDao = f.getAnnotation(AnnSequenceDao.class);
@@ -175,15 +200,15 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 				return f;
 			}
 		}
-		throw new SequenceException("Field SequenceDao not Found.");
+		throw new SequenceException("Field [sequenceDao] not Found.");
 	}
 	/**
 	 * 检查注解：{@link AnnSequenceName}
 	 */
-	private Field checkSequenceName(Class<?> clz) {
+	private Field checkSequenceName(Class<? extends AbstractSequence> clz) {
 		List<Field> fields = FieldUtil.getAllFieldsList(clz);
 		if (fields == null || fields.size() <= 0) {
-			throw new SequenceException("Field Name not Found.");
+			throw new SequenceException("Field [name] not Found.");
 		}
 		for (Field f: fields) {
 			AnnSequenceName annSeqName = f.getAnnotation(AnnSequenceName.class);
@@ -191,15 +216,15 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 				return f;
 			}
 		}
-		throw new SequenceException("Field Name not Found.");
+		throw new SequenceException("Field [name] not Found.");
 	}
 	/**
 	 * 检查注解：{@link AnnSequenceMinValue}
 	 */
-	private Field checkSequenceMinValue(Class<?> clz) {
+	private Field checkSequenceMinValue(Class<? extends AbstractSequence> clz) {
 		List<Field> fields = FieldUtil.getAllFieldsList(clz);
 		if (fields == null || fields.size() <= 0) {
-			throw new SequenceException("Field MinValue not Found.");
+			throw new SequenceException("Field [minValue] not Found.");
 		}
 		for (Field f: fields) {
 			AnnSequenceMinValue annSeqMinVal = f.getAnnotation(AnnSequenceMinValue.class);
@@ -207,7 +232,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 				return f;
 			}
 		}
-		throw new SequenceException("Field MinValue not Found.");
+		throw new SequenceException("Field [minValue] not Found.");
 	}
 
 	public static class Property {
