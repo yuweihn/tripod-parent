@@ -109,7 +109,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		if (seqDaoBeanNames.length != 1) {
 			throw new SequenceException("[SequenceDao] not found in spring context.");
 		}
-		Property defaultSeqDaoProperty = new Property(defaultSeqDaoField.getName(), seqDaoBeanNames[0], Property.TYPE_REFERENCE);
+		String seqDaoBeanName = seqDaoBeanNames[0];
 
 		for (Entry<String, String> entry : beans.entrySet()) {
 			String beanName = entry.getKey();
@@ -131,24 +131,23 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 			long minValue = arr.length >= 2 ? Long.parseLong(arr[1]) : 0;
 
 			Class<? extends AbstractSequence> clz = null;
-			Property seqDaoProperty = null;
+			Field seqDaoField = null;
 			Field seqNameField = null;
 			Field seqMinValField = null;
 			if (arr.length >= 3) {
 				clz = forName(arr[2]);
-				Field seqDaoField = checkSequenceDao(clz);
+				seqDaoField = checkSequenceDao(clz);
 				seqNameField = checkSequenceName(clz);
 				seqMinValField = checkSequenceMinValue(clz);
-				seqDaoProperty = new Property(seqDaoField.getName(), seqDaoBeanNames[0], Property.TYPE_REFERENCE);
 			} else {
 				clz = defaultClz;
-				seqDaoProperty = defaultSeqDaoProperty;
+				seqDaoField = defaultSeqDaoField;
 				seqNameField = defaultSeqNameField;
 				seqMinValField = defaultSeqMinValField;
 			}
 
 			List<Property> propList = new ArrayList<>();
-			propList.add(seqDaoProperty);
+			propList.add(new Property(seqDaoField.getName(), seqDaoBeanName, Property.TYPE_REFERENCE));
 			propList.add(new Property(seqNameField.getName(), seqName, Property.TYPE_VALUE));
 			propList.add(new Property(seqMinValField.getName(), minValue, Property.TYPE_VALUE));
 			registerBean(clz, beanName, this.constructArgList, propList);
