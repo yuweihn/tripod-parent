@@ -61,7 +61,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 		try {
 			Class<?> clz = Class.forName(clzName);
 			if (!AbstractSequence.class.isAssignableFrom(clz)) {
-				throw new SequenceException("[" + clzName + "] must be a subclass of " + AbstractSequence.class.getName() + ".");
+				throw new SequenceException("[" + clzName + "] is not the subclass of " + AbstractSequence.class.getName() + ".");
 			}
 			return (Class<? extends AbstractSequence>) clz;
 		} catch (ClassNotFoundException e) {
