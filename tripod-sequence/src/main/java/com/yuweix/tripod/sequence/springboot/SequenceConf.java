@@ -45,7 +45,7 @@ public class SequenceConf {
 	}
 
 	@ConditionalOnMissingBean(SequenceBeanHolder.class)
-	@Bean(name = "sequenceBeanHolder")
+	@Bean
 	@ConfigurationProperties(prefix = "tripod.sequence", ignoreUnknownFields = true)
 	public SequenceBeanHolder sequenceBeanHolder() {
 		return new SequenceBeanHolder() {
