@@ -24,7 +24,7 @@ import java.util.List;
 public class JedisClusterConf {
 
 	@Bean(name = "jedisPoolConfig")
-	public JedisPoolConfig jedisPoolConfig(@Value("${tripod.redis.pool.maxTotal:1024}") int maxTotal
+	public JedisPoolConfig jedisPoolConfig(@Value("${tripod.redis.pool.maxTotal:20}") int maxTotal
 			, @Value("${tripod.redis.pool.maxIdle:10}") int maxIdle
 			, @Value("${tripod.redis.pool.minIdle:10}") int minIdle
 			, @Value("${tripod.redis.pool.maxWaitMillis:10000}") long maxWaitMillis
