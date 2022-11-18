@@ -60,7 +60,7 @@ public class LettuceConf {
 		if (port > 0) {
 			conf.setPort(port);
 		}
-		if (dbIndex > 0) {
+		if (dbIndex >= 0) {
 			conf.setDatabase(dbIndex);
 		}
 		if (needPassword) {
