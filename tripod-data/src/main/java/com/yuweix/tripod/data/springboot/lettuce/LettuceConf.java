@@ -31,9 +31,10 @@ import java.time.Duration;
 public class LettuceConf {
 	@Bean(name = "lettuceClientConfiguration")
 	public LettuceClientConfiguration clientConfiguration(@Value("${tripod.redis.pool.maxTotal:1024}") int maxTotal
-			, @Value("${tripod.redis.pool.maxIdle:100}") int maxIdle
-			, @Value("${tripod.redis.pool.minIdle:100}") int minIdle
+			, @Value("${tripod.redis.pool.maxIdle:10}") int maxIdle
+			, @Value("${tripod.redis.pool.minIdle:10}") int minIdle
 			, @Value("${tripod.redis.pool.maxWaitMillis:10000}") long maxWaitMillis
+			, @Value("${tripod.redis.pool.timeBetweenEvictionRunsMillis:-1}") long timeBetweenEvictionRunsMillis
 			, @Value("${tripod.redis.pool.testOnBorrow:false}") boolean testOnBorrow
 			, @Value("${tripod.redis.timeoutMillis:5000}") long timeoutMillis) {
 		GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
@@ -41,6 +42,7 @@ public class LettuceConf {
 		poolConfig.setMaxIdle(maxIdle);
 		poolConfig.setMinIdle(minIdle);
 		poolConfig.setMaxWaitMillis(maxWaitMillis);
+		poolConfig.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
 		poolConfig.setTestOnBorrow(testOnBorrow);
 		LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
 				.commandTimeout(Duration.ofMillis(timeoutMillis))
