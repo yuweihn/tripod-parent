@@ -15,7 +15,7 @@ public class TableConfig {
 	/**
 	 * 分片数量
 	 */
-	private int shardingSize;
+	private int shardingSize = 2;
 
 	public int getSuffixLength() {
 		return suffixLength;
