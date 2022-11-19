@@ -11,7 +11,7 @@ import java.util.Map;
 final class Constant {
 	private static final Map<String, TableConfig> TABLE_CONF_MAP = new HashMap<>();
 
-	static void putTableConf(Map<String, TableConfig> map) {
+	static void initTableConf(Map<String, TableConfig> map) {
 		TABLE_CONF_MAP.clear();
 		if (map != null) {
 			TABLE_CONF_MAP.putAll(map);

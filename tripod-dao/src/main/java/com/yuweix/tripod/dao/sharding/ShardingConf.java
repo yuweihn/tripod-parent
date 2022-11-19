@@ -12,14 +12,14 @@ import java.util.Map;
  * @author yuwei
  */
 public class ShardingConf {
-	interface ShardingTableHolder {
+	interface TableHolder {
 		Map<String, TableConfig> getTables();
 	}
 
 	@Bean
 	@ConfigurationProperties(prefix = "tripod.sharding", ignoreUnknownFields = true)
-	public ShardingTableHolder shardingTableHolder() {
-		return new ShardingTableHolder() {
+	public TableHolder tableHolder() {
+		return new TableHolder() {
 			private Map<String, TableConfig> map = new HashMap<>();
 
 			@Override
@@ -30,9 +30,9 @@ public class ShardingConf {
 	}
 
 	@Bean(name = "shardingTableConf")
-	public Map<String, TableConfig> shardingTableConf(ShardingTableHolder shardingTableHolder) {
-		Map<String, TableConfig> map = shardingTableHolder.getTables();
-		Constant.putTableConf(map);
+	public Map<String, TableConfig> shardingTableConf(TableHolder tableHolder) {
+		Map<String, TableConfig> map = tableHolder.getTables();
+		Constant.initTableConf(map);
 		return map;
 	}
 }
