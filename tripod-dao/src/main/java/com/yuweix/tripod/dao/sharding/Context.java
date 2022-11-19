@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author yuwei
  */
-final class Constant {
+final class Context {
 	private static final Map<String, TableConfig> TABLE_CONF_MAP = new HashMap<>();
 
 	static void initTableConf(Map<String, TableConfig> map) {

@@ -8,7 +8,7 @@ package com.yuweix.tripod.dao.sharding;
  */
 public interface Strategy {
     default TableConfig getTableConf(String tableName) {
-        return Constant.getTableConf(tableName);
+        return Context.getTableConf(tableName);
     }
 
     /**

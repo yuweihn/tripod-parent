@@ -32,7 +32,7 @@ public class ShardingConf {
 	@Bean(name = "shardingTableConf")
 	public Map<String, TableConfig> shardingTableConf(H shardingTableHolder) {
 		Map<String, TableConfig> map = shardingTableHolder.getTables();
-		Constant.initTableConf(map);
+		Context.initTableConf(map);
 		return map;
 	}
 }
