@@ -31,16 +31,16 @@ public class CookieSessionFilter extends SessionFilter {
 
 	@Override
 	protected String getSessionId(HttpServletRequest request, HttpServletResponse response) {
-		String _cookieName = cookieName;
-		if (_cookieName == null || "".equals(_cookieName)) {
-			_cookieName = SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX;
+		String ckName = cookieName;
+		if (ckName == null || "".equals(ckName)) {
+			ckName = SessionConf.getInstance().getApplicationName() + SessionConstant.COOKIE_SESSION_ID_SUFFIX;
 		}
 
-		String sid = CookiesUtil.findValueByKey(request, _cookieName);
+		String sid = CookiesUtil.findValueByKey(request, ckName);
 		if (sid == null || "".equals(sid)) {
 			sid = UUID.randomUUID().toString().replace("-", "");
 		}
-		CookiesUtil.addCookie(request, response, _cookieName, sid, null, null
+		CookiesUtil.addCookie(request, response, ckName, sid, null, null
 				, SessionConstant.COOKIE_MAX_AGE_DEFAULT);
 		return sid;
 	}

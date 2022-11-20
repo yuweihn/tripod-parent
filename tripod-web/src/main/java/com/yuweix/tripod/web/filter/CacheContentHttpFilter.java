@@ -45,7 +45,7 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 		}
 		
 		if (logInfoMap == null) {
-			logInfoMap = new LinkedHashMap<String, Object>();
+			logInfoMap = new LinkedHashMap<>();
 		}
 		logInfoMap.put("requestBody", bodyInfo);
 		return logInfoMap;
@@ -73,7 +73,11 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 	}
 
 	@Override
-	protected void afterFilter(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) throws IOException {
-		response.copyBodyToResponse();
+	protected void afterFilter(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) {
+		try {
+			response.copyBodyToResponse();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

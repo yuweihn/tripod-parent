@@ -50,20 +50,20 @@ public class FreeMarkerAutoConfiguration {
 	@ConditionalOnMissingBean
 	@Bean(name = "freemarkerConfig")
 	public FreeMarkerConfigurer freemarkerConfig(
-			@Value("${freemarker.template.path:classpath:/templates/}") String template_path,
-			@Value("${freemarker.template.update.delay:0}") String template_update_delay,
-			@Value("${freemarker.default.encoding:utf-8}") String default_encoding,
-			@Value("${freemarker.output.encoding:utf-8}") String output_encoding,
-			@Value("${freemarker.locale:zh_CN}") String locale,
-			@Value("${freemarker.number.format:0.##########}") String number_format,
-			@Value("${freemarker.date.format:yyyy-MM-dd}") String date_format,
-			@Value("${freemarker.time.format:HH:mm:ss}") String time_format,
-			@Value("${freemarker.datetime.format:yyyy-MM-dd HH:mm:ss}") String datetime_format,
-			@Value("${freemarker.classic.compatible:true}") String classic_compatible,
-			@Value("${freemarker.template.exception.handler:ignore}") String template_exception_handler,
-			@Value("${freemarker.whitespace.stripping:true}") String whitespace_stripping,
-			@Value("${freemarker.registered.custom.output.formats:}") String customOutputFormats,
-			@Value("${freemarker.auto.import:}") String auto_import) {
+			@Value("${tripod.freemarker.template.path:classpath:/templates/}") String template_path,
+			@Value("${tripod.freemarker.template.update.delay:0}") String template_update_delay,
+			@Value("${tripod.freemarker.default.encoding:utf-8}") String default_encoding,
+			@Value("${tripod.freemarker.output.encoding:utf-8}") String output_encoding,
+			@Value("${tripod.freemarker.locale:zh_CN}") String locale,
+			@Value("${tripod.freemarker.number.format:0.##########}") String number_format,
+			@Value("${tripod.freemarker.date.format:yyyy-MM-dd}") String date_format,
+			@Value("${tripod.freemarker.time.format:HH:mm:ss}") String time_format,
+			@Value("${tripod.freemarker.datetime.format:yyyy-MM-dd HH:mm:ss}") String datetime_format,
+			@Value("${tripod.freemarker.classic.compatible:true}") String classic_compatible,
+			@Value("${tripod.freemarker.template.exception.handler:ignore}") String template_exception_handler,
+			@Value("${tripod.freemarker.whitespace.stripping:true}") String whitespace_stripping,
+			@Value("${tripod.freemarker.registered.custom.output.formats:}") String customOutputFormats,
+			@Value("${tripod.freemarker.auto.import:}") String auto_import) {
 		FreeMarkerConfigurer config = new FreeMarkerConfigurer();
 		config.setTemplateLoaderPath(template_path);
 		config.setPreTemplateLoaders(new ClassTemplateLoader(Page.class, ""));
@@ -88,7 +88,7 @@ public class FreeMarkerAutoConfiguration {
 		}
 		config.setFreemarkerSettings(settings);
 
-		Map<String, Object> variables = new HashMap<String, Object>();
+		Map<String, Object> variables = new HashMap<>();
 		variables.put("extends", new ExtendsDirective());
 		variables.put("override", new OverrideDirective());
 		variables.put("block", new BlockDirective());

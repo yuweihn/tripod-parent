@@ -27,14 +27,12 @@ public class NotEmptyMultipartResolver extends CommonsMultipartResolver {
 			 * do nothing.
 			 */
 		} else {
-			List<FileItem> tempList = new ArrayList<FileItem>();
-
+			List<FileItem> tempList = new ArrayList<>();
 			for (FileItem fileItem: fileItems) {
 				if (fileItem == null || fileItem.isFormField() || fileItem.getSize() > 0) {
 					tempList.add(fileItem);
 				}
 			}
-
 			fileItems.clear();
 			fileItems.addAll(tempList);
 		}

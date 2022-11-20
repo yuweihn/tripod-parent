@@ -76,7 +76,7 @@ public class Page {
 	}
 
 	private List<Integer> initPageNos() {
-		List<Integer> list = new ArrayList<Integer>();
+		List<Integer> list = new ArrayList<>();
 		/**
 		 * 如果当前页currentPage超过合法范围(1~pageCount)，则返回空
 		 **/

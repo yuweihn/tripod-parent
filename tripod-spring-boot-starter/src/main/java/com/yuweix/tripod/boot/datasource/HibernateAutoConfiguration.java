@@ -24,27 +24,27 @@ import java.sql.SQLException;
 public class HibernateAutoConfiguration {
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
-	public DataSource druidDataSourceMaster(@Value("${jdbc.driver.class}") String driverClassName
-			, @Value("${jdbc.url}") String url
-			, @Value("${jdbc.userName}") String userName
-			, @Value("${jdbc.password}") String password
-			, @Value("${jdbc.default.read.only:false}") boolean defaultReadOnly
-			, @Value("${jdbc.filters:stat}") String filters
-			, @Value("${jdbc.max.active:2}") int maxActive
-			, @Value("${jdbc.initial.size:1}") int initialSize
-			, @Value("${jdbc.max.wait:60000}") long maxWaitMillis
-			, @Value("${jdbc.remove.abandoned:true}") boolean removeAbandoned
-			, @Value("${jdbc.remove.abandoned.timeout:1800}") int removeAbandonedTimeout
-			, @Value("${jdbc.min.idle:1}") int minIdle
-			, @Value("${jdbc.time.between.eviction.runs.millis:60000}") long timeBetweenEvictionRunsMillis
-			, @Value("${jdbc.min.evictable.idle.time.millis:300000}") long minEvictableIdleTimeMillis
-			, @Value("${jdbc.validation.query:select 'x'}") String validationQuery
-			, @Value("${jdbc.test.while.idle:true}") boolean testWhileIdle
-			, @Value("${jdbc.test.on.borrow:false}") boolean testOnBorrow
-			, @Value("${jdbc.test.on.return:false}") boolean testOnReturn
-			, @Value("${jdbc.pool.prepared.statements:true}") boolean poolPreparedStatements
-			, @Value("${jdbc.max.pool.prepared.statement.per.connection.size:50}") int maxPoolPreparedStatementPerConnectionSize
-			, @Value("${jdbc.max.open.prepared.statements:100}") int maxOpenPreparedStatements) throws SQLException {
+	public DataSource druidDataSourceMaster(@Value("${tripod.jdbc.driver.class}") String driverClassName
+			, @Value("${tripod.jdbc.url}") String url
+			, @Value("${tripod.jdbc.userName}") String userName
+			, @Value("${tripod.jdbc.password}") String password
+			, @Value("${tripod.jdbc.default.read.only:false}") boolean defaultReadOnly
+			, @Value("${tripod.jdbc.filters:stat}") String filters
+			, @Value("${tripod.jdbc.max.active:2}") int maxActive
+			, @Value("${tripod.jdbc.initial.size:1}") int initialSize
+			, @Value("${tripod.jdbc.max.wait:60000}") long maxWaitMillis
+			, @Value("${tripod.jdbc.remove.abandoned:true}") boolean removeAbandoned
+			, @Value("${tripod.jdbc.remove.abandoned.timeout:1800}") int removeAbandonedTimeout
+			, @Value("${tripod.jdbc.min.idle:1}") int minIdle
+			, @Value("${tripod.jdbc.time.between.eviction.runs.millis:60000}") long timeBetweenEvictionRunsMillis
+			, @Value("${tripod.jdbc.min.evictable.idle.time.millis:300000}") long minEvictableIdleTimeMillis
+			, @Value("${tripod.jdbc.validation.query:select 'x'}") String validationQuery
+			, @Value("${tripod.jdbc.test.while.idle:true}") boolean testWhileIdle
+			, @Value("${tripod.jdbc.test.on.borrow:false}") boolean testOnBorrow
+			, @Value("${tripod.jdbc.test.on.return:false}") boolean testOnReturn
+			, @Value("${tripod.jdbc.pool.prepared.statements:true}") boolean poolPreparedStatements
+			, @Value("${tripod.jdbc.max.pool.prepared.statement.per.connection.size:50}") int maxPoolPreparedStatementPerConnectionSize
+			, @Value("${tripod.jdbc.max.open.prepared.statements:100}") int maxOpenPreparedStatements) throws SQLException {
 		DruidDataSource dataSource = new DruidDataSource();
 		dataSource.setDriverClassName(driverClassName);
 		dataSource.setUrl(url);
