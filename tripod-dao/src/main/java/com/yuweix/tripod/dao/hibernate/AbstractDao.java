@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.yuweix.tripod.dao.PersistContext;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -19,7 +20,7 @@ import javax.persistence.criteria.CriteriaQuery;
 /**
  * @author yuwei
  */
-public abstract class AbstractDao<T extends Serializable, PK extends Serializable> implements Dao<T, PK> {
+public abstract class AbstractDao<T extends Serializable, PK extends Serializable> extends PersistContext implements Dao<T, PK> {
 	private Class<T> clz;
 	private SessionFactory sessionFactory;
 
