@@ -118,13 +118,16 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		return shardingVal;
 	}
 
-	protected void beforeSharding(T entity) {
-		Object shardingVal = getShardingVal(entity);
+	protected void beforeSharding(Object shardingVal) {
 		if (shardingVal != null) {
 			String srcTableName = this.getTableName(clz);
 			String destTableName = this.getPhysicalTableName(clz, shardingVal);
 			tableInterceptorThreadLocal.set(new DynamicTableInterceptor(srcTableName, destTableName));
 		}
+	}
+	protected void beforeSharding(T entity) {
+		Object shardingVal = getShardingVal(entity);
+		beforeSharding(shardingVal);
 	}
 	protected void afterSharding() {
 		tableInterceptorThreadLocal.remove();
