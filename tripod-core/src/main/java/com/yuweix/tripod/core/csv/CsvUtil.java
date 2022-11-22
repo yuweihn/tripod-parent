@@ -66,7 +66,10 @@ public abstract class CsvUtil {
 	 */
 	public static<T> void export(List<T> dataList, OutputStream out) {
 		Assert.notEmpty(dataList, "[dataList] must not be empty.");
-		log.info("list size: {}", dataList.size());
+		log.info("list size: {}", dataList == null ? 0 : dataList.size());
+		if (dataList == null || dataList.size() <= 0) {
+			return;
+		}
 		OutputStreamWriter osw = null;
 		BufferedWriter bw = null;
 		try {

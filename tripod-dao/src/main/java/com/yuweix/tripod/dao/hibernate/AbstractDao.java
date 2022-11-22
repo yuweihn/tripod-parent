@@ -2,25 +2,33 @@ package com.yuweix.tripod.dao.hibernate;
 
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.yuweix.tripod.dao.PersistContext;
+import com.yuweix.tripod.dao.sharding.Sharding;
 import org.hibernate.Session;
+import org.hibernate.SessionBuilder;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 
 import javax.annotation.Resource;
-import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.Column;
+import javax.persistence.Id;
 
 
 /**
  * @author yuwei
  */
 public abstract class AbstractDao<T extends Serializable, PK extends Serializable> extends PersistContext implements Dao<T, PK> {
+	private static final Map<Class<?>, FieldColumn> CLASS_PK_FIELD_MAP = new ConcurrentHashMap<>();
+	private static final Map<Class<?>, FieldColumn> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
+
+	private ThreadLocal<DynamicTableInterceptor> tableInterceptorThreadLocal = new ThreadLocal<>();
+
 	private Class<T> clz;
 	private SessionFactory sessionFactory;
 
@@ -30,7 +38,12 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	protected Session getSession() {
-		return sessionFactory.getCurrentSession();
+		if (tableInterceptorThreadLocal.get() == null) {
+			return this.sessionFactory.getCurrentSession();
+		} else {
+			SessionBuilder<?> builder = this.sessionFactory.withOptions().interceptor(tableInterceptorThreadLocal.get());
+			return builder.openSession();
+		}
 	}
 
 
@@ -44,49 +57,110 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public List<T> getAll() {
-		Session session = getSession();
-		CriteriaQuery<T> criteriaQuery = session.getCriteriaBuilder().createQuery(clz);
-		Query<T> query = session.createQuery(criteriaQuery);
-		return query.list();
-	}
-
-	@Override
 	public T get(final PK id) {
 		return getSession().get(clz, id);
 	}
 
 	@Override
-	public void save(final T entity) {
-		getSession().save(entity);
+	public T get(PK id, Object shardingVal) {
+		String tableName = this.getPhysicalTableName(clz, shardingVal);
+		FieldColumn pkCol = getPKFieldColumn();
+		String sql = "select * from " + tableName + " where " + pkCol.getColumnName() + " = ?";
+		return queryForObject(sql, new Object[] {id});
+	}
+
+	private FieldColumn getPKFieldColumn() {
+		FieldColumn fc = CLASS_PK_FIELD_MAP.get(clz);
+
+		if (fc == null) {
+			Field[] fields = clz.getDeclaredFields();
+			for (Field field: fields) {
+				field.setAccessible(true);
+				Id idAnn = field.getAnnotation(Id.class);
+				if (idAnn != null) {
+					Column col = field.getAnnotation(Column.class);
+					fc = new FieldColumn(col == null ? field.getName() : col.name(), field);
+					CLASS_PK_FIELD_MAP.put(clz, fc);
+					break;
+				}
+			}
+		}
+		return fc;
+	}
+	private FieldColumn getShardingFieldColumn() {
+		FieldColumn fc = CLASS_SHARDING_FIELD_MAP.get(clz);
+
+		if (fc == null) {
+			Field[] fields = clz.getDeclaredFields();
+			for (Field field: fields) {
+				field.setAccessible(true);
+				Sharding sAnn = field.getAnnotation(Sharding.class);
+				if (sAnn != null) {
+					Column col = field.getAnnotation(Column.class);
+					fc = new FieldColumn(col == null ? field.getName() : col.name(), field);
+					CLASS_SHARDING_FIELD_MAP.put(clz, fc);
+					break;
+				}
+			}
+		}
+		return fc;
+	}
+	private Object getShardingVal(T t) {
+		Object shardingVal = null;
+		FieldColumn fc = getShardingFieldColumn();
+		if (fc != null) {
+			try {
+				shardingVal = fc.getField().get(t);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return shardingVal;
+	}
+
+	protected void beforeSharding(T entity) {
+		Object shardingVal = getShardingVal(entity);
+		if (shardingVal != null) {
+			String srcTableName = this.getTableName(clz);
+			String destTableName = this.getPhysicalTableName(clz, shardingVal);
+			tableInterceptorThreadLocal.set(new DynamicTableInterceptor(srcTableName, destTableName));
+		}
+	}
+	protected void afterSharding() {
+		tableInterceptorThreadLocal.remove();
 	}
 
 	@Override
-	public void saveOrUpdateAll(final Collection<T> entities) {
-		getSession().saveOrUpdate(entities);
+	public void save(final T entity) {
+		beforeSharding(entity);
+		getSession().save(entity);
+		afterSharding();
 	}
 
 	@Override
 	public void update(final T entity) {
+		beforeSharding(entity);
 		getSession().update(entity);
-	}
-
-	@Override
-	public void saveOrUpdate(final T entity) {
-		getSession().saveOrUpdate(entity);
-	}
-
-	@Override
-	public T merge(final T entity) {
-		getSession().merge(entity);
-		return entity;
+		afterSharding();
 	}
 
 	@Override
 	public void deleteByKey(PK id) {
 		final T entity = get(id);
 		if (entity != null) {
+			beforeSharding(entity);
 			getSession().delete(entity);
+			afterSharding();
+		}
+	}
+
+	@Override
+	public void deleteByKey(PK id, Object shardingVal) {
+		final T entity = get(id, shardingVal);
+		if (entity != null) {
+			beforeSharding(entity);
+			getSession().delete(entity);
+			afterSharding();
 		}
 	}
 
