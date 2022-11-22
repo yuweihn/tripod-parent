@@ -37,6 +37,23 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 		}
 	}
 
+	@Override
+	public T get(PK id, Object shardingVal) {
+		String key = getPkCacheKeyPre() + id + "." + shardingVal;
+		T t = getByCacheKey(key);
+		if (t != null) {
+			return t;
+		}
+
+		t = getMapper().selectOneByIdSharding(id, shardingVal, clz);
+		if (t != null) {
+			putByCacheKey(key, t);
+			return t;
+		} else {
+			return null;
+		}
+	}
+
 	public void deleteByIdFromCache(PK id) {
 		String key = getPkCacheKeyPre() + id;
 		deleteByCacheKey(key);
@@ -161,6 +178,15 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	@Override
 	public int deleteByKey(PK id) {
 		T t = get(id);
+		if (t == null) {
+			return 0;
+		}
+		return delete(t);
+	}
+
+	@Override
+	public int deleteByKey(PK id, Object shardingVal) {
+		T t = get(id, shardingVal);
 		if (t == null) {
 			return 0;
 		}
