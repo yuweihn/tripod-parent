@@ -1,6 +1,8 @@
 package com.yuweix.tripod.dao.mybatis;
 
 
+import com.yuweix.tripod.dao.sharding.Sharding;
+
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -12,7 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author yuwei
  */
 public abstract class CacheableDao<T extends Serializable, PK extends Serializable> extends AbstractDao<T, PK> {
-	private static final Map<Class<?>, Field> CLASS_PK_FIELD_ID_MAP = new ConcurrentHashMap<>();
+	private static final Map<Class<?>, Field> CLASS_PK_FIELD_MAP = new ConcurrentHashMap<>();
+	private static final Map<Class<?>, Field> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
 
 
 	public CacheableDao() {
@@ -37,6 +40,11 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 		}
 	}
 
+	public void deleteByIdFromCache(PK id) {
+		String key = getPkCacheKeyPre() + id;
+		deleteByCacheKey(key);
+	}
+
 	@Override
 	public T get(PK id, Object shardingVal) {
 		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
@@ -54,8 +62,8 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 		}
 	}
 
-	public void deleteByIdFromCache(PK id) {
-		String key = getPkCacheKeyPre() + id;
+	public void deleteByIdFromCache(PK id, Object shardingVal) {
+		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
 		deleteByCacheKey(key);
 	}
 
@@ -73,7 +81,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	protected abstract void deleteByCacheKey(String key);
 
 	private Field getPKField() {
-		Field f = CLASS_PK_FIELD_ID_MAP.get(clz);
+		Field f = CLASS_PK_FIELD_MAP.get(clz);
 
 		if (f == null) {
 			Field[] fields = clz.getDeclaredFields();
@@ -82,7 +90,24 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
 					f = field;
-					CLASS_PK_FIELD_ID_MAP.put(clz, field);
+					CLASS_PK_FIELD_MAP.put(clz, field);
+					break;
+				}
+			}
+		}
+		return f;
+	}
+	private Field getShardingField() {
+		Field f = CLASS_SHARDING_FIELD_MAP.get(clz);
+
+		if (f == null) {
+			Field[] fields = clz.getDeclaredFields();
+			for (Field field: fields) {
+				field.setAccessible(true);
+				Sharding sAnn = field.getAnnotation(Sharding.class);
+				if (sAnn != null) {
+					f = field;
+					CLASS_SHARDING_FIELD_MAP.put(clz, field);
 					break;
 				}
 			}
@@ -91,7 +116,13 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	private void handleChange(T t) {
-		deleteByIdFromCache(getId(t));
+		PK id = getId(t);
+		Object shardingVal = getShardingVal(t);
+		if (shardingVal == null) {
+			deleteByIdFromCache(id);
+		} else {
+			deleteByIdFromCache(id, shardingVal);
+		}
 		onchange(t);
 	}
 	@SuppressWarnings("unchecked")
@@ -110,6 +141,18 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 			throw new RuntimeException("数据异常");
 		}
 		return id;
+	}
+	private Object getShardingVal(T t) {
+		Object shardingVal = null;
+		Field field = getShardingField();
+		if (field != null) {
+			try {
+				shardingVal = field.get(t);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return shardingVal;
 	}
 
 	/**
