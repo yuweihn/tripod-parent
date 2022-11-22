@@ -32,6 +32,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	private Class<T> clz;
 	private SessionFactory sessionFactory;
 
+
 	@Resource
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -63,10 +64,12 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 
 	@Override
 	public T get(PK id, Object shardingVal) {
-		String tableName = this.getPhysicalTableName(clz, shardingVal);
-		FieldColumn pkCol = getPKFieldColumn();
-		String sql = "select * from " + tableName + " where " + pkCol.getColumnName() + " = ?";
-		return queryForObject(sql, new Object[] {id});
+		try {
+			beforeSharding(shardingVal);
+			return getSession().get(clz, id);
+		} finally {
+			afterSharding();
+		}
 	}
 
 	private FieldColumn getPKFieldColumn() {
