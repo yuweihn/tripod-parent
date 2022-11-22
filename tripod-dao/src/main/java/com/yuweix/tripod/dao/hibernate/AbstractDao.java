@@ -27,7 +27,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	private static final Map<Class<?>, FieldColumn> CLASS_PK_FIELD_MAP = new ConcurrentHashMap<>();
 	private static final Map<Class<?>, FieldColumn> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
 
-	private ThreadLocal<DynamicTableInterceptor> tableInterceptorThreadLocal = new ThreadLocal<>();
+	private final ThreadLocal<DynamicTableInterceptor> tableInterceptorThreadLocal = new ThreadLocal<>();
 
 	private Class<T> clz;
 	private SessionFactory sessionFactory;
@@ -135,25 +135,34 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 
 	@Override
 	public void save(final T entity) {
-		beforeSharding(entity);
-		getSession().save(entity);
-		afterSharding();
+		try {
+			beforeSharding(entity);
+			getSession().save(entity);
+		} finally {
+			afterSharding();
+		}
 	}
 
 	@Override
 	public void update(final T entity) {
-		beforeSharding(entity);
-		getSession().update(entity);
-		afterSharding();
+		try {
+			beforeSharding(entity);
+			getSession().update(entity);
+		} finally {
+			afterSharding();
+		}
 	}
 
 	@Override
 	public void deleteByKey(PK id) {
 		final T entity = get(id);
 		if (entity != null) {
-			beforeSharding(entity);
-			getSession().delete(entity);
-			afterSharding();
+			try {
+				beforeSharding(entity);
+				getSession().delete(entity);
+			} finally {
+				afterSharding();
+			}
 		}
 	}
 
@@ -161,9 +170,12 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	public void deleteByKey(PK id, Object shardingVal) {
 		final T entity = get(id, shardingVal);
 		if (entity != null) {
-			beforeSharding(entity);
-			getSession().delete(entity);
-			afterSharding();
+			try {
+				beforeSharding(entity);
+				getSession().delete(entity);
+			} finally {
+				afterSharding();
+			}
 		}
 	}
 
