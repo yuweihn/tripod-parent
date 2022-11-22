@@ -39,7 +39,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 
 	@Override
 	public T get(PK id, Object shardingVal) {
-		String key = getPkCacheKeyPre() + id + "." + shardingVal;
+		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
 		T t = getByCacheKey(key);
 		if (t != null) {
 			return t;
