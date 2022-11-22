@@ -182,7 +182,13 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	@Override
 	public int updateByPrimaryKey(T t) {
 		PK id = getId(t);
-		T t0 = getMapper().selectOneById(id, clz);
+		Object shardingVal = getShardingVal(t);
+		T t0 = null;
+		if (shardingVal == null) {
+			t0 = getMapper().selectOneById(id, clz);
+		} else {
+			t0 = getMapper().selectOneByIdSharding(id, shardingVal, clz);
+		}
 
 		int n = getMapper().updateByPrimaryKey(t);
 		if (t != null) {
@@ -197,7 +203,13 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	@Override
 	public int updateByPrimaryKeySelective(T t) {
 		PK id = getId(t);
-		T t0 = getMapper().selectOneById(id, clz);
+		Object shardingVal = getShardingVal(t);
+		T t0 = null;
+		if (shardingVal == null) {
+			t0 = getMapper().selectOneById(id, clz);
+		} else {
+			t0 = getMapper().selectOneByIdSharding(id, shardingVal, clz);
+		}
 
 		int n = getMapper().updateByPrimaryKeySelective(t);
 		if (t != null) {
