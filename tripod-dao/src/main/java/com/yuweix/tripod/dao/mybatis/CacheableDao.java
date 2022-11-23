@@ -1,8 +1,11 @@
 package com.yuweix.tripod.dao.mybatis;
 
 
+import com.yuweix.tripod.dao.PersistCache;
 import com.yuweix.tripod.dao.sharding.Sharding;
+import org.springframework.beans.factory.annotation.Qualifier;
 
+import javax.annotation.Resource;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -17,6 +20,10 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	private static final Map<Class<?>, Field> CLASS_PK_FIELD_MAP = new ConcurrentHashMap<>();
 	private static final Map<Class<?>, Field> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
 
+	@Resource
+	@Qualifier("persistCache")
+	protected PersistCache cache;
+
 
 	public CacheableDao() {
 
@@ -26,14 +33,14 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	@Override
 	public T get(PK id) {
 		String key = getPkCacheKeyPre() + id;
-		T t = getByCacheKey(key);
+		T t = cache.get(key);
 		if (t != null) {
 			return t;
 		}
 
 		t = getMapper().selectOneById(id, clz);
 		if (t != null) {
-			putByCacheKey(key, t);
+			cache.put(key, t);
 			return t;
 		} else {
 			return null;
@@ -42,20 +49,20 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 
 	public void deleteByIdFromCache(PK id) {
 		String key = getPkCacheKeyPre() + id;
-		deleteByCacheKey(key);
+		cache.remove(key);
 	}
 
 	@Override
 	public T get(PK id, Object shardingVal) {
 		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
-		T t = getByCacheKey(key);
+		T t = cache.get(key);
 		if (t != null) {
 			return t;
 		}
 
 		t = getMapper().selectOneByIdSharding(id, shardingVal, clz);
 		if (t != null) {
-			putByCacheKey(key, t);
+			cache.put(key, t);
 			return t;
 		} else {
 			return null;
@@ -64,7 +71,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 
 	public void deleteByIdFromCache(PK id, Object shardingVal) {
 		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
-		deleteByCacheKey(key);
+		cache.remove(key);
 	}
 
 	protected String getPkCacheKeyPre() {
@@ -75,10 +82,6 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	protected String getAppName() {
 		return null;
 	}
-
-	protected abstract T getByCacheKey(String key);
-	protected abstract void putByCacheKey(String key, T t);
-	protected abstract void deleteByCacheKey(String key);
 
 	private Field getPKField() {
 		Field f = CLASS_PK_FIELD_MAP.get(clz);
