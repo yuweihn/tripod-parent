@@ -3,8 +3,8 @@ package com.yuweix.tripod.dao.mybatis;
 
 import com.yuweix.tripod.dao.PersistCache;
 import com.yuweix.tripod.dao.sharding.Sharding;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -16,11 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author yuwei
  */
 public abstract class CacheableDao<T extends Serializable, PK extends Serializable> extends AbstractDao<T, PK> {
+	public static final long DEFAULT_CACHE_TIMEOUT = 3600;
 	private static final Map<Class<?>, Field> CLASS_PK_FIELD_MAP = new ConcurrentHashMap<>();
 	private static final Map<Class<?>, Field> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
 
-	@Resource
-	protected PersistCache persistCache;
+	@Autowired
+	protected PersistCache cache;
 
 
 	public CacheableDao() {
@@ -31,14 +32,14 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	@Override
 	public T get(PK id) {
 		String key = getPkCacheKeyPre() + id;
-		T t = persistCache.get(key);
+		T t = cache.get(key);
 		if (t != null) {
 			return t;
 		}
 
 		t = getMapper().selectOneById(id, clz);
 		if (t != null) {
-			persistCache.put(key, t);
+			cache.put(key, t, DEFAULT_CACHE_TIMEOUT);
 			return t;
 		} else {
 			return null;
@@ -47,20 +48,20 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 
 	public void deleteByIdFromCache(PK id) {
 		String key = getPkCacheKeyPre() + id;
-		persistCache.remove(key);
+		cache.remove(key);
 	}
 
 	@Override
 	public T get(PK id, Object shardingVal) {
 		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
-		T t = persistCache.get(key);
+		T t = cache.get(key);
 		if (t != null) {
 			return t;
 		}
 
 		t = getMapper().selectOneByIdSharding(id, shardingVal, clz);
 		if (t != null) {
-			persistCache.put(key, t);
+			cache.put(key, t, DEFAULT_CACHE_TIMEOUT);
 			return t;
 		} else {
 			return null;
@@ -69,7 +70,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 
 	public void deleteByIdFromCache(PK id, Object shardingVal) {
 		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
-		persistCache.remove(key);
+		cache.remove(key);
 	}
 
 	protected String getPkCacheKeyPre() {

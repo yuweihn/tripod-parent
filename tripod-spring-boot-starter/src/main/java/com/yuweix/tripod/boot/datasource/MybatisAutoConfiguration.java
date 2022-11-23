@@ -29,11 +29,10 @@ public class MybatisAutoConfiguration {
 	@ConditionalOnMissingBean(name = "persistCache")
 	@DependsOn("redisCache")
 	@Bean(name = "persistCache")
-	public PersistCache persistCache(@Qualifier("redisCache") Cache cache
-			, @Value("${tripod.dao.cache.timeout:3600}") long timeout) {
+	public PersistCache persistCache(@Qualifier("redisCache") Cache cache) {
 		return new PersistCache() {
 			@Override
-			public <T> boolean put(String key, T t) {
+			public <T> boolean put(String key, T t, long timeout) {
 				return cache.put(key, t, timeout);
 			}
 			@Override
