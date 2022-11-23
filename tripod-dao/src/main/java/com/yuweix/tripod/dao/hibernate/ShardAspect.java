@@ -17,7 +17,7 @@ import java.lang.reflect.Parameter;
  */
 @Aspect
 public class ShardAspect {
-    @Pointcut("@annotation(com.yuweix.tripod.dao.hibernate.Shard)")
+    @Pointcut("@annotation(com.yuweix.tripod.dao.hibernate.HbShard)")
     public void pointcut() {
 
     }
@@ -27,7 +27,7 @@ public class ShardAspect {
         Signature signature = joinPoint.getSignature();
         MethodSignature methodSignature = (MethodSignature) signature;
         Method method = methodSignature.getMethod();
-        Shard annoShard = method.getAnnotation(Shard.class);
+        HbShard annoShard = method.getAnnotation(HbShard.class);
 
         Object target = joinPoint.getTarget();
         if (!(target instanceof AbstractDao)) {
