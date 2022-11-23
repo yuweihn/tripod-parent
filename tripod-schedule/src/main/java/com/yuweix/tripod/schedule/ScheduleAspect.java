@@ -14,11 +14,11 @@ import org.aspectj.lang.annotation.Pointcut;
 @Aspect
 public class ScheduleAspect {
     @Pointcut("@annotation(com.yuweix.tripod.schedule.Executable)")
-    public void pointcut() {
+    public void executable() {
 
     }
 
-    @Around("pointcut()")
+    @Around("executable()")
     public void around(ProceedingJoinPoint joinPoint) throws Throwable {
         Object target = joinPoint.getTarget();
         if (!(target instanceof AbstractTask)) {
