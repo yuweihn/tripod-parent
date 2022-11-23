@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Import;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "tripod.boot.schedule.enabled")
+@ConditionalOnProperty(name = "tripod.boot.schedule.enabled", matchIfMissing = true)
 @Import({ScheduleConf.class})
 public class ScheduleAutoConfiguration {
 
