@@ -2,7 +2,6 @@ package com.yuweix.tripod.dao.hibernate;
 
 
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -24,9 +23,7 @@ public class ShardAspect {
 
     @Around("pointcut()")
     public void around(ProceedingJoinPoint joinPoint) throws Throwable {
-        Signature signature = joinPoint.getSignature();
-        MethodSignature methodSignature = (MethodSignature) signature;
-        Method method = methodSignature.getMethod();
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         HbShard annoShard = method.getAnnotation(HbShard.class);
 
         Object target = joinPoint.getTarget();
