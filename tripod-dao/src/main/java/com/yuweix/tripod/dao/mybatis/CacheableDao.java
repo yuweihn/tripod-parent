@@ -3,7 +3,6 @@ package com.yuweix.tripod.dao.mybatis;
 
 import com.yuweix.tripod.dao.PersistCache;
 import com.yuweix.tripod.dao.sharding.Sharding;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.Resource;
 import javax.persistence.Id;
@@ -21,8 +20,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	private static final Map<Class<?>, Field> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
 
 	@Resource
-	@Qualifier("persistCache")
-	protected PersistCache cache;
+	protected PersistCache persistCache;
 
 
 	public CacheableDao() {
@@ -33,14 +31,14 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	@Override
 	public T get(PK id) {
 		String key = getPkCacheKeyPre() + id;
-		T t = cache.get(key);
+		T t = persistCache.get(key);
 		if (t != null) {
 			return t;
 		}
 
 		t = getMapper().selectOneById(id, clz);
 		if (t != null) {
-			cache.put(key, t);
+			persistCache.put(key, t);
 			return t;
 		} else {
 			return null;
@@ -49,20 +47,20 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 
 	public void deleteByIdFromCache(PK id) {
 		String key = getPkCacheKeyPre() + id;
-		cache.remove(key);
+		persistCache.remove(key);
 	}
 
 	@Override
 	public T get(PK id, Object shardingVal) {
 		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
-		T t = cache.get(key);
+		T t = persistCache.get(key);
 		if (t != null) {
 			return t;
 		}
 
 		t = getMapper().selectOneByIdSharding(id, shardingVal, clz);
 		if (t != null) {
-			cache.put(key, t);
+			persistCache.put(key, t);
 			return t;
 		} else {
 			return null;
@@ -71,7 +69,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 
 	public void deleteByIdFromCache(PK id, Object shardingVal) {
 		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
-		cache.remove(key);
+		persistCache.remove(key);
 	}
 
 	protected String getPkCacheKeyPre() {
