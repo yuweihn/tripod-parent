@@ -24,8 +24,8 @@ import java.sql.SQLException;
 @Import({HibernateConf.class, SequenceConf.class})
 public class HibernateAutoConfiguration {
 	@ConditionalOnMissingBean(ShardAspect.class)
-	@Bean(name = "shardAspect")
-	public ShardAspect shardAspect() {
+	@Bean(name = "hbShardAspect")
+	public ShardAspect hbShardAspect() {
 		return new ShardAspect();
 	}
 
