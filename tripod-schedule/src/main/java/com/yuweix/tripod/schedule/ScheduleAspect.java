@@ -13,7 +13,7 @@ import org.aspectj.lang.annotation.Pointcut;
  */
 @Aspect
 public class ScheduleAspect {
-    @Pointcut("@annotation(com.yuweix.tripod.schedule.Schedule)")
+    @Pointcut("@annotation(com.yuweix.tripod.schedule.Executable)")
     public void pointcut() {
 
     }
