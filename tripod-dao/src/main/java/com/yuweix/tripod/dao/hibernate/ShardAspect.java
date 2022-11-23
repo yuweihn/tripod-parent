@@ -29,7 +29,7 @@ public class ShardAspect {
             return;
         }
 
-        Object shardingVal = getShardingVal(joinPoint);
+        Object shardingVal = parseShardingVal(joinPoint);
         AbstractDao<?, ?> dao = (AbstractDao<?, ?>) target;
         try {
             dao.beforeSharding(shardingVal);
@@ -39,7 +39,7 @@ public class ShardAspect {
         }
     }
 
-    private Object getShardingVal(ProceedingJoinPoint joinPoint) {
+    private Object parseShardingVal(ProceedingJoinPoint joinPoint) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         HbShard annoShard = method.getAnnotation(HbShard.class);
 
