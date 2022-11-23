@@ -15,8 +15,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface Shard {
     /**
-     * 第几个参数为分片字段的值
+     * 分片参数名称，默认第一个参数
      * @return
      */
-    int value() default 0;
+    String value() default "";
 }

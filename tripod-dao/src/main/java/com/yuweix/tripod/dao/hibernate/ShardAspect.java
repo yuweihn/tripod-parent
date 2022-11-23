@@ -35,7 +35,26 @@ public class ShardAspect {
             return;
         }
 
-        int idx = annoShard.value();
+        int idx = -1;
+        String shardParamName = annoShard.value();
+        if (shardParamName == null || "".equals(shardParamName)) {
+            idx = 0;
+        } else {
+            Parameter[] params = method.getParameters();
+            if (params == null || params.length <= 0) {
+                throw new RuntimeException("Sharding parameter is required.");
+            }
+            for (int i = 0; i < params.length; i++) {
+                if (shardParamName.equals(params[i].getName())) {
+                    idx = i;
+                    break;
+                }
+            }
+            if (idx < 0 || idx > params.length - 1) {
+                throw new RuntimeException("Sharding parameter is required.");
+            }
+        }
+
         final Object[] args = joinPoint.getArgs();
         if (args == null || args.length <= 0) {
             throw new RuntimeException("Sharding parameter is required.");
