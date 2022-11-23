@@ -121,8 +121,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		return shardingVal;
 	}
 
-	protected void beforeSharding(T entity) {
-		Object shardingVal = getShardingVal(entity);
+	protected void beforeSharding(T t) {
+		Object shardingVal = getShardingVal(t);
 		beforeSharding(shardingVal);
 	}
 	protected void beforeSharding(Object shardingVal) {
@@ -138,20 +138,20 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public void save(final T entity) {
+	public void save(final T t) {
 		try {
-			beforeSharding(entity);
-			getSession().save(entity);
+			beforeSharding(t);
+			getSession().save(t);
 		} finally {
 			afterSharding();
 		}
 	}
 
 	@Override
-	public void update(final T entity) {
+	public void update(final T t) {
 		try {
-			beforeSharding(entity);
-			getSession().update(entity);
+			beforeSharding(t);
+			getSession().update(t);
 		} finally {
 			afterSharding();
 		}
@@ -159,11 +159,11 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 
 	@Override
 	public void deleteByKey(PK id) {
-		final T entity = get(id);
-		if (entity != null) {
+		final T t = get(id);
+		if (t != null) {
 			try {
-				beforeSharding(entity);
-				getSession().delete(entity);
+				beforeSharding(t);
+				getSession().delete(t);
 			} finally {
 				afterSharding();
 			}
@@ -172,11 +172,11 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 
 	@Override
 	public void deleteByKey(PK id, Object shardingVal) {
-		final T entity = get(id, shardingVal);
-		if (entity != null) {
+		final T t = get(id, shardingVal);
+		if (t != null) {
 			try {
-				beforeSharding(entity);
-				getSession().delete(entity);
+				beforeSharding(t);
+				getSession().delete(t);
 			} finally {
 				afterSharding();
 			}
@@ -359,7 +359,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		return execute(sql, (Object[]) null);
 	}
 	
-	public void delete(final T entity) {
-		getSession().delete(entity);
+	public void delete(final T t) {
+		getSession().delete(t);
 	}
 }
