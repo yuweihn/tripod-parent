@@ -20,7 +20,6 @@ import java.util.Properties;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 public class HibernateConf {
-
 	@ConditionalOnMissingBean(name = "mappingLocations")
 	@Bean(name = "mappingLocations")
 	public Resource[] mappingLocations() {

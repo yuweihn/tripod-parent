@@ -2,6 +2,7 @@ package com.yuweix.tripod.boot.datasource;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.yuweix.tripod.dao.hibernate.ShardAspect;
 import com.yuweix.tripod.data.springboot.HibernateConf;
 import com.yuweix.tripod.sequence.springboot.SequenceConf;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,12 @@ import java.sql.SQLException;
 @ConditionalOnProperty(name = "tripod.boot.hibernate.enabled")
 @Import({HibernateConf.class, SequenceConf.class})
 public class HibernateAutoConfiguration {
+	@ConditionalOnMissingBean(ShardAspect.class)
+	@Bean(name = "shardAspect")
+	public ShardAspect shardAspect() {
+		return new ShardAspect();
+	}
+
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
 	public DataSource druidDataSourceMaster(@Value("${tripod.jdbc.driver.class}") String driverClassName
