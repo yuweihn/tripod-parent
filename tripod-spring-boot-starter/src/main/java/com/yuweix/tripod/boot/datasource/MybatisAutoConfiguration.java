@@ -6,13 +6,11 @@ import com.yuweix.tripod.dao.PersistCache;
 import com.yuweix.tripod.data.cache.Cache;
 import com.yuweix.tripod.data.springboot.MybatisConf;
 import com.yuweix.tripod.sequence.springboot.SequenceConf;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Import;
 
 import javax.sql.DataSource;
@@ -26,10 +24,9 @@ import java.sql.SQLException;
 @ConditionalOnProperty(name = "tripod.boot.mybatis.enabled")
 @Import({MybatisConf.class, SequenceConf.class})
 public class MybatisAutoConfiguration {
-	@ConditionalOnMissingBean(name = "persistCache")
-	@DependsOn("redisCache")
+	@ConditionalOnMissingBean(PersistCache.class)
 	@Bean(name = "persistCache")
-	public PersistCache persistCache(@Qualifier("redisCache") Cache cache) {
+	public PersistCache persistCache(Cache cache) {
 		return new PersistCache() {
 			@Override
 			public <T> boolean put(String key, T t, long timeout) {
