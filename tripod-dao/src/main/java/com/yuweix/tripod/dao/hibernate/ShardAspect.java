@@ -23,14 +23,25 @@ public class ShardAspect {
 
     @Around("pointcut()")
     public void around(ProceedingJoinPoint joinPoint) throws Throwable {
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        HbShard annoShard = method.getAnnotation(HbShard.class);
-
         Object target = joinPoint.getTarget();
         if (!(target instanceof AbstractDao)) {
             joinPoint.proceed();
             return;
         }
+
+        Object shardingVal = getShardingVal(joinPoint);
+        AbstractDao<?, ?> dao = (AbstractDao<?, ?>) target;
+        try {
+            dao.beforeSharding(shardingVal);
+            joinPoint.proceed();
+        } finally {
+            dao.afterSharding();
+        }
+    }
+
+    private Object getShardingVal(ProceedingJoinPoint joinPoint) {
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        HbShard annoShard = method.getAnnotation(HbShard.class);
 
         int idx = -1;
         String shardParamName = annoShard.value();
@@ -56,14 +67,6 @@ public class ShardAspect {
         if (args == null || args.length <= 0) {
             throw new RuntimeException("Sharding parameter is required.");
         }
-        Object shardingVal = args[idx];
-
-        AbstractDao<?, ?> dao = (AbstractDao<?, ?>) target;
-        try {
-            dao.beforeSharding(shardingVal);
-            joinPoint.proceed();
-        } finally {
-            dao.afterSharding();
-        }
+        return args[idx];
     }
 }
