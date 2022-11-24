@@ -27,6 +27,6 @@ public class ScheduleAspect {
         }
 
         AbstractTask task = (AbstractTask) target;
-        task.doExecute();
+        task.start();
     }
 }

@@ -46,10 +46,10 @@ public abstract class AbstractTask {
 	}
 
 	public void execute() {
-		this.doExecute();
+		this.start();
 	}
 
-	public final void doExecute() {
+	public final void start() {
 		long startTime = System.currentTimeMillis();
 		Elector elector = getLeaderElector();
 		if (elector == null) {
