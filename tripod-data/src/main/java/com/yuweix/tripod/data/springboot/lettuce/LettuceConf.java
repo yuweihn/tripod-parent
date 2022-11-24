@@ -30,13 +30,13 @@ import java.time.Duration;
  */
 public class LettuceConf {
 	@Bean(name = "lettuceClientConfiguration")
-	public LettuceClientConfiguration clientConfiguration(@Value("${tripod.redis.pool.maxTotal:20}") int maxTotal
-			, @Value("${tripod.redis.pool.maxIdle:10}") int maxIdle
-			, @Value("${tripod.redis.pool.minIdle:10}") int minIdle
-			, @Value("${tripod.redis.pool.maxWaitMillis:10000}") long maxWaitMillis
-			, @Value("${tripod.redis.pool.timeBetweenEvictionRunsMillis:-1}") long timeBetweenEvictionRunsMillis
-			, @Value("${tripod.redis.pool.testOnBorrow:false}") boolean testOnBorrow
-			, @Value("${tripod.redis.timeoutMillis:5000}") long timeoutMillis) {
+	public LettuceClientConfiguration clientConfiguration(@Value("${tripod.redis.pool.max-total:20}") int maxTotal
+			, @Value("${tripod.redis.pool.max-idle:10}") int maxIdle
+			, @Value("${tripod.redis.pool.min-idle:10}") int minIdle
+			, @Value("${tripod.redis.pool.max-wait-millis:10000}") long maxWaitMillis
+			, @Value("${tripod.redis.pool.time-between-eviction-runs-millis:-1}") long timeBetweenEvictionRunsMillis
+			, @Value("${tripod.redis.pool.test-on-borrow:false}") boolean testOnBorrow
+			, @Value("${tripod.redis.timeout-millis:5000}") long timeoutMillis) {
 		GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
 		poolConfig.setMaxTotal(maxTotal);
 		poolConfig.setMaxIdle(maxIdle);
@@ -54,8 +54,8 @@ public class LettuceConf {
 	@Bean(name = "redisStandaloneConfiguration")
 	public RedisStandaloneConfiguration redisStandaloneConfiguration(@Value("${tripod.redis.host:}") String host
 			, @Value("${tripod.redis.port:0}") int port
-			, @Value("${tripod.redis.dbIndex:0}") int dbIndex
-			, @Value("${tripod.redis.needPassword:false}") boolean needPassword
+			, @Value("${tripod.redis.db-index:0}") int dbIndex
+			, @Value("${tripod.redis.need-password:false}") boolean needPassword
 			, @Value("${tripod.redis.password:}") String password) {
 		RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration();
 		conf.setHostName(host);

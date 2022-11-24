@@ -25,13 +25,13 @@ public class SequenceConf {
 	@ConditionalOnMissingBean(SequenceDao.class)
 	@Bean(name = "sequenceDao")
 	public SequenceDao sequenceDao(@Qualifier("dataSource") DataSource dataSource
-			, @Value("${tripod.sequence.setting.innerStep:100}") int innerStep
-			, @Value("${tripod.sequence.setting.retryTimes:5}") int retryTimes
-			, @Value("${tripod.sequence.setting.segmentCount:1}") int segmentCount
-			, @Value("${tripod.sequence.setting.maxSkipCount:5}") int maxSkipCount
-			, @Value("${tripod.sequence.setting.maxWaitMillis:5000}") long maxWaitMillis
-			, @Value("${tripod.sequence.setting.ruleClassName:}") String ruleClassName
-			, @Value("${tripod.sequence.setting.tableName:sequence}") String tableName) {
+			, @Value("${tripod.sequence.setting.inner-step:100}") int innerStep
+			, @Value("${tripod.sequence.setting.retry-times:5}") int retryTimes
+			, @Value("${tripod.sequence.setting.segment-count:1}") int segmentCount
+			, @Value("${tripod.sequence.setting.max-skip-count:5}") int maxSkipCount
+			, @Value("${tripod.sequence.setting.max-wait-millis:5000}") long maxWaitMillis
+			, @Value("${tripod.sequence.setting.rule-class-name:}") String ruleClassName
+			, @Value("${tripod.sequence.setting.table-name:sequence}") String tableName) {
 		SegmentSequenceDao sequenceDao = new SegmentSequenceDao();
 		sequenceDao.setDataSource(dataSource);
 		sequenceDao.setInnerStep(innerStep);
@@ -60,7 +60,7 @@ public class SequenceConf {
 	@ConditionalOnMissingBean(SequenceBeanFactory.class)
 	@Bean(name = "sequenceBeanFactory")
 	public SequenceBeanFactory sequenceBeanFactory(Environment env) {
-		String clzName = env.getProperty("tripod.sequence.className");
+		String clzName = env.getProperty("tripod.sequence.class-name");
 		if (clzName != null && !"".equals(clzName)) {
 			return new SequenceBeanFactory(clzName);
 		} else {

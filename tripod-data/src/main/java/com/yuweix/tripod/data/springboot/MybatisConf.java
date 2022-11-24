@@ -29,7 +29,7 @@ import java.io.IOException;
 public class MybatisConf {
 	@ConditionalOnMissingBean(name = "mapperLocations")
 	@Bean(name = "mapperLocations")
-	public Resource[] mapperLocations(@Value("${tripod.mybatis.mapper.locationPattern:}") String locationPattern) throws IOException {
+	public Resource[] mapperLocations(@Value("${tripod.mybatis.mapper.location-pattern:}") String locationPattern) throws IOException {
 		if (locationPattern == null || "".equals(locationPattern)) {
 			return new Resource[0];
 		}
@@ -40,7 +40,7 @@ public class MybatisConf {
 	@ConditionalOnMissingBean(name = "basePackage")
 	@Bean(name = "basePackage")
 	public String basePackage(Environment env) {
-		return env.getProperty("tripod.mybatis.basePackage");
+		return env.getProperty("tripod.mybatis.base-package");
 	}
 
 	@ConditionalOnMissingBean(name = "sqlSessionFactory")

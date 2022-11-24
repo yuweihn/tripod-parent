@@ -21,9 +21,9 @@ public class ActiveMqConf {
 	 * 真正可以产生Connection的ConnectionFactory，由对应的 JMS服务厂商提供
 	 */
 	@Bean(name = "targetConnectionFactory")
-	public ActiveMQConnectionFactory activeMQConnectionFactory(@Value("${mq.broker.url}") String brokerUrl
-					, @Value("${mq.user.name}") String userName
-					, @Value("${mq.password}") String password) {
+	public ActiveMQConnectionFactory activeMQConnectionFactory(@Value("${tripod.mq.broker.url}") String brokerUrl
+					, @Value("${tripod.mq.user-name}") String userName
+					, @Value("${tripod.mq.password}") String password) {
 		ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
 		activeMQConnectionFactory.setBrokerURL(brokerUrl);
 		activeMQConnectionFactory.setUserName(userName);
@@ -38,7 +38,7 @@ public class ActiveMqConf {
 	 */
 	@Bean(name = "pooledConnectionFactory")
 	public PooledConnectionFactory pooledConnectionFactory(@Qualifier("targetConnectionFactory") Object targetConnectionFactory
-					, @Value("${mq.pool.max.connections}") int maxConnections) {
+					, @Value("${tripod.mq.pool.max.connections}") int maxConnections) {
 		PooledConnectionFactory pooledConnectionFactory = new PooledConnectionFactory();
 		pooledConnectionFactory.setConnectionFactory(targetConnectionFactory);
 		pooledConnectionFactory.setMaxConnections(maxConnections);
