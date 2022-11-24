@@ -4,6 +4,7 @@ package com.yuweix.tripod.boot.core;
 import com.yuweix.tripod.core.json.Fastjson;
 import com.yuweix.tripod.core.json.Json;
 import com.yuweix.tripod.core.json.JsonUtil;
+import com.yuweix.tripod.session.SessionAttribute;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,7 +24,7 @@ public class JsonAutoConfiguration {
 	@Bean
 	public Json json(@Value("${tripod.json.accept:}") String accepts) {
 		Json json = new Fastjson();
-		json.addAccept("com.yuweix.tripod.session.SessionAttribute");
+		json.addAccept(SessionAttribute.class.getName());
 		if (accepts != null && !"".equals(accepts.trim())) {
 			String[] arr = accepts.trim().split(",");
 			for (String accept: arr) {
