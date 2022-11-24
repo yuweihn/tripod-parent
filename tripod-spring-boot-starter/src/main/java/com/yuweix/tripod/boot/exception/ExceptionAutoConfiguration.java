@@ -37,7 +37,7 @@ public class ExceptionAutoConfiguration {
 	@Configuration
 	@ConditionalOnProperty(name = "tripod.boot.exception.handler.enabled", matchIfMissing = true)
 	protected static class ErrorControllerConfiguration {
-		@Value("${tripod.exception.errorCode:}")
+		@Value("${tripod.exception.error-code:}")
 		private String errorCode;
 
 		@Controller
