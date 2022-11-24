@@ -23,10 +23,8 @@ public class ScheduleAspect {
         Object target = joinPoint.getTarget();
         if (!(target instanceof AbstractTask)) {
             joinPoint.proceed();
-            return;
+        } else {
+            ((AbstractTask) target).start();
         }
-
-        AbstractTask task = (AbstractTask) target;
-        task.start();
     }
 }
