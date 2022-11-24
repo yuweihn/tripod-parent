@@ -21,7 +21,7 @@ import java.lang.reflect.Constructor;
 public class JsonAutoConfiguration {
 	@ConditionalOnMissingBean(Json.class)
 	@Bean
-	public Json json(@Value("${tripod.boot.json.accept:}") String accepts) {
+	public Json json(@Value("${tripod.json.accept:}") String accepts) {
 		Json json = new Fastjson();
 		json.addAccept("com.yuweix.tripod.session.SessionAttribute");
 		if (accepts != null && !"".equals(accepts.trim())) {
