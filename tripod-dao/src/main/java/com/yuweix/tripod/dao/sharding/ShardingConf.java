@@ -31,9 +31,10 @@ public class ShardingConf {
 
 	@Bean(name = "shardingContext")
 	public ShardingContext shardingContext(H shardingTableHolder) {
-		ShardingContext shardingContext = new ShardingContext();
 		Map<String, TableConfig> map = shardingTableHolder.getTables();
 		Context.initTableConf(map);
+
+		ShardingContext shardingContext = new ShardingContext();
 		shardingContext.initTableConf(map);
 		return shardingContext;
 	}
