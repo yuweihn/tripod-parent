@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.yuweix.tripod.dao.PersistContext;
 import com.yuweix.tripod.dao.sharding.Sharding;
+import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionBuilder;
 import org.hibernate.SessionFactory;
@@ -27,7 +28,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	private static final Map<Class<?>, FieldColumn> CLASS_PK_FIELD_MAP = new ConcurrentHashMap<>();
 	private static final Map<Class<?>, FieldColumn> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
 
-	private final ThreadLocal<DynamicTableInterceptor> tableInterceptorThreadLocal = new ThreadLocal<>();
+	private final ThreadLocal<Interceptor> interceptorThreadLocal = new ThreadLocal<>();
 
 	private Class<T> clz;
 	private SessionFactory sessionFactory;
@@ -39,10 +40,11 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	protected Session getSession() {
-		if (tableInterceptorThreadLocal.get() == null) {
+		Interceptor interceptor = interceptorThreadLocal.get();
+		if (interceptor == null) {
 			return this.sessionFactory.getCurrentSession();
 		} else {
-			SessionBuilder<?> builder = this.sessionFactory.withOptions().interceptor(tableInterceptorThreadLocal.get());
+			SessionBuilder<?> builder = this.sessionFactory.withOptions().interceptor(interceptor);
 			return builder.openSession();
 		}
 	}
@@ -131,10 +133,10 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		}
 		String srcTableName = this.getTableName(clz);
 		String destTableName = this.getPhysicalTableName(clz, shardingVal);
-		tableInterceptorThreadLocal.set(new DynamicTableInterceptor(srcTableName, destTableName));
+		interceptorThreadLocal.set(new DynamicTableInterceptor(srcTableName, destTableName));
 	}
 	protected void afterSharding() {
-		tableInterceptorThreadLocal.remove();
+		interceptorThreadLocal.remove();
 	}
 
 	@Override
