@@ -19,12 +19,13 @@ public class ScheduleAspect {
     }
 
     @Around("executable()")
-    public void around(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         Object target = joinPoint.getTarget();
         if (!(target instanceof AbstractTask)) {
-            joinPoint.proceed();
+            return joinPoint.proceed();
         } else {
             ((AbstractTask) target).start();
+            return null;
         }
     }
 }
