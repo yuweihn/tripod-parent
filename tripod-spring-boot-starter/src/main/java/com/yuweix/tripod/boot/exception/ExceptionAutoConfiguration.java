@@ -37,7 +37,7 @@ public class ExceptionAutoConfiguration {
 	@Configuration
 	@ConditionalOnProperty(name = "tripod.boot.exception.handler.enabled", matchIfMissing = true)
 	protected static class ErrorControllerConfiguration {
-		@Value("${tripod.boot.exception.errorCode:}")
+		@Value("${tripod.exception.errorCode:}")
 		private String errorCode;
 
 		@Controller
@@ -83,7 +83,7 @@ public class ExceptionAutoConfiguration {
 	}
 
 	@ConditionalOnMissingBean(ClassMessagePair.class)
-	@ConfigurationProperties(prefix = "tripod.boot.exception", ignoreUnknownFields = true)
+	@ConfigurationProperties(prefix = "tripod.exception", ignoreUnknownFields = true)
 	@Bean
 	public ClassMessagePair classMessagePair() {
 		return new ClassMessagePair() {
@@ -99,7 +99,7 @@ public class ExceptionAutoConfiguration {
 	@ConditionalOnMissingBean(ExceptionHandler.class)
 	@Bean
 	public ExceptionHandler exceptionHandler(ClassMessagePair classMessagePair, ExceptionViewResolver viewResolver
-			, @Value("${tripod.boot.exception.showExceptionName:false}") boolean showExceptionName) {
+			, @Value("${tripod.exception.show-name:false}") boolean showExceptionName) {
 		Map<Class<?>, String> errorMsgMap = new HashMap<>();
 
 		Map<String, String> classMessageMap = classMessagePair.getDefaultMessage();
@@ -113,10 +113,10 @@ public class ExceptionAutoConfiguration {
 			}
 		}
 
-		ExceptionHandler exceptionHandler = new ExceptionHandler();
-		exceptionHandler.setViewResolver(viewResolver);
-		exceptionHandler.setErrorMsgMap(errorMsgMap);
-		exceptionHandler.setShowExceptionName(showExceptionName);
-		return exceptionHandler;
+		ExceptionHandler handler = new ExceptionHandler();
+		handler.setViewResolver(viewResolver);
+		handler.setErrorMsgMap(errorMsgMap);
+		handler.setShowExceptionName(showExceptionName);
+		return handler;
 	}
 }
