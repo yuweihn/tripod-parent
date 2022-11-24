@@ -9,16 +9,16 @@ import java.util.Map;
  * @author yuwei
  */
 public class ShardingContext {
-	private static final Map<String, TableConfig> TABLE_CONF_MAP = new HashMap<>();
+	private final Map<String, TableConfig> TABLE_CONF_MAP = new HashMap<>();
 
-	static void initTableConf(Map<String, TableConfig> map) {
+	public void initTableConf(Map<String, TableConfig> map) {
 		TABLE_CONF_MAP.clear();
 		if (map != null) {
 			TABLE_CONF_MAP.putAll(map);
 		}
 	}
 
-	public static Map<String, TableConfig> getTableConfMap() {
+	public Map<String, TableConfig> getTableConfMap() {
 		return TABLE_CONF_MAP;
 	}
 }
