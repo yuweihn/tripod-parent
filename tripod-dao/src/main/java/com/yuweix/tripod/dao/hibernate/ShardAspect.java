@@ -22,18 +22,17 @@ public class ShardAspect {
     }
 
     @Around("pointcut()")
-    public void around(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         Object target = joinPoint.getTarget();
         if (!(target instanceof AbstractDao)) {
-            joinPoint.proceed();
-            return;
+            return joinPoint.proceed();
         }
 
         Object shardingVal = parseShardingVal(joinPoint);
         AbstractDao<?, ?> dao = (AbstractDao<?, ?>) target;
         try {
             dao.beforeSharding(shardingVal);
-            joinPoint.proceed();
+            return joinPoint.proceed();
         } finally {
             dao.afterSharding();
         }
