@@ -38,19 +38,27 @@ public class HibernateConf {
 	@Bean(name = "sessionFactory")
 	public LocalSessionFactoryBean localSessionFactoryBean(@Qualifier("dataSource") DataSource dataSource
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
-			, @Qualifier("packagesToScan") String[] packagesToScan) {
+			, @Qualifier("packagesToScan") String[] packagesToScan
+			, @Value("${tripod.hibernate.dialect:org.hibernate.dialect.MySQLDialect}") String dialect
+			, @Value("${tripod.hibernate.current-session-context-class:org.springframework.orm.hibernate5.SpringSessionContext}") String sessionContext
+			, @Value("${tripod.hibernate.cache.region.factory-class:org.hibernate.cache.ehcache.EhCacheRegionFactory}") String cacheRegionFactory
+			, @Value("${tripod.hibernate.cache.use-query-cache:true}") String useQueryCache
+			, @Value("${tripod.hibernate.cache.use-second-level-cache:false}") String useSecondLevelCache
+			, @Value("${tripod.hibernate.show-sql:false}") String showSql
+			, @Value("${tripod.hibernate.jdbc.batch-size:20}") String batchSize
+			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode) {
 		LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource);
 
 		Properties properties = new Properties();
-		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-		properties.setProperty("hibernate.current_session_context_class", "org.springframework.orm.hibernate5.SpringSessionContext");
-		properties.setProperty("hibernate.cache.region.factory_class", "org.hibernate.cache.ehcache.EhCacheRegionFactory");
-		properties.setProperty("hibernate.cache.use_query_cache", "true");
-		properties.setProperty("hibernate.cache.use_second_level_cache", "false");
-		properties.setProperty("hibernate.show_sql", "false");
-		properties.setProperty("hibernate.jdbc.batch_size", "20");
-		properties.setProperty("hibernate.connection.release_mode", "auto");
+		properties.setProperty("hibernate.dialect", dialect);
+		properties.setProperty("hibernate.current_session_context_class", sessionContext);
+		properties.setProperty("hibernate.cache.region.factory_class", cacheRegionFactory);
+		properties.setProperty("hibernate.cache.use_query_cache", useQueryCache);
+		properties.setProperty("hibernate.cache.use_second_level_cache", useSecondLevelCache);
+		properties.setProperty("hibernate.show_sql", showSql);
+		properties.setProperty("hibernate.jdbc.batch_size", batchSize);
+		properties.setProperty("hibernate.connection.release_mode", releaseMode);
 		sessionFactoryBean.setHibernateProperties(properties);
 		sessionFactoryBean.setMappingLocations(mappingLocations);
 		sessionFactoryBean.setPackagesToScan(packagesToScan);
