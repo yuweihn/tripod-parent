@@ -16,7 +16,7 @@ import org.springframework.util.CollectionUtils;
  * @author yuwei
  */
 public class CacheHttpSession implements HttpSession {
-	private String id;
+	private final String id;
 	/**
 	 * session是否已失效
 	 */
