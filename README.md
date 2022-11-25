@@ -1,4 +1,4 @@
 # Tripod
-支持SpringBoot2.*以上
+支持SpringBoot3.*以上
 <br/>
-jdk1.8+
+jdk17+
