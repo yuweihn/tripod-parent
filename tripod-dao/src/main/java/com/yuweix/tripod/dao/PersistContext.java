@@ -279,7 +279,7 @@ public abstract class PersistContext {
 		Strategy strategy = map.get(strategyClz);
 		if (strategy == null) {
 			try {
-				strategy = strategyClz.newInstance();
+				strategy = strategyClz.getDeclaredConstructor().newInstance();
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

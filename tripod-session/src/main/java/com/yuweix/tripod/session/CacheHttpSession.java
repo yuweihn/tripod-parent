@@ -2,9 +2,8 @@ package com.yuweix.tripod.session;
 
 
 import java.util.*;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 
 import com.yuweix.tripod.core.json.Json;
 import com.yuweix.tripod.session.cache.SessionCache;
@@ -16,7 +15,6 @@ import org.springframework.util.CollectionUtils;
  * 一个HttpSession的实现，实际的属性会储存在指定的缓存实现中。
  * @author yuwei
  */
-@SuppressWarnings("deprecation")
 public class CacheHttpSession implements HttpSession {
 	private String id;
 	/**
@@ -297,30 +295,5 @@ public class CacheHttpSession implements HttpSession {
 	@Override
 	public ServletContext getServletContext() {
 		return null;
-	}
-
-	@Override
-	public HttpSessionContext getSessionContext() {
-		return null;
-	}
-
-	@Override
-	public Object getValue(String name) {
-		return null;
-	}
-
-	@Override
-	public String[] getValueNames() {
-		return null;
-	}
-
-	@Override
-	public void putValue(String name, Object value) {
-
-	}
-
-	@Override
-	public void removeValue(String name) {
-
 	}
 }

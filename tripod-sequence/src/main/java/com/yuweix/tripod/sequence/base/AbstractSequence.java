@@ -3,9 +3,9 @@ package com.yuweix.tripod.sequence.base;
 
 import com.yuweix.tripod.sequence.bean.SequenceHolder;
 import com.yuweix.tripod.sequence.dao.SequenceDao;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 

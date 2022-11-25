@@ -1,7 +1,7 @@
 package com.yuweix.tripod.session.conf;
 
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 

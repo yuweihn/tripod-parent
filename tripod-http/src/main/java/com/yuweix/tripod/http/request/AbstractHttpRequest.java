@@ -2,7 +2,7 @@ package com.yuweix.tripod.http.request;
 
 
 import java.util.List;
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import com.alibaba.fastjson2.TypeReference;
 import com.yuweix.tripod.http.CallbackResponseHandler;

@@ -2,14 +2,13 @@ package com.yuweix.tripod.core.mq.activemq.listener;
 
 
 import com.yuweix.tripod.core.mq.activemq.message.IReceiver;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.jms.listener.SessionAwareMessageListener;
-
-import javax.jms.Message;
-import javax.jms.Session;
 
 
 /**

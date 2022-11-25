@@ -61,7 +61,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 				if (!IRule.class.isAssignableFrom(ruleClass)) {
 					throw new SequenceException("[ruleClassName] must be a subclass of [" + IRule.class.getName() + "], but now it is [" + ruleClassName + "].");
 				}
-				rule = (IRule) ruleClass.newInstance();
+				rule = (IRule) ruleClass.getDeclaredConstructor().newInstance();
 				rule.setSegmentCount(segCount);
 			} catch (Exception e) {
 				throw new SequenceException(e);

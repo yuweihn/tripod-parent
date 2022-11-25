@@ -1,12 +1,11 @@
 package com.yuweix.tripod.core.mq.activemq.message;
 
 
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
 
 
 /**
@@ -23,6 +22,7 @@ public class TextSender implements ISender {
 
 	public void send(String channel, final String message) {
 		jmsTemplate.send(channel, new MessageCreator() {
+			@Override
 			public Message createMessage(Session session) throws JMSException {
 				return session.createTextMessage(message);
 			}

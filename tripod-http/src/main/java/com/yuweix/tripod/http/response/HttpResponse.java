@@ -2,7 +2,7 @@ package com.yuweix.tripod.http.response;
 
 
 import org.apache.http.Header;
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.util.List;
 
 

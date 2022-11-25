@@ -11,12 +11,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.yuweix.tripod.dao.PersistContext;
 import com.yuweix.tripod.dao.sharding.Sharding;
+import jakarta.annotation.Resource;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionBuilder;
 import org.hibernate.SessionFactory;
 
-import javax.annotation.Resource;
 import javax.persistence.Column;
 import javax.persistence.Id;
 

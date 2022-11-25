@@ -1,9 +1,10 @@
 package com.yuweix.tripod.core.mq.activemq.listener;
 
 
+import jakarta.annotation.Resource;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
-import javax.annotation.Resource;
-import javax.jms.ConnectionFactory;
+
+import jakarta.jms.ConnectionFactory;
 
 
 /**

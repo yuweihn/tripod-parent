@@ -2,8 +2,8 @@ package com.yuweix.tripod.session.filter;
 
 
 import java.util.UUID;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import com.yuweix.tripod.session.CookiesUtil;
 import com.yuweix.tripod.session.SessionConstant;
 import com.yuweix.tripod.session.cache.SessionCache;

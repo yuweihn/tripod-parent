@@ -2,7 +2,7 @@ package com.yuweix.tripod.web;
 
 
 import java.util.Locale;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.yuweix.tripod.core.ActionUtil;
 import com.yuweix.tripod.core.Constant;

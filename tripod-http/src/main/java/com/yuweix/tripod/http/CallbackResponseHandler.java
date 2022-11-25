@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 
 import com.alibaba.fastjson2.TypeReference;
 import com.yuweix.tripod.core.json.JsonUtil;
