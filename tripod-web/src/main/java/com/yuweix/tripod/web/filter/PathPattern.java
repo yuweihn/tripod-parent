@@ -16,15 +16,15 @@ public class PathPattern {
 	/**
 	 * 精确匹配
 	 */
-	private final List<String> exactMatches = new ArrayList<String>();
+	private final List<String> exactMatches = new ArrayList<>();
 	/**
 	 * 前置匹配
 	 */
-	private final List<String> startsWithMatches = new ArrayList<String>();
+	private final List<String> startsWithMatches = new ArrayList<>();
 	/**
 	 * 后缀匹配
 	 */
-	private final List<String> endsWithMatches = new ArrayList<String>();
+	private final List<String> endsWithMatches = new ArrayList<>();
 
 	public PathPattern(String... urlPatterns) {
 		for (String urlPattern : urlPatterns) {
