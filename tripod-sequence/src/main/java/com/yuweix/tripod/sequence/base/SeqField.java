@@ -12,6 +12,8 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AnnSequenceDao {
-
+public @interface SeqField {
+    boolean isDao() default false;
+    boolean isName() default false;
+    boolean isMinValue() default false;
 }

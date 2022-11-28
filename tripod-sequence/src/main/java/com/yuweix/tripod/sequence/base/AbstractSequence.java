@@ -17,11 +17,11 @@ public abstract class AbstractSequence implements Sequence {
 	protected final Lock lock = new ReentrantLock();
 	protected volatile SequenceHolder sequenceHolder;
 
-	@AnnSequenceDao
+	@SeqField(isDao = true)
 	protected SequenceDao sequenceDao;
-	@AnnSequenceName
+	@SeqField(isName = true)
 	protected String name;
-	@AnnSequenceMinValue
+	@SeqField(isMinValue = true)
 	protected long minValue;
 
 
