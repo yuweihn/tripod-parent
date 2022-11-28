@@ -11,12 +11,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.yuweix.tripod.dao.PersistContext;
 import com.yuweix.tripod.dao.sharding.Sharding;
-import org.hibernate.Interceptor;
+import javax.annotation.Resource;
 import org.hibernate.Session;
-import org.hibernate.SessionBuilder;
 import org.hibernate.SessionFactory;
 
-import javax.annotation.Resource;
 import javax.persistence.Column;
 import javax.persistence.Id;
 
@@ -28,8 +26,6 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	private static final Map<Class<?>, FieldColumn> CLASS_PK_FIELD_MAP = new ConcurrentHashMap<>();
 	private static final Map<Class<?>, FieldColumn> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
 
-	private final ThreadLocal<Interceptor> interceptorThreadLocal = new ThreadLocal<>();
-
 	private Class<T> clz;
 	private SessionFactory sessionFactory;
 
@@ -40,13 +36,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	protected Session getSession() {
-		Interceptor interceptor = interceptorThreadLocal.get();
-		if (interceptor == null) {
-			return this.sessionFactory.getCurrentSession();
-		} else {
-			SessionBuilder<?> builder = this.sessionFactory.withOptions().interceptor(interceptor);
-			return builder.openSession();
-		}
+		return this.sessionFactory.getCurrentSession();
 	}
 
 
@@ -133,10 +123,10 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		}
 		String srcTableName = this.getTableName(clz);
 		String destTableName = this.getPhysicalTableName(clz, shardingVal);
-		interceptorThreadLocal.set(new DynamicTableInterceptor(srcTableName, destTableName));
+		DynamicTableThreadLocal.set(srcTableName, destTableName);
 	}
 	protected void afterSharding() {
-		interceptorThreadLocal.remove();
+		DynamicTableThreadLocal.remove();
 	}
 
 	@Override
@@ -355,7 +345,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	protected int execute(String sql) {
 		return execute(sql, (Object[]) null);
 	}
-	
+
 	public void delete(final T t) {
 		getSession().delete(t);
 	}
