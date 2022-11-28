@@ -277,7 +277,7 @@ public abstract class MonitorUtil {
 			// 总的物理内存+虚拟内存
 			long totalVirtualMemory = osmxb.getTotalSwapSpaceSize();
 			// 剩余的物理内存
-			long freePhysicalMemorySize = osmxb.getFreePhysicalMemorySize();
+			long freePhysicalMemorySize = osmxb.getFreeMemorySize();
 			return new Memory(totalVirtualMemory, totalVirtualMemory - freePhysicalMemorySize);
 		} catch (Exception e) {
 			e.printStackTrace();

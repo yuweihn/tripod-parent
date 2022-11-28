@@ -102,7 +102,6 @@ public class CallbackResponseHandler<B> implements ResponseHandler<HttpResponse<
 				Date expiryDate = c.getExpiryDate();
 
 				Cookie cookie = new Cookie(c.getName(), c.getValue());
-				cookie.setComment(c.getComment());
 				cookie.setDomain(c.getDomain());
 				if (expiryDate == null) {
 					cookie.setMaxAge(-1);
@@ -111,7 +110,6 @@ public class CallbackResponseHandler<B> implements ResponseHandler<HttpResponse<
 				}
 				cookie.setPath(c.getPath());
 				cookie.setSecure(c.isSecure());
-				cookie.setVersion(c.getVersion());
 				cookieList.add(cookie);
 			}
 		}

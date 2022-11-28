@@ -25,6 +25,6 @@ public class MapCntCallback extends MapParamCallback {
 	public Object doInHibernate(Session session) throws HibernateException {
 		NativeQuery<Object> query = session.createNativeQuery(sql);
 		assembleParams(query, params);
-		return new Integer(query.uniqueResult().toString());
+		return Integer.parseInt(query.uniqueResult().toString());
 	}
 }

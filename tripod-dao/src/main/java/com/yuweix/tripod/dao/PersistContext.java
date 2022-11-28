@@ -248,7 +248,7 @@ public abstract class PersistContext {
 	}
 
 	protected Object getFieldValue(Field field, Object t) {
-		if (!field.isAccessible()) {
+		if (!field.canAccess(t)) {
 			field.setAccessible(true);
 		}
 		try {
