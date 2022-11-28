@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target({METHOD})
 @Retention(RUNTIME)
-public @interface HbShard {
+public @interface HibernateShard {
     /**
      * 分片参数名称，默认第一个参数
      * @return
