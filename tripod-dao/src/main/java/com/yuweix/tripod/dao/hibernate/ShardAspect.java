@@ -16,7 +16,7 @@ import java.lang.reflect.Parameter;
  */
 @Aspect
 public class ShardAspect {
-    @Pointcut("@annotation(com.yuweix.tripod.dao.hibernate.HbShard)")
+    @Pointcut("@annotation(com.yuweix.tripod.dao.hibernate.HibernateShard)")
     public void pointcut() {
 
     }
@@ -40,10 +40,10 @@ public class ShardAspect {
 
     private Object parseShardingVal(ProceedingJoinPoint joinPoint) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        HbShard annoShard = method.getAnnotation(HbShard.class);
+        HibernateShard hShard = method.getAnnotation(HibernateShard.class);
 
         int idx = -1;
-        String shardParamName = annoShard.value();
+        String shardParamName = hShard.value();
         if (shardParamName == null || "".equals(shardParamName)) {
             idx = 0;
         } else {
