@@ -4,7 +4,7 @@ package com.yuweix.tripod.boot.datasource;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.tripod.dao.PersistCache;
 import com.yuweix.tripod.data.cache.Cache;
-import com.yuweix.tripod.data.springboot.MybatisConf;
+import com.yuweix.tripod.dao.springboot.MybatisConf;
 import com.yuweix.tripod.sequence.springboot.SequenceConf;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

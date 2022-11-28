@@ -1,6 +1,7 @@
-package com.yuweix.tripod.data.springboot;
+package com.yuweix.tripod.dao.springboot;
 
 
+import com.yuweix.tripod.dao.hibernate.DynamicTableInterceptor;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,8 +48,8 @@ public class HibernateConf {
 			, @Value("${tripod.hibernate.show-sql:false}") String showSql
 			, @Value("${tripod.hibernate.jdbc.batch-size:20}") String batchSize
 			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode) {
-		LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-		sessionFactoryBean.setDataSource(dataSource);
+		LocalSessionFactoryBean bean = new LocalSessionFactoryBean();
+		bean.setDataSource(dataSource);
 
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect", dialect);
@@ -59,10 +60,11 @@ public class HibernateConf {
 		properties.setProperty("hibernate.show_sql", showSql);
 		properties.setProperty("hibernate.jdbc.batch_size", batchSize);
 		properties.setProperty("hibernate.connection.release_mode", releaseMode);
-		sessionFactoryBean.setHibernateProperties(properties);
-		sessionFactoryBean.setMappingLocations(mappingLocations);
-		sessionFactoryBean.setPackagesToScan(packagesToScan);
-		return sessionFactoryBean;
+		bean.setHibernateProperties(properties);
+		bean.setMappingLocations(mappingLocations);
+		bean.setPackagesToScan(packagesToScan);
+		bean.setEntityInterceptor(new DynamicTableInterceptor());
+		return bean;
 	}
 
 	@Bean(name = "transactionManager")
