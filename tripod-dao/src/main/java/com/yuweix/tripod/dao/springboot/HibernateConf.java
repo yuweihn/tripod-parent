@@ -2,6 +2,7 @@ package com.yuweix.tripod.dao.springboot;
 
 
 import com.yuweix.tripod.dao.hibernate.DynamicTableInterceptor;
+import com.yuweix.tripod.dao.hibernate.ShardAspect;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,5 +73,11 @@ public class HibernateConf {
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
 		transactionManager.setSessionFactory(sessionFactory);
 		return transactionManager;
+	}
+
+	@ConditionalOnMissingBean(ShardAspect.class)
+	@Bean(name = "hbShardAspect")
+	public ShardAspect hbShardAspect() {
+		return new ShardAspect();
 	}
 }
