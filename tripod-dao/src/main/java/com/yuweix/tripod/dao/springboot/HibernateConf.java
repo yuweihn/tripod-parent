@@ -1,4 +1,4 @@
-package com.yuweix.tripod.data.springboot;
+package com.yuweix.tripod.dao.springboot;
 
 
 import org.hibernate.SessionFactory;

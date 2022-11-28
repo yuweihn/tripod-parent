@@ -3,7 +3,7 @@ package com.yuweix.tripod.boot.datasource;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.tripod.dao.hibernate.ShardAspect;
-import com.yuweix.tripod.data.springboot.HibernateConf;
+import com.yuweix.tripod.dao.springboot.HibernateConf;
 import com.yuweix.tripod.sequence.springboot.SequenceConf;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
