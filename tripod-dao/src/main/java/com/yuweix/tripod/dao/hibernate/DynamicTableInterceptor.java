@@ -5,24 +5,18 @@ import org.hibernate.EmptyInterceptor;
 
 
 /**
- * 动态修改表名
+ * 动态修改表名拦截器
  * @author yuwei
  */
 public class DynamicTableInterceptor extends EmptyInterceptor {
-	private String srcName;
-	private String destName;
-
-
 	public DynamicTableInterceptor() {
 
-	}
-	public DynamicTableInterceptor(String srcName, String destName) {
-		this.srcName = srcName;
-		this.destName = destName;
 	}
 
 	@Override
 	public String onPrepareStatement(String sql) {
+		final String srcName = DynamicTableThreadLocal.getSrcName();
+		final String destName = DynamicTableThreadLocal.getDestName();
 		if (srcName == null || destName == null) {
 			return sql;
 		}
