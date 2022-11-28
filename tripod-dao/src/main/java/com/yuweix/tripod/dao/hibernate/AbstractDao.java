@@ -163,12 +163,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	public void deleteByKey(PK id) {
 		final T t = get(id);
 		if (t != null) {
-			try {
-				beforeSharding(t);
-				getSession().delete(t);
-			} finally {
-				afterSharding();
-			}
+			getSession().delete(t);
 		}
 	}
 
