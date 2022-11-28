@@ -182,7 +182,7 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	}
 
 	/**
-	 * 检查注解：{@link AnnSequenceDao}
+	 * 检查注解：{@link SeqField#isDao()}
 	 */
 	private Field checkSequenceDao(Class<? extends AbstractSequence> clz) {
 		List<Field> fields = FieldUtil.getAllFieldsList(clz);
@@ -190,15 +190,15 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 			throw new SequenceException("Field [sequenceDao] not Found.");
 		}
 		for (Field f: fields) {
-			AnnSequenceDao annSeqDao = f.getAnnotation(AnnSequenceDao.class);
-			if (annSeqDao != null) {
+			SeqField seqField = f.getAnnotation(SeqField.class);
+			if (seqField != null && seqField.isDao()) {
 				return f;
 			}
 		}
 		throw new SequenceException("Field [sequenceDao] not Found.");
 	}
 	/**
-	 * 检查注解：{@link AnnSequenceName}
+	 * 检查注解：{@link SeqField#isName()}
 	 */
 	private Field checkSequenceName(Class<? extends AbstractSequence> clz) {
 		List<Field> fields = FieldUtil.getAllFieldsList(clz);
@@ -206,15 +206,15 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 			throw new SequenceException("Field [name] not Found.");
 		}
 		for (Field f: fields) {
-			AnnSequenceName annSeqName = f.getAnnotation(AnnSequenceName.class);
-			if (annSeqName != null) {
+			SeqField seqField = f.getAnnotation(SeqField.class);
+			if (seqField != null && seqField.isName()) {
 				return f;
 			}
 		}
 		throw new SequenceException("Field [name] not Found.");
 	}
 	/**
-	 * 检查注解：{@link AnnSequenceMinValue}
+	 * 检查注解：{@link SeqField#isMinValue()}
 	 */
 	private Field checkSequenceMinValue(Class<? extends AbstractSequence> clz) {
 		List<Field> fields = FieldUtil.getAllFieldsList(clz);
@@ -222,8 +222,8 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 			throw new SequenceException("Field [minValue] not Found.");
 		}
 		for (Field f: fields) {
-			AnnSequenceMinValue annSeqMinVal = f.getAnnotation(AnnSequenceMinValue.class);
-			if (annSeqMinVal != null) {
+			SeqField seqField = f.getAnnotation(SeqField.class);
+			if (seqField != null && seqField.isMinValue()) {
 				return f;
 			}
 		}

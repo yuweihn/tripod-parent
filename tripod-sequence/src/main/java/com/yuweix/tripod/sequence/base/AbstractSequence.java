@@ -3,9 +3,9 @@ package com.yuweix.tripod.sequence.base;
 
 import com.yuweix.tripod.sequence.bean.SequenceHolder;
 import com.yuweix.tripod.sequence.dao.SequenceDao;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,11 +17,11 @@ public abstract class AbstractSequence implements Sequence {
 	protected final Lock lock = new ReentrantLock();
 	protected volatile SequenceHolder sequenceHolder;
 
-	@AnnSequenceDao
+	@SeqField(isDao = true)
 	protected SequenceDao sequenceDao;
-	@AnnSequenceName
+	@SeqField(isName = true)
 	protected String name;
-	@AnnSequenceMinValue
+	@SeqField(isMinValue = true)
 	protected long minValue;
 
 
