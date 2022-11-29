@@ -1,7 +1,7 @@
 package com.yuweix.tripod.boot.dao;
 
 
-import com.yuweix.tripod.dao.sharding.ShardingConf;
+import com.yuweix.tripod.dao.springboot.ShardingConf;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
