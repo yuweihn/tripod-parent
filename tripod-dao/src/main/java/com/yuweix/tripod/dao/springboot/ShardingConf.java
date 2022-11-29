@@ -1,6 +1,9 @@
-package com.yuweix.tripod.dao.sharding;
+package com.yuweix.tripod.dao.springboot;
 
 
+import com.yuweix.tripod.dao.sharding.ShardingContext;
+import com.yuweix.tripod.dao.sharding.TableConfig;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
@@ -29,12 +32,11 @@ public class ShardingConf {
 		};
 	}
 
+	@ConditionalOnMissingBean(ShardingContext.class)
 	@Bean(name = "shardingContext")
 	public ShardingContext shardingContext(H shardingTableHolder) {
 		Map<String, TableConfig> map = shardingTableHolder.getTables();
-		Context.initTableConf(map);
-
-		ShardingContext shardingContext = new ShardingContext();
+		ShardingContext shardingContext = ShardingContext.getInstance();
 		shardingContext.initTableConf(map);
 		return shardingContext;
 	}
