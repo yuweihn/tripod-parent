@@ -3,11 +3,13 @@ package com.yuweix.tripod.dao.springboot;
 
 import com.yuweix.tripod.dao.hibernate.DynamicTableInterceptor;
 import com.yuweix.tripod.dao.hibernate.ShardAspect;
+import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
@@ -23,6 +25,10 @@ import java.util.Properties;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 public class HibernateConf {
+	@jakarta.annotation.Resource
+	private ApplicationContext applicationContext;
+
+
 	@ConditionalOnMissingBean(name = "mappingLocations")
 	@Bean(name = "mappingLocations")
 	public Resource[] mappingLocations() {
@@ -51,6 +57,13 @@ public class HibernateConf {
 			, @Value("${tripod.hibernate.show-sql:false}") String showSql
 			, @Value("${tripod.hibernate.jdbc.batch-size:20}") String batchSize
 			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode) {
+		/**
+		 * 如果有分片上下文配置，优先加载
+		 */
+		try {
+			applicationContext.getBean(ShardingContext.class);
+		} catch (Exception ignored) {}
+
 		LocalSessionFactoryBean bean = new LocalSessionFactoryBean();
 		bean.setDataSource(dataSource);
 
