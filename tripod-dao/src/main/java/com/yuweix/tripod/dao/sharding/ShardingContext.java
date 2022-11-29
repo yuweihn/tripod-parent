@@ -9,8 +9,8 @@ import java.util.Map;
  * @author yuwei
  */
 public class ShardingContext {
-	private final Map<String, TableConfig> TABLE_CONF_MAP = new HashMap<>();
 	private static final ShardingContext INSTANCE = new ShardingContext();
+	private final Map<String, TableConfig> TABLE_CONF_MAP = new HashMap<>();
 
 	private ShardingContext() {
 
