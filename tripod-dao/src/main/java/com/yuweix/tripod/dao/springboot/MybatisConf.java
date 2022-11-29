@@ -1,6 +1,7 @@
 package com.yuweix.tripod.dao.springboot;
 
 
+import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -8,6 +9,7 @@ import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
@@ -27,6 +29,9 @@ import java.io.IOException;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 public class MybatisConf {
+	@javax.annotation.Resource
+	private ApplicationContext applicationContext;
+
 	@ConditionalOnMissingBean(name = "mapperLocations")
 	@Bean(name = "mapperLocations")
 	public Resource[] mapperLocations(@Value("${tripod.mybatis.mapper.location-pattern:}") String locationPattern) throws IOException {
@@ -47,6 +52,13 @@ public class MybatisConf {
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactoryBean sqlSessionFactoryBean(@Qualifier("dataSource") DataSource dataSource
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
+		/**
+		 * 如果有分片上下文配置，优先加载
+		 */
+		try {
+			applicationContext.getBean(ShardingContext.class);
+		} catch (Exception ignored) {}
+
 		SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource);
 		if (mapperLocations != null && mapperLocations.length > 0) {
