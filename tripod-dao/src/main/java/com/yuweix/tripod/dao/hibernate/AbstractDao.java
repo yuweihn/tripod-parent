@@ -123,10 +123,10 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		}
 		String srcTableName = this.getTableName(clz);
 		String destTableName = this.getPhysicalTableName(clz, shardingVal);
-		DynamicTableThreadLocal.set(srcTableName, destTableName);
+		DynamicTableTL.set(srcTableName, destTableName);
 	}
 	protected void afterSharding() {
-		DynamicTableThreadLocal.remove();
+		DynamicTableTL.remove();
 	}
 
 	@Override

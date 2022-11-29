@@ -15,8 +15,8 @@ public class DynamicTableInterceptor extends EmptyInterceptor {
 
 	@Override
 	public String onPrepareStatement(String sql) {
-		final String srcName = DynamicTableThreadLocal.getSrcName();
-		final String destName = DynamicTableThreadLocal.getDestName();
+		final String srcName = DynamicTableTL.getSrcName();
+		final String destName = DynamicTableTL.getDestName();
 		if (srcName == null || destName == null) {
 			return sql;
 		}

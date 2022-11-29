@@ -3,10 +3,9 @@ package com.yuweix.tripod.dao.hibernate;
 
 
 /**
- * 动态修改表名
  * @author yuwei
  */
-public class DynamicTableThreadLocal {
+public class DynamicTableTL {
 	private static final ThreadLocal<TB> THREAD_LOCAL = new ThreadLocal<>();
 
 	public static void set(String srcName, String destName) {
