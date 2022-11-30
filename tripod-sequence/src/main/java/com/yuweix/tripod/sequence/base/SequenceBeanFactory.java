@@ -128,7 +128,12 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 
 			String[] arr = seqNameValue.split(DELIMITER);
 			String seqName = arr[0];
-			long minValue = arr.length >= 2 ? Long.parseLong(arr[1]) : 0;
+			long minValue = 0;
+			if (arr.length >= 2) {
+				try {
+					minValue = Long.parseLong(arr[1]);
+				} catch (Exception ignored) {}
+			}
 
 			Class<? extends AbstractSequence> clz = null;
 			Field seqDaoField = null;
