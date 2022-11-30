@@ -113,7 +113,7 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 			.append(nameColumnName).append(" = ?");
 		return buf.toString();
 	}
-	
+
 	private void closeResultSet(ResultSet rs) {
 		if (rs != null) {
 			try {
@@ -143,7 +143,7 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 	}
 
 	protected abstract DataSource getDataSource(int segment);
-	
+
 	protected int insertSeq(int segment, String seqName, long initValue) {
 		return insertSeq(getDataSource(segment), segment, seqName, initValue);
 	}
@@ -166,7 +166,7 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 			}
 
 			if (log.isDebugEnabled()) {
-				log.debug("插入初值:" + seqName + ", value:" + initValue);
+				log.debug("Insert initial value {} to {}.", initValue, seqName);
 			}
 			return affectedRows;
 		} catch (Exception e) {
