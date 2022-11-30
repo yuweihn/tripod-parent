@@ -25,7 +25,7 @@ public class SingleSequenceDao extends AbstractSequenceDao {
 
 	@Override
 	public void init() {
-		Assert.notNull(dataSource, "The dataSource is required.");
+		Assert.notNull(dataSource, "The [dataSource] is required.");
 		super.init();
 	}
 
@@ -45,7 +45,7 @@ public class SingleSequenceDao extends AbstractSequenceDao {
 
 	@Override
 	public SequenceHolder nextRange(String seqName) {
-		Assert.notNull(seqName, "序列名称不能为空");
+		Assert.notNull(seqName, "The [seqName] is required.");
 
 		int retryTimes = getRetryTimes();
 		for (int i = 0; i < retryTimes + 1; ++i) {

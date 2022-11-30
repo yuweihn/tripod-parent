@@ -40,19 +40,19 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 		this.excludedSegment = new ConcurrentHashMap<>();
 		this.threadPool = Executors.newFixedThreadPool(1);
 	}
-	
+
 	@Override
 	public void init() {
 		initDataSourceRouteRule();
 	}
-	
+
 	private void initDataSourceRouteRule() {
 		if (rule != null) {
 			return;
 		}
-		
+
 		int segCount = getSegmentCount();
-		
+
 		if (ruleClassName == null || "".equals(ruleClassName.trim())) {
 			rule = new RoundRobinRule(segCount);
 		} else {
@@ -75,7 +75,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 			minValue = 0;
 		}
 
-		for (int i = 0; i < getSegmentCount(); ++i) {
+		for (int i = 0, cnt = getSegmentCount(); i < cnt; ++i) {
 			Long oldValue = selectSeqValue(i, seqName);
 			if (oldValue == null) {
 				long adjustMinValue = adjustValue(i, minValue);
@@ -94,19 +94,19 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 
 	@Override
 	public SequenceHolder nextRange(final String seqName) {
-		Assert.notNull(seqName, "序列名称不能为空");
+		Assert.notNull(seqName, "The [seqName] is required.");
 		int segCount = getSegmentCount();
-		
+
 		int retryTimes = getRetryTimes();
 		for (int i = 0; i < retryTimes + 1; ++i) {
 			int segment = rule.chooseSegment(seqName);
 			Long oldValue = selectSeqValueFromASegment(segment, seqName);
-			
+
 			if (oldValue == null || oldValue < 0L || oldValue > Long.MAX_VALUE - 100000000L) {
 				log.error("Can not get sequence, segment = {}, seqName = {}, value = {}.", segment, seqName, oldValue);
 				continue;
 			}
-			
+
 			long adjustOldValue = adjustValue(segment, oldValue);
 			long newValue = adjustOldValue + ((long) segCount * getInnerStep());
 			try {
@@ -115,32 +115,33 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 				log.error("", e);
 				continue;
 			}
-			
+
 			if (i >= retryTimes - 1) {
 				cleanExcludedSegment();
 			}
-			
+
 			return new SequenceHolder(adjustOldValue + 1L, adjustOldValue + (long) getInnerStep());
 		}
 		throw new SequenceException("Retried too many times, retryTimes = " + retryTimes);
 	}
-	
+
 	protected void cleanExcludedSegment() {
 		if (excludedSegment != null && !excludedSegment.isEmpty()) {
 			excludedSegment.clear();
 		}
 	}
-	
+
 	private Long selectSeqValueFromASegment(final int segment, final String seqName) {
 		int segCount = getSegmentCount();
-		
+
 		if (excludedSegment.get(segment) != null) {
 			if (excludedSegment.get(segment).incrementAndGet() <= maxSkipCount) {
 				return null;
 			}
 
 			excludedSegment.remove(segment);
-			log.info("{}次数已过，index为{}的数据源后续重新尝试取序列", maxSkipCount, segment);
+			log.info("The number of [maxSkipCount: {}] has passed, and the data source with index {} can get the sequence again now."
+					, maxSkipCount, segment);
 		}
 
 		if (excludedSegment.size() >= segCount - 1) {
@@ -158,7 +159,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 				log.error("", e);
 				if (excludedSegment.size() < segCount - 1) {
 					excludedSegment.put(segment, new AtomicInteger(0));
-					log.error("暂时剔除index为{}的数据源，{}次后重新尝试", segment, maxSkipCount);
+					log.error("Temporarily remove the data source with index {}, and try again after {} times.", segment, maxSkipCount);
 				}
 				return null;
 			}
@@ -173,16 +174,16 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 		long standardValue = currentValue - currentValue % (long) outStep + ((long) segment * getInnerStep());
 		return currentValue <= standardValue ? standardValue : (standardValue + outStep);
 	}
-	
+
 	protected abstract int getSegmentCount();
 
 	public void setMaxSkipCount(int maxSkipCount) {
-		Assert.isTrue(maxSkipCount > 0, "Property maxSkipCount must be larger than zero, maxSkipCount = " + maxSkipCount);
+		Assert.isTrue(maxSkipCount > 0, "Property [maxSkipCount] must be larger than zero, maxSkipCount = " + maxSkipCount);
 		this.maxSkipCount = maxSkipCount;
 	}
 
 	public void setMaxWaitMillis(long maxWaitMillis) {
-		Assert.isTrue(maxWaitMillis > 0, "Property maxWaitMillis must be larger than zero, maxWaitMillis = " + maxWaitMillis);
+		Assert.isTrue(maxWaitMillis > 0, "Property [maxWaitMillis] must be larger than zero, maxWaitMillis = " + maxWaitMillis);
 		this.maxWaitMillis = maxWaitMillis;
 	}
 
