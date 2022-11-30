@@ -170,7 +170,7 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 			}
 			return affectedRows;
 		} catch (Exception e) {
-			throw new SequenceException("插入初值值失败！sequence Name：" + seqName + "   value:" + initValue, e);
+			throw new SequenceException("Failed to assign init value " + initValue + " to " + seqName, e);
 		} finally {
 			closeStatement(stmt);
 			closeConnection(conn);
@@ -194,7 +194,7 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 			stmt.setLong(5, oldValue);
 			int affectedRows = stmt.executeUpdate();
 			if (affectedRows <= 0) {
-				throw new SequenceException("Failed to update value at " + seqName + " update affectedRow = 0");
+				throw new SequenceException("Failed to update the value of " + seqName + " from " + oldValue + " to " + newValue);
 			}
 			return affectedRows;
 		} catch (Exception e) {

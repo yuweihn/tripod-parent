@@ -75,7 +75,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 			minValue = 0;
 		}
 
-		for (int i = 0; i < getSegmentCount(); ++i) {
+		for (int i = 0, cnt = getSegmentCount(); i < cnt; ++i) {
 			Long oldValue = selectSeqValue(i, seqName);
 			if (oldValue == null) {
 				long adjustMinValue = adjustValue(i, minValue);
@@ -94,7 +94,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 
 	@Override
 	public SequenceHolder nextRange(final String seqName) {
-		Assert.notNull(seqName, "序列名称不能为空");
+		Assert.notNull(seqName, "The [seqName] is required.");
 		int segCount = getSegmentCount();
 		
 		int retryTimes = getRetryTimes();
@@ -140,7 +140,8 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 			}
 
 			excludedSegment.remove(segment);
-			log.info("{}次数已过，index为{}的数据源后续重新尝试取序列", maxSkipCount, segment);
+			log.info("The number of [maxSkipCount: {}] has passed, and the data source with index {} can get the sequence again now."
+					, maxSkipCount, segment);
 		}
 
 		if (excludedSegment.size() >= segCount - 1) {
@@ -158,7 +159,7 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 				log.error("", e);
 				if (excludedSegment.size() < segCount - 1) {
 					excludedSegment.put(segment, new AtomicInteger(0));
-					log.error("暂时剔除index为{}的数据源，{}次后重新尝试", segment, maxSkipCount);
+					log.error("Temporarily remove the data source with index {}, and try again after {} times.", segment, maxSkipCount);
 				}
 				return null;
 			}
@@ -177,12 +178,12 @@ public abstract class AbstractGroupSequenceDao extends AbstractSequenceDao {
 	protected abstract int getSegmentCount();
 
 	public void setMaxSkipCount(int maxSkipCount) {
-		Assert.isTrue(maxSkipCount > 0, "Property maxSkipCount must be larger than zero, maxSkipCount = " + maxSkipCount);
+		Assert.isTrue(maxSkipCount > 0, "Property [maxSkipCount] must be larger than zero, maxSkipCount = " + maxSkipCount);
 		this.maxSkipCount = maxSkipCount;
 	}
 
 	public void setMaxWaitMillis(long maxWaitMillis) {
-		Assert.isTrue(maxWaitMillis > 0, "Property maxWaitMillis must be larger than zero, maxWaitMillis = " + maxWaitMillis);
+		Assert.isTrue(maxWaitMillis > 0, "Property [maxWaitMillis] must be larger than zero, maxWaitMillis = " + maxWaitMillis);
 		this.maxWaitMillis = maxWaitMillis;
 	}
 
