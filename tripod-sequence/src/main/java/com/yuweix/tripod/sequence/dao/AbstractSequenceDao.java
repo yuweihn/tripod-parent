@@ -166,7 +166,7 @@ public abstract class AbstractSequenceDao implements SequenceDao {
 			}
 
 			if (log.isDebugEnabled()) {
-				log.debug("插入初值:" + seqName + ", value:" + initValue);
+				log.debug("Insert initial value {} to {}.", initValue, seqName);
 			}
 			return affectedRows;
 		} catch (Exception e) {
