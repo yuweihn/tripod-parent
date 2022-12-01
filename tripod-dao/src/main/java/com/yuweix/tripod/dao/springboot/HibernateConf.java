@@ -48,7 +48,7 @@ public class HibernateConf {
 	public LocalSessionFactoryBean localSessionFactoryBean(@Qualifier("dataSource") DataSource dataSource
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
-			, @Qualifier("dynamicTableInterceptor") Interceptor interceptor
+			, Interceptor interceptor
 			, @Value("${tripod.hibernate.dialect:org.hibernate.dialect.MySQLDialect}") String dialect
 			, @Value("${tripod.hibernate.current-session-context-class:org.springframework.orm.hibernate5.SpringSessionContext}") String sessionContext
 			, @Value("${tripod.hibernate.cache.region.factory-class:org.hibernate.cache.ehcache.EhCacheRegionFactory}") String cacheRegionFactory
@@ -96,7 +96,7 @@ public class HibernateConf {
 		return new ShardAspect();
 	}
 
-	@ConditionalOnMissingBean(name = "dynamicTableInterceptor")
+	@ConditionalOnMissingBean(Interceptor.class)
 	@Bean(name = "dynamicTableInterceptor")
 	public Interceptor dynamicTableInterceptor() {
 		return new DynamicTableInterceptor();
