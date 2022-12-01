@@ -53,6 +53,7 @@ public class HibernateConf {
 			, @Value("${tripod.hibernate.current-session-context-class:org.springframework.orm.hibernate5.SpringSessionContext}") String sessionContext
 			, @Value("${tripod.hibernate.cache.region.factory-class:org.hibernate.cache.jcache.internal.JCacheRegionFactory}") String cacheRegionFactory
 			, @Value("${tripod.hibernate.cache.provider-class:org.ehcache.jsr107.EhcacheCachingProvider}") String cacheProviderClass
+			, @Value("${tripod.hibernate.cache.provider-configuration-file-resource-path:ehcache-default.xml}") String ehcachePath
 			, @Value("${tripod.hibernate.cache.use-query-cache:true}") String useQueryCache
 			, @Value("${tripod.hibernate.cache.use-second-level-cache:false}") String useSecondLevelCache
 			, @Value("${tripod.hibernate.show-sql:false}") String showSql
@@ -73,6 +74,7 @@ public class HibernateConf {
 		properties.setProperty("hibernate.current_session_context_class", sessionContext);
 		properties.setProperty("hibernate.cache.region.factory_class", cacheRegionFactory);
 		properties.setProperty("hibernate.cache.provider_class", cacheProviderClass);
+		properties.setProperty("hibernate.cache.provider_configuration_file_resource_path", ehcachePath);
 		properties.setProperty("hibernate.cache.use_query_cache", useQueryCache);
 		properties.setProperty("hibernate.cache.use_second_level_cache", useSecondLevelCache);
 		properties.setProperty("hibernate.show_sql", showSql);
