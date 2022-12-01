@@ -50,6 +50,9 @@ public abstract class AbstractTask {
 	}
 
 	public final void start() {
+		if (!isEnabled()) {
+			return;
+		}
 		long startTime = System.currentTimeMillis();
 		Elector elector = getLeaderElector();
 		if (elector == null) {
@@ -80,6 +83,10 @@ public abstract class AbstractTask {
 		} else {
 			log.warn("Not leader, job didn't execute! JobName: {}, Leader: {}", this.getClass().getName(), res.getLeader());
 		}
+	}
+
+	protected boolean isEnabled() {
+		return true;
 	}
 
 	protected void before() {
