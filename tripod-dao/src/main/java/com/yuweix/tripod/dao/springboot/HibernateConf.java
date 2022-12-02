@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
@@ -44,6 +45,7 @@ public class HibernateConf {
 		return packages.split(",");
 	}
 
+	@ConditionalOnMissingBean(SessionFactory.class)
 	@Bean(name = "sessionFactory")
 	public LocalSessionFactoryBean localSessionFactoryBean(@Qualifier("dataSource") DataSource dataSource
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
@@ -89,6 +91,7 @@ public class HibernateConf {
 		return bean;
 	}
 
+	@ConditionalOnMissingBean(TransactionManager.class)
 	@Bean(name = "transactionManager")
 	public HibernateTransactionManager transactionManager(@Qualifier("sessionFactory") SessionFactory sessionFactory) {
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
