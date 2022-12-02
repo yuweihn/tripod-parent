@@ -56,6 +56,7 @@ public class HibernateConf {
 			, @Value("${tripod.hibernate.cache.provider-configuration-file-resource-path:ehcache-default.xml}") String ehcachePath
 			, @Value("${tripod.hibernate.cache.use-query-cache:true}") String useQueryCache
 			, @Value("${tripod.hibernate.cache.use-second-level-cache:false}") String useSecondLevelCache
+			, @Value("${tripod.hibernate.cache.missing-cache-strategy:create}") String missingCacheStrategy
 			, @Value("${tripod.hibernate.show-sql:false}") String showSql
 			, @Value("${tripod.hibernate.jdbc.batch-size:20}") String batchSize
 			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode) {
@@ -77,6 +78,7 @@ public class HibernateConf {
 		properties.setProperty("hibernate.cache.provider_configuration_file_resource_path", ehcachePath);
 		properties.setProperty("hibernate.cache.use_query_cache", useQueryCache);
 		properties.setProperty("hibernate.cache.use_second_level_cache", useSecondLevelCache);
+		properties.setProperty("hibernate.javax.cache.missing_cache_strategy", missingCacheStrategy);
 		properties.setProperty("hibernate.show_sql", showSql);
 		properties.setProperty("hibernate.jdbc.batch_size", batchSize);
 		properties.setProperty("hibernate.connection.release_mode", releaseMode);
