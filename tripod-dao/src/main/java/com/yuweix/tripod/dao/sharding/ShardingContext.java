@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class ShardingContext {
 	private static final ShardingContext INSTANCE = new ShardingContext();
-	private final Map<String, TableConfig> TABLE_CONF_MAP = new HashMap<>();
+	private final Map<String, TableConfig> tableConfMap = new HashMap<>();
 
 	private ShardingContext() {
 
@@ -20,17 +20,17 @@ public class ShardingContext {
 	}
 
 	public void initTableConf(Map<String, TableConfig> map) {
-		TABLE_CONF_MAP.clear();
+		tableConfMap.clear();
 		if (map != null) {
-			TABLE_CONF_MAP.putAll(map);
+			tableConfMap.putAll(map);
 		}
 	}
 
 	public TableConfig getTableConf(String tableName) {
-		return TABLE_CONF_MAP.get(tableName);
+		return tableConfMap.get(tableName);
 	}
 
 	public Map<String, TableConfig> getTableConfMap() {
-		return TABLE_CONF_MAP;
+		return tableConfMap;
 	}
 }
