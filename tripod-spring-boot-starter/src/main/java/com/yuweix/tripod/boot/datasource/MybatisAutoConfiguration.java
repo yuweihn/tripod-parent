@@ -43,7 +43,7 @@ public class MybatisAutoConfiguration {
 		};
 	}
 
-	@ConditionalOnMissingBean(name = "dataSource")
+	@ConditionalOnProperty(name = "tripod.jdbc.enabled")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
 	public DataSource druidDataSourceMaster(@Value("${tripod.jdbc.driver-class}") String driverClassName
 			, @Value("${tripod.jdbc.url}") String url
