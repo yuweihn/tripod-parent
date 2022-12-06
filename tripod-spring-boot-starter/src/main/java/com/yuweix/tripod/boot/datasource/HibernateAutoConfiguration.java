@@ -5,7 +5,6 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.tripod.dao.springboot.HibernateConf;
 import com.yuweix.tripod.sequence.springboot.SequenceConf;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +21,7 @@ import java.sql.SQLException;
 @ConditionalOnProperty(name = "tripod.boot.hibernate.enabled")
 @Import({HibernateConf.class, SequenceConf.class})
 public class HibernateAutoConfiguration {
-	@ConditionalOnMissingBean(name = "dataSource")
+	@ConditionalOnProperty(name = "tripod.jdbc.enabled")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
 	public DataSource druidDataSourceMaster(@Value("${tripod.jdbc.driver-class}") String driverClassName
 			, @Value("${tripod.jdbc.url}") String url
