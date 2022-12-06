@@ -54,7 +54,7 @@ public class MybatisAutoConfiguration {
 			, @Value("${tripod.jdbc.max-active:2}") int maxActive
 			, @Value("${tripod.jdbc.initial-size:1}") int initialSize
 			, @Value("${tripod.jdbc.max-wait-mills:60000}") long maxWaitMillis
-			, @Value("${tripod.jdbc.remove-abandoned:true}") boolean removeAbandoned
+			, @Value("${tripod.jdbc.remove-abandoned:false}") boolean removeAbandoned
 			, @Value("${tripod.jdbc.remove-abandoned-timeout:1800}") int removeAbandonedTimeout
 			, @Value("${tripod.jdbc.min-idle:1}") int minIdle
 			, @Value("${tripod.jdbc.time-between-eviction-runs-millis:60000}") long timeBetweenEvictionRunsMillis
