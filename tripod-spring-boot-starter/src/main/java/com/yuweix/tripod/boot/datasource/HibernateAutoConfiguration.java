@@ -22,7 +22,7 @@ import java.sql.SQLException;
 @ConditionalOnProperty(name = "tripod.boot.hibernate.enabled")
 @Import({HibernateConf.class, SequenceConf.class})
 public class HibernateAutoConfiguration {
-	@ConditionalOnMissingBean(DataSource.class)
+	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
 	public DataSource druidDataSourceMaster(@Value("${tripod.datasource.driver-class}") String driverClassName
 			, @Value("${tripod.datasource.url}") String url
