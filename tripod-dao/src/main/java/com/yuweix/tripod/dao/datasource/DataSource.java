@@ -10,6 +10,6 @@ import java.lang.annotation.*;
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-public @interface MyDataSource {
+public @interface DataSource {
     String value() default "";
 }
