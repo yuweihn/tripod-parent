@@ -85,6 +85,7 @@ public class MybatisConf {
 	}
 
 	@Primary
+	@ConditionalOnMissingBean(name = "dataSourceWrapper")
 	@Bean(name = "dataSourceWrapper")
 	public DataSource dataSourceWrapper(@Qualifier("dataSource") DataSource defaultDataSource) {
 		return defaultDataSource;
