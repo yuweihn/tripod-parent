@@ -34,7 +34,7 @@ public class HibernateConf {
 
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
-	public DataSource druidDataSourceMaster(@Value("${tripod.datasource.default.driver-class}") String driverClassName
+	public DataSource defaultDataSource(@Value("${tripod.datasource.default.driver-class}") String driverClassName
 			, @Value("${tripod.datasource.default.url}") String url
 			, @Value("${tripod.datasource.default.user-name}") String userName
 			, @Value("${tripod.datasource.default.password}") String password
