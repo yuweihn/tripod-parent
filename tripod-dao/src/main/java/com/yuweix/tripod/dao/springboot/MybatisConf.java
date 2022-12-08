@@ -109,7 +109,7 @@ public class MybatisConf {
 
 	@ConditionalOnMissingBean(name = "sqlSessionFactory")
 	@Bean(name = "sqlSessionFactory")
-	public SqlSessionFactoryBean sqlSessionFactoryBean(DataSource dataSource
+	public SqlSessionFactoryBean sqlSessionFactoryBean(@Qualifier("dataSourceWrapper") DataSource dataSource
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
 		/**
 		 * 如果有分片上下文配置，优先加载
@@ -144,7 +144,7 @@ public class MybatisConf {
 
 	@ConditionalOnMissingBean(name = "transactionManager")
 	@Bean(name = "transactionManager")
-	public DataSourceTransactionManager transactionManager(DataSource dataSource) {
+	public DataSourceTransactionManager transactionManager(@Qualifier("dataSourceWrapper") DataSource dataSource) {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
 		transactionManager.setDataSource(dataSource);
 		return transactionManager;

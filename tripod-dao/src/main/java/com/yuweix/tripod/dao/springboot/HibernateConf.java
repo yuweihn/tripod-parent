@@ -106,7 +106,7 @@ public class HibernateConf {
 
 	@ConditionalOnMissingBean(SessionFactory.class)
 	@Bean(name = "sessionFactory")
-	public LocalSessionFactoryBean localSessionFactoryBean(DataSource dataSource
+	public LocalSessionFactoryBean localSessionFactoryBean(@Qualifier("dataSourceWrapper") DataSource dataSource
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
 			, Interceptor interceptor
