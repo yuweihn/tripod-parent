@@ -101,7 +101,7 @@ public class HibernateConf {
 	@ConditionalOnMissingBean(name = "dataSourceWrapper")
 	@Bean(name = "dataSourceWrapper")
 	public DataSource dataSourceWrapper(@Qualifier("dataSource") DataSource defaultDataSource
-			, Map<Object, Object> dataSources) {
+			, @Qualifier("dataSources") Map<Object, Object> dataSources) {
 		if (dataSources == null) {
 			dataSources = new HashMap<>();
 		}
