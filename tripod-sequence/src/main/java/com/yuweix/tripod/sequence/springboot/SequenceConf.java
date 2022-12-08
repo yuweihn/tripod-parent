@@ -6,6 +6,7 @@ import com.yuweix.tripod.sequence.base.SequenceBeanFactory;
 import com.yuweix.tripod.sequence.base.SequenceBeanHolder;
 import com.yuweix.tripod.sequence.dao.SegmentSequenceDao;
 import com.yuweix.tripod.sequence.dao.SequenceDao;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -23,7 +24,7 @@ import java.util.Map;
 public class SequenceConf {
 	@ConditionalOnMissingBean(SequenceDao.class)
 	@Bean(name = "sequenceDao")
-	public SequenceDao sequenceDao(DataSource dataSource
+	public SequenceDao sequenceDao(@Qualifier("dataSourceWrapper") DataSource dataSource
 			, @Value("${tripod.sequence.setting.inner-step:100}") int innerStep
 			, @Value("${tripod.sequence.setting.retry-times:5}") int retryTimes
 			, @Value("${tripod.sequence.setting.segment-count:1}") int segmentCount

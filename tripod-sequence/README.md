@@ -34,7 +34,7 @@ For example:
 ------------------------------------------------------------------------------------------------------------------
 	@ConditionalOnMissingBean(SequenceDao.class)
 	@Bean(name = "sequenceDao")
-	public SequenceDao sequenceDao(DataSource dataSource
+	public SequenceDao sequenceDao(@Qualifier("dataSourceWrapper") DataSource dataSource
 			, @Value("${tripod.sequence.setting.innerStep:100}") int innerStep
 			, @Value("${tripod.sequence.setting.retryTimes:5}") int retryTimes
 			, @Value("${tripod.sequence.setting.segmentCount:1}") int segmentCount
