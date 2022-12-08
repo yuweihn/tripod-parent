@@ -19,7 +19,7 @@ public class DynamicDataSourceAspect {
     /**
      * 切点表达式
      */
-    @Pointcut("@annotation(com.yuweix.tripod.dao.datasource.MyDataSource)")
+    @Pointcut("@annotation(com.yuweix.tripod.dao.datasource.DataSource)")
     public void pointcut() {
 
     }
@@ -27,7 +27,7 @@ public class DynamicDataSourceAspect {
     @Before("pointcut()")
     public void before(JoinPoint joinPoint) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        MyDataSource annotation = method.getAnnotation(MyDataSource.class);
+        DataSource annotation = method.getAnnotation(DataSource.class);
         String dataSourceName = annotation.value();
         DataSourceContextHolder.setDataSource(dataSourceName);
     }
