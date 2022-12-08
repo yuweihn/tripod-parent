@@ -25,7 +25,7 @@ public class DynamicDataSourceAspect {
     }
 
     @Before("pointcut()")
-    public void beforeMethod(JoinPoint joinPoint) {
+    public void before(JoinPoint joinPoint) {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         MyDataSource annotation = method.getAnnotation(MyDataSource.class);
         String dataSourceName = annotation.value();
@@ -33,7 +33,7 @@ public class DynamicDataSourceAspect {
     }
 
     @After("pointcut()")
-    public void afterSwitchDS(JoinPoint joinPoint) {
+    public void after(JoinPoint joinPoint) {
         DataSourceContextHolder.removeDataSource();
     }
 }
