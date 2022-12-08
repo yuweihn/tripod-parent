@@ -19,7 +19,7 @@ public class DynamicDataSourceAspect {
     /**
      * 切点表达式
      */
-    @Pointcut("@annotation(com.yuweix.tripod.dao.springboot.MyDataSource)")
+    @Pointcut("@annotation(com.yuweix.tripod.dao.datasource.MyDataSource)")
     public void pointcut() {
 
     }
