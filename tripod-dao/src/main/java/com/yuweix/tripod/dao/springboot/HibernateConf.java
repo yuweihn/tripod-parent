@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -80,6 +81,13 @@ public class HibernateConf {
 		return dataSource;
 	}
 
+	@Primary
+	@Bean(name = "dataSourceWrapper")
+	public DataSource dataSourceWrapper(@Qualifier("dataSource") DataSource defaultDataSource) {
+		return defaultDataSource;
+	}
+
+
 	@ConditionalOnMissingBean(name = "mappingLocations")
 	@Bean(name = "mappingLocations")
 	public Resource[] mappingLocations() {
@@ -97,7 +105,7 @@ public class HibernateConf {
 
 	@ConditionalOnMissingBean(SessionFactory.class)
 	@Bean(name = "sessionFactory")
-	public LocalSessionFactoryBean localSessionFactoryBean(@Qualifier("dataSource") DataSource dataSource
+	public LocalSessionFactoryBean localSessionFactoryBean(DataSource dataSource
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
 			, Interceptor interceptor

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -83,6 +84,12 @@ public class MybatisConf {
 		return dataSource;
 	}
 
+	@Primary
+	@Bean(name = "dataSourceWrapper")
+	public DataSource dataSourceWrapper(@Qualifier("dataSource") DataSource defaultDataSource) {
+		return defaultDataSource;
+	}
+
 	@ConditionalOnMissingBean(name = "mapperLocations")
 	@Bean(name = "mapperLocations")
 	public Resource[] mapperLocations(@Value("${tripod.mybatis.mapper.location-pattern:}") String locationPattern) throws IOException {
@@ -101,7 +108,7 @@ public class MybatisConf {
 
 	@ConditionalOnMissingBean(name = "sqlSessionFactory")
 	@Bean(name = "sqlSessionFactory")
-	public SqlSessionFactoryBean sqlSessionFactoryBean(@Qualifier("dataSource") DataSource dataSource
+	public SqlSessionFactoryBean sqlSessionFactoryBean(DataSource dataSource
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
 		/**
 		 * 如果有分片上下文配置，优先加载
@@ -136,7 +143,7 @@ public class MybatisConf {
 
 	@ConditionalOnMissingBean(name = "transactionManager")
 	@Bean(name = "transactionManager")
-	public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DataSource dataSource) {
+	public DataSourceTransactionManager transactionManager(DataSource dataSource) {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
 		transactionManager.setDataSource(dataSource);
 		return transactionManager;
