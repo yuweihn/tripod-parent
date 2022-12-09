@@ -108,10 +108,10 @@ public class MybatisConf {
 		if (dataSources == null) {
 			dataSources = new HashMap<>();
 		}
-		DynamicDataSource dynamicDataSource = new DynamicDataSource();
-		dynamicDataSource.setDefaultTargetDataSource(defaultDataSource);
-		dynamicDataSource.setTargetDataSources(dataSources);
-		return dynamicDataSource;
+		DynamicDataSource dds = new DynamicDataSource();
+		dds.setDefaultTargetDataSource(defaultDataSource);
+		dds.setTargetDataSources(dataSources);
+		return dds;
 	}
 
 	@ConditionalOnMissingBean(name = "mapperLocations")
