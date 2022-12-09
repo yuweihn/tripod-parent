@@ -21,6 +21,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -130,7 +131,7 @@ public class MybatisConf {
 		return env.getProperty("tripod.mybatis.base-package");
 	}
 
-	@ConditionalOnMissingBean(name = "sqlSessionFactory")
+	@ConditionalOnMissingBean(SqlSessionFactory.class)
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactoryBean sqlSessionFactoryBean(@Qualifier("dataSourceWrapper") DataSource dataSource
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
@@ -149,13 +150,13 @@ public class MybatisConf {
 		return sessionFactoryBean;
 	}
 
-	@ConditionalOnMissingBean(name = "sqlSessionTemplate")
+	@ConditionalOnMissingBean(SqlSessionTemplate.class)
 	@Bean(name = "sqlSessionTemplate")
 	public SqlSessionTemplate SqlSessionTemplate(@Qualifier("sqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
 		return new SqlSessionTemplate(sqlSessionFactory);
 	}
 
-	@ConditionalOnMissingBean(name = "mapperScannerConf")
+	@ConditionalOnMissingBean(MapperScannerConfigurer.class)
 	@Bean(name = "mapperScannerConf")
 	public MapperScannerConfigurer mapperScannerConf(@Qualifier("basePackage") String basePackage) {
 		MapperScannerConfigurer conf = new MapperScannerConfigurer();
@@ -165,7 +166,7 @@ public class MybatisConf {
 		return conf;
 	}
 
-	@ConditionalOnMissingBean(name = "transactionManager")
+	@ConditionalOnMissingBean(TransactionManager.class)
 	@Bean(name = "transactionManager")
 	public DataSourceTransactionManager transactionManager(@Qualifier("dataSourceWrapper") DataSource dataSource) {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
@@ -173,7 +174,7 @@ public class MybatisConf {
 		return transactionManager;
 	}
 
-	@ConditionalOnMissingBean(name = "transactionTemplate")
+	@ConditionalOnMissingBean(TransactionTemplate.class)
 	@Bean(name = "transactionTemplate")
 	public TransactionTemplate transactionTemplate(@Qualifier("transactionManager") PlatformTransactionManager transactionManager) {
 		return new TransactionTemplate(transactionManager);
