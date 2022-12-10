@@ -98,9 +98,9 @@ public class HibernateConf {
 	}
 
 	@Primary
-	@ConditionalOnMissingBean(name = "dataSourceWrapper")
-	@Bean(name = "dataSourceWrapper")
-	public DataSource dataSourceWrapper(@Qualifier("dataSource") DataSource defaultDataSource
+	@ConditionalOnMissingBean(name = "dynamicDataSource")
+	@Bean(name = "dynamicDataSource")
+	public DataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
 			, @Qualifier("dataSources") Map<Object, Object> dataSources) {
 		if (dataSources == null) {
 			dataSources = new HashMap<>();
@@ -129,7 +129,7 @@ public class HibernateConf {
 
 	@ConditionalOnMissingBean(SessionFactory.class)
 	@Bean(name = "sessionFactory")
-	public LocalSessionFactoryBean localSessionFactoryBean(@Qualifier("dataSourceWrapper") DataSource dataSource
+	public LocalSessionFactoryBean localSessionFactoryBean(@Qualifier("dynamicDataSource") DataSource dataSource
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
 			, Interceptor interceptor

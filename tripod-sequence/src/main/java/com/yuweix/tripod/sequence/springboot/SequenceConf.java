@@ -24,7 +24,7 @@ import java.util.Map;
 public class SequenceConf {
 	@ConditionalOnMissingBean(SequenceDao.class)
 	@Bean(name = "sequenceDao")
-	public SequenceDao sequenceDao(@Qualifier("dataSourceWrapper") DataSource dataSource
+	public SequenceDao sequenceDao(@Qualifier("dynamicDataSource") DataSource dataSource
 			, @Value("${tripod.sequence.setting.inner-step:100}") int innerStep
 			, @Value("${tripod.sequence.setting.retry-times:5}") int retryTimes
 			, @Value("${tripod.sequence.setting.segment-count:1}") int segmentCount

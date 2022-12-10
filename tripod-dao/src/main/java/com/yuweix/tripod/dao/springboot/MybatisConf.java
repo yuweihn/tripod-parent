@@ -102,9 +102,9 @@ public class MybatisConf {
 	}
 
 	@Primary
-	@ConditionalOnMissingBean(name = "dataSourceWrapper")
-	@Bean(name = "dataSourceWrapper")
-	public DataSource dataSourceWrapper(@Qualifier("dataSource") DataSource defaultDataSource
+	@ConditionalOnMissingBean(name = "dynamicDataSource")
+	@Bean(name = "dynamicDataSource")
+	public DataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
 			, @Qualifier("dataSources") Map<Object, Object> dataSources) {
 		if (dataSources == null) {
 			dataSources = new HashMap<>();
@@ -133,7 +133,7 @@ public class MybatisConf {
 
 	@ConditionalOnMissingBean(SqlSessionFactory.class)
 	@Bean(name = "sqlSessionFactory")
-	public SqlSessionFactoryBean sqlSessionFactoryBean(@Qualifier("dataSourceWrapper") DataSource dataSource
+	public SqlSessionFactoryBean sqlSessionFactoryBean(@Qualifier("dynamicDataSource") DataSource dataSource
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
 		/**
 		 * 如果有分片上下文配置，优先加载
@@ -168,7 +168,7 @@ public class MybatisConf {
 
 	@ConditionalOnMissingBean(TransactionManager.class)
 	@Bean(name = "transactionManager")
-	public DataSourceTransactionManager transactionManager(@Qualifier("dataSourceWrapper") DataSource dataSource) {
+	public DataSourceTransactionManager transactionManager(@Qualifier("dynamicDataSource") DataSource dataSource) {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
 		transactionManager.setDataSource(dataSource);
 		return transactionManager;
