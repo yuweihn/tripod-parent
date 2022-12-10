@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -100,9 +101,10 @@ public class MybatisConf {
 		return new DynamicDataSourceAspect();
 	}
 
-	@ConditionalOnMissingBean(DynamicDataSource.class)
+	@Primary
+	@ConditionalOnMissingBean(name = "dynamicDataSource")
 	@Bean(name = "dynamicDataSource")
-	public DynamicDataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
+	public DataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
 			, @Qualifier("dataSources") Map<Object, Object> dataSources) {
 		if (dataSources == null) {
 			dataSources = new HashMap<>();
