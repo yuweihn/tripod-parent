@@ -97,10 +97,9 @@ public class HibernateConf {
 		return new DynamicDataSourceAspect();
 	}
 
-	@Primary
-	@ConditionalOnMissingBean(name = "dynamicDataSource")
+	@ConditionalOnMissingBean(DynamicDataSource.class)
 	@Bean(name = "dynamicDataSource")
-	public DataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
+	public DynamicDataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
 			, @Qualifier("dataSources") Map<Object, Object> dataSources) {
 		if (dataSources == null) {
 			dataSources = new HashMap<>();
