@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -97,10 +96,9 @@ public class HibernateConf {
 		return new DynamicDataSourceAspect();
 	}
 
-	@Primary
-	@ConditionalOnMissingBean(name = "dynamicDataSource")
+	@ConditionalOnMissingBean(DynamicDataSource.class)
 	@Bean(name = "dynamicDataSource")
-	public DataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
+	public DynamicDataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
 			, @Qualifier("dataSources") Map<Object, Object> dataSources) {
 		if (dataSources == null) {
 			dataSources = new HashMap<>();
