@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
@@ -130,7 +129,7 @@ public class HibernateConf {
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
 			, Interceptor interceptor
-			, ApplicationContext applicationContext
+			, @Autowired(required = false) ShardingContext shardingContext
 			, @Value("${tripod.hibernate.dialect:org.hibernate.dialect.MySQLDialect}") String dialect
 			, @Value("${tripod.hibernate.current-session-context-class:org.springframework.orm.hibernate5.SpringSessionContext}") String sessionContext
 			, @Value("${tripod.hibernate.cache.region.factory-class:org.hibernate.cache.jcache.internal.JCacheRegionFactory}") String cacheRegionFactory
@@ -142,13 +141,6 @@ public class HibernateConf {
 			, @Value("${tripod.hibernate.show-sql:false}") String showSql
 			, @Value("${tripod.hibernate.jdbc.batch-size:20}") String batchSize
 			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode) {
-		/**
-		 * 如果有分片上下文配置，优先加载
-		 */
-		try {
-			applicationContext.getBean(ShardingContext.class);
-		} catch (Exception ignored) {}
-
 		LocalSessionFactoryBean bean = new LocalSessionFactoryBean();
 		bean.setDataSource(dataSource);
 

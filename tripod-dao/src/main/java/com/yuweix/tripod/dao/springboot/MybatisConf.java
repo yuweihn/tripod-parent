@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
@@ -131,15 +130,8 @@ public class MybatisConf {
 	@ConditionalOnMissingBean(SqlSessionFactory.class)
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactoryBean sqlSessionFactoryBean(@Autowired DataSource dataSource
-			, ApplicationContext applicationContext
+			, @Autowired(required = false) ShardingContext shardingContext
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
-		/**
-		 * 如果有分片上下文配置，优先加载
-		 */
-		try {
-			applicationContext.getBean(ShardingContext.class);
-		} catch (Exception ignored) {}
-
 		SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource);
 		if (mapperLocations != null && mapperLocations.length > 0) {
