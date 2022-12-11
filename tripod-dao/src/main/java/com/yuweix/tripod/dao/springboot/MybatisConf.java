@@ -102,7 +102,7 @@ public class MybatisConf {
 	}
 
 	@Primary
-	@ConditionalOnMissingBean(name = "dynamicDataSource")
+	@ConditionalOnMissingBean(DynamicDataSource.class)
 	@Bean(name = "dynamicDataSource")
 	public DataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
 			, @Qualifier("dataSources") Map<Object, Object> dataSources) {
