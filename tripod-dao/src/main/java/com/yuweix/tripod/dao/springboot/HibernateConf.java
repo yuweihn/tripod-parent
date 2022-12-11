@@ -34,10 +34,6 @@ import java.util.Properties;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 public class HibernateConf {
-	@javax.annotation.Resource
-	private ApplicationContext applicationContext;
-
-
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
 	public DataSource defaultDataSource(@Value("${tripod.datasource.default.driver-class}") String driverClassName
@@ -134,6 +130,7 @@ public class HibernateConf {
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
 			, Interceptor interceptor
+			, ApplicationContext applicationContext
 			, @Value("${tripod.hibernate.dialect:org.hibernate.dialect.MySQLDialect}") String dialect
 			, @Value("${tripod.hibernate.current-session-context-class:org.springframework.orm.hibernate5.SpringSessionContext}") String sessionContext
 			, @Value("${tripod.hibernate.cache.region.factory-class:org.hibernate.cache.jcache.internal.JCacheRegionFactory}") String cacheRegionFactory

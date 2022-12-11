@@ -38,10 +38,6 @@ import java.util.Map;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 public class MybatisConf {
-	@javax.annotation.Resource
-	private ApplicationContext applicationContext;
-
-
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
 	public DataSource defaultDataSource(@Value("${tripod.datasource.default.driver-class}") String driverClassName
@@ -135,6 +131,7 @@ public class MybatisConf {
 	@ConditionalOnMissingBean(SqlSessionFactory.class)
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactoryBean sqlSessionFactoryBean(@Autowired DataSource dataSource
+			, ApplicationContext applicationContext
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
 		/**
 		 * 如果有分片上下文配置，优先加载
