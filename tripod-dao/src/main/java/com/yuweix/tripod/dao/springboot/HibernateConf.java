@@ -9,6 +9,7 @@ import com.yuweix.tripod.dao.hibernate.ShardAspect;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -129,7 +130,7 @@ public class HibernateConf {
 
 	@ConditionalOnMissingBean(SessionFactory.class)
 	@Bean(name = "sessionFactory")
-	public LocalSessionFactoryBean localSessionFactoryBean(@Qualifier("dynamicDataSource") DataSource dataSource
+	public LocalSessionFactoryBean localSessionFactoryBean(@Autowired DataSource dataSource
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
 			, Interceptor interceptor
