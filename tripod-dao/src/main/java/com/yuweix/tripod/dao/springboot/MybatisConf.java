@@ -9,6 +9,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.mapper.MapperScannerConfigurer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -133,7 +134,7 @@ public class MybatisConf {
 
 	@ConditionalOnMissingBean(SqlSessionFactory.class)
 	@Bean(name = "sqlSessionFactory")
-	public SqlSessionFactoryBean sqlSessionFactoryBean(@Qualifier("dynamicDataSource") DataSource dataSource
+	public SqlSessionFactoryBean sqlSessionFactoryBean(@Autowired DataSource dataSource
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
 		/**
 		 * 如果有分片上下文配置，优先加载
@@ -168,7 +169,7 @@ public class MybatisConf {
 
 	@ConditionalOnMissingBean(TransactionManager.class)
 	@Bean(name = "transactionManager")
-	public DataSourceTransactionManager transactionManager(@Qualifier("dynamicDataSource") DataSource dataSource) {
+	public DataSourceTransactionManager transactionManager(@Autowired DataSource dataSource) {
 		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
 		transactionManager.setDataSource(dataSource);
 		return transactionManager;
