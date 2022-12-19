@@ -140,7 +140,11 @@ public class HibernateConf {
 			, @Value("${tripod.hibernate.show-sql:false}") String showSql
 			, @Value("${tripod.hibernate.jdbc.batch-size:20}") String batchSize
 			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode
-			, @Value("${tripod.hibernate.session.factory.statement-inspector:com.yuweix.tripod.dao.hibernate.DynamicTableInspector}") String statementInspector) {
+			, @Value("${tripod.hibernate.session.factory.statement-inspector:}") String statementInspector) {
+		if (statementInspector == null || "".equals(statementInspector.trim())) {
+			statementInspector = DynamicTableInspector.class.getName();
+		}
+
 		LocalSessionFactoryBean bean = new LocalSessionFactoryBean();
 		bean.setDataSource(dataSource);
 
