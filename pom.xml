@@ -23,7 +23,7 @@
         <fastjson2.version>2.0.8</fastjson2.version>
         <freemarker.version>2.3.28</freemarker.version>
         <guava.version>31.1-jre</guava.version>
-        <hibernate.version>5.4.24.Final</hibernate.version>
+        <hibernate.version>6.1.0.Final</hibernate.version>
         <httpclient.version>4.5.13</httpclient.version>
         <httpcore.version>4.4.9</httpcore.version>
         <jakarta.annotation.api.version>2.1.1</jakarta.annotation.api.version>
@@ -148,13 +148,13 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${hibernate.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-jcache</artifactId>
                 <version>${hibernate.version}</version>
                 <scope>provided</scope>

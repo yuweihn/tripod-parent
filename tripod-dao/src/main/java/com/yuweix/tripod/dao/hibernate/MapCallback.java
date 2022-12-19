@@ -5,8 +5,8 @@ import java.util.Map;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.query.NativeQuery;
+import org.hibernate.transform.Transformers;
 
 
 /**
@@ -39,7 +39,7 @@ public class MapCallback extends MapParamCallback {
 		NativeQuery<?> query = null;
 		if (clz != null && Map.class.isAssignableFrom(clz)) {
 			query = session.createNativeQuery(sql);
-			query.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
+			query.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 		} else {
 			query = session.createNativeQuery(sql, clz);
 		}

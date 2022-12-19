@@ -4,9 +4,9 @@ package com.yuweix.tripod.dao.mybatis.provider;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import org.apache.ibatis.jdbc.SQL;
 
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import java.lang.reflect.Field;
 import java.util.List;
 

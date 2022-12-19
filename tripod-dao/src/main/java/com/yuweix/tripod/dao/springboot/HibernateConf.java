@@ -4,7 +4,7 @@ package com.yuweix.tripod.dao.springboot;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
-import com.yuweix.tripod.dao.hibernate.DynamicTableInterceptor;
+import com.yuweix.tripod.dao.hibernate.DynamicTableInspector;
 import com.yuweix.tripod.dao.hibernate.ShardAspect;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.hibernate.Interceptor;
@@ -128,7 +128,6 @@ public class HibernateConf {
 	public LocalSessionFactoryBean localSessionFactoryBean(@Autowired DataSource dataSource
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
-			, Interceptor interceptor
 			, @Autowired(required = false) ShardingContext shardingContext
 			, @Value("${tripod.hibernate.dialect:org.hibernate.dialect.MySQLDialect}") String dialect
 			, @Value("${tripod.hibernate.current-session-context-class:org.springframework.orm.hibernate5.SpringSessionContext}") String sessionContext
@@ -140,7 +139,8 @@ public class HibernateConf {
 			, @Value("${tripod.hibernate.cache.missing-cache-strategy:create}") String missingCacheStrategy
 			, @Value("${tripod.hibernate.show-sql:false}") String showSql
 			, @Value("${tripod.hibernate.jdbc.batch-size:20}") String batchSize
-			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode) {
+			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode
+			, @Value("${tripod.hibernate.session.factory.statement-inspector:com.yuweix.tripod.dao.hibernate.DynamicTableInspector}") String statementInspector) {
 		LocalSessionFactoryBean bean = new LocalSessionFactoryBean();
 		bean.setDataSource(dataSource);
 
@@ -156,10 +156,10 @@ public class HibernateConf {
 		properties.setProperty("hibernate.show_sql", showSql);
 		properties.setProperty("hibernate.jdbc.batch_size", batchSize);
 		properties.setProperty("hibernate.connection.release_mode", releaseMode);
+		properties.setProperty("hibernate.session_factory.statement_inspector", statementInspector);
 		bean.setHibernateProperties(properties);
 		bean.setMappingLocations(mappingLocations);
 		bean.setPackagesToScan(packagesToScan);
-		bean.setEntityInterceptor(interceptor);
 		return bean;
 	}
 
@@ -175,11 +175,5 @@ public class HibernateConf {
 	@Bean(name = "hbShardAspect")
 	public ShardAspect hbShardAspect() {
 		return new ShardAspect();
-	}
-
-	@ConditionalOnMissingBean(Interceptor.class)
-	@Bean(name = "dynamicTableInterceptor")
-	public Interceptor dynamicTableInterceptor() {
-		return new DynamicTableInterceptor();
 	}
 }

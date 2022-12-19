@@ -6,7 +6,7 @@ import com.yuweix.tripod.dao.mybatis.where.Criteria;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import org.apache.ibatis.jdbc.SQL;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;

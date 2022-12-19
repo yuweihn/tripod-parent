@@ -5,7 +5,7 @@ import com.yuweix.tripod.dao.PersistCache;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.Id;
+import jakarta.persistence.Id;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Map;

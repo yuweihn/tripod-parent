@@ -15,8 +15,8 @@ import jakarta.annotation.Resource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
 
 
 /**
