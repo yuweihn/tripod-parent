@@ -7,7 +7,6 @@ import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
 import com.yuweix.tripod.dao.hibernate.DynamicTableInspector;
 import com.yuweix.tripod.dao.hibernate.ShardAspect;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
-import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
