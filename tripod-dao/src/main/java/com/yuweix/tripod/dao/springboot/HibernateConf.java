@@ -128,10 +128,10 @@ public class HibernateConf {
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
 			, @Autowired(required = false) ShardingContext shardingContext
-			, @Value("${tripod.hibernate.dialect:org.hibernate.dialect.MySQLDialect}") String dialect
-			, @Value("${tripod.hibernate.current-session-context-class:org.springframework.orm.hibernate5.SpringSessionContext}") String sessionContext
-			, @Value("${tripod.hibernate.cache.region.factory-class:org.hibernate.cache.jcache.internal.JCacheRegionFactory}") String cacheRegionFactory
-			, @Value("${tripod.hibernate.cache.provider-class:org.ehcache.jsr107.EhcacheCachingProvider}") String cacheProviderClass
+			, @Value("${tripod.hibernate.dialect:}") String dialect
+			, @Value("${tripod.hibernate.current-session-context-class:}") String sessionContext
+			, @Value("${tripod.hibernate.cache.region.factory-class:}") String cacheRegionFactory
+			, @Value("${tripod.hibernate.cache.provider-class:}") String cacheProviderClass
 			, @Value("${tripod.hibernate.cache.provider-configuration-file-resource-path:ehcache-default.xml}") String ehcachePath
 			, @Value("${tripod.hibernate.cache.use-query-cache:true}") String useQueryCache
 			, @Value("${tripod.hibernate.cache.use-second-level-cache:false}") String useSecondLevelCache
@@ -140,6 +140,18 @@ public class HibernateConf {
 			, @Value("${tripod.hibernate.jdbc.batch-size:20}") String batchSize
 			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode
 			, @Value("${tripod.hibernate.session.factory.statement-inspector:}") String statementInspector) {
+		if (dialect == null || "".equals(dialect.trim())) {
+			dialect = org.hibernate.dialect.MySQLDialect.class.getName();
+		}
+		if (sessionContext == null || "".equals(sessionContext.trim())) {
+			sessionContext = org.springframework.orm.hibernate5.SpringSessionContext.class.getName();
+		}
+		if (cacheRegionFactory == null || "".equals(cacheRegionFactory.trim())) {
+			cacheRegionFactory = org.hibernate.cache.jcache.internal.JCacheRegionFactory.class.getName();
+		}
+		if (cacheProviderClass == null || "".equals(cacheProviderClass.trim())) {
+			cacheProviderClass = org.ehcache.jsr107.EhcacheCachingProvider.class.getName();
+		}
 		if (statementInspector == null || "".equals(statementInspector.trim())) {
 			statementInspector = DynamicTableInspector.class.getName();
 		}
