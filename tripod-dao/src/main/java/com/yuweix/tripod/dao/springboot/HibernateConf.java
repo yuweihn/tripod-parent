@@ -144,9 +144,6 @@ public class HibernateConf {
 			statementInspector = DynamicTableInspector.class.getName();
 		}
 
-		LocalSessionFactoryBean bean = new LocalSessionFactoryBean();
-		bean.setDataSource(dataSource);
-
 		Properties properties = new Properties();
 		properties.setProperty("hibernate.dialect", dialect);
 		properties.setProperty("hibernate.current_session_context_class", sessionContext);
@@ -160,6 +157,9 @@ public class HibernateConf {
 		properties.setProperty("hibernate.jdbc.batch_size", batchSize);
 		properties.setProperty("hibernate.connection.release_mode", releaseMode);
 		properties.setProperty("hibernate.session_factory.statement_inspector", statementInspector);
+
+		LocalSessionFactoryBean bean = new LocalSessionFactoryBean();
+		bean.setDataSource(dataSource);
 		bean.setHibernateProperties(properties);
 		bean.setMappingLocations(mappingLocations);
 		bean.setPackagesToScan(packagesToScan);
