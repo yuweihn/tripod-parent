@@ -51,7 +51,7 @@ public class ShardAspect {
             if (params == null || params.length <= 0) {
                 throw new RuntimeException("Sharding parameter is required.");
             }
-            for (int i = 0; i < params.length; i++) {
+            for (int i = 0, len = params.length; i < len; i++) {
                 if (shardParamName.equals(params[i].getName())) {
                     idx = i;
                     break;
