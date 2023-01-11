@@ -28,10 +28,10 @@ public class Response<C, D> implements Serializable {
 		this.msg = msg;
 		this.data = data;
 	}
-	public static<CC, DD> Response<CC, DD> create(CC code, String msg) {
-		return create(code, msg, null);
+	public static<CC, DD> Response<CC, DD> of(CC code, String msg) {
+		return of(code, msg, null);
 	}
-	public static<CC, DD> Response<CC, DD> create(CC code, String msg, DD data) {
+	public static<CC, DD> Response<CC, DD> of(CC code, String msg, DD data) {
 		return new Response<>(code, msg, data);
 	}
 
