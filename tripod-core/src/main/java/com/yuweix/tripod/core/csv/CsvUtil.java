@@ -65,7 +65,6 @@ public abstract class CsvUtil {
 	 * @param dataList 数据
 	 */
 	public static<T> void export(List<T> dataList, OutputStream out) {
-		Assert.notEmpty(dataList, "[dataList] must not be empty.");
 		log.info("list size: {}", dataList == null ? 0 : dataList.size());
 		if (dataList == null || dataList.size() <= 0) {
 			return;
