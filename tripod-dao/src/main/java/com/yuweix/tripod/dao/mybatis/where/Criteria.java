@@ -29,10 +29,10 @@ public class Criteria implements Serializable {
 		pindex = 0;
 	}
 
-	public static Criteria create(String key, Operator operator) {
-		return create(key, operator, null);
+	public static Criteria of(String key, Operator operator) {
+		return of(key, operator, null);
 	}
-	public static Criteria create(String key, Operator operator, Object value) {
+	public static Criteria of(String key, Operator operator, Object value) {
 		Criteria criteria = new Criteria();
 		String criterionSql = createCriterionSql(key, operator, value, criteria.params, criteria.hashCode(), ++criteria.pindex);
 		criteria.sql.append(criterionSql);
