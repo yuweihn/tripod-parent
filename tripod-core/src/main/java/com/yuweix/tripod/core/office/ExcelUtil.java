@@ -273,6 +273,9 @@ public abstract class ExcelUtil {
 			Map<String, Object> map = new HashMap<>();
 			int i = 0;
 			for (Cell cell: row) {
+				if (i >= keyList.size()) {
+					break;
+				}
 				map.put(keyList.get(i++), getCellValue(cell));
 			}
 			list.add(map);
