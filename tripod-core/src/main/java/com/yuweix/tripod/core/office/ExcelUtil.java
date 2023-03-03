@@ -269,14 +269,15 @@ public abstract class ExcelUtil {
 			if (row.getRowNum() <= 0) {
 				continue;
 			}
-			
+
 			Map<String, Object> map = new HashMap<>();
-			int i = 0;
+			int keySize = keyList.size();
 			for (Cell cell: row) {
-				if (i >= keyList.size()) {
-					break;
+				int idx = cell.getColumnIndex();
+				if (idx < 0 || idx >= keySize) {
+					continue;
 				}
-				map.put(keyList.get(i++), getCellValue(cell));
+				map.put(keyList.get(idx), getCellValue(cell));
 			}
 			list.add(map);
 		}
