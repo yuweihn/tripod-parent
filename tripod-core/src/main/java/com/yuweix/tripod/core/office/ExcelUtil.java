@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.yuweix.tripod.core.json.JsonUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
@@ -34,9 +35,9 @@ import org.springframework.util.Assert;
 public abstract class ExcelUtil {
 	private static final Logger log = LoggerFactory.getLogger(ExcelUtil.class);
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	
-	
-	
+
+
+
 	/**
 	 * 读入excel工作簿文件，只读取第一个sheet
 	 */
@@ -106,7 +107,7 @@ public abstract class ExcelUtil {
 	 */
 	public static<T> byte[] export(List<T> dataList) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		export(out, dataList);
+		export(dataList, out);
 		byte[] data = out.toByteArray();
 
 		try {
@@ -117,11 +118,24 @@ public abstract class ExcelUtil {
 		return data;
 	}
 
+	public static<T> void export(List<T> dataList, HttpServletResponse response, String fileName) {
+		response.setContentType("application/vnd.ms-excel");
+		response.setCharacterEncoding("utf-8");
+		response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+		response.setHeader("_filename", fileName);
+		response.setHeader("Access-Control-Expose-Headers", "_filename");
+		try {
+			export(dataList, response.getOutputStream());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	/**
 	 * 导出数据到输出流
 	 * @param dataList 数据
 	 */
-	public static<T> void export(OutputStream out, List<T> dataList) {
+	public static<T> void export(List<T> dataList, OutputStream out) {
 		Assert.notEmpty(dataList, "[dataList] is required.");
 		log.info("list size: {}", dataList.size());
 		SXSSFWorkbook workbook = null;
@@ -250,7 +264,7 @@ public abstract class ExcelUtil {
 		}
 		return list;
 	}
-	
+
 	private static List<String> getInputHeadList(Row row) {
 		List<String> list = new ArrayList<>();
 		for (Cell cell: row) {
@@ -262,7 +276,7 @@ public abstract class ExcelUtil {
 		}
 		return list;
 	}
-	
+
 	private static List<Map<String, Object>> getInputDataList(Sheet sheet, List<String> keyList) {
 		List<Map<String, Object>> list = new ArrayList<>();
 		for (Row row: sheet) {
