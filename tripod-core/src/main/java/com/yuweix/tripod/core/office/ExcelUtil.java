@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.util.Assert;
 
+import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * @author yuwei
@@ -106,7 +108,7 @@ public abstract class ExcelUtil {
 	 */
 	public static<T> byte[] export(List<T> dataList) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		export(out, dataList);
+		export(dataList, out);
 		byte[] data = out.toByteArray();
 
 		try {
@@ -117,11 +119,24 @@ public abstract class ExcelUtil {
 		return data;
 	}
 
+	public static<T> void export(List<T> dataList, HttpServletResponse response, String fileName) {
+		response.setContentType("application/vnd.ms-excel");
+		response.setCharacterEncoding("utf-8");
+		response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+		response.setHeader("_filename", fileName);
+		response.setHeader("Access-Control-Expose-Headers", "_filename");
+		try {
+			export(dataList, response.getOutputStream());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	/**
 	 * 导出数据到输出流
 	 * @param dataList 数据
 	 */
-	public static<T> void export(OutputStream out, List<T> dataList) {
+	public static<T> void export(List<T> dataList, OutputStream out) {
 		Assert.notEmpty(dataList, "[dataList] is required.");
 		log.info("list size: {}", dataList.size());
 		SXSSFWorkbook workbook = null;
