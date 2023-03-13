@@ -118,7 +118,7 @@ public abstract class ExcelUtil {
 		return data;
 	}
 
-	public static<T> void export(List<T> dataList, HttpServletResponse response, String fileName) {
+	public static<T> void export(List<T> dataList, String fileName, HttpServletResponse response) {
 		response.setContentType("application/vnd.ms-excel");
 		response.setCharacterEncoding("utf-8");
 		response.setHeader("Content-disposition", "attachment;filename=" + fileName);
