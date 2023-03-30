@@ -106,8 +106,11 @@ public abstract class ExcelUtil {
 	 * @param dataList 数据
 	 */
 	public static<T> byte[] export(List<T> dataList) {
+		return export(dataList, 20);
+	}
+	public static<T> byte[] export(List<T> dataList, int fontHeight) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		export(dataList, out);
+		export(dataList, out, fontHeight);
 		byte[] data = out.toByteArray();
 
 		try {
@@ -118,14 +121,17 @@ public abstract class ExcelUtil {
 		return data;
 	}
 
-	public static<T> void export(List<T> dataList, String fileName, HttpServletResponse response) {
-		response.setContentType("application/vnd.ms-excel");
-		response.setCharacterEncoding("utf-8");
-		response.setHeader("Content-disposition", "attachment;filename=" + fileName);
-		response.setHeader("_filename", fileName);
-		response.setHeader("Access-Control-Expose-Headers", "_filename");
+	public static<T> void export(List<T> dataList, String fileName, HttpServletResponse resp) {
+		export(dataList, fileName, resp, 20);
+	}
+	public static<T> void export(List<T> dataList, String fileName, HttpServletResponse resp, int fontHeight) {
+		resp.setContentType("application/vnd.ms-excel");
+		resp.setCharacterEncoding("utf-8");
+		resp.setHeader("Content-disposition", "attachment;filename=" + fileName);
+		resp.setHeader("_filename", fileName);
+		resp.setHeader("Access-Control-Expose-Headers", "_filename");
 		try {
-			export(dataList, response.getOutputStream());
+			export(dataList, resp.getOutputStream(), fontHeight);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -135,7 +141,7 @@ public abstract class ExcelUtil {
 	 * 导出数据到输出流
 	 * @param dataList 数据
 	 */
-	public static<T> void export(List<T> dataList, OutputStream out) {
+	public static<T> void export(List<T> dataList, OutputStream out, int fontHeight) {
 		Assert.notEmpty(dataList, "[dataList] is required.");
 		log.info("list size: {}", dataList.size());
 		SXSSFWorkbook workbook = null;
@@ -148,7 +154,7 @@ public abstract class ExcelUtil {
 			CellStyle titleStyle = workbook.createCellStyle();
 			titleStyle.setAlignment(HorizontalAlignment.CENTER);
 			Font titleFont = workbook.createFont();
-			titleFont.setFontHeightInPoints((short) 20);
+			titleFont.setFontHeightInPoints((short) fontHeight);
 			titleFont.setBold(true);
 			titleStyle.setFont(titleFont);
 
