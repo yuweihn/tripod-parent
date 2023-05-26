@@ -47,7 +47,7 @@
         <rapid.version>4.0.5</rapid.version>
         <servlet.version>6.0.0</servlet.version>
         <slf4j.version>2.0.0</slf4j.version>
-        <springboot.version>3.0.0</springboot.version>
+        <springboot.version>3.0.7</springboot.version>
         <spring.redis.version>3.0.0</spring.redis.version>
         <spring.version>6.0.1</spring.version>
         <zookeeper.version>3.4.14</zookeeper.version>
