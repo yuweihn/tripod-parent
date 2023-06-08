@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +23,10 @@ public abstract class BeanUtil {
 											, "H", "I", "J", "K", "L", "M", "N"
 											, "O", "P", "Q", "R", "S", "T"
 											, "U", "V", "W", "X", "Y", "Z"
+											, "a", "b", "b", "d", "e", "f", "g"
+											, "h", "i", "j", "k", "l", "m", "n"
+											, "o", "p", "q", "r", "s", "t"
+											, "u", "v", "w", "x", "y", "z"
 											, "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 
 	private static final String EMAIL_REG = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
@@ -86,7 +91,7 @@ public abstract class BeanUtil {
 	 * @return
 	 */
 	public static String getRandCode(int length) {
-		Random random = new Random();
+		Random random = new SecureRandom();
 		StringBuilder builder = new StringBuilder("");
 		for (int i = 0; i < length; i++) {
 			builder.append(CHAR_ARRAY[random.nextInt(CHAR_ARRAY.length)]);
