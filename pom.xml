@@ -32,7 +32,7 @@
         <jdk.version>17</jdk.version>
         <lettuce.version>6.1.10.RELEASE</lettuce.version>
         <maven.compiler.encoding>utf-8</maven.compiler.encoding>
-        <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
+        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <maven.gpg.plugin.version>3.0.1</maven.gpg.plugin.version>
         <maven.javadoc.plugin.version>3.4.0</maven.javadoc.plugin.version>
         <maven.shade.plugin.version>3.3.0</maven.shade.plugin.version>
