@@ -372,4 +372,43 @@ public abstract class BeanUtil {
 		}
 		return targets;
 	}
+
+	public static boolean exists(Long[] list, long num) {
+		if (list == null || list.length <= 0) {
+			return false;
+		}
+
+		for (long anum: list) {
+			if (anum == num) {
+				return true;
+			}
+		}
+		return false;
+	}
+	/**
+	 * 集合list中是否包含元素str
+	 * @param list
+	 * @param str
+	 * @return
+	 */
+	public static boolean exists(List<String> list, String str) {
+		if (list == null || str == null) {
+			return false;
+		}
+
+		for (String astr: list) {
+			if (astr.trim().equals(str.trim())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public static boolean exists(List<? extends Number> list, Number num){
+		for (Number anum: list) {
+			if (anum.equals(num)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

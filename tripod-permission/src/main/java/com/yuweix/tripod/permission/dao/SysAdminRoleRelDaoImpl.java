@@ -10,7 +10,7 @@ import com.yuweix.tripod.dao.mybatis.BaseMapper;
 import com.yuweix.tripod.dao.mybatis.CacheableDao;
 import com.yuweix.tripod.dao.mybatis.where.Criteria;
 import com.yuweix.tripod.dao.mybatis.where.Operator;
-import com.yuweix.tripod.permission.conf.Properties;
+import com.yuweix.tripod.permission.common.Properties;
 import jakarta.annotation.Resource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

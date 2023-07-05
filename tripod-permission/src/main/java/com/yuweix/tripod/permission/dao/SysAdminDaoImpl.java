@@ -3,7 +3,7 @@ package com.yuweix.tripod.permission.dao;
 
 import com.yuweix.tripod.dao.mybatis.BaseMapper;
 import com.yuweix.tripod.dao.mybatis.CacheableDao;
-import com.yuweix.tripod.permission.conf.Properties;
+import com.yuweix.tripod.permission.common.Properties;
 import com.yuweix.tripod.permission.mapper.SysAdminMapper;
 import com.yuweix.tripod.permission.model.SysAdmin;
 import jakarta.annotation.Resource;

@@ -5,7 +5,7 @@ import com.yuweix.tripod.permission.mapper.SysRoleMapper;
 import com.yuweix.tripod.permission.model.SysRole;
 import com.yuweix.tripod.dao.mybatis.BaseMapper;
 import com.yuweix.tripod.dao.mybatis.CacheableDao;
-import com.yuweix.tripod.permission.conf.Properties;
+import com.yuweix.tripod.permission.common.Properties;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Repository;
 

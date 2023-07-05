@@ -1,0 +1,104 @@
+package com.yuweix.tripod.permission.web;
+
+
+import com.wei.ai.common.AiActionUtil;
+import com.wei.ai.common.ResponseCode;
+import com.wei.ai.common.annotations.Permission;
+import com.wei.ai.dto.AdminDto;
+import com.wei.ai.dto.PermissionDto;
+import com.wei.ai.service.PermissionService;
+import com.yuweix.tripod.core.Response;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
+
+/**
+ * Sys权限管理
+ * @author yuwei
+ */
+@Controller
+public class SysPermissionController {
+	@Resource
+	private PermissionService permissionService;
+
+
+	/**
+	 * 权限列表
+	 */
+	@Permission(value = "sys.permission.list")
+	@RequestMapping(value = "/sys/permission/list", method = GET)
+	@ResponseBody
+	public Response<String, List<PermissionDto>> queryPermissionList(@RequestParam(value = "keywords", required = false) String keywords
+			, @RequestParam(value = "visible", required = false) Boolean visible) {
+		List<PermissionDto> permissionList = permissionService.queryPermissionListIncludeChildren(null, keywords
+				, null, visible);
+		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok", permissionList);
+	}
+
+	/**
+	 * 添加权限
+	 */
+	@Permission(value = "sys.permission.create")
+	@RequestMapping(value = "/sys/permission/create", method = POST)
+	@ResponseBody
+	public Response<String, Void> createPermission(@RequestParam(value = "permNo", required = true) String permNo
+			, @RequestParam(value = "title", required = false) String title
+			, @RequestParam(value = "parentId", required = false) Long parentId
+			, @RequestParam(value = "orderNum", required = false, defaultValue = "0") int orderNum
+			, @RequestParam(value = "path", required = false) String path
+			, @RequestParam(value = "component", required = false) String component
+			, @RequestParam(value = "ifExt", required = false, defaultValue = "false") boolean ifExt
+			, @RequestParam(value = "permType", required = false) String permType
+			, @RequestParam(value = "visible", required = false, defaultValue = "true") boolean visible
+			, @RequestParam(value = "icon", required = false) String icon
+			, @RequestParam(value = "descr", required = false) String descr) {
+		AdminDto adminDto = AiActionUtil.getLoginAccount();
+		permissionService.addPermission(permNo, title, parentId, orderNum, path, component, ifExt
+				, permType, visible, icon, descr, adminDto.getAccountNo());
+		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok");
+	}
+
+	/**
+	 * 修改权限
+	 */
+	@Permission(value = "sys.permission.update")
+	@RequestMapping(value = "/sys/permission/update", method = POST)
+	@ResponseBody
+	public Response<String, Void> updatePermission(@RequestParam(value = "id", required = true) long id
+			, @RequestParam(value = "permNo", required = true) String permNo
+			, @RequestParam(value = "title", required = false) String title
+			, @RequestParam(value = "parentId", required = false) Long parentId
+			, @RequestParam(value = "orderNum", required = false, defaultValue = "0") int orderNum
+			, @RequestParam(value = "path", required = false) String path
+			, @RequestParam(value = "component", required = false) String component
+			, @RequestParam(value = "ifExt", required = false, defaultValue = "false") boolean ifExt
+			, @RequestParam(value = "permType", required = false) String permType
+			, @RequestParam(value = "visible", required = false, defaultValue = "true") boolean visible
+			, @RequestParam(value = "icon", required = false) String icon
+			, @RequestParam(value = "descr", required = false) String descr) {
+		AdminDto adminDto = AiActionUtil.getLoginAccount();
+		permissionService.updatePermission(id, permNo, title, parentId, orderNum, path, component, ifExt
+				, permType, visible, icon, descr, adminDto.getAccountNo());
+		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok");
+	}
+
+	/**
+	 * 删除权限
+	 */
+	@Permission(value = "sys.permission.delete")
+	@RequestMapping(value = "/sys/permission/delete", method = DELETE)
+	@ResponseBody
+	public Response<String, Void> deletePermission(@RequestParam(value = "ids", required = true)long[] ids) {
+		for (long id: ids) {
+			permissionService.deletePermission(id);
+		}
+		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok");
+	}
+}
