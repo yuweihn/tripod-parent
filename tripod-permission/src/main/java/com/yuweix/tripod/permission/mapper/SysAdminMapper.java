@@ -1,9 +1,9 @@
-package com.wei.ai.mapper;
+package com.yuweix.tripod.permission.mapper;
 
 
-import com.wei.ai.model.SysAdmin;
-import com.wei.ai.model.SysAdminRoleRel;
-import com.wei.ai.model.SysRolePermissionRel;
+import com.yuweix.tripod.permission.model.SysAdmin;
+import com.yuweix.tripod.permission.model.SysAdminRoleRel;
+import com.yuweix.tripod.permission.model.SysRolePermissionRel;
 import com.yuweix.tripod.dao.mybatis.BaseMapper;
 import com.yuweix.tripod.dao.mybatis.provider.AbstractProvider;
 import org.apache.ibatis.annotations.Param;

@@ -1,7 +1,6 @@
-package com.yuweix.tripod.permission.model;
+package com.yuweix.tripod.permission.dto;
 
 
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -9,38 +8,21 @@ import java.util.Date;
 /**
  * @author yuwei
  */
-@Table(name = "sys_admin_role_rel")
-public class SysAdminRoleRel implements Serializable {
+public class SysAdminRoleDto implements Serializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(generator = "hehe")
+
 	private long id;
-	
-	@Column(name = "admin_id")
 	private long adminId;
-	
-	@Column(name = "role_id")
 	private long roleId;
-	
-	@Version
-	@Column(name = "version")
-	private int version;
-	
-	@Column(name = "creator")
+	private String roleNo;
+	private String roleName;
+
 	private String creator;
-	
-	@Column(name = "create_time")
 	private Date createTime;
-	
-	@Column(name = "modifier")
 	private String modifier;
-	
-	@Column(name = "modify_time")
 	private Date modifyTime;
 
 
@@ -68,12 +50,20 @@ public class SysAdminRoleRel implements Serializable {
 		this.roleId = roleId;
 	}
 
-	public int getVersion() {
-		return version;
+	public String getRoleNo() {
+		return roleNo;
 	}
 
-	public void setVersion(int version) {
-		this.version = version;
+	public void setRoleNo(String roleNo) {
+		this.roleNo = roleNo;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
 	}
 
 	public String getCreator() {

@@ -1,7 +1,5 @@
-package com.wei.ai.model;
+package com.yuweix.tripod.permission.model;
 
-
-import lombok.Data;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -12,7 +10,6 @@ import java.util.Date;
  * @author yuwei
  */
 @Table(name = "sys_role_permission_rel")
-@Data
 public class SysRolePermissionRel implements Serializable {
 	/**
 	 * 
@@ -46,4 +43,69 @@ public class SysRolePermissionRel implements Serializable {
 	
 	@Column(name = "modify_time")
 	private Date modifyTime;
+
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public long getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(long roleId) {
+		this.roleId = roleId;
+	}
+
+	public long getPermId() {
+		return permId;
+	}
+
+	public void setPermId(long permId) {
+		this.permId = permId;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getModifier() {
+		return modifier;
+	}
+
+	public void setModifier(String modifier) {
+		this.modifier = modifier;
+	}
+
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
+	}
 }

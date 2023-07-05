@@ -1,7 +1,5 @@
-package com.wei.ai.model;
+package com.yuweix.tripod.permission.model;
 
-
-import lombok.Data;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -12,7 +10,6 @@ import java.util.Date;
  * @author yuwei
  */
 @Table(name = "sys_permission")
-@Data
 public class SysPermission implements Serializable {
 	/**
 	 *
@@ -46,7 +43,7 @@ public class SysPermission implements Serializable {
 	private boolean ifExt;
 
 	/**
-	 * 见 {@link com.wei.ai.common.enums.PermType}
+	 * 见 {@link com.yuweix.tripod.permission.enums.PermType}
 	 */
 	@Column(name = "perm_type")
 	private String permType;
@@ -76,4 +73,141 @@ public class SysPermission implements Serializable {
 
 	@Column(name = "modify_time")
 	private Date modifyTime;
+
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getPermNo() {
+		return permNo;
+	}
+
+	public void setPermNo(String permNo) {
+		this.permNo = permNo;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public Long getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Long parentId) {
+		this.parentId = parentId;
+	}
+
+	public int getOrderNum() {
+		return orderNum;
+	}
+
+	public void setOrderNum(int orderNum) {
+		this.orderNum = orderNum;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public String getComponent() {
+		return component;
+	}
+
+	public void setComponent(String component) {
+		this.component = component;
+	}
+
+	public boolean isIfExt() {
+		return ifExt;
+	}
+
+	public void setIfExt(boolean ifExt) {
+		this.ifExt = ifExt;
+	}
+
+	public String getPermType() {
+		return permType;
+	}
+
+	public void setPermType(String permType) {
+		this.permType = permType;
+	}
+
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public String getIcon() {
+		return icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public String getDescr() {
+		return descr;
+	}
+
+	public void setDescr(String descr) {
+		this.descr = descr;
+	}
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
+	public String getCreator() {
+		return creator;
+	}
+
+	public void setCreator(String creator) {
+		this.creator = creator;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getModifier() {
+		return modifier;
+	}
+
+	public void setModifier(String modifier) {
+		this.modifier = modifier;
+	}
+
+	public Date getModifyTime() {
+		return modifyTime;
+	}
+
+	public void setModifyTime(Date modifyTime) {
+		this.modifyTime = modifyTime;
+	}
 }
