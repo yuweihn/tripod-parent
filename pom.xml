@@ -63,7 +63,7 @@
         <module>tripod-sequence</module>
         <module>tripod-session</module>
         <module>tripod-web</module>
-<!--        <module>tripod-permission</module>-->
+        <module>tripod-permission</module>
         <module>tripod-spring-boot-starter</module>
     </modules>
 
