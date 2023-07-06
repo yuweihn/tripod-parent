@@ -1,14 +1,14 @@
 package com.yuweix.tripod.permission.web;
 
 
-import com.wei.ai.common.AiActionUtil;
-import com.wei.ai.common.ResponseCode;
-import com.wei.ai.common.annotations.Permission;
-import com.wei.ai.dto.AdminDto;
-import com.wei.ai.dto.PageResponseDto;
-import com.wei.ai.dto.RoleDto;
-import com.wei.ai.service.RoleService;
 import com.yuweix.tripod.core.Response;
+import com.yuweix.tripod.permission.annotations.Permission;
+import com.yuweix.tripod.permission.common.PermissionUtil;
+import com.yuweix.tripod.permission.common.Properties;
+import com.yuweix.tripod.permission.dto.AdminDto;
+import com.yuweix.tripod.permission.dto.PageResponseDto;
+import com.yuweix.tripod.permission.dto.RoleDto;
+import com.yuweix.tripod.permission.service.RoleService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +28,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class SysRoleController {
 	@Resource
 	private RoleService roleService;
+	@Resource
+	private Properties properties;
 
 
 	/**
@@ -41,11 +43,10 @@ public class SysRoleController {
 			, @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
 		int count = roleService.queryRoleCount(keywords);
 		List<RoleDto> roleList = roleService.queryRoleList(keywords, pageNo, pageSize);
-		PageResponseDto<RoleDto> dto = PageResponseDto.<RoleDto>builder()
-				.size(count)
-				.list(roleList)
-				.build();
-		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok", dto);
+		PageResponseDto<RoleDto> dto = new PageResponseDto<>();
+		dto.setSize(count);
+		dto.setList(roleList);
+		return new Response<>(properties.getSuccessCode(), "ok", dto);
 	}
 
 	/**
@@ -57,9 +58,9 @@ public class SysRoleController {
 	public Response<String, RoleDto> queryRoleInfo(@RequestParam(value = "id", required = true) long id) {
 		RoleDto role = roleService.queryRoleById(id);
 		if (role == null) {
-			return new Response<>(ResponseCode.FAILURE.getCode(), "无数据");
+			return new Response<>(properties.getFailureCode(), "无数据");
 		} else {
-			return new Response<>(ResponseCode.SUCCESS.getCode(), "ok", role);
+			return new Response<>(properties.getSuccessCode(), "ok", role);
 		}
 	}
 
@@ -71,9 +72,9 @@ public class SysRoleController {
 	@ResponseBody
 	public Response<String, Void> createRole(@RequestParam(value = "roleNo", required = true)String roleNo
 			, @RequestParam(value = "roleName", required = true) String roleName) {
-		AdminDto adminDto = AiActionUtil.getLoginAccount();
+		AdminDto adminDto = PermissionUtil.getLoginAccount();
 		roleService.addRole(roleNo.trim(), roleName, adminDto.getAccountNo());
-		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok");
+		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 
 	/**
@@ -85,9 +86,9 @@ public class SysRoleController {
 	public Response<String, Void> updateRole(@RequestParam(value = "id", required = true) long id
 			, @RequestParam(value = "roleNo", required = true)String roleNo
 			, @RequestParam(value = "roleName", required = true) String roleName) {
-		AdminDto adminDto = AiActionUtil.getLoginAccount();
+		AdminDto adminDto = PermissionUtil.getLoginAccount();
 		roleService.updateRole(id, roleNo.trim(), roleName, adminDto.getAccountNo());
-		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok");
+		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 
 	/**
@@ -100,6 +101,6 @@ public class SysRoleController {
 		for (long id: ids) {
 			roleService.deleteRole(id);
 		}
-		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok");
+		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 }

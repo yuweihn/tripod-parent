@@ -1,13 +1,13 @@
 package com.yuweix.tripod.permission.web;
 
 
-import com.wei.ai.common.AiActionUtil;
-import com.wei.ai.common.ResponseCode;
-import com.wei.ai.common.annotations.Permission;
-import com.wei.ai.dto.AdminDto;
-import com.wei.ai.dto.PermissionDto;
-import com.wei.ai.service.PermissionService;
 import com.yuweix.tripod.core.Response;
+import com.yuweix.tripod.permission.annotations.Permission;
+import com.yuweix.tripod.permission.common.PermissionUtil;
+import com.yuweix.tripod.permission.common.Properties;
+import com.yuweix.tripod.permission.dto.AdminDto;
+import com.yuweix.tripod.permission.dto.PermissionDto;
+import com.yuweix.tripod.permission.service.PermissionService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +27,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class SysPermissionController {
 	@Resource
 	private PermissionService permissionService;
+	@Resource
+	private Properties properties;
 
 
 	/**
@@ -39,7 +41,7 @@ public class SysPermissionController {
 			, @RequestParam(value = "visible", required = false) Boolean visible) {
 		List<PermissionDto> permissionList = permissionService.queryPermissionListIncludeChildren(null, keywords
 				, null, visible);
-		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok", permissionList);
+		return new Response<>(properties.getSuccessCode(), "ok", permissionList);
 	}
 
 	/**
@@ -59,10 +61,10 @@ public class SysPermissionController {
 			, @RequestParam(value = "visible", required = false, defaultValue = "true") boolean visible
 			, @RequestParam(value = "icon", required = false) String icon
 			, @RequestParam(value = "descr", required = false) String descr) {
-		AdminDto adminDto = AiActionUtil.getLoginAccount();
+		AdminDto adminDto = PermissionUtil.getLoginAccount();
 		permissionService.addPermission(permNo, title, parentId, orderNum, path, component, ifExt
 				, permType, visible, icon, descr, adminDto.getAccountNo());
-		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok");
+		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 
 	/**
@@ -83,10 +85,10 @@ public class SysPermissionController {
 			, @RequestParam(value = "visible", required = false, defaultValue = "true") boolean visible
 			, @RequestParam(value = "icon", required = false) String icon
 			, @RequestParam(value = "descr", required = false) String descr) {
-		AdminDto adminDto = AiActionUtil.getLoginAccount();
+		AdminDto adminDto = PermissionUtil.getLoginAccount();
 		permissionService.updatePermission(id, permNo, title, parentId, orderNum, path, component, ifExt
 				, permType, visible, icon, descr, adminDto.getAccountNo());
-		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok");
+		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 
 	/**
@@ -99,6 +101,6 @@ public class SysPermissionController {
 		for (long id: ids) {
 			permissionService.deletePermission(id);
 		}
-		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok");
+		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 }

@@ -1,15 +1,15 @@
 package com.yuweix.tripod.permission.web;
 
 
-import com.wei.ai.common.AiActionUtil;
-import com.wei.ai.common.ResponseCode;
-import com.wei.ai.common.annotations.Permission;
-import com.wei.ai.dto.AdminDto;
-import com.wei.ai.dto.PermissionDto;
-import com.wei.ai.dto.RolePermissionDto;
-import com.wei.ai.service.PermissionService;
-import com.wei.ai.service.RolePermissionService;
 import com.yuweix.tripod.core.Response;
+import com.yuweix.tripod.permission.annotations.Permission;
+import com.yuweix.tripod.permission.common.PermissionUtil;
+import com.yuweix.tripod.permission.common.Properties;
+import com.yuweix.tripod.permission.dto.AdminDto;
+import com.yuweix.tripod.permission.dto.PermissionDto;
+import com.yuweix.tripod.permission.dto.RolePermissionDto;
+import com.yuweix.tripod.permission.service.PermissionService;
+import com.yuweix.tripod.permission.service.RolePermissionService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +33,8 @@ public class SysRolePermissionController {
 	private PermissionService permissionService;
 	@Resource
 	private RolePermissionService rolePermissionService;
+	@Resource
+	private Properties properties;
 
 
 	/**
@@ -46,11 +48,10 @@ public class SysRolePermissionController {
 				, null, null, null);
 		List<Long> permIdList = rolePermissionService.queryPermissionIdListByRoleId(roleId);
 
-		RolePermissionDto dto = RolePermissionDto.builder()
-				.permList(permissionList)
-				.checkedPermIdList(permIdList)
-				.build();
-		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok", dto);
+		RolePermissionDto dto = new RolePermissionDto();
+		dto.setPermList(permissionList);
+		dto.setCheckedPermIdList(permIdList);
+		return new Response<>(properties.getSuccessCode(), "ok", dto);
 	}
 
 	/**
@@ -67,8 +68,8 @@ public class SysRolePermissionController {
 				permIdList.add(permId);
 			}
 		}
-		AdminDto adminDto = AiActionUtil.getLoginAccount();
+		AdminDto adminDto = PermissionUtil.getLoginAccount();
 		rolePermissionService.saveRolePermission(roleId, permIdList, adminDto.getAccountNo());
-		return new Response<>(ResponseCode.SUCCESS.getCode(), "ok");
+		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 }
