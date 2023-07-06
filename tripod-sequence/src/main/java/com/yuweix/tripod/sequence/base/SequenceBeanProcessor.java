@@ -3,6 +3,7 @@ package com.yuweix.tripod.sequence.base;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -86,7 +87,17 @@ public class SequenceBeanProcessor implements BeanDefinitionRegistryPostProcesso
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
 		if (bean instanceof SequenceBean) {
-			registerBeans(this.sequenceClz, ((SequenceBean) bean).getBeans());
+			Map<String, String> map = new HashMap<>();
+			SequenceBean sbean = (SequenceBean) bean;
+			Map<String, String> beans = sbean.getBeans();
+			Map<String, String> baseBeans = sbean.getBaseBeans();
+			if (beans != null && !beans.isEmpty()) {
+				map.putAll(beans);
+			}
+			if (baseBeans != null && !baseBeans.isEmpty()) {
+				map.putAll(baseBeans);
+			}
+			registerBeans(this.sequenceClz, map);
 			done = true;
 		} else if (!done) {
 			beanFactory.getBean(SequenceBean.class);
