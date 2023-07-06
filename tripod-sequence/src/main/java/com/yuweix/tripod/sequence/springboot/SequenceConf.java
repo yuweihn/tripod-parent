@@ -1,10 +1,9 @@
 package com.yuweix.tripod.sequence.springboot;
 
 
-import com.yuweix.tripod.sequence.base.BeanMap;
 import com.yuweix.tripod.sequence.base.DefaultSequence;
-import com.yuweix.tripod.sequence.base.SequenceBeanFactory;
-import com.yuweix.tripod.sequence.base.SequenceBeanHolder;
+import com.yuweix.tripod.sequence.base.SequenceBeanProcessor;
+import com.yuweix.tripod.sequence.base.SequenceBean;
 import com.yuweix.tripod.sequence.dao.SegmentSequenceDao;
 import com.yuweix.tripod.sequence.dao.SequenceDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +44,11 @@ public class SequenceConf {
 		return sequenceDao;
 	}
 
-	@ConditionalOnMissingBean(SequenceBeanHolder.class)
+	@ConditionalOnMissingBean(SequenceBean.class)
 	@Bean
 	@ConfigurationProperties(prefix = "tripod.sequence", ignoreUnknownFields = true)
-	public SequenceBeanHolder sequenceBeanHolder() {
-		return new SequenceBeanHolder() {
+	public SequenceBean sequenceBean() {
+		return new SequenceBean() {
 			private Map<String, String> map = new HashMap<>();
 			@Override
 			public Map<String, String> getBeans() {
@@ -58,25 +57,14 @@ public class SequenceConf {
 		};
 	}
 
-	@ConditionalOnMissingBean(BeanMap.class)
-	@Bean
-	public BeanMap beanMap(SequenceBeanHolder holder) {
-		BeanMap map = new BeanMap();
-		Map<String, String> beans = holder.getBeans();
-		if (beans != null && !beans.isEmpty()) {
-			map.putAll(beans);
-		}
-		return map;
-	}
-
-	@ConditionalOnMissingBean(SequenceBeanFactory.class)
-	@Bean(name = "sequenceBeanFactory")
-	public SequenceBeanFactory sequenceBeanFactory(Environment env) {
+	@ConditionalOnMissingBean(SequenceBeanProcessor.class)
+	@Bean(name = "sequenceBeanProcessor")
+	public SequenceBeanProcessor sequenceBeanProcessor(Environment env) {
 		String clzName = env.getProperty("tripod.sequence.class-name");
 		if (clzName != null && !"".equals(clzName)) {
-			return new SequenceBeanFactory(clzName);
+			return new SequenceBeanProcessor(clzName);
 		} else {
-			return new SequenceBeanFactory(DefaultSequence.class);
+			return new SequenceBeanProcessor(DefaultSequence.class);
 		}
 	}
 }

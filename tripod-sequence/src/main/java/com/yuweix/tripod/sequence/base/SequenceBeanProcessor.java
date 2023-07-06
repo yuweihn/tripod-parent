@@ -25,8 +25,8 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProce
  * 注册一系列{@link Sequence}实例到Spring容器中
  * @author yuwei
  */
-public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor {
-	private static final Logger log = LoggerFactory.getLogger(SequenceBeanFactory.class);
+public class SequenceBeanProcessor implements BeanDefinitionRegistryPostProcessor, BeanPostProcessor {
+	private static final Logger log = LoggerFactory.getLogger(SequenceBeanProcessor.class);
 
 	private static final String DELIMITER = ",";
 
@@ -38,20 +38,20 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	private boolean done = false;
 
 
-	public SequenceBeanFactory(Class<? extends AbstractSequence> sequenceClz) {
+	public SequenceBeanProcessor(Class<? extends AbstractSequence> sequenceClz) {
 		this(sequenceClz, null);
 	}
-	public SequenceBeanFactory(String sequenceClzName) {
+	public SequenceBeanProcessor(String sequenceClzName) {
 		this(sequenceClzName, null);
 	}
-	public SequenceBeanFactory(Class<? extends AbstractSequence> sequenceClz, List<Property> constructArgList) {
+	public SequenceBeanProcessor(Class<? extends AbstractSequence> sequenceClz, List<Property> constructArgList) {
 		this(sequenceClz.getName(), constructArgList);
 	}
 	/**
 	 * @param sequenceClzName                         准备实例化的Sequence实现类
 	 * @param constructArgList                        Sequence实现类的构造函数参数序列
 	 */
-	public SequenceBeanFactory(String sequenceClzName, List<Property> constructArgList) {
+	public SequenceBeanProcessor(String sequenceClzName, List<Property> constructArgList) {
 		this.sequenceClz = forName(sequenceClzName);
 		this.constructArgList = constructArgList;
 	}
@@ -85,18 +85,22 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	}
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (bean instanceof BeanMap) {
-			registerBeans(this.sequenceClz, (BeanMap) bean);
+		if (bean instanceof SequenceBean) {
+			registerBeans(this.sequenceClz, ((SequenceBean) bean).getBeans());
 			done = true;
 		} else if (!done) {
-			beanFactory.getBean(BeanMap.class);
+			beanFactory.getBean(SequenceBean.class);
 		}
 		return bean;
 	}
 
+
 	/**
 	 * 注册一系列[Sequence Bean]
 	 */
+	public void registerBeans(Map<String, String> beans) {
+		this.registerBeans(this.sequenceClz, beans);
+	}
 	private void registerBeans(Class<? extends AbstractSequence> defaultClz, Map<String, String> beans) {
 		if (beans == null || beans.isEmpty()) {
 			return;

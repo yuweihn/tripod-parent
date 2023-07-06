@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * @author yuwei
  **/
-public interface SequenceBeanHolder {
+public interface SequenceBean {
 	/**
 	 * 返回键值对格式数据，如果“值”为空，就以“键”作为“值”。
 	 * 键：beanName
