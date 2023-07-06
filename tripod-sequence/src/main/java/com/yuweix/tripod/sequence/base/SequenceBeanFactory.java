@@ -85,11 +85,11 @@ public class SequenceBeanFactory implements BeanDefinitionRegistryPostProcessor,
 	}
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (bean instanceof SequenceBeanHolder) {
-			registerBeans(this.sequenceClz, ((SequenceBeanHolder) bean).getBeans());
+		if (bean instanceof BeanMap) {
+			registerBeans(this.sequenceClz, (BeanMap) bean);
 			done = true;
 		} else if (!done) {
-			beanFactory.getBean(SequenceBeanHolder.class);
+			beanFactory.getBean(BeanMap.class);
 		}
 		return bean;
 	}
