@@ -58,7 +58,7 @@ public class SequenceConf {
 	}
 
 	@ConditionalOnMissingBean(SequenceBeanProcessor.class)
-	@Bean(name = "sequenceBeanProcessor")
+	@Bean
 	public SequenceBeanProcessor sequenceBeanProcessor(Environment env) {
 		String clzName = env.getProperty("tripod.sequence.class-name");
 		if (clzName != null && !"".equals(clzName)) {

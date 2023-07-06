@@ -97,9 +97,6 @@ public class SequenceBeanProcessor implements BeanDefinitionRegistryPostProcesso
 	/**
 	 * 注册一系列[Sequence Bean]
 	 */
-	public void registerBeans(Map<String, String> beans) {
-		this.registerBeans(this.sequenceClz, beans);
-	}
 	private void registerBeans(Class<? extends AbstractSequence> defaultClz, Map<String, String> beans) {
 		if (beans == null || beans.isEmpty()) {
 			return;
