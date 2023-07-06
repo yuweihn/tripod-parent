@@ -6,6 +6,7 @@ import com.yuweix.tripod.permission.web.interceptor.PermissionCheckInterceptor;
 import com.yuweix.tripod.sequence.base.SequenceBeanHolder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.Map;
 /**
  * @author yuwei
  */
+@ComponentScan(basePackages = "com.yuweix.tripod.permission", useDefaultFilters = true)
 public class PermissionConf {
 	@Bean(name = "sequenceBeanHolder#advice")
 	public Object sequenceBeanHolderAdvice(SequenceBeanHolder holder) {

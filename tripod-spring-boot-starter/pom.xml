@@ -111,6 +111,11 @@
 			<artifactId>tripod-web</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.yuweix</groupId>
+			<artifactId>tripod-permission</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 
