@@ -1,6 +1,7 @@
 package com.yuweix.tripod.sequence.springboot;
 
 
+import com.yuweix.tripod.sequence.base.BeanMap;
 import com.yuweix.tripod.sequence.base.DefaultSequence;
 import com.yuweix.tripod.sequence.base.SequenceBeanFactory;
 import com.yuweix.tripod.sequence.base.SequenceBeanHolder;
@@ -55,6 +56,17 @@ public class SequenceConf {
 				return map;
 			}
 		};
+	}
+
+	@ConditionalOnMissingBean(BeanMap.class)
+	@Bean
+	public BeanMap beanMap(SequenceBeanHolder holder) {
+		BeanMap map = new BeanMap();
+		Map<String, String> beans = holder.getBeans();
+		if (beans != null && !beans.isEmpty()) {
+			map.putAll(beans);
+		}
+		return map;
 	}
 
 	@ConditionalOnMissingBean(SequenceBeanFactory.class)

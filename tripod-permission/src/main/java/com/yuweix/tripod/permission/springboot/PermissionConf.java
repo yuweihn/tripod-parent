@@ -3,6 +3,7 @@ package com.yuweix.tripod.permission.springboot;
 
 import com.yuweix.tripod.core.json.Json;
 import com.yuweix.tripod.permission.web.interceptor.PermissionCheckInterceptor;
+import com.yuweix.tripod.sequence.base.BeanMap;
 import com.yuweix.tripod.sequence.base.SequenceBeanHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -18,31 +19,29 @@ import java.util.Map;
  */
 @ComponentScan(basePackages = "com.yuweix.tripod.permission", useDefaultFilters = true)
 public class PermissionConf {
-	@Bean(name = "sequenceBeanHolder#advice")
-	public Object sequenceBeanHolderAdvice(@Autowired(required = false) SequenceBeanHolder holder) {
-		if (holder == null) {
-			return null;
+	@Bean
+	public BeanMap beanMap(@Autowired(required = false) SequenceBeanHolder holder) {
+		BeanMap map = new BeanMap();
+		Map<String, String> beans = holder == null ? null : holder.getBeans();
+		if (beans != null && !beans.isEmpty()) {
+			map.putAll(beans);
 		}
-		Map<String, String> beans = holder.getBeans();
-		if (beans == null) {
-			return null;
+		if (!map.containsKey("seqSysAdmin")) {
+			map.put("seqSysAdmin", "seq_sys_admin,200");
 		}
-		if (!beans.containsKey("seqSysAdmin")) {
-			beans.put("seqSysAdmin", "seq_sys_admin,200");
+		if (!map.containsKey("seqSysPermission")) {
+			map.put("seqSysPermission", "seq_sys_permission,200");
 		}
-		if (!beans.containsKey("seqSysPermission")) {
-			beans.put("seqSysPermission", "seq_sys_permission,200");
+		if (!map.containsKey("seqSysRole")) {
+			map.put("seqSysRole", "seq_sys_role,200");
 		}
-		if (!beans.containsKey("seqSysRole")) {
-			beans.put("seqSysRole", "seq_sys_role,200");
+		if (!map.containsKey("seqSysRolePermissionRel")) {
+			map.put("seqSysRolePermissionRel", "seq_sys_role_permission_rel,200");
 		}
-		if (!beans.containsKey("seqSysRolePermissionRel")) {
-			beans.put("seqSysRolePermissionRel", "seq_sys_role_permission_rel,200");
+		if (!map.containsKey("seqSysAdminRoleRel")) {
+			map.put("seqSysAdminRoleRel", "seq_sys_admin_role_rel,200");
 		}
-		if (!beans.containsKey("seqSysAdminRoleRel")) {
-			beans.put("seqSysAdminRoleRel", "seq_sys_admin_role_rel,200");
-		}
-		return null;
+		return map;
 	}
 
 	@Bean(name = "json#advice")
