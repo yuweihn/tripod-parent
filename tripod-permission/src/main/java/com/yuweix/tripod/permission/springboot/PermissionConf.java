@@ -3,14 +3,14 @@ package com.yuweix.tripod.permission.springboot;
 
 import com.yuweix.tripod.core.json.Json;
 import com.yuweix.tripod.permission.web.interceptor.PermissionCheckInterceptor;
-import com.yuweix.tripod.sequence.base.BeanMap;
-import com.yuweix.tripod.sequence.base.SequenceBeanHolder;
+import com.yuweix.tripod.sequence.base.SequenceBeanProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -19,29 +19,19 @@ import java.util.Map;
  */
 @ComponentScan(basePackages = "com.yuweix.tripod.permission", useDefaultFilters = true)
 public class PermissionConf {
-	@Bean
-	public BeanMap beanMap(@Autowired(required = false) SequenceBeanHolder holder) {
-		BeanMap map = new BeanMap();
-		Map<String, String> beans = holder == null ? null : holder.getBeans();
-		if (beans != null && !beans.isEmpty()) {
-			map.putAll(beans);
+	@Bean(name = "sequenceBeanProcessor#advice")
+	public Object sequenceBeanProcessorAdvice(@Autowired(required = false) SequenceBeanProcessor sequenceBeanProcessor) {
+		if (sequenceBeanProcessor == null) {
+			return null;
 		}
-		if (!map.containsKey("seqSysAdmin")) {
-			map.put("seqSysAdmin", "seq_sys_admin,200");
-		}
-		if (!map.containsKey("seqSysPermission")) {
-			map.put("seqSysPermission", "seq_sys_permission,200");
-		}
-		if (!map.containsKey("seqSysRole")) {
-			map.put("seqSysRole", "seq_sys_role,200");
-		}
-		if (!map.containsKey("seqSysRolePermissionRel")) {
-			map.put("seqSysRolePermissionRel", "seq_sys_role_permission_rel,200");
-		}
-		if (!map.containsKey("seqSysAdminRoleRel")) {
-			map.put("seqSysAdminRoleRel", "seq_sys_admin_role_rel,200");
-		}
-		return map;
+		Map<String, String> beans = new HashMap<>();
+		beans.put("seqSysAdmin", "seq_sys_admin,200");
+		beans.put("seqSysPermission", "seq_sys_permission,200");
+		beans.put("seqSysRole", "seq_sys_role,200");
+		beans.put("seqSysRolePermissionRel", "seq_sys_role_permission_rel,200");
+		beans.put("seqSysAdminRoleRel", "seq_sys_admin_role_rel,200");
+		sequenceBeanProcessor.registerBeans(beans);
+		return null;
 	}
 
 	@Bean(name = "json#advice")

@@ -54,11 +54,11 @@ For example:
 		return sequenceDao;
 	}
 
-	@ConditionalOnMissingBean(SequenceBeanHolder.class)
-	@Bean(name = "sequenceBeanHolder")
+	@ConditionalOnMissingBean(SequenceBean.class)
+	@Bean
 	@ConfigurationProperties(prefix = "tripod.sequence", ignoreUnknownFields = true)
-	public SequenceBeanHolder sequenceBeanHolder() {
-		return new SequenceBeanHolder() {
+	public SequenceBean sequenceBean() {
+		return new SequenceBean() {
 			private Map<String, String> map = new HashMap<>();
 			@Override
 			public Map<String, String> getBeans() {
@@ -67,14 +67,14 @@ For example:
 		};
 	}
 
-	@ConditionalOnMissingBean(SequenceBeanFactory.class)
-	@Bean(name = "sequenceBeanFactory")
-	public SequenceBeanFactory sequenceBeanFactory(Environment env) {
-		String clzName = env.getProperty("tripod.sequence.className");
+	@ConditionalOnMissingBean(SequenceBeanProcessor.class)
+	@Bean(name = "sequenceBeanProcessor")
+	public SequenceBeanProcessor sequenceBeanProcessor(Environment env) {
+		String clzName = env.getProperty("tripod.sequence.class-name");
 		if (clzName != null && !"".equals(clzName)) {
-			return new SequenceBeanFactory(clzName);
+			return new SequenceBeanProcessor(clzName);
 		} else {
-			return new SequenceBeanFactory(DefaultSequence.class);
+			return new SequenceBeanProcessor(DefaultSequence.class);
 		}
 	}
 ------------------------------------------------------------------------------------------------------------------
