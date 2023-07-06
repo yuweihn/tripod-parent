@@ -4,6 +4,7 @@ package com.yuweix.tripod.permission.springboot;
 import com.yuweix.tripod.core.json.Json;
 import com.yuweix.tripod.permission.web.interceptor.PermissionCheckInterceptor;
 import com.yuweix.tripod.sequence.base.SequenceBeanHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,7 +19,10 @@ import java.util.Map;
 @ComponentScan(basePackages = "com.yuweix.tripod.permission", useDefaultFilters = true)
 public class PermissionConf {
 	@Bean(name = "sequenceBeanHolder#advice")
-	public Object sequenceBeanHolderAdvice(SequenceBeanHolder holder) {
+	public Object sequenceBeanHolderAdvice(@Autowired(required = false) SequenceBeanHolder holder) {
+		if (holder == null) {
+			return null;
+		}
 		Map<String, String> beans = holder.getBeans();
 		if (beans == null) {
 			return null;
@@ -42,7 +46,10 @@ public class PermissionConf {
 	}
 
 	@Bean(name = "json#advice")
-	public Object jsonAdvice(Json json) {
+	public Object jsonAdvice(@Autowired(required = false) Json json) {
+		if (json == null) {
+			return null;
+		}
 		json.addAccept("com.yuweix.tripod.permission.dto");
 		json.addAccept("com.yuweix.tripod.permission.model");
 		return null;
