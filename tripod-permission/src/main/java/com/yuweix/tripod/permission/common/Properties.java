@@ -11,7 +11,7 @@ import java.io.Serializable;
  * @author yuwei
  */
 @Component
-@ConfigurationProperties(prefix = "tripod.permission.conf", ignoreUnknownFields = true)
+@ConfigurationProperties(prefix = "tripod.permission.setting", ignoreUnknownFields = true)
 public class Properties implements Serializable {
 	/**
 	 *

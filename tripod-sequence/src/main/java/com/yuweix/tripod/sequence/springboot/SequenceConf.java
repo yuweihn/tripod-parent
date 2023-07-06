@@ -54,6 +54,10 @@ public class SequenceConf {
 			public Map<String, String> getBeans() {
 				return map;
 			}
+			@Override
+			public Map<String, String> getBaseBeans() {
+				return null;
+			}
 		};
 	}
 
