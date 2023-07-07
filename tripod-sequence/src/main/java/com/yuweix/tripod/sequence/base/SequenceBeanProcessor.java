@@ -89,13 +89,13 @@ public class SequenceBeanProcessor implements BeanDefinitionRegistryPostProcesso
 		if (bean instanceof SequenceBean) {
 			Map<String, String> map = new HashMap<>();
 			SequenceBean sbean = (SequenceBean) bean;
-			Map<String, String> beans = sbean.getBeans();
 			Map<String, String> baseBeans = sbean.getBaseBeans();
-			if (beans != null && !beans.isEmpty()) {
-				map.putAll(beans);
-			}
+			Map<String, String> beans = sbean.getBeans();
 			if (baseBeans != null && !baseBeans.isEmpty()) {
 				map.putAll(baseBeans);
+			}
+			if (beans != null && !beans.isEmpty()) {
+				map.putAll(beans);
 			}
 			registerBeans(this.sequenceClz, map);
 			done = true;
