@@ -21,6 +21,7 @@ public class AdminDto implements Serializable {
 	private String avatar;
 	private String lastLoginTime;
 	private String lastLoginIp;
+	private Object extField;
 	private String creator;
 	private String createTime;
 	private String modifier;
@@ -97,6 +98,14 @@ public class AdminDto implements Serializable {
 
 	public void setLastLoginIp(String lastLoginIp) {
 		this.lastLoginIp = lastLoginIp;
+	}
+
+	public Object getExtField() {
+		return extField;
+	}
+
+	public void setExtField(Object extField) {
+		this.extField = extField;
 	}
 
 	public String getCreator() {
