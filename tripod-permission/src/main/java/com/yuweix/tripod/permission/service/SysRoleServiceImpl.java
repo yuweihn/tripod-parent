@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 /**
  * @author yuwei
  */
-@Service("roleService")
-public class RoleServiceImpl implements RoleService {
+@Service("sysRoleService")
+public class SysRoleServiceImpl implements SysRoleService {
 	@Resource
 	private SysRoleDao sysRoleDao;
 	@Resource

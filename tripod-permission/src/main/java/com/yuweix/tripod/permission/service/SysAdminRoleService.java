@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author yuwei
  */
-public interface AdminRoleService {
+public interface SysAdminRoleService {
 	int queryAdminRoleCountByAdminId(long adminId, String keywords);
 	List<AdminRoleDto> queryAdminRoleListByAdminId(long adminId, String keywords, int pageNo, int pageSize);
 	

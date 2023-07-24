@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
 /**
  * @author yuwei
  */
-@Service("adminService")
-public class AdminServiceImpl implements AdminService {
+@Service("sysAdminService")
+public class SysAdminServiceImpl implements SysAdminService {
 	@Resource
 	private Sequence seqSysAdmin;
 	

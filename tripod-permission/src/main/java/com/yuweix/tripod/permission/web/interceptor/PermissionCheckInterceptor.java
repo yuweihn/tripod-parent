@@ -8,8 +8,8 @@ import com.yuweix.tripod.permission.common.PermissionUtil;
 import com.yuweix.tripod.permission.common.Properties;
 import com.yuweix.tripod.permission.dto.AdminDto;
 import com.yuweix.tripod.permission.dto.PermissionDto;
-import com.yuweix.tripod.permission.service.AdminService;
-import com.yuweix.tripod.permission.service.PermissionService;
+import com.yuweix.tripod.permission.service.SysAdminService;
+import com.yuweix.tripod.permission.service.SysPermissionService;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +32,9 @@ public class PermissionCheckInterceptor implements HandlerInterceptor {
 	private static final Logger log = LoggerFactory.getLogger(PermissionCheckInterceptor.class);
 
 	@Resource
-	private PermissionService permissionService;
+	private SysPermissionService sysPermissionService;
 	@Resource
-	private AdminService adminService;
+	private SysAdminService sysAdminService;
 	@Resource
 	private Properties properties;
 
@@ -57,11 +57,11 @@ public class PermissionCheckInterceptor implements HandlerInterceptor {
 		AdminDto adminDto = PermissionUtil.getLoginAccount();
 		boolean ok = false;
 		for (String permNo : permNos) {
-			PermissionDto permissionDto = permissionService.queryPermissionByNo(permNo);
+			PermissionDto permissionDto = sysPermissionService.queryPermissionByNo(permNo);
 			if (permissionDto == null) {
 				continue;
 			}
-			boolean has = adminService.hasPermission(adminDto.getId(), permissionDto.getId());
+			boolean has = sysAdminService.hasPermission(adminDto.getId(), permissionDto.getId());
 			if (has) {
 				ok = true;
 				break;

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author yuwei
  */
-public interface PermissionService {
+public interface SysPermissionService {
 	List<PermissionDto> queryPermissionListIncludeChildren(List<Long> idList, String keywords, List<String> permTypeList
 			, Boolean visible);
 

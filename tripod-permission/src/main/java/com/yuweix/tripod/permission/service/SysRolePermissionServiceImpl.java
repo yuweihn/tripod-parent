@@ -16,8 +16,8 @@ import java.util.List;
 /**
  * @author yuwei
  */
-@Service("rolePermissionService")
-public class RolePermissionServiceImpl implements RolePermissionService {
+@Service("sysRolePermissionService")
+public class SysRolePermissionServiceImpl implements SysRolePermissionService {
 	@Resource
 	private SysRolePermissionRelDao sysRolePermissionRelDao;
 

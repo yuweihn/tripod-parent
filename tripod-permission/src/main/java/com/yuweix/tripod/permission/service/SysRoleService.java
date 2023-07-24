@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author yuwei
  */
-public interface RoleService {
+public interface SysRoleService {
 	/**
 	 * 查询所有角色
 	 * @return
