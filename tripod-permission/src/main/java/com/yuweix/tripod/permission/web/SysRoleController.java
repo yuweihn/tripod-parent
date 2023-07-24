@@ -8,7 +8,7 @@ import com.yuweix.tripod.permission.common.Properties;
 import com.yuweix.tripod.permission.dto.AdminDto;
 import com.yuweix.tripod.permission.dto.PageResponseDto;
 import com.yuweix.tripod.permission.dto.RoleDto;
-import com.yuweix.tripod.permission.service.RoleService;
+import com.yuweix.tripod.permission.service.SysRoleService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @Controller
 public class SysRoleController {
 	@Resource
-	private RoleService roleService;
+	private SysRoleService sysRoleService;
 	@Resource
 	private Properties properties;
 
@@ -41,8 +41,8 @@ public class SysRoleController {
 	public Response<String, PageResponseDto<RoleDto>> queryRoleList(@RequestParam(value = "keywords", required = false) String keywords
 			, @RequestParam(value = "pageNo", required = false, defaultValue = "1") int pageNo
 			, @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
-		int count = roleService.queryRoleCount(keywords);
-		List<RoleDto> roleList = roleService.queryRoleList(keywords, pageNo, pageSize);
+		int count = sysRoleService.queryRoleCount(keywords);
+		List<RoleDto> roleList = sysRoleService.queryRoleList(keywords, pageNo, pageSize);
 		PageResponseDto<RoleDto> dto = new PageResponseDto<>();
 		dto.setSize(count);
 		dto.setList(roleList);
@@ -56,7 +56,7 @@ public class SysRoleController {
 	@RequestMapping(value = "/sys/role/info", method = GET)
 	@ResponseBody
 	public Response<String, RoleDto> queryRoleInfo(@RequestParam(value = "id", required = true) long id) {
-		RoleDto role = roleService.queryRoleById(id);
+		RoleDto role = sysRoleService.queryRoleById(id);
 		if (role == null) {
 			return new Response<>(properties.getFailureCode(), "无数据");
 		} else {
@@ -73,7 +73,7 @@ public class SysRoleController {
 	public Response<String, Void> createRole(@RequestParam(value = "roleNo", required = true)String roleNo
 			, @RequestParam(value = "roleName", required = true) String roleName) {
 		AdminDto adminDto = PermissionUtil.getLoginAccount();
-		roleService.addRole(roleNo.trim(), roleName, adminDto.getAccountNo());
+		sysRoleService.addRole(roleNo.trim(), roleName, adminDto.getAccountNo());
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 
@@ -87,7 +87,7 @@ public class SysRoleController {
 			, @RequestParam(value = "roleNo", required = true)String roleNo
 			, @RequestParam(value = "roleName", required = true) String roleName) {
 		AdminDto adminDto = PermissionUtil.getLoginAccount();
-		roleService.updateRole(id, roleNo.trim(), roleName, adminDto.getAccountNo());
+		sysRoleService.updateRole(id, roleNo.trim(), roleName, adminDto.getAccountNo());
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 
@@ -99,7 +99,7 @@ public class SysRoleController {
 	@ResponseBody
 	public Response<String, Void> deleteRole(@RequestParam(value = "ids", required = true)long[] ids) {
 		for (long id: ids) {
-			roleService.deleteRole(id);
+			sysRoleService.deleteRole(id);
 		}
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}

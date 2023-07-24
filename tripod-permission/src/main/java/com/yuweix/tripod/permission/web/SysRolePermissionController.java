@@ -8,8 +8,8 @@ import com.yuweix.tripod.permission.common.Properties;
 import com.yuweix.tripod.permission.dto.AdminDto;
 import com.yuweix.tripod.permission.dto.PermissionDto;
 import com.yuweix.tripod.permission.dto.RolePermissionDto;
-import com.yuweix.tripod.permission.service.PermissionService;
-import com.yuweix.tripod.permission.service.RolePermissionService;
+import com.yuweix.tripod.permission.service.SysPermissionService;
+import com.yuweix.tripod.permission.service.SysRolePermissionService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,9 +30,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @Controller
 public class SysRolePermissionController {
 	@Resource
-	private PermissionService permissionService;
+	private SysPermissionService sysPermissionService;
 	@Resource
-	private RolePermissionService rolePermissionService;
+	private SysRolePermissionService sysRolePermissionService;
 	@Resource
 	private Properties properties;
 
@@ -44,9 +44,9 @@ public class SysRolePermissionController {
 	@RequestMapping(value = "/sys/role/permission/list", method = GET)
 	@ResponseBody
 	public Response<String, RolePermissionDto> queryPermissionListByRoleId(@RequestParam(value = "roleId", required = true) long roleId) {
-		List<PermissionDto> permissionList = permissionService.queryPermissionListIncludeChildren(null
+		List<PermissionDto> permissionList = sysPermissionService.queryPermissionListIncludeChildren(null
 				, null, null, null);
-		List<Long> permIdList = rolePermissionService.queryPermissionIdListByRoleId(roleId);
+		List<Long> permIdList = sysRolePermissionService.queryPermissionIdListByRoleId(roleId);
 
 		RolePermissionDto dto = new RolePermissionDto();
 		dto.setPermList(permissionList);
@@ -69,7 +69,7 @@ public class SysRolePermissionController {
 			}
 		}
 		AdminDto adminDto = PermissionUtil.getLoginAccount();
-		rolePermissionService.saveRolePermission(roleId, permIdList, adminDto.getAccountNo());
+		sysRolePermissionService.saveRolePermission(roleId, permIdList, adminDto.getAccountNo());
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 }

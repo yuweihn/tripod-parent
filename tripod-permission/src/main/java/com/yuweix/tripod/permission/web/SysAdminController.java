@@ -8,7 +8,7 @@ import com.yuweix.tripod.permission.common.Properties;
 import com.yuweix.tripod.permission.dto.AdminDto;
 import com.yuweix.tripod.permission.dto.PageResponseDto;
 import com.yuweix.tripod.permission.enums.EnumGender;
-import com.yuweix.tripod.permission.service.AdminService;
+import com.yuweix.tripod.permission.service.SysAdminService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +30,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @Controller
 public class SysAdminController {
 	@Resource
-	private AdminService adminService;
+	private SysAdminService sysAdminService;
 	@Resource
 	private Properties properties;
 
@@ -45,8 +45,8 @@ public class SysAdminController {
 			@RequestParam(value = "keywords", required = false) String keywords
 			, @RequestParam(value = "pageNo", required = false, defaultValue = "1") int pageNo
 			, @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
-		int size = adminService.queryAdminCount(keywords);
-		List<AdminDto> adminList = adminService.queryAdminList(keywords, pageNo, pageSize);
+		int size = sysAdminService.queryAdminCount(keywords);
+		List<AdminDto> adminList = sysAdminService.queryAdminList(keywords, pageNo, pageSize);
 		
 		PageResponseDto<AdminDto> dto = new PageResponseDto<>();
 		dto.setSize(size);
@@ -61,7 +61,7 @@ public class SysAdminController {
 	@RequestMapping(value = "/sys/admin/info", method = GET)
 	@ResponseBody
 	public Response<String, AdminDto> findAdminById(@RequestParam(value = "id", required = true) long accountId) {
-		AdminDto adminDto = adminService.findAdminById(accountId);
+		AdminDto adminDto = sysAdminService.findAdminById(accountId);
 		if (adminDto != null) {
 			adminDto.setPassword(null);
 		}
@@ -79,7 +79,7 @@ public class SysAdminController {
 			, @RequestParam(value = "realName", required = false) String realName
 			, @RequestParam(value = "gender", required = false) Byte gender) {
 		AdminDto adminDto = PermissionUtil.getLoginAccount();
-		adminService.createAccount(accountNo, password, realName, gender, adminDto.getAccountNo());
+		sysAdminService.createAccount(accountNo, password, realName, gender, adminDto.getAccountNo());
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 
@@ -93,7 +93,7 @@ public class SysAdminController {
 			, @RequestParam(value = "realName", required = false) String realName
 			, @RequestParam(value = "gender", required = false) Byte gender) {
 		AdminDto adminDto = PermissionUtil.getLoginAccount();
-		adminService.updateAccount(accountId, realName, gender, adminDto.getAccountNo());
+		sysAdminService.updateAccount(accountId, realName, gender, adminDto.getAccountNo());
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 
@@ -106,7 +106,7 @@ public class SysAdminController {
 	public Response<String, Void> changePassword(@RequestParam(value = "accountId", required = true) long accountId
 			, @RequestParam(value = "password", required = true) String password) {
 		AdminDto adminDto = PermissionUtil.getLoginAccount();
-		adminService.changePassword(accountId, password, adminDto.getAccountNo());
+		sysAdminService.changePassword(accountId, password, adminDto.getAccountNo());
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 
@@ -138,7 +138,7 @@ public class SysAdminController {
 	@ResponseBody
 	public Response<String, Void> deleteAdmin(@RequestParam(value = "ids", required = true) long[] ids) {
 		for (long accountId: ids) {
-			adminService.deleteAccount(accountId);
+			sysAdminService.deleteAccount(accountId);
 		}
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}

@@ -7,7 +7,7 @@ import com.yuweix.tripod.permission.common.PermissionUtil;
 import com.yuweix.tripod.permission.common.Properties;
 import com.yuweix.tripod.permission.dto.AdminDto;
 import com.yuweix.tripod.permission.dto.PermissionDto;
-import com.yuweix.tripod.permission.service.PermissionService;
+import com.yuweix.tripod.permission.service.SysPermissionService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +26,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 @Controller
 public class SysPermissionController {
 	@Resource
-	private PermissionService permissionService;
+	private SysPermissionService sysPermissionService;
 	@Resource
 	private Properties properties;
 
@@ -39,7 +39,7 @@ public class SysPermissionController {
 	@ResponseBody
 	public Response<String, List<PermissionDto>> queryPermissionList(@RequestParam(value = "keywords", required = false) String keywords
 			, @RequestParam(value = "visible", required = false) Boolean visible) {
-		List<PermissionDto> permissionList = permissionService.queryPermissionListIncludeChildren(null, keywords
+		List<PermissionDto> permissionList = sysPermissionService.queryPermissionListIncludeChildren(null, keywords
 				, null, visible);
 		return new Response<>(properties.getSuccessCode(), "ok", permissionList);
 	}
@@ -62,7 +62,7 @@ public class SysPermissionController {
 			, @RequestParam(value = "icon", required = false) String icon
 			, @RequestParam(value = "descr", required = false) String descr) {
 		AdminDto adminDto = PermissionUtil.getLoginAccount();
-		permissionService.addPermission(permNo, title, parentId, orderNum, path, component, ifExt
+		sysPermissionService.addPermission(permNo, title, parentId, orderNum, path, component, ifExt
 				, permType, visible, icon, descr, adminDto.getAccountNo());
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}
@@ -86,7 +86,7 @@ public class SysPermissionController {
 			, @RequestParam(value = "icon", required = false) String icon
 			, @RequestParam(value = "descr", required = false) String descr) {
 		AdminDto adminDto = PermissionUtil.getLoginAccount();
-		permissionService.updatePermission(id, permNo, title, parentId, orderNum, path, component, ifExt
+		sysPermissionService.updatePermission(id, permNo, title, parentId, orderNum, path, component, ifExt
 				, permType, visible, icon, descr, adminDto.getAccountNo());
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}
@@ -99,7 +99,7 @@ public class SysPermissionController {
 	@ResponseBody
 	public Response<String, Void> deletePermission(@RequestParam(value = "ids", required = true)long[] ids) {
 		for (long id: ids) {
-			permissionService.deletePermission(id);
+			sysPermissionService.deletePermission(id);
 		}
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}

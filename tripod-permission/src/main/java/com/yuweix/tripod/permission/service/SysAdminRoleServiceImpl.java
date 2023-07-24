@@ -25,8 +25,8 @@ import java.util.List;
 /**
  * @author yuwei
  */
-@Service("adminRoleService")
-public class AdminRoleServiceImpl implements AdminRoleService {
+@Service("sysAdminRoleService")
+public class SysAdminRoleServiceImpl implements SysAdminRoleService {
 	@Resource
 	private SysAdminRoleRelDao sysAdminRoleRelDao;
 	@Resource

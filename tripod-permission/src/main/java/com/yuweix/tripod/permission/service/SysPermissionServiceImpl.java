@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 /**
  * @author yuwei
  */
-@Service("permissionService")
-public class PermissionServiceImpl implements PermissionService {
+@Service("sysPermissionService")
+public class SysPermissionServiceImpl implements SysPermissionService {
 	@Resource
 	private SysAdminDao sysAdminDao;
 	@Resource

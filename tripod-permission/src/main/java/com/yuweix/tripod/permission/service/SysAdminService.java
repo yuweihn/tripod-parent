@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author yuwei
  */
-public interface AdminService {
+public interface SysAdminService {
 	long createAccount(String accountNo, String password, String realName, Byte gender, String creator);
 	void updateAccount(long id, String realName, Byte gender, String modifier);
 	AdminDto findAdminById(long id);
