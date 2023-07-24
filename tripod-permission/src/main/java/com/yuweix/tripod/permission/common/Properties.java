@@ -19,11 +19,18 @@ public class Properties implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private String appName;
+
 	private String actionClass;
 	private String actionMethod;
+
 	private String successCode = "0000";
 	private String failureCode = "9999";
 	private String noAuthorityCode = "1005";
+
+	/**
+	 * 缓存时长(秒)
+	 */
+	private long cacheTimeout = 3600L;
 
 
 	public String getAppName() {
@@ -81,5 +88,13 @@ public class Properties implements Serializable {
 
 	public void setNoAuthorityCode(String noAuthorityCode) {
 		this.noAuthorityCode = noAuthorityCode;
+	}
+
+	public long getCacheTimeout() {
+		return cacheTimeout;
+	}
+
+	public void setCacheTimeout(long cacheTimeout) {
+		this.cacheTimeout = cacheTimeout;
 	}
 }
