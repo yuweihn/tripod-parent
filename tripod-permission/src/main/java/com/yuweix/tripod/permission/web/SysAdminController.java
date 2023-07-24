@@ -6,7 +6,6 @@ import com.yuweix.tripod.permission.annotations.Permission;
 import com.yuweix.tripod.permission.common.PermissionUtil;
 import com.yuweix.tripod.permission.common.Properties;
 import com.yuweix.tripod.permission.dto.AdminDto;
-import com.yuweix.tripod.permission.dto.DropDownDto;
 import com.yuweix.tripod.permission.dto.PageResponseDto;
 import com.yuweix.tripod.permission.enums.EnumGender;
 import com.yuweix.tripod.permission.service.AdminService;
@@ -17,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
@@ -115,15 +116,15 @@ public class SysAdminController {
 	@Permission(value = "sys.admin.gender.drop.down.list")
 	@RequestMapping(value = "/sys/admin/gender/drop-down-list", method = GET)
 	@ResponseBody
-	public Response<String, List<DropDownDto>> queryGenderDropDownList() {
+	public Response<String, List<Map<String, Object>>> queryGenderDropDownList() {
 		EnumGender[] genders = EnumGender.values();
-		List<DropDownDto> list = new ArrayList<>();
+		List<Map<String, Object>> list = new ArrayList<>();
 		if (genders != null && genders.length > 0) {
 			for (EnumGender gender: genders) {
-				DropDownDto dto = new DropDownDto();
-				dto.setId(gender.getCode());
-				dto.setName(gender.getName());
-				list.add(dto);
+				Map<String, Object> map = new HashMap<>();
+				map.put("id", gender.getCode());
+				map.put("name", gender.getName());
+				list.add(map);
 			}
 		}
 		return new Response<>(properties.getSuccessCode(), "ok", list);
