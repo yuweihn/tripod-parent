@@ -97,7 +97,7 @@ public class SysRolePermissionRelDaoImpl extends CacheableDao<SysRolePermissionR
 		
 		rel = sysRolePermissionRelMapper.queryByRoleIdAndPermId(roleId, permId);
 		if (rel != null) {
-			cache.put(key, rel, 1 * 60 * 60);
+			cache.put(key, rel, properties.getCacheTimeout());
 			return rel;
 		} else {
 			return null;

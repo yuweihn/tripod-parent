@@ -65,7 +65,7 @@ public class SysPermissionDaoImpl extends CacheableDao<SysPermission, Long> impl
 
 		permission = sysPermissionMapper.queryPermissionByNo(permNo);
 		if (permission != null) {
-			cache.put(key, permission, 1 * 60 * 60);
+			cache.put(key, permission, properties.getCacheTimeout());
 		}
 		return permission;
 	}

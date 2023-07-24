@@ -90,7 +90,7 @@ public class SysAdminRoleRelDaoImpl extends CacheableDao<SysAdminRoleRel, Long> 
 		}
 		
 		res = sysAdminRoleRelMapper.hasRole(adminId, roleId);
-		cache.put(key, res, 1 * 60 * 60);
+		cache.put(key, res, properties.getCacheTimeout());
 		return res;
 	}
 	
@@ -120,7 +120,7 @@ public class SysAdminRoleRelDaoImpl extends CacheableDao<SysAdminRoleRel, Long> 
 		
 		rel = sysAdminRoleRelMapper.queryByAdminIdAndRoleId(adminId, roleId);
 		if (rel != null) {
-			cache.put(key, rel, 1 * 60 * 60);
+			cache.put(key, rel, properties.getCacheTimeout());
 			return rel;
 		} else {
 			return null;
