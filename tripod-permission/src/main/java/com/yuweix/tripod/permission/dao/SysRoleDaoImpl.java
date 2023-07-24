@@ -49,7 +49,7 @@ public class SysRoleDaoImpl extends CacheableDao<SysRole, Long> implements SysRo
 
 		role = sysRoleMapper.queryRoleByNo(roleNo);
 		if (role != null) {
-			cache.put(key, role, properties.getCacheTimeout());
+			cache.put(key, role, DEFAULT_CACHE_TIMEOUT);
 		}
 		return role;
 	}

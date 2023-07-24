@@ -53,7 +53,7 @@ public class SysAdminDaoImpl extends CacheableDao<SysAdmin, Long> implements Sys
 		
 		admin = sysAdminMapper.findAdminByAccountNo(accountNo);
 		if (admin != null) {
-			cache.put(key, admin, properties.getCacheTimeout());
+			cache.put(key, admin, DEFAULT_CACHE_TIMEOUT);
 		}
 		return admin;
 	}
@@ -73,7 +73,7 @@ public class SysAdminDaoImpl extends CacheableDao<SysAdmin, Long> implements Sys
 		}
 		
 		has = sysAdminMapper.hasPermission(adminId, permissionId);
-		cache.put(key, has, properties.getCacheTimeout());
+		cache.put(key, has, DEFAULT_CACHE_TIMEOUT);
 		return has;
 	}
 
