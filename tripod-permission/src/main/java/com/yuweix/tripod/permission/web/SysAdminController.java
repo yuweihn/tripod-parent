@@ -7,8 +7,10 @@ import com.yuweix.tripod.permission.common.PermissionUtil;
 import com.yuweix.tripod.permission.common.Properties;
 import com.yuweix.tripod.permission.dto.AdminDto;
 import com.yuweix.tripod.permission.dto.PageResponseDto;
+import com.yuweix.tripod.permission.dto.PermissionMenuTreeDto;
 import com.yuweix.tripod.permission.enums.EnumGender;
 import com.yuweix.tripod.permission.service.SysAdminService;
+import com.yuweix.tripod.permission.service.SysPermissionService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +33,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 public class SysAdminController {
 	@Resource
 	private SysAdminService sysAdminService;
+	@Resource
+	private SysPermissionService sysPermissionService;
 	@Resource
 	private Properties properties;
 
@@ -141,6 +145,28 @@ public class SysAdminController {
 			sysAdminService.deleteAccount(accountId);
 		}
 		return new Response<>(properties.getSuccessCode(), "ok");
+	}
+
+	/**
+	 * 查询权限菜单列表
+	 */
+	@RequestMapping(value = "/sys/admin/permission/menu/list", method = GET)
+	@ResponseBody
+	public Response<String, List<PermissionMenuTreeDto>> getMenuTreeListByAdminId() {
+		AdminDto adminDto = PermissionUtil.getLoginAccount();
+		List<PermissionMenuTreeDto> menuList = sysPermissionService.getMenuTreeListByAdminId(adminDto.getId());
+		return Response.of(properties.getSuccessCode(), "ok", menuList);
+	}
+
+	/**
+	 * 查询权限按钮列表
+	 */
+	@RequestMapping(value = "/sys/admin/permission/button/list", method = GET)
+	@ResponseBody
+	public Response<String, List<String>> getPermissionNoListByAdminId() {
+		AdminDto adminDto = PermissionUtil.getLoginAccount();
+		List<String> permList = sysPermissionService.getPermissionNoListByAdminId(adminDto.getId());
+		return Response.of(properties.getSuccessCode(), "ok", permList);
 	}
 }
 
