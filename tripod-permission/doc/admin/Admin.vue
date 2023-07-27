@@ -112,8 +112,7 @@
 		<el-col :span="24" class="toolbar2">
 			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0" class="el-icon-delete" v-hasPerm="['sys.admin.delete']"> 批量删除</el-button>
 			<el-pagination layout="total, sizes, prev, pager, next, jumper" background
-						@size-change="handleSizeChange"
-						@current-change="handleCurrentChange"
+						@size-change="handleSizeChange" @current-change="handleCurrentChange"
 						:page-sizes="[10,20,50,100]" :current-page="pageNo" :page-size="pageSize" :total="total" style="float:right;">
 			</el-pagination>
 		</el-col>
