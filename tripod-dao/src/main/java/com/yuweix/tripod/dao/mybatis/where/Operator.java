@@ -15,6 +15,8 @@ public enum Operator {
 	lte("<="),
 	ne("!="),
 	like("like"),
+	in("in"),
+	nin("not in"),
 	isNull("is null"),
 	isNotNull("is not null");
 

@@ -124,6 +124,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		}
 
 		StringBuilder builder = new StringBuilder("");
+		builder.append("<script>");
 		builder.append(" select count(1) as cnt ");
 		builder.append(" from ").append(tableNameBuilder.toString()).append("  ");
 		if (shardingWhere == null) {
@@ -139,6 +140,7 @@ public class SelectSqlProvider extends AbstractProvider {
 			}
 		}
 
+		builder.append("</script>");
 		return builder.toString();
 	}
 
@@ -181,6 +183,7 @@ public class SelectSqlProvider extends AbstractProvider {
 		}
 
 		StringBuilder builder = new StringBuilder("");
+		builder.append("<script>");
 		builder.append(" select ").append(getAllColumnSql(entityClass));
 		builder.append(" from ").append(tableNameBuilder.toString()).append("  ");
 		if (shardingWhere == null) {
@@ -209,6 +212,7 @@ public class SelectSqlProvider extends AbstractProvider {
 
 			builder.append(" limit ").append((pageNo - 1) * pageSize).append(", ").append(pageSize);
 		}
+		builder.append("</script>");
 		return builder.toString();
 	}
 }
