@@ -58,6 +58,7 @@ public class Criteria implements Serializable {
 						return " 1 = 1 ";
 					}
 				} else {
+					params.put(paramKey, value);
 					return key + " " + operator.getCode() + " <foreach item='item' collection='criteria.params." + paramKey + "' open='(' separator=',' close=')'>#{item}</foreach> ";
 				}
 			}
