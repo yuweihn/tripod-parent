@@ -1,0 +1,46 @@
+{
+    "name": "webapp",
+    "version": "1.0.0",
+    "description": "A Vue.js project",
+    "author": "yuwei <yuwei@yuweix.com>",
+    "private": true,
+    "scripts": {
+        "dev": "vite --mode dev",
+        "build": "vite build --mode prd",
+        "build:dev": "vite build --mode dev",
+        "build:qa": "vite build --mode qa",
+        "build:prd": "vite build --mode prd",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "@element-plus/icons-vue": "2.0.10",
+        "@vueup/vue-quill": "1.1.0",
+        "@vueuse/core": "9.5.0",
+        "axios": "0.27.2",
+        "echarts": "5.4.0",
+        "element-plus": "2.2.27",
+        "file-saver": "2.0.5",
+        "font-awesome": "^4.7.0",
+        "fuse.js": "6.6.2",
+        "js-base64": "^3.7.5",
+        "js-file-download": "^0.4.12",
+        "js-md5": "^0.7.3",
+        "jsencrypt": "3.3.1",
+        "nprogress": "0.2.0",
+        "pinia": "2.0.22",
+        "vue": "3.2.45",
+        "vue-cropper": "1.0.3",
+        "vue-router": "4.1.4"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "3.1.0",
+        "@vue/compiler-sfc": "3.2.45",
+        "sass": "1.56.1",
+        "sass-loader": "^13.3.2",
+        "unplugin-auto-import": "0.11.4",
+        "vite": "3.2.3",
+        "vite-plugin-compression": "0.5.1",
+        "vite-plugin-svg-icons": "2.0.1",
+        "vite-plugin-vue-setup-extend": "0.4.0"
+    }
+}
