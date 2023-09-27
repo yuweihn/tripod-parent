@@ -1,0 +1,62 @@
+@import './element-ui.scss';
+@import './vars.scss';
+
+
+body {
+	margin: 0px;
+	padding: 0px;
+	font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, SimSun, sans-serif;
+	font-size: 14px;
+	-webkit-font-smoothing: antialiased;
+}
+
+#app {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	width: 100%;
+}
+
+.toolbar {
+	background: #f2f2f2;
+	padding: 10px;
+	border: 0px solid #dfe6ec;
+	margin: 10px 0px;
+	.el-form-item {
+		margin-bottom: 10px;
+		margin-right: 12px;
+	}
+}
+.toolbar2 {
+	background: #f2f2f2;
+	padding: 10px;
+	margin: 10px 0 30px 0;
+}
+.table-expand .el-form-item__label {
+    color: #99a9bf;
+}
+.table-expand .el-form-item {
+    margin-right: 0;
+    margin-bottom: 0;
+    width: 90%;
+}
+.fade-enter-active, .fade-leave-active {
+	transition: all .2s ease;
+}
+
+.fade-enter, .fade-leave-active {
+	opacity: 0;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}

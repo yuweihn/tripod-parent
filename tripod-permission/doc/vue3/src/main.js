@@ -1,0 +1,72 @@
+import { createApp } from 'vue';
+
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
+import locale from 'element-plus/lib/locale/lang/zh-cn';
+
+import '@/assets/styles/index.scss';
+import 'font-awesome/css/font-awesome.min.css';
+
+import App from './App';
+
+
+// svg图标
+import 'virtual:svg-icons-register';
+import SvgIcon from '@/components/SvgIcon';
+import elementIcons from '@/components/SvgIcon/svgicon';
+
+import settings from './settings';
+import request from '@/assets/js/request';
+import date from '@/assets/js/date';
+import util from '@/assets/js/util';
+import md5 from 'js-md5';
+import modal from '@/assets/js/modal';
+import cache from '@/assets/js/cache';
+import session from '@/assets/js/session';
+import store from './store'
+import {router} from './basic.routes';
+import directive from './directive';
+import fileDownload from "js-file-download";
+import dynamicRouteStore from '@/dynamic.routes';
+import dynamicButtonStore from '@/dynamic.buttons';
+
+import './permission';
+
+// 富文本组件
+import Editor from "@/components/Editor";
+import FileUpload from '@/components/FileUpload';
+
+const app = createApp(App);
+
+// 全局方法挂载
+app.config.globalProperties.settings = settings;
+app.config.globalProperties.request = request;
+app.config.globalProperties.$util = util;
+app.config.globalProperties.$date = date;
+app.config.globalProperties.$md5 = md5;
+app.config.globalProperties.$modal = modal;
+app.config.globalProperties.resetForm = util.resetForm;
+app.config.globalProperties.cache = cache;
+app.config.globalProperties.session = session;
+app.config.globalProperties.fileDownload = fileDownload;
+app.config.globalProperties.removeDynamicLoaded = () => {
+    dynamicRouteStore().resetDynamicMenuLoaded();
+    dynamicButtonStore().resetDynamicButtonLoaded();
+}
+
+// 全局组件挂载
+app.component('Editor', Editor);
+app.component('file-upload', FileUpload);
+
+app.use(router);
+app.use(store);
+app.use(elementIcons);
+app.component('svg-icon', SvgIcon);
+
+directive(app);
+
+app.use(ElementPlus, {
+    locale: locale
+});
+
+app.mount('#app');

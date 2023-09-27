@@ -1,0 +1,53 @@
+
+.el-submenu .el-menu-item {
+    min-width: 200px;
+}
+.el-submenu__title:hover {
+    cursor: pointer;
+    background-color: #ecf5ff;
+}
+.horizontal-collapse-transition .el-sub-menu__title .el-sub-menu__icon-arrow {
+    opacity: 1;
+}
+.el-dialog .el-form {
+    padding-right: 10px;
+    padding-bottom: 20px;
+}
+.el-dialog .dialog-footer {
+    text-align: right;
+    padding-right: 10px;
+}
+
+.el-submenu [class^=fa] {
+	vertical-align: baseline;
+	margin-right: 10px;
+}
+
+.el-menu-item [class^=fa] {
+	vertical-align: baseline;
+	margin-right: 10px;
+}
+
+.el-upload__tip {
+    line-height: 10px;
+}
+.el-table {
+    font-size: 12px;
+}
+.el-table .cell {
+	padding: 0px 2px;
+	margin: 0px 2px;
+}
+.el-button.is-text {
+    color: #409eff;
+    font-size: 12px;
+}
+.el-button [class*=el-icon]+span {
+    margin-left: 2px;
+}
+.el-dropdown-menu__item {
+    padding: 0px 12px;
+    i {
+        margin-right: 1px;
+    }
+}
