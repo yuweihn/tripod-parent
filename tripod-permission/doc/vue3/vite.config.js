@@ -20,6 +20,10 @@ export default defineConfig(({ mode, command }) => {
             // https://cn.vitejs.dev/config/#resolve-extensions
             extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
         },
+        build: {
+            // 输出目录，默认是 dist
+            outDir: 'dist'
+        },
         // vite 相关配置
         server: {
             port: 3000,
