@@ -191,5 +191,5 @@ defineExpose({
 
 eg.      <file-upload ref="fileUpload" :title="'上传证书'" :fileLabel="'文件'" :fileTips="'请选择证书，文件不要超过2MB'"
                      :accept="''" :maxSize="2097152" :fileErr="'请选择文件'" :fileType="'text'"
-                     :actionUrl="this.$global.baseUrl + '/cert/upload'" v-on:change="onUploadChanged" v-on:complete="onUploadCompleted" />
+                     :actionUrl="'/cert/upload'" v-on:change="onUploadChanged" v-on:complete="onUploadCompleted" />
 -->
