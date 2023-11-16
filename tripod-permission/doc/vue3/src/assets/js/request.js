@@ -90,7 +90,7 @@ service.interceptors.response.use(res => {
         session.removeToken();
         ElMessage({ message: msg, type: 'error'});
         location.href = './';
-        return Promise.reject(msg);
+        return Promise.reject(new Error(msg));
     } else if (code !== "0000") {
         ElMessage({ message: msg, type: 'error'});
         return Promise.reject(new Error(msg));
