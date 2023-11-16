@@ -10,7 +10,8 @@ export default {
                 el.parentNode && el.parentNode.removeChild(el);
             }
         }, 0);
-    }
+    },
+    hasPerm: hasPerm
 }
 
 function hasPerm(val) {
