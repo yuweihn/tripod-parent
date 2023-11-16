@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ElNotification , ElMessageBox, ElMessage, ElLoading } from 'element-plus';
+import {ElMessage} from 'element-plus';
 import md5 from 'js-md5';
 import errorCode from './errorCode';
 import util from './util';
@@ -88,12 +88,12 @@ service.interceptors.response.use(res => {
     if (code === '1001') {
         session.removeUser();
         session.removeToken();
-        ElNotification.error({ title: msg });
+        ElMessage({ message: msg, type: 'error'});
         location.href = './';
         return Promise.reject(msg);
     } else if (code !== "0000") {
-        ElNotification.error({ title: msg });
-        return Promise.reject(msg);
+        ElMessage({ message: msg, type: 'error'});
+        return Promise.reject(new Error(msg));
     } else {
         return Promise.resolve(res);
     }
