@@ -1,6 +1,7 @@
-import hasPerm from './permission/has.perm';
+import hasPermObj from './permission/has.perm';
 
 
 export default function directive(app) {
-    app.directive('hasPerm', hasPerm);
+    app.config.globalProperties.hasPerm = hasPermObj.hasPerm;
+    app.directive('hasPerm', hasPermObj);
 }
