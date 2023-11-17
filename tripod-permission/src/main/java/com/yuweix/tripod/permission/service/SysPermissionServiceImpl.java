@@ -14,7 +14,6 @@ import com.yuweix.tripod.permission.enums.PermType;
 import com.yuweix.tripod.permission.model.SysPermission;
 import com.yuweix.tripod.sequence.base.Sequence;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -157,7 +156,6 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 		return toPermissionDto(permission);
 	}
 
-	@Transactional
 	@Override
 	public long addPermission(String permNo, String title, Long parentId, int orderNum, String path
 			, String component, boolean ifExt, String permType, boolean visible
@@ -187,7 +185,6 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 		return id;
 	}
 
-	@Transactional
 	@Override
 	public void updatePermission(long id, String permNo, String title, Long parentId, int orderNum, String path
 			, String component, boolean ifExt, String permType, boolean visible
@@ -222,7 +219,6 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 		permissionDao.updateByPrimaryKey(permission);
 	}
 
-	@Transactional
 	@Override
 	public void deletePermission(long permissionId) {
 		Criteria criteria = Criteria.of("perm_id", Operator.eq, permissionId);

@@ -13,7 +13,6 @@ import com.yuweix.tripod.permission.model.SysAdminRoleRel;
 import com.yuweix.tripod.permission.model.SysRole;
 import com.yuweix.tripod.sequence.base.Sequence;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
@@ -67,7 +66,6 @@ public class SysAdminRoleServiceImpl implements SysAdminRoleService {
 	}
 
 	@Override
-	@Transactional
 	public void addAdminRoleList(long adminId, List<Long> roleIdList, String modifier) {
 		Criteria criteria = Criteria.of("admin_id", Operator.eq, adminId);
 		List<SysAdminRoleRel> relList = sysAdminRoleRelDao.findList(criteria, null);
@@ -111,7 +109,6 @@ public class SysAdminRoleServiceImpl implements SysAdminRoleService {
 	}
 
 	@Override
-	@Transactional
 	public long addAdminRole(long adminId, long roleId, String creator) {
 		SysAdminRoleRel rel = sysAdminRoleRelDao.queryByAdminIdAndRoleId(adminId, roleId);
 		if (rel != null) {
@@ -151,7 +148,6 @@ public class SysAdminRoleServiceImpl implements SysAdminRoleService {
 	}
 
 	@Override
-	@Transactional
 	public void updateAdminRole(long id, long adminId, long roleId, String modifier) {
 		SysAdminRoleRel rel = sysAdminRoleRelDao.get(id);
 		if (rel == null) {
@@ -170,7 +166,6 @@ public class SysAdminRoleServiceImpl implements SysAdminRoleService {
 	}
 
 	@Override
-	@Transactional
 	public void deleteAdminRole(long id) {
 		sysAdminRoleRelDao.deleteByKey(id);
 	}

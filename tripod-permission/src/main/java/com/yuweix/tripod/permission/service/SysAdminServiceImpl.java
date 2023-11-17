@@ -14,7 +14,6 @@ import com.yuweix.tripod.permission.enums.EnumGender;
 import com.yuweix.tripod.permission.model.SysAdmin;
 import com.yuweix.tripod.sequence.base.Sequence;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -36,8 +35,7 @@ public class SysAdminServiceImpl implements SysAdminService {
 	@Resource
 	private SysAdminRoleRelDao sysAdminRoleRelDao;
 
-	
-	@Transactional
+
 	@Override
 	public long createAccount(String accountNo, String password, String realName, Byte gender, String creator) {
 		SysAdmin admin = sysAdminDao.findAdminByAccountNo(accountNo);
@@ -55,8 +53,7 @@ public class SysAdminServiceImpl implements SysAdminService {
 		sysAdminDao.insert(admin);
 		return admin.getId();
 	}
-	
-	@Transactional
+
 	@Override
 	public void updateAccount(long id, String realName, Byte gender, String modifier) {
 		SysAdmin admin = sysAdminDao.get(id);
@@ -114,7 +111,6 @@ public class SysAdminServiceImpl implements SysAdminService {
 		return new Response<>(true, "登录成功", toAdminDto(admin));
 	}
 
-	@Transactional
 	@Override
 	public void changePassword(long id, String password, String modifier) {
 		SysAdmin admin = sysAdminDao.get(id);
@@ -127,7 +123,6 @@ public class SysAdminServiceImpl implements SysAdminService {
 		sysAdminDao.updateByPrimaryKey(admin);
 	}
 
-	@Transactional
 	@Override
 	public void changePassword(long id, String oldPassword, String password, String modifier) {
 		SysAdmin admin = sysAdminDao.get(id);
@@ -142,8 +137,7 @@ public class SysAdminServiceImpl implements SysAdminService {
 		admin.setModifyTime(new Date());
 		sysAdminDao.updateByPrimaryKey(admin);
 	}
-	
-	@Transactional
+
 	@Override
 	public void changeAvatar(long id, String avatar, String modifier) {
 		SysAdmin admin = sysAdminDao.get(id);
@@ -155,8 +149,7 @@ public class SysAdminServiceImpl implements SysAdminService {
 		admin.setModifyTime(new Date());
 		sysAdminDao.updateByPrimaryKey(admin);
 	}
-	
-	@Transactional
+
 	@Override
 	public void deleteAccount(long id) {
 		int cnt = sysAdminRoleRelDao.findCount(Criteria.of("admin_id", Operator.eq, id));

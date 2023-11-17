@@ -11,7 +11,6 @@ import com.yuweix.tripod.permission.dto.RoleDto;
 import com.yuweix.tripod.permission.model.SysRole;
 import com.yuweix.tripod.sequence.base.Sequence;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -59,7 +58,6 @@ public class SysRoleServiceImpl implements SysRoleService {
 		return dto;
 	}
 
-	@Transactional
 	@Override
 	public long addRole(String roleNo, String roleName, String creator) {
 		if (!StringUtils.hasText(roleName)) {
@@ -116,7 +114,6 @@ public class SysRoleServiceImpl implements SysRoleService {
 		return toRoleDto(role);
 	}
 
-	@Transactional
 	@Override
 	public void updateRole(long id, String roleNo, String roleName, String modifier) {
 		if (!StringUtils.hasText(roleName)) {
@@ -139,7 +136,6 @@ public class SysRoleServiceImpl implements SysRoleService {
 		sysRoleDao.updateByPrimaryKeySelective(role);
 	}
 
-	@Transactional
 	@Override
 	public void deleteRole(long roleId) {
 		int cnt = sysRolePermissionRelDao.findCount(Criteria.of("role_id", Operator.eq, roleId));
