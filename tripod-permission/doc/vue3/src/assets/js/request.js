@@ -26,8 +26,6 @@ const sign = {
 
 // request拦截器
 service.interceptors.request.use(config => {
-    // 是否需要防止数据重复提交
-    const doNotCheckRepeatSubmit = (config.headers || {}).rejectRepeat === false;
     // get请求映射params参数
     if (config.method === 'get' && config.params) {
         let url = config.url + '?' + util.tansParams(config.params);
@@ -35,6 +33,14 @@ service.interceptors.request.use(config => {
         config.params = {};
         config.url = url;
     }
+
+    //将header中的responseType提取出来单独提交
+    var rtype = (config.headers || {}).responseType;
+    delete (config.headers || {}).responseType;
+    (rtype != null) && (config.responseType = rtype);
+
+    //防刷
+    const doNotCheckRepeatSubmit = (config.headers || {}).rejectRepeat === false; // 是否需要防止数据重复提交
     if (!doNotCheckRepeatSubmit && (config.method === 'post' || config.method === 'put' || config.method === 'delete')) {
         const requestObj = {
             url: config.url,
@@ -58,6 +64,7 @@ service.interceptors.request.use(config => {
         }
     }
 
+    //加签
     const timestamp = new Date().getTime();
     const signVal = md5("key=" + sign.key + "&secret=" + sign.secret + "&timestamp=" + timestamp);
     const tokenV = session.getToken();
@@ -115,14 +122,11 @@ export default {
         });
     },
     post: function(url, params, headers) {
-        var rtype = (headers || {}).responseType;
-        delete (headers || {}).responseType;
         return service({
             url: url,
             method: 'post',
             headers: headers ? headers : {},
-            data: params ? params : null,
-            responseType: rtype
+            data: params ? params : null
         });
     },
     put: function(url, params, headers) {
