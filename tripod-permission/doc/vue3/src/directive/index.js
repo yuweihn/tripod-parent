@@ -1,4 +1,4 @@
-import hasPermObj from './permission/has.perm';
+import hasPermObj from './permiss';
 
 
 export default function directive(app) {
