@@ -114,13 +114,15 @@ export default {
             params: params ? params : null
         });
     },
-    post: function(url, params, headers, responseType) {
+    post: function(url, params, headers) {
+        var rtype = (headers || {}).responseType;
+        delete (headers || {}).responseType;
         return service({
             url: url,
             method: 'post',
             headers: headers ? headers : {},
             data: params ? params : null,
-            responseType: responseType ? responseType : null
+            responseType: rtype
         });
     },
     put: function(url, params, headers) {
