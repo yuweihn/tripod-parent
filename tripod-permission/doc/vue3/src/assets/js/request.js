@@ -115,11 +115,14 @@ export default {
         });
     },
     post: function(url, params, headers) {
+        var rtype = (headers || {}).responseType;
+        delete (headers || {}).responseType;
         return service({
             url: url,
             method: 'post',
             headers: headers ? headers : {},
-            data: params ? params : null
+            data: params ? params : null,
+            responseType: rtype
         });
     },
     put: function(url, params, headers) {
