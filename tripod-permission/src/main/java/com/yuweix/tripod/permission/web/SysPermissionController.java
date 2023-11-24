@@ -127,9 +127,9 @@ public class SysPermissionController {
 	@RequestMapping(value = "/sys/permission/export", method = POST)
 	@ResponseBody
 	public void doExport(HttpServletResponse response) throws Exception {
-		PermissionExportDto def = sysPermissionService.queryAllPermissionList();
+		PermissionExportDto exportDto = sysPermissionService.getPermissionExportDto();
 
-		String fileName = URLEncoder.encode("permission" + DateUtil.formatDate(new Date(), "yyyyMMddHHmmss") + ".json", "utf-8");
+		String fileName = URLEncoder.encode("permission." + DateUtil.formatDate(new Date(), "yyyyMMddHHmmss") + ".json", "utf-8");
 		response.setContentType("application/octet-stream");
 		response.setCharacterEncoding("utf-8");
 		response.setHeader("Content-disposition", "attachment;filename=" + fileName);
@@ -140,7 +140,7 @@ public class SysPermissionController {
 		OutputStreamWriter osw = null;
 		BufferedWriter bw = null;
 		try {
-			String str = def == null ? "" : JsonUtil.toJSONString(def);
+			String str = exportDto == null ? "" : JsonUtil.toJSONString(exportDto);
 			osw = new OutputStreamWriter(out, StandardCharsets.UTF_8);
 			bw = new BufferedWriter(osw);
 			bw.append(str);
@@ -165,34 +165,24 @@ public class SysPermissionController {
 	}
 
 	/**
-	 * 导入外部权限数据。按权限编码(permNo)覆盖原数据
-	 * @param reset   是否清除现有数据
+	 * 导入外部权限数据
 	 */
 	@Permission(value = "sys.permission.import")
 	@RequestMapping(value = "/sys/permission/import", method = POST)
 	@ResponseBody
-	public Response<String, Void> doImport(@RequestParam(value = "file", required = true) MultipartFile file
-			, @RequestParam(value = "reset", required = false, defaultValue = "false") boolean reset) throws Exception {
+	public Response<String, Void> doImport(@RequestParam(value = "file", required = true) MultipartFile file) throws Exception {
 		String str = new String(file.getBytes(), StandardCharsets.UTF_8);
 		PermissionExportDto dto = "".equals(str)
 				? null
 				: JsonUtil.parseObject(str, PermissionExportDto.class);
-		List<PermissionExportDto.Body> list = dto == null ? null : dto.getList();
-		if (list == null || list.size() <= 0) {
-			return new Response<>(properties.getFailureCode(), "No Data.");
-		}
 		if (!dto.verify()) {
 			return new Response<>(properties.getFailureCode(), "验签失败！");
 		}
-		if (reset) {
-			sysPermissionService.deleteAll();
+		List<PermissionDto> list = dto.getList();
+		if (list == null || list.size() <= 0) {
+			return new Response<>(properties.getFailureCode(), "No Data.");
 		}
-		for (PermissionExportDto.Body body : list) {
-			sysPermissionService.doImport(body.getPermNo(), body.getTitle(), body.getParentId(), body.getOrderNum()
-					, body.getPath(), body.getComponent(), body.getIfExt(), body.getPermType(), body.getVisible()
-					, body.getIcon(), body.getDescr()
-					, body.getCreator(), body.getCreateTime(), body.getModifier(), body.getModifyTime());
-		}
+		sysPermissionService.doImport(null, list);
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 }

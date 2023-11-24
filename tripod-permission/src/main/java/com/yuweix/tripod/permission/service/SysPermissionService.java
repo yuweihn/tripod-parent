@@ -38,12 +38,9 @@ public interface SysPermissionService {
 			, String component, boolean ifExt, String permType, boolean visible
 			, String icon, String descr, String modifier);
 	void deletePermission(long permissionId);
-	void deleteAll();
 
 	PermissionDto queryPermissionByNo(String permNo);
 
-	PermissionExportDto queryAllPermissionList();
-	void doImport(String permNo, String title, Long parentId, Integer orderNum, String path, String component
-			, Boolean ifExt, String permType, Boolean visible, String icon, String descr
-			, String creator, String createTime, String modifier, String modifyTime);
+	PermissionExportDto getPermissionExportDto();
+	void doImport(Long parentId, List<PermissionDto> list);
 }

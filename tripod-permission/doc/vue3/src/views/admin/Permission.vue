@@ -75,6 +75,8 @@
 		<!--工具条-->
 		<el-col :span="24" class="toolbar2">
 			<el-button type="danger" @click="batchRemove" :disabled="sels.length === 0" :icon="Delete" v-hasPerm="['sys.permission.delete']"> 批量删除</el-button>
+            <el-button type="success" v-on:click="doExport" :icon="Coin" v-hasPerm="['sys.permission.export']"> 导出</el-button>
+            <el-button type="danger" v-on:click="doImport" :icon="CirclePlus" v-hasPerm="['sys.permission.import']"> 导入</el-button>
 		</el-col>
 
 		<!--新增界面-->
@@ -82,13 +84,18 @@
 
 		<!--编辑界面-->
 		<edit-permission ref="editPermission" v-on:success="getPermissionList"/>
+
+        <file-upload ref="importData" :title="'导入外部数据'" :fileLabel="'文件'" :fileTips="'只接受*.json格式，最大不要超过2MB'"
+                  :accept="'.json'" :maxSize="2097152" :fileErr="'请选择外部数据文件'" :fileType="'text'"
+                  :actionUrl="'/sys/permission/import'" v-on:change="onImportPost" v-on:complete="onImportCompleted" />
 	</section>
 </template>
 
 <script setup>
 import CreatePermission from './components/CreatePermission';
 import EditPermission from './components/EditPermission';
-import {Delete, EditPen, Search, MoreFilled} from '@element-plus/icons-vue';
+import FileUpload from '@/components/FileUpload';
+import {Search, EditPen, MoreFilled, Coin, CirclePlus, Delete} from '@element-plus/icons-vue';
 
 const {proxy} = getCurrentInstance();
 const filters = ref({
@@ -145,6 +152,53 @@ function batchRemove() {
         });
     }).catch((err) => {});
     sels.value = [];
+}
+function doExport() {
+    proxy.$modal.confirm('导出确认！', '提示', {type: 'warning'}).then(() => {
+        listLoading.value = true;
+        proxy.request.post('/sys/permission/export', null, {responseType: 'blob'}).then((res) => {
+            if (res.headers["content-type"].indexOf("application/octet-stream") === 0) {
+                const fileName = res.headers["_filename"];
+                if (fileName) {
+                    proxy.fileDownload(res.data, decodeURIComponent(fileName));
+                } else {
+                    proxy.$modal.msgError("Error");
+                }
+            } else if (res.headers["content-type"].indexOf("application/json") === 0) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    var dt = JSON.parse(reader.result);
+                    if (dt.code === '0000') {
+                        proxy.$modal.msgSuccess(dt.msg);
+                    } else {
+                        proxy.$modal.msgError(dt.msg);
+                    }
+                }
+                reader.readAsText(res.data, 'utf-8');
+            } else {
+                proxy.$modal.msgError("Invalid Content Type!!");
+            }
+            listLoading.value = false;
+        }).catch((err) => {
+            listLoading.value = false;
+        });
+    }).catch((err) => {});
+}
+function doImport() {
+    proxy.$refs.importData.show("hehe");
+}
+function onImportPost(res, callback) {
+    if (res.data.code === '0000') {
+        proxy.$modal.msgSuccess(res.data.msg);
+        callback(res.data.data);
+        proxy.$refs.importData.close();
+        getPermissionList(1);
+    } else {
+        proxy.$modal.msgError(res.data.msg);
+    }
+}
+function onImportCompleted(key, resp) {
+    getPermissionList(1);
 }
 
 onMounted(() => {
