@@ -45,10 +45,10 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 			, Boolean visible) {
 		List<SysPermission> permissionList = permissionDao.queryPermissionList(idList, null, keywords, permTypeList, visible
 				, null, null);
-		List<PermissionDto> dotList = permissionList == null || permissionList.size() <= 0
+		List<PermissionDto> dtoList = permissionList == null || permissionList.size() <= 0
 				? new ArrayList<>()
 				: permissionList.stream().map(this::toPermissionDto).collect(Collectors.toList());
-		return buildPermTree(dotList);
+		return buildPermTree(dtoList);
 	}
 	private PermissionDto toPermissionDto(SysPermission permission) {
 		if (permission == null) {
@@ -77,11 +77,11 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 	/**
 	 * 构建树状结构
 	 */
-	private <T extends AbstractTreeDto<T>>List<T> buildPermTree(List<T> dotList) {
-		if (dotList == null || dotList.size() <= 0) {
-			return dotList;
+	private <T extends AbstractTreeDto<T>>List<T> buildPermTree(List<T> dtoList) {
+		if (dtoList == null || dtoList.size() <= 0) {
+			return dtoList;
 		}
-		CopyOnWriteArrayList<T> copyList = new CopyOnWriteArrayList<>(dotList);
+		CopyOnWriteArrayList<T> copyList = new CopyOnWriteArrayList<>(dtoList);
 		List<Long> delIds = new ArrayList<>();
 		for (T dto1 : copyList) {
 			for (T dto2 : copyList) {
@@ -108,10 +108,10 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 
 		List<SysPermission> permissionList = permissionDao.queryPermissionList(permIdList, null, null
 				, permTypeList, null, null, null);
-		List<PermissionMenuTreeDto> dotList = permissionList == null || permissionList.size() <= 0
+		List<PermissionMenuTreeDto> dtoList = permissionList == null || permissionList.size() <= 0
 				? new ArrayList<>()
 				: permissionList.stream().map(this::toPermissionMenuTreeDto).collect(Collectors.toList());
-		return buildPermTree(dotList);
+		return buildPermTree(dtoList);
 	}
 	private PermissionMenuTreeDto toPermissionMenuTreeDto(SysPermission permission) {
 		if (permission == null) {
@@ -236,69 +236,42 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 	}
 
 	@Override
-	public void deleteAll() {
-		List<SysPermission> list = permissionDao.queryPermissionList(null, null, null, null, null
-				, null, null);
-		if (list == null || list.size() <= 0) {
-			return;
-		}
-		for (SysPermission perm: list) {
-			permissionDao.delete(perm);
-		}
-	}
-
-	@Override
 	public PermissionDto queryPermissionByNo(String permNo) {
 		SysPermission permission = permissionDao.queryPermissionByNo(permNo);
 		return toPermissionDto(permission);
 	}
 
 	@Override
-	public PermissionExportDto queryAllPermissionList() {
+	public PermissionExportDto getPermissionExportDto() {
 		List<SysPermission> list = permissionDao.queryPermissionList(null, null, null, null, null
 				, null, null);
-		return list == null || list.size() <= 0
-				? null
-				: toPermissionExportDto(list);
-	}
-	private PermissionExportDto toPermissionExportDto(List<SysPermission> plist) {
-		if (plist == null || plist.size() <= 0) {
-			return null;
-		}
-		PermissionExportDto dto = new PermissionExportDto();
-		for (SysPermission perm: plist) {
-			PermissionExportDto.Body body = new PermissionExportDto.Body();
-			body.setId(perm.getId());
-			body.setPermNo(perm.getPermNo());
-			body.setTitle(perm.getTitle());
-			body.setParentId(perm.getParentId());
-			body.setOrderNum(perm.getOrderNum());
-			body.setPath(perm.getPath());
-			body.setComponent(perm.getComponent());
-			body.setIfExt(perm.isIfExt());
-			body.setPermType(perm.getPermType());
-			body.setPermTypeName(PermType.getNameByCode(perm.getPermType()));
-			body.setVisible(perm.isVisible());
-			body.setIcon(perm.getIcon());
-			body.setDescr(perm.getDescr());
-			body.setCreator(perm.getCreator());
-			body.setCreateTime(perm.getCreateTime() == null ? "" : DateUtil.formatDate(perm.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
-			body.setModifier(perm.getModifier());
-			body.setModifyTime(perm.getModifyTime() == null ? "" : DateUtil.formatDate(perm.getModifyTime(), "yyyy-MM-dd HH:mm:ss"));
-			dto.addBody(body);
-		}
-		return dto.sign();
+		List<PermissionDto> dtoList = list == null || list.size() <= 0
+				? new ArrayList<>()
+				: list.stream().map(this::toPermissionDto).collect(Collectors.toList());
+		return new PermissionExportDto(buildPermTree(dtoList));
 	}
 
+
+	@Override
+	public void doImport(Long parentId, List<PermissionDto> list) {
+		if (list == null || list.size() <= 0) {
+			return;
+		}
+		for (PermissionDto dto: list) {
+			Long newParentId = doImport(dto.getPermNo(), dto.getTitle(), parentId, dto.getOrderNum(), dto.getPath()
+					, dto.getComponent(), dto.getIfExt(), dto.getPermType(), dto.getVisible(), dto.getIcon(), dto.getDescr()
+					, dto.getCreator(), dto.getCreateTime(), dto.getModifier(), dto.getModifyTime());
+			doImport(newParentId, dto.getChildren());
+		}
+	}
 	/**
 	 * 按 permNo 覆盖数据
 	 */
-	@Override
-	public void doImport(String permNo, String title, Long parentId, Integer orderNum, String path, String component
-			, Boolean ifExt, String permType, Boolean visible, String icon, String descr
+	private Long doImport(String permNo, String title, Long parentId, Integer orderNum, String path
+			, String component, Boolean ifExt, String permType, Boolean visible, String icon, String descr
 			, String creator, String createTime, String modifier, String modifyTime) {
 		if (permNo == null || "".equals(permNo.trim())) {
-			return;
+			return null;
 		}
 		Date createTime0 = DateUtil.parseDateIgnoreE(createTime, "yyyy-MM-dd HH:mm:ss");
 		Date modifyTime0 = DateUtil.parseDateIgnoreE(modifyTime, "yyyy-MM-dd HH:mm:ss");
@@ -322,6 +295,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 			perm.setModifier(modifier);
 			perm.setModifyTime(modifyTime0);
 			permissionDao.insert(perm);
+			return perm.getId();
 		} else {
 			perm.setTitle(title);
 			perm.setParentId(parentId);
@@ -336,6 +310,7 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 			perm.setModifier(modifier);
 			perm.setModifyTime(modifyTime0);
 			permissionDao.updateByPrimaryKey(perm);
+			return perm.getId();
 		}
 	}
 }
