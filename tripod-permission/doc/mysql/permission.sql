@@ -63,7 +63,7 @@ create table sys_admin(
 	primary     key(id),
 	unique idx_account_no(account_no)
 )engine=innodb default charset=utf8mb4 comment='管理员账号表';
-
+//
 drop table if exists sys_role_permission_rel;
 create table sys_role_permission_rel(
 	id                        bigint(20) unsigned   not null,
