@@ -19,6 +19,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>com.yuweix</groupId>
 			<artifactId>tripod-core</artifactId>
 			<version>${project.version}</version>
