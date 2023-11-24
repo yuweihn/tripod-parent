@@ -120,46 +120,50 @@ insert into sys_permission(id, perm_no, title, parent_id, order_num, path, compo
     values(7, 'sys.permission.update', '修改权限', 2, 3, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
     values(8, 'sys.permission.delete', '删除权限', 2, 4, null, null, false, 'B', true, '#', null, 'system', now());
+insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
+    values(9, 'sys.permission.export', '导出权限', 2, 5, null, null, false, 'B', true, '#', null, 'system', now());
+insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
+    values(10, 'sys.permission.import', '导入权限', 2, 6, null, null, false, 'B', true, '#', null, 'system', now());
 
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(9, 'sys.role.list', '查询角色列表', 3, 1, null, null, false, 'B', true, '#', null, 'system', now());
+    values(11, 'sys.role.list', '查询角色列表', 3, 1, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(10, 'sys.role.info', '查询角色详情', 3, 2, null, null, false, 'B', true, '#', null, 'system', now());
+    values(12, 'sys.role.info', '查询角色详情', 3, 2, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(11, 'sys.role.create', '添加角色', 3, 3, null, null, false, 'B', true, '#', null, 'system', now());
+    values(13, 'sys.role.create', '添加角色', 3, 3, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(12, 'sys.role.update', '修改角色', 3, 4, null, null, false, 'B', true, '#', null, 'system', now());
+    values(14, 'sys.role.update', '修改角色', 3, 4, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(13, 'sys.role.delete', '删除角色', 3, 5, null, null, false, 'B', true, '#', null, 'system', now());
+    values(15, 'sys.role.delete', '删除角色', 3, 5, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(14, 'sys.role.permission.list', '查询指定角色的权限集合', 3, 6, null, null, false, 'B', true, '#', null, 'system', now());
+    values(16, 'sys.role.permission.list', '查询指定角色的权限集合', 3, 6, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(15, 'sys.role.permission.save', '保存角色权限', 3, 7, null, null, false, 'B', true, '#', null, 'system', now());
+    values(17, 'sys.role.permission.save', '保存角色权限', 3, 7, null, null, false, 'B', true, '#', null, 'system', now());
 
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(16, 'sys.admin.list', '查询管理员列表', 4, 1, null, null, false, 'B', true, '#', null, 'system', now());
+    values(18, 'sys.admin.list', '查询管理员列表', 4, 1, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(17, 'sys.admin.info', '查询管理员详情', 4, 2, null, null, false, 'B', true, '#', null, 'system', now());
+    values(19, 'sys.admin.info', '查询管理员详情', 4, 2, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(18, 'sys.admin.create', '添加管理员', 4, 3, null, null, false, 'B', true, '#', null, 'system', now());
+    values(20, 'sys.admin.create', '添加管理员', 4, 3, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(19, 'sys.admin.update', '更新管理员', 4, 4, null, null, false, 'B', true, '#', null, 'system', now());
+    values(21, 'sys.admin.update', '更新管理员', 4, 4, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(20, 'sys.admin.change.password', '设置密码', 4, 5, null, null, false, 'B', true, '#', null, 'system', now());
+    values(22, 'sys.admin.change.password', '设置密码', 4, 5, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(21, 'sys.admin.gender.drop.down.list', '性别列表(下拉选择)', 4, 6, null, null, false, 'B', true, '#', null, 'system', now());
+    values(23, 'sys.admin.gender.drop.down.list', '性别列表(下拉选择)', 4, 6, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(22, 'sys.admin.delete', '删除管理员', 4, 7, null, null, false, 'B', true, '#', null, 'system', now());
+    values(24, 'sys.admin.delete', '删除管理员', 4, 7, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(23, 'sys.admin.role.list', '管理员角色列表', 4, 8, null, null, false, 'B', true, '#', null, 'system', now());
+    values(25, 'sys.admin.role.list', '管理员角色列表', 4, 8, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(24, 'sys.admin.role.info', '查询指定的管理员角色', 4, 9, null, null, false, 'B', true, '#', null, 'system', now());
+    values(26, 'sys.admin.role.info', '查询指定的管理员角色', 4, 9, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(25, 'sys.admin.role.create', '增加管理员角色', 4, 10, null, null, false, 'B', true, '#', null, 'system', now());
+    values(27, 'sys.admin.role.create', '增加管理员角色', 4, 10, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(26, 'sys.admin.role.update', '修改管理员角色', 4, 11, null, null, false, 'B', true, '#', null, 'system', now());
+    values(28, 'sys.admin.role.update', '修改管理员角色', 4, 11, null, null, false, 'B', true, '#', null, 'system', now());
 insert into sys_permission(id, perm_no, title, parent_id, order_num, path, component, if_ext, perm_type, visible, icon, descr, creator, create_time)
-    values(27, 'sys.admin.role.delete', '删除管理员角色', 4, 12, null, null, false, 'B', true, '#', null, 'system', now());
+    values(29, 'sys.admin.role.delete', '删除管理员角色', 4, 12, null, null, false, 'B', true, '#', null, 'system', now());
 
 
 truncate table sys_role;
@@ -194,6 +198,8 @@ insert into sys_role_permission_rel(id, role_id, perm_id, creator, create_time) 
 insert into sys_role_permission_rel(id, role_id, perm_id, creator, create_time) values(25, 1, 25, 'system', now());
 insert into sys_role_permission_rel(id, role_id, perm_id, creator, create_time) values(26, 1, 26, 'system', now());
 insert into sys_role_permission_rel(id, role_id, perm_id, creator, create_time) values(27, 1, 27, 'system', now());
+insert into sys_role_permission_rel(id, role_id, perm_id, creator, create_time) values(28, 1, 28, 'system', now());
+insert into sys_role_permission_rel(id, role_id, perm_id, creator, create_time) values(29, 1, 29, 'system', now());
 
 /************************************************************************************************************
 *********明文**12345*****密文**827ccb0eea8a706c4c34a16891f84e7b*************
