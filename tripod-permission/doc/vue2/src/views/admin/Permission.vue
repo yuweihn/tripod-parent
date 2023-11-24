@@ -76,6 +76,8 @@
 		<!--工具条-->
 		<el-col :span="24" class="toolbar2">
 			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length === 0" class="el-icon-delete" v-hasPerm="['sys.permission.delete']"> 批量删除</el-button>
+            <el-button type="success" v-on:click="doExport" class="el-icon-coin" v-hasPerm="['sys.permission.export']"> 导出</el-button>
+            <el-button type="danger" v-on:click="doImport" class="el-icon-circle-plus-outline" v-hasPerm="['sys.permission.import']"> 导入</el-button>
 		</el-col>
 
 		<!--新增界面-->
@@ -83,17 +85,22 @@
 
 		<!--编辑界面-->
 		<edit-permission ref="editPermission" v-on:success="getPermissionList"/>
+
+        <file-upload ref="importData" :title="'导入外部数据'" :fileLabel="'文件'" :fileTips="'只接受*.json格式，最大不要超过2MB'"
+                  :accept="'.json'" :maxSize="2097152" :fileErr="'请选择外部数据文件'" :fileType="'text'"
+                  :actionUrl="this.$global.baseUrl + '/sys/permission/import'" v-on:change="onImportPost" v-on:complete="onImportCompleted" />
 	</section>
 </template>
 
 <script>
 import CreatePermission from './components/CreatePermission';
 import EditPermission from './components/EditPermission';
-
+import FileUpload from '@/views/components/FileUpload';
 export default {
     components: {
         'create-permission': CreatePermission,
-        'edit-permission': EditPermission
+        'edit-permission': EditPermission,
+        'file-upload': FileUpload
     },
 
     data() {
@@ -172,6 +179,59 @@ export default {
 
             });
             this.sels = [];
+        },
+
+        doExport() {
+            this.$confirm('导出确认！', '提示', {type: 'warning'}).then(() => {
+                var this0 = this;
+                this0.listLoading = true;
+                this0.$axios.post(this0.$global.baseUrl + '/sys/permission/export', null, {responseType: 'blob'}).then((res) => {
+                    if (res.data.type === 'application/octet-stream') {
+                        const fileName = res.headers["_filename"];
+                        if (fileName) {
+                            this0.$fileDownload(res.data, decodeURIComponent(fileName));
+                        } else {
+                            this0.$message.error("Error");
+                        }
+                    } else if (res.data.type === 'application/json') {
+                        const reader = new FileReader();
+                        reader.onload = function() {
+                            var dt = JSON.parse(reader.result);
+                            if (dt.code === '0000') {
+                                this0.$message({type: "success", message: dt.msg});
+                            } else {
+                                this0.$message.error(dt.msg);
+                            }
+                        }
+                        reader.readAsText(res.data, 'utf-8');
+                    } else {
+                        this0.$message.error("Invalid Content Type!!");
+                    }
+                    this0.listLoading = false;
+                }).catch((err) => {
+                    this0.listLoading = false;
+                    this0.$message.error(err.message);
+                });
+            }).catch(() => {
+
+            });
+        },
+
+        doImport: function() {
+            this.$refs.importData.show("hehe");
+        },
+        onImportPost(res, callback) {
+            if (res.data.code === '0000') {
+                this.$message({type: "success", message: res.data.msg});
+                callback(res.data.data);
+                this.$refs.importData.close();
+                this.getPermissionList(1);
+            } else {
+                this.$message.error(res.data.msg);
+            }
+        },
+        onImportCompleted(key, resp) {
+            this.getPermissionList(1);
         }
     },
     mounted() {
