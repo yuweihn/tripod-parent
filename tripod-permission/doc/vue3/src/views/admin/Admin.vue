@@ -263,7 +263,10 @@ function showBigPict(img) {
     }
     preview.value.showList = preview.value.initList.slice(idx, preview.value.initList.length).concat(preview.value.initList.slice(0, idx));
 }
-getAdminList();
+
+onMounted(() => {
+    getAdminList();
+})
 </script>
 
 <style scoped>
