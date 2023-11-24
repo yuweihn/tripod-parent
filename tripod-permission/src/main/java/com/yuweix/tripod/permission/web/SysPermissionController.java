@@ -1,19 +1,33 @@
 package com.yuweix.tripod.permission.web;
 
 
+import com.yuweix.tripod.core.DateUtil;
 import com.yuweix.tripod.core.Response;
+import com.yuweix.tripod.core.json.JsonUtil;
 import com.yuweix.tripod.permission.annotations.Permission;
 import com.yuweix.tripod.permission.common.PermissionUtil;
 import com.yuweix.tripod.permission.common.Properties;
 import com.yuweix.tripod.permission.dto.AdminDto;
 import com.yuweix.tripod.permission.dto.PermissionDto;
+import com.yuweix.tripod.permission.dto.PermissionExportDto;
 import com.yuweix.tripod.permission.service.SysPermissionService;
 import jakarta.annotation.Resource;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
@@ -25,6 +39,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
  */
 @Controller
 public class SysPermissionController {
+	private static final Logger log = LoggerFactory.getLogger(SysPermissionController.class);
+
 	@Resource
 	private SysPermissionService sysPermissionService;
 	@Resource
@@ -100,6 +116,82 @@ public class SysPermissionController {
 	public Response<String, Void> deletePermission(@RequestParam(value = "ids", required = true)long[] ids) {
 		for (long id: ids) {
 			sysPermissionService.deletePermission(id);
+		}
+		return new Response<>(properties.getSuccessCode(), "ok");
+	}
+
+	/**
+	 * 导出全部权限
+	 */
+	@Permission(value = "sys.permission.export")
+	@RequestMapping(value = "/sys/permission/export", method = POST)
+	@ResponseBody
+	public void doExport(HttpServletResponse response) throws Exception {
+		PermissionExportDto def = sysPermissionService.queryAllPermissionList();
+
+		String fileName = URLEncoder.encode("permission" + DateUtil.formatDate(new Date(), "yyyyMMddHHmmss") + ".json", "utf-8");
+		response.setContentType("application/octet-stream");
+		response.setCharacterEncoding("utf-8");
+		response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+		response.setHeader("_filename", fileName);
+		response.setHeader("Access-Control-Expose-Headers", "_filename");
+
+		ServletOutputStream out = response.getOutputStream();
+		OutputStreamWriter osw = null;
+		BufferedWriter bw = null;
+		try {
+			String str = def == null ? "" : JsonUtil.toJSONString(def);
+			osw = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+			bw = new BufferedWriter(osw);
+			bw.append(str);
+		} catch (Exception e) {
+			log.error("", e);
+		} finally {
+			if (bw != null) {
+				try {
+					bw.close();
+				} catch (IOException e) {
+					log.error("", e);
+				}
+			}
+			if (osw != null) {
+				try {
+					osw.close();
+				} catch (IOException e) {
+					log.error("", e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 导入外部权限数据。按权限编码(permNo)覆盖原数据
+	 * @param reset   是否清除现有数据
+	 */
+	@Permission(value = "sys.permission.import")
+	@RequestMapping(value = "/sys/permission/import", method = POST)
+	@ResponseBody
+	public Response<String, Void> doImport(@RequestParam(value = "file", required = true) MultipartFile file
+			, @RequestParam(value = "reset", required = false, defaultValue = "false") boolean reset) throws Exception {
+		String str = new String(file.getBytes(), StandardCharsets.UTF_8);
+		PermissionExportDto dto = "".equals(str)
+				? null
+				: JsonUtil.parseObject(str, PermissionExportDto.class);
+		List<PermissionExportDto.Body> list = dto == null ? null : dto.getList();
+		if (list == null || list.size() <= 0) {
+			return new Response<>(properties.getFailureCode(), "No Data.");
+		}
+		if (!dto.verify()) {
+			return new Response<>(properties.getFailureCode(), "验签失败！");
+		}
+		if (reset) {
+			sysPermissionService.deleteAll();
+		}
+		for (PermissionExportDto.Body body : list) {
+			sysPermissionService.doImport(body.getPermNo(), body.getTitle(), body.getParentId(), body.getOrderNum()
+					, body.getPath(), body.getComponent(), body.getIfExt(), body.getPermType(), body.getVisible()
+					, body.getIcon(), body.getDescr()
+					, body.getCreator(), body.getCreateTime(), body.getModifier(), body.getModifyTime());
 		}
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}

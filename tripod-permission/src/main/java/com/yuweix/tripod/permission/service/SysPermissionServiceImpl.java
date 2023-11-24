@@ -9,6 +9,7 @@ import com.yuweix.tripod.permission.dao.SysPermissionDao;
 import com.yuweix.tripod.permission.dao.SysRolePermissionRelDao;
 import com.yuweix.tripod.permission.dto.AbstractTreeDto;
 import com.yuweix.tripod.permission.dto.PermissionDto;
+import com.yuweix.tripod.permission.dto.PermissionExportDto;
 import com.yuweix.tripod.permission.dto.PermissionMenuTreeDto;
 import com.yuweix.tripod.permission.enums.PermType;
 import com.yuweix.tripod.permission.model.SysPermission;
@@ -235,8 +236,106 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 	}
 
 	@Override
+	public void deleteAll() {
+		List<SysPermission> list = permissionDao.queryPermissionList(null, null, null, null, null
+				, null, null);
+		if (list == null || list.size() <= 0) {
+			return;
+		}
+		for (SysPermission perm: list) {
+			permissionDao.delete(perm);
+		}
+	}
+
+	@Override
 	public PermissionDto queryPermissionByNo(String permNo) {
 		SysPermission permission = permissionDao.queryPermissionByNo(permNo);
 		return toPermissionDto(permission);
+	}
+
+	@Override
+	public PermissionExportDto queryAllPermissionList() {
+		List<SysPermission> list = permissionDao.queryPermissionList(null, null, null, null, null
+				, null, null);
+		return list == null || list.size() <= 0
+				? null
+				: toPermissionExportDto(list);
+	}
+	private PermissionExportDto toPermissionExportDto(List<SysPermission> plist) {
+		if (plist == null || plist.size() <= 0) {
+			return null;
+		}
+		PermissionExportDto dto = new PermissionExportDto();
+		for (SysPermission perm: plist) {
+			PermissionExportDto.Body body = new PermissionExportDto.Body();
+			body.setId(perm.getId());
+			body.setPermNo(perm.getPermNo());
+			body.setTitle(perm.getTitle());
+			body.setParentId(perm.getParentId());
+			body.setOrderNum(perm.getOrderNum());
+			body.setPath(perm.getPath());
+			body.setComponent(perm.getComponent());
+			body.setIfExt(perm.isIfExt());
+			body.setPermType(perm.getPermType());
+			body.setPermTypeName(PermType.getNameByCode(perm.getPermType()));
+			body.setVisible(perm.isVisible());
+			body.setIcon(perm.getIcon());
+			body.setDescr(perm.getDescr());
+			body.setCreator(perm.getCreator());
+			body.setCreateTime(perm.getCreateTime() == null ? "" : DateUtil.formatDate(perm.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+			body.setModifier(perm.getModifier());
+			body.setModifyTime(perm.getModifyTime() == null ? "" : DateUtil.formatDate(perm.getModifyTime(), "yyyy-MM-dd HH:mm:ss"));
+			dto.addBody(body);
+		}
+		return dto.sign();
+	}
+
+	/**
+	 * 按 permNo 覆盖数据
+	 */
+	@Override
+	public void doImport(String permNo, String title, Long parentId, Integer orderNum, String path, String component
+			, Boolean ifExt, String permType, Boolean visible, String icon, String descr
+			, String creator, String createTime, String modifier, String modifyTime) {
+		if (permNo == null || "".equals(permNo.trim())) {
+			return;
+		}
+		Date createTime0 = DateUtil.parseDateIgnoreE(createTime, "yyyy-MM-dd HH:mm:ss");
+		Date modifyTime0 = DateUtil.parseDateIgnoreE(modifyTime, "yyyy-MM-dd HH:mm:ss");
+		SysPermission perm = permissionDao.queryPermissionByNo(permNo.trim());
+		if (perm == null) {
+			perm = new SysPermission();
+			perm.setId(seqSysPermission.next());
+			perm.setPermNo(permNo.trim());
+			perm.setTitle(title);
+			perm.setParentId(parentId);
+			perm.setOrderNum(orderNum == null ? 0 : orderNum);
+			perm.setPath(path);
+			perm.setComponent(component);
+			perm.setIfExt(ifExt != null && ifExt);
+			perm.setPermType(permType);
+			perm.setVisible(visible != null && visible);
+			perm.setIcon(icon);
+			perm.setDescr(descr);
+			perm.setCreator(creator);
+			perm.setCreateTime(createTime0 == null ? new Date() : createTime0);
+			perm.setModifier(modifier);
+			perm.setModifyTime(modifyTime0);
+			permissionDao.insert(perm);
+		} else {
+			perm.setTitle(title);
+			perm.setParentId(parentId);
+			perm.setOrderNum(orderNum == null ? 0 : orderNum);
+			perm.setPath(path);
+			perm.setComponent(component);
+			perm.setIfExt(ifExt != null && ifExt);
+			perm.setPermType(permType);
+			perm.setVisible(visible != null && visible);
+			perm.setIcon(icon);
+			perm.setDescr(descr);
+			perm.setModifier(modifier);
+			perm.setModifyTime(modifyTime0);
+			permissionDao.updateByPrimaryKey(perm);
+		}
 	}
 }
