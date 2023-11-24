@@ -96,6 +96,7 @@
 import CreatePermission from './components/CreatePermission';
 import EditPermission from './components/EditPermission';
 import FileUpload from '@/views/components/FileUpload';
+
 export default {
     components: {
         'create-permission': CreatePermission,
