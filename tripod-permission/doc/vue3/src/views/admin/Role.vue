@@ -178,7 +178,10 @@ function batchRemove() {
     }).catch((err) => {});
     sels.value = [];
 }
-getRoleList();
+
+onMounted(() => {
+    getRoleList();
+})
 </script>
 
 <style scoped>

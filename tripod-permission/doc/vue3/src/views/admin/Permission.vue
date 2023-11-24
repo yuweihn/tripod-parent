@@ -146,7 +146,10 @@ function batchRemove() {
     }).catch((err) => {});
     sels.value = [];
 }
-getPermissionList();
+
+onMounted(() => {
+    getPermissionList();
+})
 </script>
 
 <style scoped>
