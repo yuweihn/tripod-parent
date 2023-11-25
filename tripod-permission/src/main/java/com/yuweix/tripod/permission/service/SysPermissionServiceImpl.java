@@ -7,10 +7,7 @@ import com.yuweix.tripod.dao.mybatis.where.Operator;
 import com.yuweix.tripod.permission.dao.SysAdminDao;
 import com.yuweix.tripod.permission.dao.SysPermissionDao;
 import com.yuweix.tripod.permission.dao.SysRolePermissionRelDao;
-import com.yuweix.tripod.permission.dto.AbstractTreeDto;
-import com.yuweix.tripod.permission.dto.PermissionDto;
-import com.yuweix.tripod.permission.dto.PermissionExportDto;
-import com.yuweix.tripod.permission.dto.PermissionMenuTreeDto;
+import com.yuweix.tripod.permission.dto.*;
 import com.yuweix.tripod.permission.enums.PermType;
 import com.yuweix.tripod.permission.model.SysPermission;
 import com.yuweix.tripod.sequence.base.Sequence;
@@ -233,6 +230,34 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 			throw new RuntimeException("存在子权限，不能删除");
 		}
 		permissionDao.deleteByKey(permissionId);
+	}
+
+	@Override
+	public void deletePermissions(List<Long> idList) {
+		if (idList == null || idList.size() <= 0) {
+			return;
+		}
+		List<PermissionIdDto> idDtoList = new ArrayList<>();
+		for (Long id: idList) {
+			SysPermission perm = permissionDao.get(id);
+			if (perm == null) {
+				continue;
+			}
+			PermissionIdDto idDto = new PermissionIdDto();
+			idDto.setId(perm.getId());
+			idDto.setParentId(perm.getParentId());
+			idDtoList.add(idDto);
+		}
+		deletePermissionTreeList(buildPermTree(idDtoList));
+	}
+	private void deletePermissionTreeList(List<PermissionIdDto> list) {
+		if (list == null || list.size() <= 0) {
+			return;
+		}
+		for (PermissionIdDto dto: list) {
+			deletePermissionTreeList(dto.getChildren());
+			deletePermission(dto.getId());
+		}
 	}
 
 	@Override
