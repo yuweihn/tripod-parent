@@ -132,7 +132,7 @@ public class SysPermissionController {
 	public void doExport(HttpServletResponse response) throws Exception {
 		PermissionExportDto exportDto = sysPermissionService.getPermissionExportDto();
 
-		String fileName = URLEncoder.encode("permission." + DateUtil.formatDate(new Date(), "yyyyMMddHHmmss") + ".json", "utf-8");
+		String fileName = URLEncoder.encode(properties.getAppName() + ".permission." + DateUtil.formatDate(new Date(), "yyyyMMddHHmmss") + ".json", "utf-8");
 		response.setContentType("application/octet-stream");
 		response.setCharacterEncoding("utf-8");
 		response.setHeader("Content-disposition", "attachment;filename=" + fileName);
