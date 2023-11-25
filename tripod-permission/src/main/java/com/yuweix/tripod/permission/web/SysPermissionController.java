@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -114,9 +115,11 @@ public class SysPermissionController {
 	@RequestMapping(value = "/sys/permission/delete", method = DELETE)
 	@ResponseBody
 	public Response<String, Void> deletePermission(@RequestParam(value = "ids", required = true)long[] ids) {
+		List<Long> list = new ArrayList<>();
 		for (long id: ids) {
-			sysPermissionService.deletePermission(id);
+			list.add(id);
 		}
+		sysPermissionService.deletePermissions(list);
 		return new Response<>(properties.getSuccessCode(), "ok");
 	}
 

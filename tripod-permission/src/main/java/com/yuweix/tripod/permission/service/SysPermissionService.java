@@ -38,6 +38,7 @@ public interface SysPermissionService {
 			, String component, boolean ifExt, String permType, boolean visible
 			, String icon, String descr, String modifier);
 	void deletePermission(long permissionId);
+	void deletePermissions(List<Long> idList);
 
 	PermissionDto queryPermissionByNo(String permNo);
 
