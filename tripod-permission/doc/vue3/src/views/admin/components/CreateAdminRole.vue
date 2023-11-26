@@ -4,7 +4,10 @@
 			<el-form-item label="角色" prop="roleId">
 				<el-select v-model="addForm.roleId" placeholder="请输入" @change="onRoleChanged($event)"
 							:remote-method="initRoleList" clearable filterable remote style="width: 100%">
-					<el-option v-for="item in roleSlt.result.list" :key="item.val" :label="item.label" :value="item.val" />
+					<el-option v-for="item in roleSlt.result.list" :key="item.val" :label="item.label" :value="item.val">
+						<span class="slt-option-left">{{item.label}}</span>
+						<span class="slt-option-right">{{item.roleNo}}</span>
+					</el-option>
 					<el-pagination layout="total, prev, pager, next" hide-on-single-page @current-change="onRolePageChanged"
 						        :current-page="roleSlt.pageNo" :page-size="roleSlt.pageSize" :total="roleSlt.result.size"/>
 				</el-select>
@@ -41,9 +44,9 @@ const roleSlt = ref({
 });
 const emit = defineEmits(["success"]);
 
-function show(aId) {
+function show(aid) {
     proxy.resetForm("addFormRef");
-    adminId.value = aId;
+    adminId.value = aid;
     addForm.value.roleId = null;
     roleSlt.value.result.size = 0;
     roleSlt.value.result.list = [];
@@ -83,7 +86,7 @@ function onRolePageChanged(pno, psize) {
     proxy.request.get('/sys/role/list', params).then((res) => {
         roleSlt.value.result.size = res.data.data.size;
         roleSlt.value.result.list = res.data.data.list.map(item => {
-            return {val: item.id, label: item.roleName};
+            return {val: item.id, label: item.roleName, roleNo: item.roleNo};
         });
     }).catch((err) => {
         roleSlt.value.result.size = 0;
