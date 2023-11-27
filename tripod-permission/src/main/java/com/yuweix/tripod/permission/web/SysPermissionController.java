@@ -178,7 +178,7 @@ public class SysPermissionController {
 		PermissionExportDto dto = "".equals(str)
 				? null
 				: JsonUtil.parseObject(str, PermissionExportDto.class);
-		if (!dto.verify()) {
+		if (dto == null || !dto.verify()) {
 			return new Response<>(properties.getFailureCode(), "验签失败！");
 		}
 		List<PermissionDto> list = dto.getList();
