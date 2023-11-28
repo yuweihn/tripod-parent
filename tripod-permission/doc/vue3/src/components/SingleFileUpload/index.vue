@@ -1,11 +1,10 @@
 <template>
 	<!--文件上传界面-->
 	<el-dialog :title="title" v-model="formVisible" :close-on-click-modal="modal" :width="width" append-to-body draggable>
-		<el-form :model="frm" label-width="80px" :rules="formRules" ref="frmRef">
-			<el-form-item :label="fileLabel" prop="done">
-				<el-upload :action="actionUrl" :list-type="fileType" :http-request="uploadFile"
-                            :on-change="handleUploadChange" :on-remove="handleUploadRemove" :before-upload="preUpload"
-                            :file-list="fileList" :accept="accept">
+		<el-form :model="frm" label-width="80px" ref="frmRef">
+			<el-form-item :label="fileLabel">
+				<el-upload :action="actionUrl" :list-type="fileType" :http-request="uploadFile" :file-list="fileList"
+				            :before-upload="preUpload" :accept="accept">
 					<el-button type="primary">点击上传</el-button>
                     <template #tip>
                         <div class="el-upload-tip2">{{fileTips}}</div>
@@ -13,10 +12,6 @@
 				</el-upload>
 			</el-form-item>
 		</el-form>
-		<div slot="footer" class="dialog-footer">
-			<el-button @click.native="formVisible = false">取消</el-button>
-			<el-button type="primary" @click.native="completeUpload" :loading="loading">完成</el-button>
-		</div>
 	</el-dialog>
 </template>
 
@@ -42,10 +37,6 @@ const props = defineProps({
         type: String,
         default: "只能上传jpg/png文件，且不超过1MB"
     },
-    fileErr: {
-        type: String,
-        default: "请上传文件"
-    },
     accept: {
         type: String,
         default: ".jpg,.png"
@@ -69,46 +60,20 @@ const {proxy} = getCurrentInstance();
 
 const key = ref(null);
 const formVisible = ref(false);
-const loading = ref(false);
-const formRules = {
-    done: [
-        {required: true, message: proxy.fileErr, trigger: 'blur'}
-    ]
-};
-const frm = ref({
-    done: null
-});
+const frm = ref({});
 const extParams = ref({});     //调接口时需要的额外的参数
-const fileList = ref([]);      //要上传的文件列表
-const resp = ref(null);        //最终返回值
+const fileList = ref([]);
 
-watch(fileList, (val, oldValue) => {
-    frm.value.done = val && (val instanceof Array) && val.length > 0 ? "ok" : null;
-});
-
-const emit = defineEmits(["change", "complete"]);
+const emit = defineEmits(["change"]);
 
 function show(k, eparams) {
     proxy.resetForm("frmRef");
+    fileList.value = [];
     key.value = k;
-    frm.value.done = null;
     if (eparams) {
         extParams.value = eparams;
     }
-    fileList.value = [];
-    resp.value = null;
     formVisible.value = true;
-}
-function close() {
-    proxy.$refs['frmRef'].resetFields();
-    formVisible.value = false;
-    loading.value = false;
-}
-function handleUploadChange(file, fList) {
-    fileList.value = [file];
-}
-function handleUploadRemove(file, fList) {
-    fileList.value = [];
 }
 function preUpload(file) {
     if (file.size > proxy.maxSize) {
@@ -127,32 +92,12 @@ function uploadFile(req) {
             formData.append(key, extParams.value[key]);
         }
     }
-    resp.value = null;
     proxy.request.post(req.action, formData).then((res) => {
-        let resData = null;
-        emit("change", key.value, res, data => {
-            resData = data;
-        });
-
-        if (resData != 'undefined' && resData != null) {
-            resp.value = resData;
-        }
-        proxy.$refs.frmRef.validate((valid) => {});
-    }).catch((err) => {
-
-    });
-}
-//完成并返回
-function completeUpload() {
-    proxy.$refs.frmRef.validate((valid) => {
-        if (valid) {
-            loading.value = true;
-            emit("complete", key.value, resp.value);
-            proxy.$refs['frmRef'].resetFields();
-            formVisible.value = false;
-            loading.value = false;
-        }
-    });
+        proxy.$refs['frmRef'].resetFields();
+        fileList.value = [];
+        formVisible.value = false;
+        emit("change", key.value, res);
+    }).catch((err) => {});
 }
 //数字除法
 function div(arg1, arg2) {
@@ -174,8 +119,7 @@ function div(arg1, arg2) {
     return (r1 / r2) * Math.pow(10, t2 - t1);
 }
 defineExpose({
-    show,
-    close
+    show
 })
 </script>
 
@@ -192,11 +136,8 @@ defineExpose({
 
 
 <!--
-父组件可以自定义change和complete这两个事件。
-1、change用于解析文件上传的后台响应数据，返回任意值；
-2、complete用于处理组件结束之后的善后操作，参数为change返回值。
-
+父组件可以自定义change事件，用于解析文件上传的后台响应数据。
 eg.      <file-upload ref="fileUpload" :title="'上传文件'" :fileLabel="'文件'" :fileTips="'请选择文件，文件不要超过2MB'"
-                     :accept="''" :maxSize="2097152" :fileErr="'请选择文件'" :fileType="'text'"
-                     :actionUrl="'/file/upload'" v-on:change="onUploadChanged" v-on:complete="onUploadCompleted" />
+                     :accept="''" :maxSize="2097152" :fileType="'text'"
+                     :actionUrl="'/file/upload'" v-on:change="onUploadChanged" />
 -->
