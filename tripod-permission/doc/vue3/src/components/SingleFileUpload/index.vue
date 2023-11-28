@@ -129,7 +129,7 @@ defineExpose({
 }
 .el-upload-tip2 {
     font-size: 12px;
-    color: var(--el-text-color-regular);
+    color: #606266;
     margin-top: 7px;
 }
 </style>
