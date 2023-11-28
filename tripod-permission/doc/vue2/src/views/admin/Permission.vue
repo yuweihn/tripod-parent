@@ -221,7 +221,7 @@ export default {
         doImport: function() {
             this.$refs.importData.show("hehe");
         },
-        onImportPost(res, callback) {
+        onImportPost(key, res, callback) {
             if (res.data.code === '0000') {
                 this.$message({type: "success", message: res.data.msg});
                 callback(res.data.data);
