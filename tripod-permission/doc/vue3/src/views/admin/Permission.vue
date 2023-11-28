@@ -187,18 +187,14 @@ function doExport() {
 function doImport() {
     proxy.$refs.importData.show("hehe");
 }
-function onImportPost(res, callback) {
-    if (res.data.code === '0000') {
-        proxy.$modal.msgSuccess(res.data.msg);
-        callback(res.data.data);
-        proxy.$refs.importData.close();
-        getPermissionList(1);
-    } else {
-        proxy.$modal.msgError(res.data.msg);
-    }
+function onImportPost(key, res, callback) {
+    proxy.$modal.msgSuccess(res.data.msg);
+    callback(res.data.data);
+    proxy.$refs.importData.close();
+    getPermissionList(1);
 }
 function onImportCompleted(key, resp) {
-    getPermissionList(1);
+
 }
 
 onMounted(() => {
