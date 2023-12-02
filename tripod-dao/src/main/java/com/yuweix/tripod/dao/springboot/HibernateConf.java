@@ -141,7 +141,8 @@ public class HibernateConf {
 			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode
 			, @Value("${tripod.hibernate.session.factory.statement-inspector:}") String statementInspector) {
 		if (dialect == null || "".equals(dialect.trim())) {
-			dialect = org.hibernate.dialect.MySQLDialect.class.getName();
+//			dialect = org.hibernate.dialect.MySQLDialect.class.getName();
+			dialect = null;
 		}
 		if (sessionContext == null || "".equals(sessionContext.trim())) {
 			sessionContext = org.springframework.orm.hibernate5.SpringSessionContext.class.getName();
