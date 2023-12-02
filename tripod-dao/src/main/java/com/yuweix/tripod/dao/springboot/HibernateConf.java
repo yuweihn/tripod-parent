@@ -141,8 +141,7 @@ public class HibernateConf {
 			, @Value("${tripod.hibernate.connection.release-mode:auto}") String releaseMode
 			, @Value("${tripod.hibernate.session.factory.statement-inspector:}") String statementInspector) {
 		if (dialect == null || "".equals(dialect.trim())) {
-//			dialect = org.hibernate.dialect.MySQLDialect.class.getName();
-			dialect = null;
+			dialect = org.hibernate.dialect.MySQLDialect.class.getName();
 		}
 		if (sessionContext == null || "".equals(sessionContext.trim())) {
 			sessionContext = org.springframework.orm.hibernate5.SpringSessionContext.class.getName();
@@ -158,7 +157,7 @@ public class HibernateConf {
 		}
 
 		Properties properties = new Properties();
-		properties.setProperty("hibernate.dialect", dialect);
+//		properties.setProperty("hibernate.dialect", dialect);
 		properties.setProperty("hibernate.current_session_context_class", sessionContext);
 		properties.setProperty("hibernate.cache.region.factory_class", cacheRegionFactory);
 		properties.setProperty("hibernate.cache.provider_class", cacheProviderClass);
