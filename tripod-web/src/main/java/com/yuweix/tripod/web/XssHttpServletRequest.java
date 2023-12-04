@@ -1,7 +1,6 @@
 package com.yuweix.tripod.web;
 
 
-import com.yuweix.tripod.core.io.StreamUtil;
 import jakarta.servlet.ReadListener;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +9,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -85,8 +86,8 @@ public class XssHttpServletRequest extends HttpServletRequestWrapper {
 			return super.getInputStream();
 		}
 
-		byte[] bytes = StreamUtil.read(super.getInputStream());
-		if (bytes == null || bytes.length <= 0) {
+		byte[] bytes = read(super.getInputStream());
+		if (bytes.length <= 0) {
 			return super.getInputStream();
 		}
 
@@ -116,5 +117,28 @@ public class XssHttpServletRequest extends HttpServletRequestWrapper {
 				return bis.read();
 			}
 		};
+	}
+
+	private static byte[] read(InputStream in) throws IOException {
+		ByteArrayOutputStream out = null;
+		try {
+			out = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int len;
+			while ((len = in.read(buffer)) != -1) {
+				out.write(buffer, 0, len);
+			}
+			return out.toByteArray();
+		} catch (Exception e) {
+			throw new IOException(e);
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
