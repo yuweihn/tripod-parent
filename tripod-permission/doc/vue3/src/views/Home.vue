@@ -59,6 +59,8 @@ function goTarget(url) {
 </script>
 
 <style scoped lang="scss">
-
+.body .el-link {
+    vertical-align: inherit;
+}
 </style>
 
