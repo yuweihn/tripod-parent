@@ -10,7 +10,7 @@
                         </div>
                     </template>
                     <div class="body">
-                        <p><i class="el-icon-s-promotion"></i> 官网：<el-link href="javascript:void(0);">http://localhost:3000</el-link></p>
+                        <p><i class="el-icon-s-promotion"></i> 官网：<el-link :href="homeUrl">{{homeUrl}}</el-link></p>
                         <p><i class="el-icon-chat-dot-round"></i> 24小时热线：<a href="javascript:;">400-100-1730</a></p>
                     </div>
                 </el-card>
@@ -52,6 +52,7 @@
 
 <script setup name="home">
 const version = ref('1.0.2');
+const homeUrl = window.location.href;
 function goTarget(url) {
     window.open(url, '__blank');
 }
