@@ -52,7 +52,7 @@
 
 <script setup name="home">
 const version = ref('1.0.2');
-const homeUrl = window.location.href;
+const homeUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
 function goTarget(url) {
     window.open(url, '__blank');
 }
