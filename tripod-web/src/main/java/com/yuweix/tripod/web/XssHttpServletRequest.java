@@ -21,8 +21,14 @@ import java.util.Map;
  * @author yuwei
  */
 public class XssHttpServletRequest extends HttpServletRequestWrapper {
+	private XssEncoder xssEncoder;
+
 	public XssHttpServletRequest(HttpServletRequest request) {
+		this(request, new DefaultXssEncoder());
+	}
+	public XssHttpServletRequest(HttpServletRequest request, XssEncoder xssEncoder) {
 		super(request);
+		this.xssEncoder = xssEncoder;
 	}
 
 	@Override
@@ -31,7 +37,7 @@ public class XssHttpServletRequest extends HttpServletRequestWrapper {
 		if (value == null || "".equals(value)) {
 			return value;
 		}
-		value = new HtmlFilter().filter(value);
+		value = xssEncoder.filter(value);
 		return value;
 	}
 
@@ -42,7 +48,7 @@ public class XssHttpServletRequest extends HttpServletRequestWrapper {
 			for (int i = 0; i < values.length; i++) {
 				String value = values[i];
 				if (value != null && !"".equals(value)) {
-					value = new HtmlFilter().filter(value);
+					value = xssEncoder.filter(value);
 				}
 				values[i] = value;
 			}
@@ -60,7 +66,7 @@ public class XssHttpServletRequest extends HttpServletRequestWrapper {
 				for (int i = 0; i < values.length; i++) {
 					String value = values[i];
 					if (value != null && !"".equals(value)) {
-						value = new HtmlFilter().filter(value);
+						value = xssEncoder.filter(value);
 					}
 					values[i] = value;
 				}
@@ -74,7 +80,7 @@ public class XssHttpServletRequest extends HttpServletRequestWrapper {
 	public String getHeader(String name) {
 		String value = super.getHeader(name);
 		if (value != null && !"".equals(value)) {
-			value = new HtmlFilter().filter(value);
+			value = xssEncoder.filter(value);
 		}
 		return value;
 	}
@@ -97,7 +103,7 @@ public class XssHttpServletRequest extends HttpServletRequestWrapper {
 		}
 
 		// xss过滤
-		content = new HtmlFilter().filter(content).trim();
+		content = xssEncoder.filter(content).trim();
 		final ByteArrayInputStream bis = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
 		return new ServletInputStream() {
 			@Override
