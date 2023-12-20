@@ -37,6 +37,7 @@ import './permission';
 // 富文本组件
 import Editor from "@/components/Editor";
 import FileUpload from '@/components/FileUpload';
+import SingleFileUpload from '@/components/SingleFileUpload';
 
 const app = createApp(App);
 
@@ -57,8 +58,9 @@ app.config.globalProperties.removeDynamicLoaded = () => {
 }
 
 // 全局组件挂载
-app.component('Editor', Editor);
-app.component('file-upload', FileUpload);
+app.component('rt-editor', Editor);
+app.component('file-upload', SingleFileUpload);
+app.component('files-upload', FileUpload);
 
 app.use(router);
 app.use(store);
