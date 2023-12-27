@@ -19,7 +19,7 @@
         <aspectj.version>1.8.13</aspectj.version>
         <commons.collections.version>3.2.2</commons.collections.version>
         <commons.fileupload.version>1.5</commons.fileupload.version>
-        <druid.version>1.2.0</druid.version>
+        <druid.version>1.2.1</druid.version>
         <fastjson2.version>2.0.8</fastjson2.version>
         <freemarker.version>2.3.28</freemarker.version>
         <guava.version>31.1-jre</guava.version>

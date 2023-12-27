@@ -55,9 +55,22 @@ public class SysPermissionController {
 	@RequestMapping(value = "/sys/permission/list", method = GET)
 	@ResponseBody
 	public Response<String, List<PermissionDto>> queryPermissionList(@RequestParam(value = "keywords", required = false) String keywords
-			, @RequestParam(value = "visible", required = false) Boolean visible) {
+			, @RequestParam(value = "visible", required = false) Boolean visible
+			, @RequestParam(value = "types", required = false) String[] types) {
+		List<String> permTypeList = null;
+		if (types != null) {
+			permTypeList = new ArrayList<>();
+			for (String type: types) {
+				if (type != null && !type.trim().isEmpty()) {
+					permTypeList.add(type.trim());
+				}
+			}
+			if (permTypeList.isEmpty()) {
+				permTypeList = null;
+			}
+		}
 		List<PermissionDto> permissionList = sysPermissionService.queryPermissionListIncludeChildren(null, keywords
-				, null, visible);
+				, permTypeList, visible);
 		return new Response<>(properties.getSuccessCode(), "ok", permissionList);
 	}
 
