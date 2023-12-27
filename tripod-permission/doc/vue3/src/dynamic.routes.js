@@ -1,7 +1,7 @@
 import Layout from '@/views/Layout';
 //import Layout from '@/layout';
-import {ElMessage} from 'element-plus';
 import {routes as basicRoutes} from '@/basic.routes';
+import modal from '@/assets/js/modal';
 import request from '@/assets/js/request';
 import {shallowRef} from 'vue';
 
@@ -21,7 +21,7 @@ const dynamicRouteStore = defineStore(
             generateMenus() {
                 return new Promise((resolve, reject) => {
                     request.get('/sys/admin/permission/menu/list').then(res => {
-                        ElMessage({type: "success", message: res.data.msg});
+                        modal.msgSuccess(res.data.msg);
                         var menus = filterAsyncRouters(res.data.data);
                         this.addRoutes = postRouters(menus);
                         this.routes = basicRoutes.concat(menus);
@@ -31,7 +31,7 @@ const dynamicRouteStore = defineStore(
                         this.addRoutes = [];
                         this.routes = basicRoutes;
                         this.isDynamicMenuLoaded = true;
-                        ElMessage({type: 'error', message: error.message});
+                        modal.msgError(error.message);
                         reject(error);
                     })
                 });

@@ -1,8 +1,8 @@
 import axios from 'axios';
-import {ElMessage} from 'element-plus';
 import md5 from 'js-md5';
 import errorCode from './errorCode';
 import util from './util';
+import modal from './modal';
 import session from './session';
 import cache from './cache';
 
@@ -95,11 +95,11 @@ service.interceptors.response.use(res => {
     if (code === '1001') {
         session.removeUser();
         session.removeToken();
-        ElMessage({ message: msg, type: 'error'});
+        modal.msgError(msg);
         location.href = './';
         return Promise.reject(new Error(msg));
     } else if (code !== "0000") {
-        ElMessage({ message: msg, type: 'error'});
+        modal.msgError(msg);
         return Promise.reject(new Error(msg));
     } else {
         return Promise.resolve(res);
@@ -108,7 +108,7 @@ service.interceptors.response.use(res => {
 error => {
     console.log('err' + error);
     let { message } = error;
-    ElMessage({ message: message, type: 'error', duration: 5 * 1000 });
+    modal.msgError(message);
     return Promise.reject(error);
 });
 

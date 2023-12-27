@@ -5,20 +5,30 @@ let loadingInstance;
 export default {
     // 消息提示
     msg(content) {
-        ElMessage.info(content)
+        this.showMsg("info", content);
     },
     // 错误消息
     msgError(content) {
-        ElMessage.error(content)
+        this.showMsg("error", content);
     },
     // 成功消息
     msgSuccess(content) {
-        ElMessage.success(content)
+        this.showMsg("success", content);
     },
     // 警告消息
     msgWarning(content) {
-        ElMessage.warning(content)
+        this.showMsg("warning", content);
     },
+    showMsg(type, content) {
+        ElMessage({
+            type: type,
+            showClose: true,
+            dangerouslyUseHTMLString: true,
+            message: '<div style="width: 255px;">' + content + '</div>',
+        })
+    },
+
+
     // 弹出提示
     alert(content) {
         ElMessageBox.alert(content, "系统提示")
