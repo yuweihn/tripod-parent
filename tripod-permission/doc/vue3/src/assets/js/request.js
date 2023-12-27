@@ -27,12 +27,12 @@ const sign = {
 // request拦截器
 service.interceptors.request.use(config => {
     // get请求映射params参数
-    if (config.method === 'get' && config.params) {
-        let url = config.url + '?' + util.tansParams(config.params);
-        url = url.slice(0, -1);
-        config.params = {};
-        config.url = url;
-    }
+//    if (config.method === 'get' && config.params) {
+//        let url = config.url + '?' + util.tansParams(config.params);
+//        url = url.slice(0, -1);
+//        config.params = {};
+//        config.url = url;
+//    }
 
     //将header中的responseType提取出来单独提交
     var rtype = (config.headers || {}).responseType;
