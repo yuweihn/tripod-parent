@@ -87,15 +87,15 @@
 		<edit-permission ref="editPermission" v-on:success="getPermissionList"/>
 
         <file-upload ref="importData" :title="'导入外部数据'" :fileLabel="'文件'" :fileTips="'只接受*.json格式，最大不要超过2MB'"
-                  :accept="'.json'" :maxSize="2097152" :fileErr="'请选择外部数据文件'" :fileType="'text'"
-                  :actionUrl="this.$global.baseUrl + '/sys/permission/import'" v-on:change="onImportPost" v-on:complete="onImportCompleted" />
+                  :accept="'.json'" :maxSize="2097152" :fileType="'text'"
+                  :actionUrl="this.$global.baseUrl + '/sys/permission/import'" v-on:change="onImportPost" />
 	</section>
 </template>
 
 <script>
 import CreatePermission from './components/CreatePermission';
 import EditPermission from './components/EditPermission';
-import FileUpload from '@/views/components/FileUpload';
+import FileUpload from '@/views/components/SingleFileUpload';
 
 export default {
     components: {
@@ -221,18 +221,14 @@ export default {
         doImport: function() {
             this.$refs.importData.show("hehe");
         },
-        onImportPost(key, res, callback) {
+        onImportPost(key, res) {
             if (res.data.code === '0000') {
+                this.removeDynamicLoaded();
                 this.$message({type: "success", message: res.data.msg});
-                callback(res.data.data);
-                this.$refs.importData.close();
-                this.getPermissionList(1);
+                this.getPermissionList();
             } else {
                 this.$message.error(res.data.msg);
             }
-        },
-        onImportCompleted(key, resp) {
-            this.getPermissionList(1);
         }
     },
     mounted() {

@@ -86,15 +86,14 @@
 		<edit-permission ref="editPermission" v-on:success="getPermissionList"/>
 
         <file-upload ref="importData" :title="'导入外部数据'" :fileLabel="'文件'" :fileTips="'只接受*.json格式，最大不要超过2MB'"
-                  :accept="'.json'" :maxSize="2097152" :fileErr="'请选择外部数据文件'" :fileType="'text'"
-                  :actionUrl="'/sys/permission/import'" v-on:change="onImportPost" v-on:complete="onImportCompleted" />
+                  :accept="'.json'" :maxSize="2097152" :fileType="'text'"
+                  :actionUrl="'/sys/permission/import'" v-on:change="onImportPost" />
 	</section>
 </template>
 
 <script setup>
 import CreatePermission from './components/CreatePermission';
 import EditPermission from './components/EditPermission';
-import FileUpload from '@/components/FileUpload';
 import {Search, EditPen, MoreFilled, Coin, CirclePlus, Delete} from '@element-plus/icons-vue';
 
 const {proxy} = getCurrentInstance();
@@ -187,14 +186,10 @@ function doExport() {
 function doImport() {
     proxy.$refs.importData.show("hehe");
 }
-function onImportPost(key, res, callback) {
+function onImportPost(key, res) {
+    proxy.removeDynamicLoaded();
     proxy.$modal.msgSuccess(res.data.msg);
-    callback(res.data.data);
-    proxy.$refs.importData.close();
-    getPermissionList(1);
-}
-function onImportCompleted(key, resp) {
-
+    getPermissionList();
 }
 
 onMounted(() => {
