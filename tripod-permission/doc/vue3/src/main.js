@@ -69,8 +69,5 @@ app.component('svg-icon', SvgIcon);
 
 directive(app);
 
-app.use(ElementPlus, {
-    locale: locale
-});
-
+app.use(ElementPlus, {locale: locale});
 app.mount('#app');
