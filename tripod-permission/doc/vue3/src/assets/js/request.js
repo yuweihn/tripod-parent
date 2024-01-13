@@ -69,11 +69,11 @@ service.interceptors.request.use(config => {
     const signVal = md5("key=" + sign.key + "&secret=" + sign.secret + "&timestamp=" + timestamp);
     const tokenV = session.getToken();
     if (tokenV != null && tokenV != "undefined") {
-        config.headers.common[sign.tokenName] = tokenV;
+        config.headers[sign.tokenName] = tokenV;
     }
-    config.headers.common['key'] = sign.key;
-    config.headers.common['timestamp'] = timestamp;
-    config.headers.common['sign'] = signVal;
+    config.headers['key'] = sign.key;
+    config.headers['timestamp'] = timestamp;
+    config.headers['sign'] = signVal;
     return config;
 }, error => {
     console.log(error);

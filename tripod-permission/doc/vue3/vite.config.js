@@ -24,6 +24,10 @@ export default defineConfig(({ mode, command }) => {
             // 输出目录，默认是 dist
             outDir: 'dist'
         },
+        define: {
+            // enable hydration mismatch details in production build
+            __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: 'true'
+        },
         // vite 相关配置
         server: {
             port: 3000,
