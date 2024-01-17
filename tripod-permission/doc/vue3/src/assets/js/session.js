@@ -1,6 +1,6 @@
 
-var userKey = "x-ai-user";
-var tokenKey = "x-ai-token";
+var userKey = "k-user";
+var tokenKey = "k-token";
 
 
 export default {
