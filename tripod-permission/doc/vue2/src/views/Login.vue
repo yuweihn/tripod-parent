@@ -87,17 +87,17 @@ export default {
         },
 
         saveLocalStored() {
-            localStorage.removeItem("account");
-            localStorage.removeItem("password");
+            this.$cache.local.remove("account");
+            this.$cache.local.remove("password");
             if (this.checked) {
-                localStorage.setItem("account", this.ruleForm2.account);
+                this.$cache.local.set("account", this.ruleForm2.account);
                 // base64加密密码
                 let password = Base64.encode(this.ruleForm2.checkPass);
-                localStorage.setItem("password", password);
+                this.$cache.local.set("password", password);
             }
         },
         getLocalStored(key) {
-            return localStorage.getItem(key);
+            return this.$cache.local.get(key);
         }
     }
 }
