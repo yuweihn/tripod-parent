@@ -1,11 +1,13 @@
 
+var keyPre = "xx_";
+
 const sessionCache = {
     set(key, value) {
         if (!sessionStorage) {
             return;
         }
         if (key != null && value != null) {
-            sessionStorage.setItem(key, value);
+            sessionStorage.setItem(keyPre + key, value);
         }
     },
     get(key) {
@@ -15,7 +17,7 @@ const sessionCache = {
         if (key == null) {
             return null;
         }
-        return sessionStorage.getItem(key);
+        return sessionStorage.getItem(keyPre + key);
     },
     setJSON(key, jsonValue) {
         if (jsonValue != null) {
@@ -29,7 +31,7 @@ const sessionCache = {
         }
     },
     remove(key) {
-        sessionStorage.removeItem(key);
+        sessionStorage.removeItem(keyPre + key);
     }
 }
 
@@ -39,7 +41,7 @@ const localCache = {
             return;
         }
         if (key != null && value != null) {
-            localStorage.setItem(key, value);
+            localStorage.setItem(keyPre + key, value);
         }
     },
     get(key) {
@@ -49,7 +51,7 @@ const localCache = {
         if (key == null) {
             return null;
         }
-        return localStorage.getItem(key);
+        return localStorage.getItem(keyPre + key);
     },
     setJSON(key, jsonValue) {
         if (jsonValue != null) {
@@ -63,7 +65,7 @@ const localCache = {
         }
     },
     remove(key) {
-        localStorage.removeItem(key);
+        localStorage.removeItem(keyPre + key);
     }
 }
 
