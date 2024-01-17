@@ -76,7 +76,7 @@ service.interceptors.request.use(config => {
     config.headers['sign'] = signVal;
     return config;
 }, error => {
-    console.log(error);
+    console.log('Error: ' + error);
     Promise.reject(error);
 });
 
@@ -106,7 +106,7 @@ service.interceptors.response.use(res => {
     }
 },
 error => {
-    console.log('err' + error);
+    console.log('Error: ' + error);
     let { message } = error;
     modal.msgError(message);
     return Promise.reject(error);
