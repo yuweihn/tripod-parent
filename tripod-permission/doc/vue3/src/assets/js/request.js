@@ -87,18 +87,15 @@ service.interceptors.response.use(res => {
         return Promise.resolve(res);
     }
 
-    // 未设置状态码则默认成功状态
-    const code = res.data.code || "9999";
-    // 获取错误信息
-    const msg = res.data.msg || errorCode[code] || errorCode['default'];
-
-    if (code === '1001') {
+    //响应状态码
+    const responseObj = res.data || errorCode.unknown;
+    if (responseObj.code === errorCode.unLogin.code) {
         session.removeUser();
         session.removeToken();
         modal.msgError(msg);
         location.href = './';
         return Promise.reject(new Error(msg));
-    } else if (code !== "0000") {
+    } else if (responseObj.code !== errorCode.success.code) {
         modal.msgError(msg);
         return Promise.reject(new Error(msg));
     } else {
