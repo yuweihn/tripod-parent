@@ -1,7 +1,6 @@
 
-var userKey = "k-user";
-var tokenKey = "k-token";
-
+var userKey = "xx_user";
+var tokenKey = "xx_token";
 
 export default {
 	putUser: function(user) {
