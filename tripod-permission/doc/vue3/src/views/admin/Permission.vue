@@ -167,7 +167,7 @@ function doExport() {
                 const reader = new FileReader();
                 reader.onload = function() {
                     var dt = JSON.parse(reader.result);
-                    if (dt.code === '0000') {
+                    if (dt.code === proxy.errorCode.success.code) {
                         proxy.$modal.msgSuccess(dt.msg);
                     } else {
                         proxy.$modal.msgError(dt.msg);
