@@ -92,12 +92,12 @@ service.interceptors.response.use(res => {
     if (responseObj.code === errorCode.unLogin.code) {
         session.removeUser();
         session.removeToken();
-        modal.msgError(msg);
+        modal.msgError(responseObj.msg);
         location.href = './';
-        return Promise.reject(new Error(msg));
+        return Promise.reject(new Error(responseObj.msg));
     } else if (responseObj.code !== errorCode.success.code) {
-        modal.msgError(msg);
-        return Promise.reject(new Error(msg));
+        modal.msgError(responseObj.msg);
+        return Promise.reject(new Error(responseObj.msg));
     } else {
         return Promise.resolve(res);
     }
