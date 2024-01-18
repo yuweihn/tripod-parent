@@ -25,6 +25,7 @@ import md5 from 'js-md5';
 import modal from '@/assets/js/modal';
 import cache from '@/assets/js/cache';
 import session from '@/assets/js/session';
+import errorCode from '@/assets/js/errorCode';
 import store from './store'
 import {router} from './basic.routes';
 import directive from './directive';
@@ -51,6 +52,7 @@ app.config.globalProperties.$modal = modal;
 app.config.globalProperties.resetForm = util.resetForm;
 app.config.globalProperties.cache = cache;
 app.config.globalProperties.session = session;
+app.config.globalProperties.errorCode = errorCode;
 app.config.globalProperties.fileDownload = fileDownload;
 app.config.globalProperties.removeDynamicLoaded = () => {
     dynamicRouteStore().resetDynamicMenuLoaded();
