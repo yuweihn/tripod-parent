@@ -1,8 +1,8 @@
 import axios from 'axios';
-import {ElMessage} from 'element-plus';
 import md5 from 'js-md5';
 import errorCode from './errorCode';
 import util from './util';
+import modal from './modal';
 import session from './session';
 import cache from './cache';
 
@@ -26,50 +26,57 @@ const sign = {
 
 // request拦截器
 service.interceptors.request.use(config => {
-    // 是否需要防止数据重复提交
-    const doNotCheckRepeatSubmit = (config.headers || {}).rejectRepeat === false;
     // get请求映射params参数
-    if (config.method === 'get' && config.params) {
-        let url = config.url + '?' + util.tansParams(config.params);
-        url = url.slice(0, -1);
-        config.params = {};
-        config.url = url;
-    }
+//    if (config.method === 'get' && config.params) {
+//        let url = config.url + '?' + util.tansParams(config.params);
+//        url = url.slice(0, -1);
+//        config.params = {};
+//        config.url = url;
+//    }
+
+    //将header中的responseType提取出来单独提交
+    var rtype = (config.headers || {}).responseType;
+    delete (config.headers || {}).responseType;
+    (rtype != null) && (config.responseType = rtype);
+
+    //防刷
+    const doNotCheckRepeatSubmit = (config.headers || {}).rejectRepeat === false; // 是否需要防止数据重复提交
     if (!doNotCheckRepeatSubmit && (config.method === 'post' || config.method === 'put' || config.method === 'delete')) {
         const requestObj = {
             url: config.url,
             data: typeof config.data === 'object' ? JSON.stringify(config.data) : config.data,
             time: new Date().getTime()
         }
-        const sessionObj = cache.session.getJSON('sessionObj');
-        if (sessionObj === undefined || sessionObj === null || sessionObj === '') {
-            cache.session.setJSON('sessionObj', requestObj);
+        const preRequestObj = cache.session.getJSON('pre_request');
+        if (preRequestObj === undefined || preRequestObj === null || preRequestObj === '') {
+            cache.session.setJSON('pre_request', requestObj);
         } else {
-            const s_url = sessionObj.url;                // 请求地址
-            const s_data = sessionObj.data;              // 请求数据
-            const s_time = sessionObj.time;              // 请求时间
+            const s_url = preRequestObj.url;                // 请求地址
+            const s_data = preRequestObj.data;              // 请求数据
+            const s_time = preRequestObj.time;              // 请求时间
             const interval = 2000;                       // 间隔时间(ms)，小于此时间视为重复提交
             if (s_data === requestObj.data && requestObj.time - s_time < interval && s_url === requestObj.url) {
                 const message = '数据正在处理，请勿重复提交';
                 return Promise.reject(new Error(message));
             } else {
-                cache.session.setJSON('sessionObj', requestObj);
+                cache.session.setJSON('pre_request', requestObj);
             }
         }
     }
 
+    //加签
     const timestamp = new Date().getTime();
     const signVal = md5("key=" + sign.key + "&secret=" + sign.secret + "&timestamp=" + timestamp);
     const tokenV = session.getToken();
     if (tokenV != null && tokenV != "undefined") {
-        config.headers.common[sign.tokenName] = tokenV;
+        config.headers[sign.tokenName] = tokenV;
     }
-    config.headers.common['key'] = sign.key;
-    config.headers.common['timestamp'] = timestamp;
-    config.headers.common['sign'] = signVal;
+    config.headers['key'] = sign.key;
+    config.headers['timestamp'] = timestamp;
+    config.headers['sign'] = signVal;
     return config;
 }, error => {
-    console.log(error);
+    console.log('Error: ' + error);
     Promise.reject(error);
 });
 
@@ -80,28 +87,25 @@ service.interceptors.response.use(res => {
         return Promise.resolve(res);
     }
 
-    // 未设置状态码则默认成功状态
-    const code = res.data.code || "9999";
-    // 获取错误信息
-    const msg = res.data.msg || errorCode[code] || errorCode['default'];
-
-    if (code === '1001') {
+    //响应状态码
+    const responseObj = res.data || errorCode.unknown;
+    if (responseObj.code === errorCode.unLogin.code) {
         session.removeUser();
         session.removeToken();
-        ElMessage({ message: msg, type: 'error'});
+        modal.msgError(responseObj.msg);
         location.href = './';
-        return Promise.reject(new Error(msg));
-    } else if (code !== "0000") {
-        ElMessage({ message: msg, type: 'error'});
-        return Promise.reject(new Error(msg));
+        return Promise.reject(new Error(responseObj.msg));
+    } else if (responseObj.code !== errorCode.success.code) {
+        modal.msgError(responseObj.msg);
+        return Promise.reject(new Error(responseObj.msg));
     } else {
         return Promise.resolve(res);
     }
 },
 error => {
-    console.log('err' + error);
+    console.log('Error: ' + error);
     let { message } = error;
-    ElMessage({ message: message, type: 'error', duration: 5 * 1000 });
+    modal.msgError(message);
     return Promise.reject(error);
 });
 

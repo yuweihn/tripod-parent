@@ -1,7 +1,6 @@
 
-var userKey = "x-ai-user";
-var tokenKey = "x-ai-token";
-
+var userKey = "xx_user";
+var tokenKey = "xx_token";
 
 export default {
 	putUser: function(user) {

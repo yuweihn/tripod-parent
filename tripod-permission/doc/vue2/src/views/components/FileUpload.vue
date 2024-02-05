@@ -7,7 +7,7 @@
 						:on-change="handleUploadChange" :on-remove="handleUploadRemove" :before-upload="preUpload"
 						:file-list="fileList" :accept="accept">
 					<el-button type="primary">点击上传</el-button>
-					<div slot="tip" class="el-upload__tip">{{fileTips}}</div>
+					<div slot="tip" class="el-upload-tip2">{{fileTips}}</div>
 				</el-upload>
 			</el-form-item>
 		</el-form>
@@ -31,11 +31,11 @@ export default {
         },
         title: {
             type: String,
-            default: "上传头像"
+            default: "上传文件"
         },
         fileLabel: {
             type: String,
-            default: "头像"
+            default: "文件"
         },
         fileTips: {
             type: String,
@@ -43,7 +43,7 @@ export default {
         },
         fileErr: {
             type: String,
-            default: "请上传头像"
+            default: "请上传文件"
         },
         accept: {
             type: String,
@@ -130,20 +130,33 @@ export default {
                     formData.append(key, this.extParams[key]);
                 }
             }
-            var _this = this;
-            _this.resp = null;
-            _this.$axios.post(req.action, formData).then((res) => {
+            var that = this;
+            that.resp = null;
+            that.$axios.post(req.action, formData).then((res) => {
                 var resData;
-                _this.$emit("change", res, data => {
+                that.$emit("change", this.key, res, data => {
                     resData = data;
                 });
 
                 if (resData != 'undefined' && resData != null) {
-                    _this.resp = resData;
+                    that.resp = resData;
                 }
-                _this.$refs.frm.validate((valid) => {});
+                that.$refs.frm.validate((valid) => {});
             }).catch((err) => {
-                _this.$message.error(err.message);
+                that.$message.error(err.message);
+            });
+        },
+
+        //完成并返回
+        completeUpload() {
+            this.$refs.frm.validate((valid) => {
+                if (valid) {
+                    this.loading = true;
+                    this.$emit("complete", this.key, this.resp);
+                    this.$refs['frm'].resetFields();
+                    this.formVisible = false;
+                    this.loading = false;
+                }
             });
         },
 
@@ -165,19 +178,6 @@ export default {
             r1 = Number(arg1.toString().replace(".", ""));
             r2 = Number(arg2.toString().replace(".", ""));
             return (r1 / r2) * Math.pow(10, t2 - t1);
-        },
-
-        //完成并返回
-        completeUpload() {
-            this.$refs.frm.validate((valid) => {
-                if (valid) {
-                    this.loading = true;
-                    this.$emit("complete", this.key, this.resp);
-                    this.$refs['frm'].resetFields();
-                    this.formVisible = false;
-                    this.loading = false;
-                }
-            });
         }
     },
     mounted() {
@@ -187,7 +187,14 @@ export default {
 </script>
 
 <style scoped>
-
+.el-upload-tip2 {
+    line-height: 10px;
+}
+.el-upload-tip2 {
+    font-size: 12px;
+    color: #606266;
+    margin-top: 7px;
+}
 </style>
 
 
@@ -196,8 +203,8 @@ export default {
  * 1、change用于解析文件上传的后台响应数据，返回任意值；
  * 2、complete用于处理组件结束之后的善后操作，参数为change返回值。
  *
- * eg.      <file-upload ref="fileUpload" :title="'上传证书'" :fileLabel="'文件'" :fileTips="'请选择证书，文件不要超过2MB'"
+ * eg.      <file-upload ref="fileUpload" :title="'上传文件'" :fileLabel="'文件'" :fileTips="'请选择文件，文件不要超过2MB'"
  *                      :accept="''" :maxSize="2097152" :fileErr="'请选择文件'" :fileType="'text'"
- *                      :actionUrl="this.$global.baseUrl + '/cert/upload'" v-on:change="onUploadChanged" v-on:complete="onUploadCompleted" />
+ *                      :actionUrl="this.$global.baseUrl + '/file/upload'" v-on:change="onUploadChanged" v-on:complete="onUploadCompleted" />
  **/
 

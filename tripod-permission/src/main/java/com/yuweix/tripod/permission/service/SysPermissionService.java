@@ -2,6 +2,7 @@ package com.yuweix.tripod.permission.service;
 
 
 import com.yuweix.tripod.permission.dto.PermissionDto;
+import com.yuweix.tripod.permission.dto.PermissionExportDto;
 import com.yuweix.tripod.permission.dto.PermissionMenuTreeDto;
 
 import java.util.List;
@@ -37,6 +38,10 @@ public interface SysPermissionService {
 			, String component, boolean ifExt, String permType, boolean visible
 			, String icon, String descr, String modifier);
 	void deletePermission(long permissionId);
+	void deletePermissions(List<Long> idList);
 
 	PermissionDto queryPermissionByNo(String permNo);
+
+	PermissionExportDto getPermissionExportDto();
+	void doImport(Long parentId, List<PermissionDto> list);
 }

@@ -4,11 +4,11 @@
 		<el-form :model="frm" label-width="80px" :rules="formRules" ref="frmRef">
 			<el-form-item :label="fileLabel" prop="done">
 				<el-upload :action="actionUrl" :list-type="fileType" :http-request="uploadFile"
-						:on-change="handleUploadChange" :on-remove="handleUploadRemove" :before-upload="preUpload"
-						:file-list="fileList" :accept="accept">
+                            :on-change="handleUploadChange" :on-remove="handleUploadRemove" :before-upload="preUpload"
+                            :file-list="fileList" :accept="accept">
 					<el-button type="primary">点击上传</el-button>
                     <template #tip>
-                        <div class="el-upload__tip">{{fileTips}}</div>
+                        <div class="el-upload-tip2">{{fileTips}}</div>
                     </template>
 				</el-upload>
 			</el-form-item>
@@ -32,11 +32,11 @@ const props = defineProps({
     },
     title: {
         type: String,
-        default: "上传头像"
+        default: "上传文件"
     },
     fileLabel: {
         type: String,
-        default: "头像"
+        default: "文件"
     },
     fileTips: {
         type: String,
@@ -44,7 +44,7 @@ const props = defineProps({
     },
     fileErr: {
         type: String,
-        default: "请上传头像"
+        default: "请上传文件"
     },
     accept: {
         type: String,
@@ -130,7 +130,7 @@ function uploadFile(req) {
     resp.value = null;
     proxy.request.post(req.action, formData).then((res) => {
         let resData = null;
-        emit("change", res, data => {
+        emit("change", key.value, res, data => {
             resData = data;
         });
 
@@ -140,6 +140,18 @@ function uploadFile(req) {
         proxy.$refs.frmRef.validate((valid) => {});
     }).catch((err) => {
 
+    });
+}
+//完成并返回
+function completeUpload() {
+    proxy.$refs.frmRef.validate((valid) => {
+        if (valid) {
+            loading.value = true;
+            emit("complete", key.value, resp.value);
+            proxy.$refs['frmRef'].resetFields();
+            formVisible.value = false;
+            loading.value = false;
+        }
     });
 }
 //数字除法
@@ -161,18 +173,6 @@ function div(arg1, arg2) {
     r2 = Number(arg2.toString().replace(".", ""));
     return (r1 / r2) * Math.pow(10, t2 - t1);
 }
-//完成并返回
-function completeUpload() {
-    proxy.$refs.frmRef.validate((valid) => {
-        if (valid) {
-            loading.value = true;
-            emit("complete", key.value, resp.value);
-            proxy.$refs['frmRef'].resetFields();
-            formVisible.value = false;
-            loading.value = false;
-        }
-    });
-}
 defineExpose({
     show,
     close
@@ -180,7 +180,14 @@ defineExpose({
 </script>
 
 <style scoped>
-
+.el-upload-tip2 {
+    line-height: 10px;
+}
+.el-upload-tip2 {
+    font-size: 12px;
+    color: #606266;
+    margin-top: 7px;
+}
 </style>
 
 
@@ -189,7 +196,7 @@ defineExpose({
 1、change用于解析文件上传的后台响应数据，返回任意值；
 2、complete用于处理组件结束之后的善后操作，参数为change返回值。
 
-eg.      <file-upload ref="fileUpload" :title="'上传证书'" :fileLabel="'文件'" :fileTips="'请选择证书，文件不要超过2MB'"
+eg.      <file-upload ref="fileUpload" :title="'上传文件'" :fileLabel="'文件'" :fileTips="'请选择文件，文件不要超过2MB'"
                      :accept="''" :maxSize="2097152" :fileErr="'请选择文件'" :fileType="'text'"
-                     :actionUrl="'/cert/upload'" v-on:change="onUploadChanged" v-on:complete="onUploadCompleted" />
+                     :actionUrl="'/file/upload'" v-on:change="onUploadChanged" v-on:complete="onUploadCompleted" />
 -->

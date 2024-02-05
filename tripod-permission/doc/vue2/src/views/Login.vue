@@ -10,7 +10,7 @@
 		</el-form-item>
 		<el-checkbox v-model="checked" class="remember">记住密码</el-checkbox>
 		<el-form-item style="width:100%;">
-			<el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" :loading="logining">登录</el-button>
+			<el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit2" :loading="loading">登录</el-button>
 			<!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
 		</el-form-item>
 	</el-form>
@@ -23,7 +23,7 @@ const Base64 = require('js-base64').Base64;
 export default {
     data() {
         return {
-            logining: false,
+            loading: false,
             ruleForm2: {
                 account: null,
                 checkPass: null
@@ -58,47 +58,46 @@ export default {
             this.$refs.ruleForm2.resetFields();
         },
         handleSubmit2(ev) {
-            var _this = this;
-            _this.$refs.ruleForm2.validate((valid) => {
+            var this0 = this;
+            this0.$refs.ruleForm2.validate((valid) => {
                 if (valid) {
-                    _this.logining = true;
+                    this0.loading = true;
                     //NProgress.start();
-                    var loginParams = "accountNo=" + _this.ruleForm2.account + "&password=" + _this.$md5(_this.ruleForm2.checkPass);
-
-                    _this.$axios.post(_this.$global.baseUrl + '/admin/login', loginParams).then((res) => {
+                    var loginParams = "accountNo=" + this0.ruleForm2.account + "&password=" + this0.$md5(this0.ruleForm2.checkPass);
+                    this0.$axios.post(this0.$global.baseUrl + '/admin/login', loginParams).then((res) => {
                         if (res.data.code === '0000') {
-                            _this.$session.putUser(res.data.data);
-                            _this.$session.putToken(res.headers[_this.$global.tokenHeaderName]);
-                            _this.$message({type: "success", message: res.data.msg});
-                            _this.$router.push({path: '/'}, onComplete => {}, onAbort => {});
-                            _this.saveLocalStored();
+                            this0.$session.putUser(res.data.data);
+                            this0.$session.putToken(res.headers[this0.$global.tokenHeaderName]);
+                            this0.$message({type: "success", message: res.data.msg});
+                            this0.$router.push({path: '/'}, onComplete => {}, onAbort => {});
+                            this0.saveLocalStored();
                         } else {
-                            _this.$message.error(res.data.msg);
+                            this0.$message.error(res.data.msg);
                         }
-                        _this.logining = false;
+                        this0.loading = false;
                     }).catch((err) => {
-                        _this.logining = false;
-                        _this.$message.error(err.message);
+                        this0.loading = false;
+                        this0.$message.error(err.message);
                     });
                 } else {
-                    _this.logining = false;
+                    this0.loading = false;
                     return false;
                 }
             });
         },
 
         saveLocalStored() {
-            localStorage.removeItem("account");
-            localStorage.removeItem("password");
+            this.$cache.local.remove("account");
+            this.$cache.local.remove("password");
             if (this.checked) {
-                localStorage.setItem("account", this.ruleForm2.account);
+                this.$cache.local.set("account", this.ruleForm2.account);
                 // base64加密密码
                 let password = Base64.encode(this.ruleForm2.checkPass);
-                localStorage.setItem("password", password);
+                this.$cache.local.set("password", password);
             }
         },
         getLocalStored(key) {
-            return localStorage.getItem(key);
+            return this.$cache.local.get(key);
         }
     }
 }

@@ -36,7 +36,7 @@
 							<span>{{row.lastLoginTime}}</span>
 						</el-form-item>
 						<el-form-item label="头像：">
-							<el-image :src="row.avatar" style="width: 80px; height: 80px"
+							<el-image :src="row.avatar" style="width: 80px; height: 80px" :hide-on-click-modal="true" :preview-teleported="true"
 								:preview-src-list="preview.showList" @click="showBigPict(row.avatar)"/>
 						</el-form-item>
 						<el-form-item label="创建人：">
@@ -263,7 +263,10 @@ function showBigPict(img) {
     }
     preview.value.showList = preview.value.initList.slice(idx, preview.value.initList.length).concat(preview.value.initList.slice(0, idx));
 }
-getAdminList();
+
+onMounted(() => {
+    getAdminList();
+})
 </script>
 
 <style scoped>

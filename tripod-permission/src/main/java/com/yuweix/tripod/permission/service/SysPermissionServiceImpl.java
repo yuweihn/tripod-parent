@@ -7,9 +7,7 @@ import com.yuweix.tripod.dao.mybatis.where.Operator;
 import com.yuweix.tripod.permission.dao.SysAdminDao;
 import com.yuweix.tripod.permission.dao.SysPermissionDao;
 import com.yuweix.tripod.permission.dao.SysRolePermissionRelDao;
-import com.yuweix.tripod.permission.dto.AbstractTreeDto;
-import com.yuweix.tripod.permission.dto.PermissionDto;
-import com.yuweix.tripod.permission.dto.PermissionMenuTreeDto;
+import com.yuweix.tripod.permission.dto.*;
 import com.yuweix.tripod.permission.enums.PermType;
 import com.yuweix.tripod.permission.model.SysPermission;
 import com.yuweix.tripod.sequence.base.Sequence;
@@ -44,10 +42,10 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 			, Boolean visible) {
 		List<SysPermission> permissionList = permissionDao.queryPermissionList(idList, null, keywords, permTypeList, visible
 				, null, null);
-		List<PermissionDto> dotList = permissionList == null || permissionList.size() <= 0
+		List<PermissionDto> dtoList = permissionList == null || permissionList.size() <= 0
 				? new ArrayList<>()
 				: permissionList.stream().map(this::toPermissionDto).collect(Collectors.toList());
-		return buildPermTree(dotList);
+		return buildPermTree(dtoList);
 	}
 	private PermissionDto toPermissionDto(SysPermission permission) {
 		if (permission == null) {
@@ -76,11 +74,11 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 	/**
 	 * 构建树状结构
 	 */
-	private <T extends AbstractTreeDto<T>>List<T> buildPermTree(List<T> dotList) {
-		if (dotList == null || dotList.size() <= 0) {
-			return dotList;
+	private <T extends AbstractTreeDto<T>>List<T> buildPermTree(List<T> dtoList) {
+		if (dtoList == null || dtoList.size() <= 0) {
+			return dtoList;
 		}
-		CopyOnWriteArrayList<T> copyList = new CopyOnWriteArrayList<>(dotList);
+		CopyOnWriteArrayList<T> copyList = new CopyOnWriteArrayList<>(dtoList);
 		List<Long> delIds = new ArrayList<>();
 		for (T dto1 : copyList) {
 			for (T dto2 : copyList) {
@@ -107,10 +105,10 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 
 		List<SysPermission> permissionList = permissionDao.queryPermissionList(permIdList, null, null
 				, permTypeList, null, null, null);
-		List<PermissionMenuTreeDto> dotList = permissionList == null || permissionList.size() <= 0
+		List<PermissionMenuTreeDto> dtoList = permissionList == null || permissionList.size() <= 0
 				? new ArrayList<>()
 				: permissionList.stream().map(this::toPermissionMenuTreeDto).collect(Collectors.toList());
-		return buildPermTree(dotList);
+		return buildPermTree(dtoList);
 	}
 	private PermissionMenuTreeDto toPermissionMenuTreeDto(SysPermission permission) {
 		if (permission == null) {
@@ -235,8 +233,109 @@ public class SysPermissionServiceImpl implements SysPermissionService {
 	}
 
 	@Override
+	public void deletePermissions(List<Long> idList) {
+		if (idList == null || idList.size() <= 0) {
+			return;
+		}
+		List<PermissionIdDto> idDtoList = new ArrayList<>();
+		for (Long id: idList) {
+			SysPermission perm = permissionDao.get(id);
+			if (perm == null) {
+				continue;
+			}
+			PermissionIdDto idDto = new PermissionIdDto();
+			idDto.setId(perm.getId());
+			idDto.setParentId(perm.getParentId());
+			idDtoList.add(idDto);
+		}
+		deletePermissionTreeList(buildPermTree(idDtoList));
+	}
+	private void deletePermissionTreeList(List<PermissionIdDto> list) {
+		if (list == null || list.size() <= 0) {
+			return;
+		}
+		for (PermissionIdDto dto: list) {
+			deletePermissionTreeList(dto.getChildren());
+			deletePermission(dto.getId());
+		}
+	}
+
+	@Override
 	public PermissionDto queryPermissionByNo(String permNo) {
 		SysPermission permission = permissionDao.queryPermissionByNo(permNo);
 		return toPermissionDto(permission);
+	}
+
+	@Override
+	public PermissionExportDto getPermissionExportDto() {
+		List<SysPermission> list = permissionDao.queryPermissionList(null, null, null, null, null
+				, null, null);
+		List<PermissionDto> dtoList = list == null || list.size() <= 0
+				? new ArrayList<>()
+				: list.stream().map(this::toPermissionDto).collect(Collectors.toList());
+		return new PermissionExportDto(buildPermTree(dtoList));
+	}
+
+
+	@Override
+	public void doImport(Long parentId, List<PermissionDto> list) {
+		if (list == null || list.size() <= 0) {
+			return;
+		}
+		for (PermissionDto dto: list) {
+			Long newParentId = doImport(dto.getPermNo(), dto.getTitle(), parentId, dto.getOrderNum(), dto.getPath()
+					, dto.getComponent(), dto.getIfExt(), dto.getPermType(), dto.getVisible(), dto.getIcon(), dto.getDescr()
+					, dto.getCreator(), dto.getCreateTime(), dto.getModifier(), dto.getModifyTime());
+			doImport(newParentId, dto.getChildren());
+		}
+	}
+	/**
+	 * 按 permNo 覆盖数据
+	 */
+	private Long doImport(String permNo, String title, Long parentId, Integer orderNum, String path
+			, String component, Boolean ifExt, String permType, Boolean visible, String icon, String descr
+			, String creator, String createTime, String modifier, String modifyTime) {
+		if (permNo == null || "".equals(permNo.trim())) {
+			return null;
+		}
+		Date createTime0 = DateUtil.parseDateIgnoreE(createTime, "yyyy-MM-dd HH:mm:ss");
+		Date modifyTime0 = DateUtil.parseDateIgnoreE(modifyTime, "yyyy-MM-dd HH:mm:ss");
+		SysPermission perm = permissionDao.queryPermissionByNo(permNo.trim());
+		if (perm == null) {
+			perm = new SysPermission();
+			perm.setId(seqSysPermission.next());
+			perm.setPermNo(permNo.trim());
+			perm.setTitle(title);
+			perm.setParentId(parentId);
+			perm.setOrderNum(orderNum == null ? 0 : orderNum);
+			perm.setPath(path);
+			perm.setComponent(component);
+			perm.setIfExt(ifExt != null && ifExt);
+			perm.setPermType(permType);
+			perm.setVisible(visible != null && visible);
+			perm.setIcon(icon);
+			perm.setDescr(descr);
+			perm.setCreator(creator);
+			perm.setCreateTime(createTime0 == null ? new Date() : createTime0);
+			perm.setModifier(modifier);
+			perm.setModifyTime(modifyTime0);
+			permissionDao.insert(perm);
+			return perm.getId();
+		} else {
+			perm.setTitle(title);
+			perm.setParentId(parentId);
+			perm.setOrderNum(orderNum == null ? 0 : orderNum);
+			perm.setPath(path);
+			perm.setComponent(component);
+			perm.setIfExt(ifExt != null && ifExt);
+			perm.setPermType(permType);
+			perm.setVisible(visible != null && visible);
+			perm.setIcon(icon);
+			perm.setDescr(descr);
+			perm.setModifier(modifier);
+			perm.setModifyTime(modifyTime0);
+			permissionDao.updateByPrimaryKey(perm);
+			return perm.getId();
+		}
 	}
 }
