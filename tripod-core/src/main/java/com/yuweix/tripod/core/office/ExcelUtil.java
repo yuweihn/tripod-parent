@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author yuwei
  */
-public abstract class PoiExcel {
-	private static final Logger log = LoggerFactory.getLogger(PoiExcel.class);
+public abstract class ExcelUtil {
+	private static final Logger log = LoggerFactory.getLogger(ExcelUtil.class);
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	
 	
