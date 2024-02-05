@@ -25,8 +25,8 @@ import java.util.Map;
 /**
  * @author yuwei
  */
-public abstract class WordUtil {
-	private static final Logger log = LoggerFactory.getLogger(WordUtil.class);
+public abstract class PoiWord {
+	private static final Logger log = LoggerFactory.getLogger(PoiWord.class);
 	private static final String TYPE_DOC = "doc";
 	private static final String TYPE_DOCX = "docx";
 
