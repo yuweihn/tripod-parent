@@ -118,13 +118,12 @@ export default {
             params: params ? params : null
         });
     },
-    post: function(url, params, headers, responseType) {
+    post: function(url, params, headers) {
         return service({
             url: url,
             method: 'post',
             headers: headers ? headers : {},
-            data: params ? params : null,
-            responseType: responseType ? responseType : null
+            data: params ? params : null
         });
     },
     put: function(url, params, headers) {
