@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class PoiExcel {
 	private static final Logger log = LoggerFactory.getLogger(PoiExcel.class);
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private static final int DEFAULT_FONT_HEIGHT = 20;
 	
 
 	/**
@@ -69,7 +70,7 @@ public abstract class PoiExcel {
 	}
 
 	public static<T> List<T> read(byte[] fileData, Class<T> clz) {
-		List<T> list = new ArrayList<T>();
+		List<T> list = new ArrayList<>();
 
 		Field[] fields = clz.getDeclaredFields();
 		if (fields == null || fields.length <= 0) {
@@ -105,12 +106,9 @@ public abstract class PoiExcel {
 	 * 导出数据
 	 * @param dataList 数据
 	 */
-	public static<T> byte[] export(List<T> dataList) {
-		return export(dataList, 20);
-	}
-	public static<T> byte[] export(List<T> dataList, int fontHeight) {
+	public static<T> byte[] export(Class<T> clz, List<T> dataList) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		export(dataList, out, fontHeight);
+		export(clz, dataList, out);
 		byte[] data = out.toByteArray();
 
 		try {
@@ -121,17 +119,14 @@ public abstract class PoiExcel {
 		return data;
 	}
 
-	public static<T> void export(List<T> dataList, String fileName, HttpServletResponse resp) {
-		export(dataList, fileName, resp, 20);
-	}
-	public static<T> void export(List<T> dataList, String fileName, HttpServletResponse resp, int fontHeight) {
+	public static<T> void export(Class<T> clz, List<T> dataList, String fileName, HttpServletResponse resp) {
 		resp.setContentType("application/vnd.ms-excel");
 		resp.setCharacterEncoding("utf-8");
 		resp.setHeader("Content-disposition", "attachment;filename=" + fileName);
 		resp.setHeader("_filename", fileName);
 		resp.setHeader("Access-Control-Expose-Headers", "_filename");
 		try {
-			export(dataList, resp.getOutputStream(), fontHeight);
+			export(clz, dataList, resp.getOutputStream());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -141,9 +136,8 @@ public abstract class PoiExcel {
 	 * 导出数据到输出流
 	 * @param dataList 数据
 	 */
-	public static<T> void export(List<T> dataList, OutputStream out, int fontHeight) {
-		Assert.notEmpty(dataList, "[dataList] is required.");
-		log.info("list size: {}", dataList.size());
+	public static<T> void export(Class<T> clz, List<T> dataList, OutputStream out) {
+		log.info("list size: {}", dataList == null ? 0 : dataList.size());
 		SXSSFWorkbook workbook = null;
 		try {
 			workbook = new SXSSFWorkbook();
@@ -154,7 +148,7 @@ public abstract class PoiExcel {
 			CellStyle titleStyle = workbook.createCellStyle();
 			titleStyle.setAlignment(HorizontalAlignment.CENTER);
 			Font titleFont = workbook.createFont();
-			titleFont.setFontHeightInPoints((short) fontHeight);
+			titleFont.setFontHeightInPoints((short) DEFAULT_FONT_HEIGHT);
 			titleFont.setBold(true);
 			titleStyle.setFont(titleFont);
 
@@ -164,7 +158,9 @@ public abstract class PoiExcel {
 			/**
 			 * 输出头部
 			 **/
-			List<String> headList = getOutputHeadList(dataList.get(0));
+			List<String> headList = dataList != null && !dataList.isEmpty()
+					? getOutputHeadList(dataList.get(0))
+					: getOutputHeadList(clz);
 			SXSSFRow headRow = sheet.createRow(0);
 			for (int i = 0; i < headList.size(); i++) {
 				String head = headList.get(i);
@@ -174,17 +170,19 @@ public abstract class PoiExcel {
 				sheet.autoSizeColumn(i, true);
 			}
 
-			List<String> keyList = getOutputKeyList(dataList.get(0));
-			/**
-			 * 输出数据部分
-			 **/
-			for (int i = 0; i < dataList.size(); i++) {
-				T t = dataList.get(i);
-				SXSSFRow dataRow = sheet.createRow(i + 1);
-				List<Object> dList = getOutputDataList(keyList, t);
-				for (int j = 0; j < dList.size(); j++) {
-					SXSSFCell cell = dataRow.createCell(j);
-					setCellValue(cell, dList.get(j));
+			if (dataList != null && !dataList.isEmpty()) {
+				List<String> keyList = getOutputKeyList(dataList.get(0));
+				/**
+				 * 输出数据部分
+				 **/
+				for (int i = 0; i < dataList.size(); i++) {
+					T t = dataList.get(i);
+					SXSSFRow dataRow = sheet.createRow(i + 1);
+					List<Object> dList = getOutputDataList(keyList, t);
+					for (int j = 0; j < dList.size(); j++) {
+						SXSSFCell cell = dataRow.createCell(j);
+						setCellValue(cell, dList.get(j));
+					}
 				}
 			}
 
@@ -220,7 +218,23 @@ public abstract class PoiExcel {
 				}
 			}
 		}
+		return list;
+	}
 
+	private static<T> List<String> getOutputHeadList(Class<T> clz) {
+		List<String> list = new ArrayList<>();
+		if (clz == null) {
+			return list;
+		}
+		Field[] fields = clz.getDeclaredFields();
+		if (fields != null && fields.length > 0) {
+			for (Field field: fields) {
+				ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
+				if (excelKeyAno != null) {
+					list.add(excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim());
+				}
+			}
+		}
 		return list;
 	}
 
