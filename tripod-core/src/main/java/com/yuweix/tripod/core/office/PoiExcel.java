@@ -32,8 +32,8 @@ import org.springframework.util.Assert;
 /**
  * @author yuwei
  */
-public abstract class ExcelUtil {
-	private static final Logger log = LoggerFactory.getLogger(ExcelUtil.class);
+public abstract class PoiExcel {
+	private static final Logger log = LoggerFactory.getLogger(PoiExcel.class);
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 
