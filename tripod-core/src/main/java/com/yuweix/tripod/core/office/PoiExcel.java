@@ -178,6 +178,7 @@ public abstract class PoiExcel {
 					for (int j = 0; j < dList.size(); j++) {
 						SXSSFCell cell = dataRow.createCell(j);
 						setCellValue(cell, dList.get(j));
+						sheet.autoSizeColumn(j, true);
 					}
 				}
 			}
