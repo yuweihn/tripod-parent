@@ -10,11 +10,7 @@ import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.yuweix.tripod.core.json.JsonUtil;
 import org.apache.poi.ss.usermodel.*;
@@ -207,32 +203,43 @@ public abstract class PoiExcel {
 			for (Object o : map.keySet()) {
 				list.add(o.toString());
 			}
+			return list;
 		} else {
-			Field[] fields = t.getClass().getDeclaredFields();
-			if (fields != null && fields.length > 0) {
-				for (Field field: fields) {
-					ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
-					if (excelKeyAno != null) {
-						list.add(excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim());
-					}
-				}
-			}
+			return getOrderedOutputHeadList(t.getClass().getDeclaredFields());
 		}
-		return list;
 	}
 
 	private static<T> List<String> getOutputHeadList(Class<T> clz) {
-		List<String> list = new ArrayList<>();
 		if (clz == null) {
+			return new ArrayList<>();
+		}
+		return getOrderedOutputHeadList(clz.getDeclaredFields());
+	}
+
+	private static<T> List<String> getOrderedOutputHeadList(Field[] fields) {
+		List<String> list = new ArrayList<>();
+		if (fields == null || fields.length <= 0) {
 			return list;
 		}
-		Field[] fields = clz.getDeclaredFields();
-		if (fields != null && fields.length > 0) {
-			for (Field field: fields) {
-				ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
-				if (excelKeyAno != null) {
-					list.add(excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim());
+		Set<Field> fieldSet = new TreeSet<>(new Comparator<Field>() {
+			@Override
+			public int compare(Field f1, Field f2) {
+				ExcelKey excelKey1 = f1.getAnnotation(ExcelKey.class);
+				ExcelKey excelKey2 = f2.getAnnotation(ExcelKey.class);
+				if (excelKey1 == null || excelKey2 == null) {
+					return -1;
 				}
+				if (excelKey1.order() == excelKey2.order()) {
+					return 1;
+				}
+				return excelKey1.order() - excelKey2.order();
+			}
+		});
+        fieldSet.addAll(Arrays.asList(fields));
+		for (Field field: fieldSet) {
+			ExcelKey excelKey = field.getAnnotation(ExcelKey.class);
+			if (excelKey != null) {
+				list.add(excelKey.title() == null || "".equals(excelKey.title().trim()) ? field.getName() : excelKey.title().trim());
 			}
 		}
 		return list;
