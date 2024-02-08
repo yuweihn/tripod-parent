@@ -216,7 +216,7 @@ public abstract class PoiExcel {
 		return getOrderedOutputHeadList(clz.getDeclaredFields());
 	}
 
-	private static<T> List<String> getOrderedOutputHeadList(Field[] fields) {
+	private static List<String> getOrderedOutputHeadList(Field[] fields) {
 		List<String> list = new ArrayList<>();
 		if (fields == null || fields.length <= 0) {
 			return list;
