@@ -22,8 +22,6 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.util.Assert;
-
 
 /**
  * @author yuwei
@@ -146,6 +144,8 @@ public abstract class PoiExcel {
 			titleFont.setFontHeightInPoints((short) DEFAULT_FONT_HEIGHT);
 			titleFont.setBold(true);
 			titleStyle.setFont(titleFont);
+			titleStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+			titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 			SXSSFSheet sheet = workbook.createSheet();
 			sheet.trackAllColumnsForAutoSizing();
@@ -267,8 +267,10 @@ public abstract class PoiExcel {
 	}
 
 	private static<T> List<Object> getOutputDataList(List<String> keyList, T t) {
-		Assert.notEmpty(keyList, "[keyList] is required.");
 		List<Object> list = new ArrayList<>();
+		if (keyList == null || keyList.size() <= 0) {
+			return list;
+		}
 
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
