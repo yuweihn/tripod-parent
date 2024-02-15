@@ -25,7 +25,9 @@ router.beforeEach((to, from, next) => {
         //加载动态菜单
         if (!store.getters.isDynamicMenuLoaded) {
             store.dispatch('GenerateMenus').then(aRoutes => {
-                router.addRoutes(aRoutes);
+                aRoutes.forEach(rt => {
+                    router.addRoute(rt);
+                });
                 next({...to, replace: true});
             }).catch(err => {
                 Message.error(err.message);
