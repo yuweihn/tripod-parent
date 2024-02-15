@@ -6,7 +6,7 @@ import Layout from '@/views/Layout.vue';
 Vue.use(VueRouter);
 
 
-export const routes = [
+export const basicRoutes = [
 	{
         path: '/login',
         name: '',
@@ -40,16 +40,15 @@ export const routes = [
 	}
 ];
 
-export const createBasicRouter = (rts) => new VueRouter({
+export const createBasicRouter = () => new VueRouter({
     //mode: 'history', // 去掉url中的#
     scrollBehavior: () => ({y: 0}),
-    routes: rts
+    routes: basicRoutes
 });
-export const router = createBasicRouter(routes);
+export const router = createBasicRouter();
 
 //修改原型对象中的push方法
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
     return originalPush.call(this, location).catch(err => err);
 }
-

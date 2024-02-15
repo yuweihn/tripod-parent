@@ -1,6 +1,6 @@
 import Layout from '@/views/Layout.vue';
 import {Message} from 'element-ui';
-import {routes as basicRoutes} from '@/basic.routes';
+import {basicRoutes} from '@/basic.routes';
 import axios from 'axios';
 import global from '@/components/js/global';
 
