@@ -2,7 +2,7 @@ import axios from 'axios';
 import store from '@/vuex/store';
 import {Message} from 'element-ui';
 import session from '@/components/js/session';
-import {router} from '@/basic.routes';
+import {router, createBasicRouter} from '@/basic.routes';
 import global from '@/components/js/global';
 import NProgress from 'nprogress';
 
@@ -25,6 +25,8 @@ router.beforeEach((to, from, next) => {
         //加载动态菜单
         if (!store.getters.isDynamicMenuLoaded) {
             store.dispatch('GenerateMenus').then(aRoutes => {
+//                const newRouter = createBasicRouter();
+//                router.matcher = newRouter.matcher;
                 aRoutes.forEach(rt => {
                     router.addRoute(rt);
                 });
