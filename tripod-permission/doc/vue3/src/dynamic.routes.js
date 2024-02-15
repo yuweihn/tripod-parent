@@ -1,6 +1,6 @@
 import Layout from '@/views/Layout';
 //import Layout from '@/layout';
-import {routes as basicRoutes} from '@/basic.routes';
+import {basicRoutes} from '@/basic.routes';
 import modal from '@/assets/js/modal';
 import request from '@/assets/js/request';
 import {shallowRef} from 'vue';

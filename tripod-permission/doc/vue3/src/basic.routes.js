@@ -4,7 +4,7 @@ import Layout from '@/views/Layout';
 //import Layout from '@/layout';
 
 
-export const routes = [
+export const basicRoutes = [
 	{
         path: '/login',
         name: '',
@@ -38,10 +38,10 @@ export const routes = [
 	}
 ];
 
-export const createBasicRouter = (rts) => createRouter({
+export const createBasicRouter = () => createRouter({
     //history: createWebHistory(),
     history: createWebHashHistory(),
-    routes: rts,
+    routes: basicRoutes,
     scrollBehavior(to, from, savedPosition) {
         if (savedPosition) {
             return savedPosition;
@@ -50,6 +50,6 @@ export const createBasicRouter = (rts) => createRouter({
         }
     }
 });
-export const router = createBasicRouter(routes);
+export const router = createBasicRouter();
 
 
