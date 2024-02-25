@@ -1,4 +1,4 @@
-# cachesession
+# tripod-session
 Manage session by cache such as redis...
 
 For example:
