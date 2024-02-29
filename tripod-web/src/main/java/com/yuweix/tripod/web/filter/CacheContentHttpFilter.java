@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -70,6 +71,11 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 			content = content.substring(0, contentLimit) + "......";
 		}
 		return content;
+	}
+
+	@Override
+	protected String getResponseBody(ContentCachingResponseWrapper response) {
+		return new String(response.getContentAsByteArray(), Charset.defaultCharset());
 	}
 
 	@Override

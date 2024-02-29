@@ -53,6 +53,10 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		this.encoding = encoding;
 	}
 
+	public String getEncoding() {
+		return encoding;
+	}
+
 	public void setStaticPath(String staticPath) {
 		this.staticPath = staticPath;
 	}
@@ -92,6 +96,10 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 			if (map != null && !map.isEmpty()) {
 				logInfoMap.putAll(map);
 			}
+		}
+		String responseBody = getResponseBody(resp);
+		if (responseBody != null) {
+			logInfoMap.put("responseBody", responseBody);
 		}
 		afterFilter(req, resp);
 		long endTimeMillis = System.currentTimeMillis();
@@ -247,6 +255,10 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 	protected void beforeFilter(R request, T response) {
 
+	}
+
+	protected String getResponseBody(T response) {
+		return null;
 	}
 
 	protected void afterFilter(R request, T response) {
