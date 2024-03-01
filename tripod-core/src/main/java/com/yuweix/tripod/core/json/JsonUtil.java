@@ -17,6 +17,9 @@ public class JsonUtil {
 	public static String toJSONString(Object object) {
 		return json.toJSONString(object);
 	}
+	public static Object parse(String text) {
+		return json.parse(text);
+	}
 	public static<T> T parseObject(String text, TypeReference<T> type) {
 		return json.parseObject(text, type);
 	}

@@ -13,6 +13,7 @@ public interface Json {
 	<T>T deserialize(String str);
 
 	String toJSONString(Object object);
+	Object parse(String text);
 	<T>T parseObject(String text, TypeReference<T> type);
 	<T>T parseObject(String text, Class<T> clazz);
 }

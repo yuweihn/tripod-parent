@@ -1,6 +1,7 @@
 package com.yuweix.tripod.web.filter;
 
 
+import com.yuweix.tripod.core.json.JsonUtil;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
@@ -17,15 +18,6 @@ import java.util.Map;
  * @author yuwei
  */
 public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequestWrapper, ContentCachingResponseWrapper> {
-	private int contentLimit = 100;
-
-
-	public void setContentLimit(int contentLimit) {
-		this.contentLimit = contentLimit;
-	}
-
-
-
 	@Override
 	protected ContentCachingRequestWrapper wrap(HttpServletRequest request) {
 		return new ContentCachingRequestWrapper(request);
@@ -39,7 +31,7 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 	@Override
 	protected Map<String, Object> logRequest(ContentCachingRequestWrapper request) {
 		Map<String, Object> logInfoMap = super.logRequest(request);
-		String bodyInfo = getBodyInfo(request);
+		Object bodyInfo = getBodyInfo(request);
 		
 		if (bodyInfo == null || "".equals(bodyInfo)) {
 			return logInfoMap;
@@ -52,7 +44,7 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 		return logInfoMap;
 	}
 
-	private String getBodyInfo(ContentCachingRequestWrapper request) {
+	private Object getBodyInfo(ContentCachingRequestWrapper request) {
 		byte[] bytes = request.getContentAsByteArray();
 		if (bytes.length <= 0) {
 			return null;
@@ -66,16 +58,21 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 			content = URLDecoder.decode(content, "utf-8");
 		} catch (Exception ignored) {
 		}
-
-		if (contentLimit > 0 && content != null && contentLimit < content.length()) {
-			content = content.substring(0, contentLimit) + "......";
+		try {
+			return JsonUtil.parse(content);
+		} catch (Exception e) {
+			return content;
 		}
-		return content;
 	}
 
 	@Override
-	protected String getResponseBody(ContentCachingResponseWrapper response) {
-		return new String(response.getContentAsByteArray(), Charset.defaultCharset());
+	protected Object getResponseBody(ContentCachingResponseWrapper response) {
+		String str = new String(response.getContentAsByteArray(), Charset.defaultCharset());
+		try {
+			return JsonUtil.parse(str);
+		} catch (Exception e) {
+			return str;
+		}
 	}
 
 	@Override
