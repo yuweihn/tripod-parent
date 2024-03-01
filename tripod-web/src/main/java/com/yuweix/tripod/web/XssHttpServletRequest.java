@@ -108,7 +108,7 @@ public class XssHttpServletRequest extends HttpServletRequestWrapper {
 		return new ServletInputStream() {
 			@Override
 			public boolean isFinished() {
-				return true;
+				return bis.available() == 0;
 			}
 			@Override
 			public boolean isReady() {
