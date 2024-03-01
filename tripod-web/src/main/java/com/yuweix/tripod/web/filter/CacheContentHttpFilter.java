@@ -66,27 +66,33 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 			content = URLDecoder.decode(content, getEncoding());
 		} catch (Exception ignored) {
 		}
-		if (contentLimit != null && contentLimit > 0 && content != null && contentLimit < content.length()) {
-			return content.substring(0, contentLimit) + "......";
-		}
-		try {
-			return JsonUtil.parse(content);
-		} catch (Exception e) {
-			return content;
-		}
+		return limit(content);
 	}
-
-	@Override
-	protected Object getResponseBody(ContentCachingResponseWrapper response) {
-		String str = new String(response.getContentAsByteArray(), Charset.forName(getEncoding()));
-		if (contentLimit != null && contentLimit > 0 && contentLimit < str.length()) {
-			return str.substring(0, contentLimit) + "......";
+	private Object limit(String str) {
+		if (contentLimit == null || contentLimit < 0) {
+			try {
+				return JsonUtil.parse(str);
+			} catch (Exception e) {
+				return str;
+			}
+		}
+		if (contentLimit == 0) {
+			return null;
+		}
+		if (str != null && str.length() > contentLimit) {
+			str = str.substring(0, contentLimit) + "......";
 		}
 		try {
 			return JsonUtil.parse(str);
 		} catch (Exception e) {
 			return str;
 		}
+	}
+
+	@Override
+	protected Object getResponseBody(ContentCachingResponseWrapper response) {
+		String str = new String(response.getContentAsByteArray(), Charset.forName(getEncoding()));
+		return limit(str);
 	}
 
 	@Override
