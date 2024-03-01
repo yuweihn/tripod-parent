@@ -97,7 +97,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 				logInfoMap.putAll(map);
 			}
 		}
-		String responseBody = getResponseBody(resp);
+		Object responseBody = getResponseBody(resp);
 		if (responseBody != null) {
 			logInfoMap.put("responseBody", responseBody);
 		}
@@ -257,7 +257,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 	}
 
-	protected String getResponseBody(T response) {
+	protected Object getResponseBody(T response) {
 		return null;
 	}
 
