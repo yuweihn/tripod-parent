@@ -18,6 +18,14 @@ import java.util.Map;
  * @author yuwei
  */
 public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequestWrapper, ContentCachingResponseWrapper> {
+	private Integer contentLimit = null;
+
+
+	public void setContentLimit(Integer contentLimit) {
+		this.contentLimit = contentLimit;
+	}
+
+
 	@Override
 	protected ContentCachingRequestWrapper wrap(HttpServletRequest request) {
 		return new ContentCachingRequestWrapper(request);
@@ -31,7 +39,7 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 	@Override
 	protected Map<String, Object> logRequest(ContentCachingRequestWrapper request) {
 		Map<String, Object> logInfoMap = super.logRequest(request);
-		Object bodyInfo = getBodyInfo(request);
+		Object bodyInfo = getRequestBody(request);
 		
 		if (bodyInfo == null || "".equals(bodyInfo)) {
 			return logInfoMap;
@@ -44,19 +52,22 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 		return logInfoMap;
 	}
 
-	private Object getBodyInfo(ContentCachingRequestWrapper request) {
+	private Object getRequestBody(ContentCachingRequestWrapper request) {
 		byte[] bytes = request.getContentAsByteArray();
 		if (bytes.length <= 0) {
 			return null;
 		}
 
-		String content = new String(bytes);
+		String content = new String(bytes, Charset.forName(getEncoding()));
 		if ("".equals(content)) {
 			return null;
 		}
 		try {
-			content = URLDecoder.decode(content, "utf-8");
+			content = URLDecoder.decode(content, getEncoding());
 		} catch (Exception ignored) {
+		}
+		if (contentLimit != null && contentLimit > 0 && content != null && contentLimit < content.length()) {
+			return content.substring(0, contentLimit) + "......";
 		}
 		try {
 			return JsonUtil.parse(content);
@@ -67,7 +78,10 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 
 	@Override
 	protected Object getResponseBody(ContentCachingResponseWrapper response) {
-		String str = new String(response.getContentAsByteArray(), Charset.defaultCharset());
+		String str = new String(response.getContentAsByteArray(), Charset.forName(getEncoding()));
+		if (contentLimit != null && contentLimit > 0 && contentLimit < str.length()) {
+			return str.substring(0, contentLimit) + "......";
+		}
 		try {
 			return JsonUtil.parse(str);
 		} catch (Exception e) {
