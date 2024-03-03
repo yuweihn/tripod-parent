@@ -18,7 +18,7 @@ import java.util.Map;
  * @author yuwei
  */
 public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequestWrapper, ContentCachingResponseWrapper> {
-    private Integer contentLimit = 512;
+    private Integer contentLimit = 1024;
 
 
     public void setContentLimit(Integer contentLimit) {
