@@ -18,11 +18,15 @@ import java.util.Map;
  * @author yuwei
  */
 public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequestWrapper, ContentCachingResponseWrapper> {
-	private Integer contentLimit = 1024;
+	private Integer maxRequestSize = null;
+	private Integer maxResponseSize = null;
 
 
-	public void setContentLimit(Integer contentLimit) {
-		this.contentLimit = contentLimit;
+	public void setMaxRequestSize(Integer maxRequestSize) {
+		this.maxRequestSize = maxRequestSize;
+	}
+	public void setMaxResponseSize(Integer maxResponseSize) {
+		this.maxResponseSize = maxResponseSize;
 	}
 
 
@@ -40,11 +44,11 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 	protected Map<String, Object> logRequest(ContentCachingRequestWrapper request) {
 		Map<String, Object> logInfoMap = super.logRequest(request);
 		Object bodyInfo = getRequestBody(request);
-		
+
 		if (bodyInfo == null || "".equals(bodyInfo)) {
 			return logInfoMap;
 		}
-		
+
 		if (logInfoMap == null) {
 			logInfoMap = new LinkedHashMap<>();
 		}
@@ -66,21 +70,21 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 			content = URLDecoder.decode(content, getEncoding());
 		} catch (Exception ignored) {
 		}
-		return limit(content);
+		return limit(content, maxRequestSize);
 	}
-	private Object limit(String str) {
-		if (contentLimit == null || contentLimit < 0) {
+	private Object limit(String str, Integer maxSize) {
+		if (maxSize == null || maxSize < 0) {
 			try {
 				return JsonUtil.parse(str);
 			} catch (Exception e) {
 				return str;
 			}
 		}
-		if (contentLimit == 0) {
+		if (maxSize == 0) {
 			return null;
 		}
-		if (str != null && str.length() > contentLimit) {
-			str = str.substring(0, contentLimit) + "......";
+		if (str != null && str.length() > maxSize) {
+			str = str.substring(0, maxSize) + "......";
 		}
 		try {
 			return JsonUtil.parse(str);
@@ -92,7 +96,7 @@ public class CacheContentHttpFilter extends AbstractFilter<ContentCachingRequest
 	@Override
 	protected Object getResponseBody(ContentCachingResponseWrapper response) {
 		String str = new String(response.getContentAsByteArray(), Charset.forName(getEncoding()));
-		return limit(str);
+		return limit(str, maxResponseSize);
 	}
 
 	@Override
