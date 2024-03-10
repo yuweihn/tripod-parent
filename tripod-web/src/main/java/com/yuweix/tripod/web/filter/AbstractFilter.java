@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
@@ -145,13 +146,8 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	 * 打印请求参数
 	 */
 	protected Map<String, Object> logRequest(R request) {
-		String url = request.getRequestURL().toString();
-		try {
-			url = URLDecoder.decode(url, Constant.ENCODING_UTF_8);
-		} catch (UnsupportedEncodingException e) {
-			log.error("", e);
-		}
-		String contentType = request.getContentType();
+		String url = URLDecoder.decode(request.getRequestURL().toString(), StandardCharsets.UTF_8);
+        String contentType = request.getContentType();
 		Map<String, String[]> params = request.getParameterMap();
 
 		LinkedHashMap<String, Object> baseLogMap = new LinkedHashMap<>();
