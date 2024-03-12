@@ -290,7 +290,9 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 			while (headerNames.hasMoreElements()) {
 				String headerName = headerNames.nextElement();
 				String headerVal = request.getHeader(headerName);
-				map.put(headerName, headerVal);
+				if (headerName != null && headerVal != null) {
+					map.put(headerName, headerVal);
+				}
 			}
 			return map;
 		}
@@ -300,7 +302,14 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		}
 		Map<String, Object> map = new HashMap<>();
 		for (String h: this.logHeaders) {
-			map.put(h, request.getHeader(h));
+			if (h == null) {
+				continue;
+			}
+			String val = request.getHeader(h);
+			if (val == null) {
+				continue;
+			}
+			map.put(h, val);
 		}
 		return map;
 	}
