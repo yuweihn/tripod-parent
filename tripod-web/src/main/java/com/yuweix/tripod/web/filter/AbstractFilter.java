@@ -45,6 +45,9 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 	private List<String> originWhiteList = new ArrayList<>();
 	private boolean allowLogRequest = true;
 
+	private boolean logAllHeaders = false;
+	private final List<String> logHeaders = new ArrayList<>();
+
 
 	public void setMethodParam(String methodParam) {
 		this.methodParam = methodParam;
@@ -70,7 +73,27 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		this.allowLogRequest = allowLogRequest;
 	}
 
-
+	public void setLogHeaders(String headers) {
+		if ("*".equals(headers)) {
+			this.logAllHeaders = true;
+			return;
+		}
+		this.logAllHeaders = false;
+		if (headers == null) {
+			return;
+		}
+		String[] arr = headers.trim().split(",");
+		if (arr.length <= 0) {
+			return;
+		}
+		this.logHeaders.clear();
+		for (String h: arr) {
+			if (h == null || h.trim().isEmpty()) {
+				continue;
+			}
+			this.logHeaders.add(h.trim());
+		}
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -97,6 +120,10 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 			if (map != null && !map.isEmpty()) {
 				logInfoMap.putAll(map);
 			}
+		}
+		Map<String, Object> requestHeader = getRequestHeader(req);
+		if (requestHeader != null) {
+			logInfoMap.put("headers", requestHeader);
 		}
 		Object responseBody = getResponseBody(resp);
 		if (responseBody != null) {
@@ -251,6 +278,31 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 
 	protected void beforeFilter(R request, T response) {
 
+	}
+
+	protected Map<String, Object> getRequestHeader(R request) {
+		if (this.logAllHeaders) {
+			Enumeration<String> headerNames = request.getHeaderNames();
+			if (headerNames == null || !headerNames.hasMoreElements()) {
+				return null;
+			}
+			Map<String, Object> map = new HashMap<>();
+			while (headerNames.hasMoreElements()) {
+				String headerName = headerNames.nextElement();
+				String headerVal = request.getHeader(headerName);
+				map.put(headerName, headerVal);
+			}
+			return map;
+		}
+
+		if (this.logHeaders.isEmpty()) {
+			return null;
+		}
+		Map<String, Object> map = new HashMap<>();
+		for (String h: this.logHeaders) {
+			map.put(h, request.getHeader(h));
+		}
+		return map;
 	}
 
 	protected Object getResponseBody(T response) {
