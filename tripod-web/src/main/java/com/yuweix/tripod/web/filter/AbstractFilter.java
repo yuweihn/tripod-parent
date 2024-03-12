@@ -123,7 +123,7 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 			}
 		}
 		Map<String, Object> requestHeader = getRequestHeader(req);
-		if (requestHeader != null) {
+		if (requestHeader != null && !requestHeader.isEmpty()) {
 			logInfoMap.put("headers", requestHeader);
 		}
 		Object responseBody = getResponseBody(resp);
