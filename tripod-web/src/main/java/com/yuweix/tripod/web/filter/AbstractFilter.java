@@ -108,29 +108,31 @@ public abstract class AbstractFilter<R extends HttpServletRequest, T extends Htt
 		R req = wrap(adjustMethod(request));
 		T resp = wrap(response);
 		beforeFilter(req, resp);
-
-		setCharacterEncoding(req, resp);
-		setContextPath(req);
-		setAccessControl(req, resp);
-
-		filterChain.doFilter(req, resp);
-
 		Map<String, Object> logInfoMap = new LinkedHashMap<>();
-		if (allowLogRequest) {
-			Map<String, Object> map = logRequest(req);
-			if (map != null && !map.isEmpty()) {
-				logInfoMap.putAll(map);
+		try {
+			setCharacterEncoding(req, resp);
+			setContextPath(req);
+			setAccessControl(req, resp);
+
+			filterChain.doFilter(req, resp);
+
+			if (allowLogRequest) {
+				Map<String, Object> map = logRequest(req);
+				if (map != null && !map.isEmpty()) {
+					logInfoMap.putAll(map);
+				}
 			}
+			Map<String, Object> requestHeader = getRequestHeader(req);
+			if (requestHeader != null && !requestHeader.isEmpty()) {
+				logInfoMap.put("headers", requestHeader);
+			}
+			Object responseBody = getResponseBody(resp);
+			if (responseBody != null) {
+				logInfoMap.put("responseBody", responseBody);
+			}
+		} finally {
+			afterFilter(req, resp);
 		}
-		Map<String, Object> requestHeader = getRequestHeader(req);
-		if (requestHeader != null && !requestHeader.isEmpty()) {
-			logInfoMap.put("headers", requestHeader);
-		}
-		Object responseBody = getResponseBody(resp);
-		if (responseBody != null) {
-			logInfoMap.put("responseBody", responseBody);
-		}
-		afterFilter(req, resp);
 		long endTimeMillis = System.currentTimeMillis();
 		logInfoMap.put("status", resp.getStatus());
 		logInfoMap.put("elapsedTime", (endTimeMillis - startTimeMillis) + "ms");
