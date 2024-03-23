@@ -51,7 +51,7 @@ public class DynamicDataSourceAspect {
     }
 
     @After("pointcut()")
-    public void after(JoinPoint joinPoint) {
+    public void after(JoinPoint point) {
         DataSourceContextHolder.removeDataSource();
     }
 }
