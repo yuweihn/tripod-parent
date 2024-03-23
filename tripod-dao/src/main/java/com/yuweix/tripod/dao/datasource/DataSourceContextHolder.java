@@ -6,7 +6,7 @@ package com.yuweix.tripod.dao.datasource;
  * @author yuwei
  */
 public class DataSourceContextHolder {
-    public static final ThreadLocal<String> HOLDER = new ThreadLocal<>();
+    private static final ThreadLocal<String> HOLDER = new ThreadLocal<>();
 
     /**
      * 获取数据源名
