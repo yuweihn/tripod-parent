@@ -45,7 +45,7 @@ public class DynamicDataSourceAspect {
             t = method.getAnnotation(clz);
         }
         if (t == null && method.getDeclaringClass().isAnnotationPresent(clz)) {
-            return method.getDeclaringClass().getAnnotation(clz);
+            t = method.getDeclaringClass().getAnnotation(clz);
         }
         return t;
     }
