@@ -4,6 +4,7 @@ package com.yuweix.tripod.dao.springboot;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
+import com.yuweix.tripod.dao.datasource.TargetDataSource;
 import com.yuweix.tripod.dao.hibernate.DynamicTableInspector;
 import com.yuweix.tripod.dao.hibernate.ShardAspect;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
@@ -22,9 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 
 /**
@@ -82,8 +81,8 @@ public class HibernateConf {
 
 	@ConditionalOnMissingBean(name = "dataSources")
 	@Bean(name = "dataSources")
-	public Map<Object, Object> dataSources() {
-		return null;
+	public List<TargetDataSource> dataSources() {
+		return new ArrayList<>();
 	}
 
 	@ConditionalOnMissingBean(DynamicDataSourceAspect.class)
@@ -96,13 +95,22 @@ public class HibernateConf {
 	@ConditionalOnMissingBean(DynamicDataSource.class)
 	@Bean(name = "dynamicDataSource")
 	public DataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
-			, @Qualifier("dataSources") Map<Object, Object> dataSources) {
+			, @Qualifier("dataSources") List<TargetDataSource> dataSources) {
 		if (dataSources == null) {
-			dataSources = new HashMap<>();
+			dataSources = new ArrayList<>();
 		}
+		Map<Object, Object> targetDataSourcesMap = new HashMap<>();
+		for (TargetDataSource tds: dataSources) {
+			Map<Object, Object> map = tds.getTargetDataSourcesMap();
+			if (map == null || map.isEmpty()) {
+				continue;
+			}
+			targetDataSourcesMap.putAll(map);
+		}
+
 		DynamicDataSource dds = new DynamicDataSource();
 		dds.setDefaultTargetDataSource(defaultDataSource);
-		dds.setTargetDataSources(dataSources);
+		dds.setTargetDataSources(targetDataSourcesMap);
 		return dds;
 	}
 
