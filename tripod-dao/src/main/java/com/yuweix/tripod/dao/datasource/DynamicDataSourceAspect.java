@@ -2,9 +2,9 @@ package com.yuweix.tripod.dao.datasource;
 
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
@@ -25,14 +25,19 @@ public class DynamicDataSourceAspect {
 
     }
 
-    @Before("pointcut()")
-    public void before(JoinPoint point) {
+    @Around("pointcut()")
+    public Object around(ProceedingJoinPoint point) throws Throwable {
         DataSource annotation = getAnnotation(point, DataSource.class);
         if (annotation == null) {
-            return;
+            return point.proceed();
         }
-        String dataSourceName = annotation.value();
-        DataSourceContextHolder.setDataSource(dataSourceName);
+        try {
+            String dataSourceName = annotation.value();
+            DataSourceContextHolder.setDataSource(dataSourceName);
+            return point.proceed();
+        } finally {
+            DataSourceContextHolder.removeDataSource();
+        }
     }
 
     private <T extends Annotation>T getAnnotation(JoinPoint point, Class<T> clz) {
@@ -48,10 +53,5 @@ public class DynamicDataSourceAspect {
             t = method.getDeclaringClass().getAnnotation(clz);
         }
         return t;
-    }
-
-    @After("pointcut()")
-    public void after(JoinPoint point) {
-        DataSourceContextHolder.removeDataSource();
     }
 }
