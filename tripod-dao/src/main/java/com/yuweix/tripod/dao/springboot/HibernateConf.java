@@ -109,6 +109,7 @@ public class HibernateConf {
 		}
 
 		DynamicDataSource dds = new DynamicDataSource();
+		dds.setLenientFallback(false);
 		dds.setDefaultTargetDataSource(defaultDataSource);
 		dds.setTargetDataSources(targetDataSourcesMap);
 		return dds;
