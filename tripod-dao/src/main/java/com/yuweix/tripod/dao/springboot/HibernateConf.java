@@ -82,7 +82,7 @@ public class HibernateConf {
 
 	@ConditionalOnMissingBean(name = "dataSources")
 	@Bean(name = "dataSources")
-	public Map<String, DataSource> dataSources() {
+	public Map<Object, Object> dataSources() {
 		return null;
 	}
 
