@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
@@ -31,6 +32,7 @@ import java.util.*;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 public class HibernateConf {
+	@ConditionalOnProperty(name = "tripod.datasource.default.enabled", matchIfMissing = true)
 	@ConditionalOnMissingBean(name = "dataSource")
 	@Bean(name = "dataSource", initMethod = "init", destroyMethod = "close")
 	public DataSource defaultDataSource(@Value("${tripod.datasource.default.driver-class}") String driverClassName
@@ -94,7 +96,7 @@ public class HibernateConf {
 	@Primary
 	@ConditionalOnMissingBean(DynamicDataSource.class)
 	@Bean(name = "dynamicDataSource")
-	public DataSource dynamicDataSource(@Qualifier("dataSource") DataSource defaultDataSource
+	public DataSource dynamicDataSource(@Autowired(required = false) @Qualifier("dataSource") DataSource defaultDataSource
 			, @Qualifier("dataSources") List<TargetDataSource> dataSources) {
 		if (dataSources == null) {
 			dataSources = new ArrayList<>();
