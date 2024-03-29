@@ -16,7 +16,7 @@ public class TargetDataSource {
     /**
      * 逻辑库后占位符长度
      * eg.
-     * user  ====>>>>  user_0000
+     * gateway  ====>>>>  gateway_0001
      * @return   逻辑库后占位符长度
      */
     private int suffixLength = 4;
