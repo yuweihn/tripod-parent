@@ -33,6 +33,11 @@ public class TargetDataSource {
         return this;
     }
 
+    public TargetDataSource setDataSourceList(List<DataSource> dataSourceList) {
+        this.dataSourceList = dataSourceList;
+        return this;
+    }
+
     public TargetDataSource addDataList(DataSource dataSource) {
         if (this.dataSourceList == null) {
             this.dataSourceList = new ArrayList<>();
