@@ -24,13 +24,17 @@ public class TargetDataSource {
     private List<DataSource> dataSourceList;
 
 
-    public TargetDataSource setLogicName(String logicName) {
+    public TargetDataSource(String logicName) {
         this.logicName = logicName;
-        return this;
     }
 
     public TargetDataSource setSuffixLength(int suffixLength) {
         this.suffixLength = suffixLength;
+        return this;
+    }
+
+    public TargetDataSource setDataSourceList(List<DataSource> dataSourceList) {
+        this.dataSourceList = dataSourceList;
         return this;
     }
 
