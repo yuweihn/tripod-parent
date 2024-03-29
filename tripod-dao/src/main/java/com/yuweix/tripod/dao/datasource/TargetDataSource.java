@@ -24,9 +24,8 @@ public class TargetDataSource {
     private List<DataSource> dataSourceList;
 
 
-    public TargetDataSource setLogicName(String logicName) {
+    public TargetDataSource(String logicName) {
         this.logicName = logicName;
-        return this;
     }
 
     public TargetDataSource setSuffixLength(int suffixLength) {
