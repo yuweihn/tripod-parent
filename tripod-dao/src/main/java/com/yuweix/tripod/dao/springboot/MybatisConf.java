@@ -106,6 +106,7 @@ public class MybatisConf {
 	@ConditionalOnMissingBean(DynamicDataSource.class)
 	@Bean(name = "dynamicDataSource")
 	public DataSource dynamicDataSource(@Autowired(required = false) @Qualifier("dataSource") DataSource defaultDataSource
+			, @Value("${tripod.datasource.default.lenient:false}") boolean lenient
 			, @Qualifier("dataSources") List<TargetDataSource> dataSources) {
 		if (dataSources == null) {
 			dataSources = new ArrayList<>();
@@ -120,7 +121,7 @@ public class MybatisConf {
 		}
 
 		DynamicDataSource dds = new DynamicDataSource();
-		dds.setLenientFallback(false);
+		dds.setLenientFallback(lenient);
 		dds.setDefaultTargetDataSource(defaultDataSource);
 		dds.setTargetDataSources(targetDataSourcesMap);
 		return dds;
