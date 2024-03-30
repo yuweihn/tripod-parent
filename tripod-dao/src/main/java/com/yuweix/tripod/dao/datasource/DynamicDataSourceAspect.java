@@ -20,7 +20,7 @@ public class DynamicDataSourceAspect {
     /**
      * 切点表达式
      */
-    @Pointcut("@within(com.yuweix.tripod.dao.datasource.DataSource) || @annotation(com.yuweix.tripod.dao.datasource.DataSource)")
+    @Pointcut("(execution(public * com.yuweix.tripod.dao.mybatis.Dao+.*(..)) || execution(public * com.yuweix.tripod.dao.hibernate.Dao+.*(..))) && (@within(com.yuweix.tripod.dao.datasource.DataSource) || @annotation(com.yuweix.tripod.dao.datasource.DataSource))")
     public void pointcut() {
 
     }
