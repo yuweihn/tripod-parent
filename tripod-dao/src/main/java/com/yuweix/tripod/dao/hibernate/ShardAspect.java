@@ -1,6 +1,7 @@
 package com.yuweix.tripod.dao.hibernate;
 
 
+import com.yuweix.tripod.dao.sharding.Sharding;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -16,53 +17,47 @@ import java.lang.reflect.Parameter;
  */
 @Aspect
 public class ShardAspect {
-    @Pointcut("@annotation(com.yuweix.tripod.dao.hibernate.HibernateShard)")
+    @Pointcut("execution(public * com.yuweix.tripod.dao.sharding.Shardable+.*(..))")
     public void pointcut() {
 
     }
 
     @Around("pointcut()")
-    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        Object target = joinPoint.getTarget();
+    public Object around(ProceedingJoinPoint point) throws Throwable {
+        Object target = point.getTarget();
         if (!(target instanceof AbstractDao)) {
-            return joinPoint.proceed();
+            return point.proceed();
         }
 
-        Object shardingVal = parseShardingVal(joinPoint);
+        Object shardingVal = parseShardingVal(point);
         AbstractDao<?, ?> dao = (AbstractDao<?, ?>) target;
         try {
             dao.beforeSharding(shardingVal);
-            return joinPoint.proceed();
+            return point.proceed();
         } finally {
             dao.afterSharding();
         }
     }
 
-    private Object parseShardingVal(ProceedingJoinPoint joinPoint) {
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        HibernateShard hShard = method.getAnnotation(HibernateShard.class);
+    private Object parseShardingVal(ProceedingJoinPoint point) {
+        Method method = ((MethodSignature) point.getSignature()).getMethod();
 
+        Parameter[] params = method.getParameters();
+        if (params == null || params.length <= 0) {
+            throw new RuntimeException("Sharding parameter is required.");
+        }
         int idx = -1;
-        String shardParamName = hShard.value();
-        if (shardParamName == null || "".equals(shardParamName)) {
-            idx = 0;
-        } else {
-            Parameter[] params = method.getParameters();
-            if (params == null || params.length <= 0) {
-                throw new RuntimeException("Sharding parameter is required.");
-            }
-            for (int i = 0, len = params.length; i < len; i++) {
-                if (shardParamName.equals(params[i].getName())) {
-                    idx = i;
-                    break;
-                }
-            }
-            if (idx < 0 || idx > params.length - 1) {
-                throw new RuntimeException("Sharding parameter is required.");
+        for (int i = 0, len = params.length; i < len; i++) {
+            if (params[i].isAnnotationPresent(Sharding.class)) {
+                idx = i;
+                break;
             }
         }
+        if (idx < 0 || idx > params.length - 1) {
+            throw new RuntimeException("Sharding parameter is required.");
+        }
 
-        final Object[] args = joinPoint.getArgs();
+        final Object[] args = point.getArgs();
         if (args == null || args.length <= 0) {
             throw new RuntimeException("Sharding parameter is required.");
         }
