@@ -41,17 +41,20 @@ public class DynamicDataSourceAspect {
     }
 
     private <T extends Annotation>T getAnnotation(JoinPoint point, Class<T> clz) {
+        Class<?> targetClz = point.getTarget().getClass();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         if (method == null) {
             return null;
         }
-        T t = null;
         if (method.isAnnotationPresent(clz)) {
-            t = method.getAnnotation(clz);
+            return method.getAnnotation(clz);
         }
-        if (t == null && method.getDeclaringClass().isAnnotationPresent(clz)) {
-            t = method.getDeclaringClass().getAnnotation(clz);
+        if (method.getDeclaringClass().isAnnotationPresent(clz)) {
+            return method.getDeclaringClass().getAnnotation(clz);
         }
-        return t;
+        if (targetClz.isAnnotationPresent(clz)) {
+            return targetClz.getAnnotation(clz);
+        }
+        return null;
     }
 }
