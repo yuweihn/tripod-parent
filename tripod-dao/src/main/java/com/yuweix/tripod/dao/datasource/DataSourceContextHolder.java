@@ -11,21 +11,21 @@ public class DataSourceContextHolder {
     /**
      * 获取数据源名
      */
-    public static String getDataSource(){
+    public static String getDataSource() {
         return HOLDER.get();
     }
 
     /**
      * 设置数据源名
      */
-    public static void setDataSource(String dataSourceName){
+    public static void setDataSource(String dataSourceName) {
         HOLDER.set(dataSourceName);
     }
 
     /**
      * 移除数据源名
      */
-    public  static void removeDataSource(){
+    public  static void removeDataSource() {
         HOLDER.remove();
     }
 }
