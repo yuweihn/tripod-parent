@@ -6,7 +6,7 @@ import com.yuweix.tripod.dao.datasource.DynamicDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
 import com.yuweix.tripod.dao.datasource.TargetDataSource;
 import com.yuweix.tripod.dao.hibernate.DynamicTableInspector;
-import com.yuweix.tripod.dao.hibernate.ShardAspect;
+import com.yuweix.tripod.dao.hibernate.HibernateShardAspect;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,9 +198,9 @@ public class HibernateConf {
 		return transactionManager;
 	}
 
-	@ConditionalOnMissingBean(ShardAspect.class)
+	@ConditionalOnMissingBean(HibernateShardAspect.class)
 	@Bean(name = "hbShardAspect")
-	public ShardAspect hbShardAspect() {
-		return new ShardAspect();
+	public HibernateShardAspect hbShardAspect() {
+		return new HibernateShardAspect();
 	}
 }

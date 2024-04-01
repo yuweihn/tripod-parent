@@ -15,7 +15,7 @@ import java.lang.reflect.Parameter;
  * @author yuwei
  */
 @Aspect
-public class ShardAspect {
+public class HibernateShardAspect {
     @Pointcut("@annotation(com.yuweix.tripod.dao.hibernate.HibernateShard)")
     public void pointcut() {
 
