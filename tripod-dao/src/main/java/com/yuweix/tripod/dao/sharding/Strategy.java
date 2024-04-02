@@ -3,7 +3,7 @@ package com.yuweix.tripod.dao.sharding;
 
 
 /**
- * 分片策略
+ * 分表策略
  * @author yuwei
  */
 public interface Strategy {
@@ -13,7 +13,7 @@ public interface Strategy {
 
     /**
      * @param tableName                  逻辑表名
-     * @param shardingVal                分片字段的值
+     * @param shardingVal                分表字段的值
      * @return   返回分片。如：0000,0001等等
      */
     <T>String getShardingIndex(String tableName, T shardingVal);
