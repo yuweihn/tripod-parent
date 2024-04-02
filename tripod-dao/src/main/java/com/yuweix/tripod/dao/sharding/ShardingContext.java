@@ -11,6 +11,7 @@ import java.util.Map;
 public class ShardingContext {
 	private static final ShardingContext INSTANCE = new ShardingContext();
 	private final Map<String, TableConfig> tableConfMap = new HashMap<>();
+	private final Map<String, DatabaseConfig> databaseConfMap = new HashMap<>();
 
 	private ShardingContext() {
 
@@ -26,11 +27,26 @@ public class ShardingContext {
 		}
 	}
 
+	public void initDatabaseConf(Map<String, DatabaseConfig> map) {
+		databaseConfMap.clear();
+		if (map != null) {
+			databaseConfMap.putAll(map);
+		}
+	}
+
 	public TableConfig getTableConf(String tableName) {
 		return tableConfMap.get(tableName);
 	}
 
 	public Map<String, TableConfig> getTableConfMap() {
 		return tableConfMap;
+	}
+
+	public DatabaseConfig getDatabaseConf(String tableName) {
+		return databaseConfMap.get(tableName);
+	}
+
+	public Map<String, DatabaseConfig> getDatabaseConfMap() {
+		return databaseConfMap;
 	}
 }
