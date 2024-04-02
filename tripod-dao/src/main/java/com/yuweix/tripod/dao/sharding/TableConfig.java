@@ -13,7 +13,7 @@ public class TableConfig {
 	 */
 	private int suffixLength = 4;
 	/**
-	 * 分片数量
+	 * 分表数量
 	 */
 	private int shardingSize = 2;
 
