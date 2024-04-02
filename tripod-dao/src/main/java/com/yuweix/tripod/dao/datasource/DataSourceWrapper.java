@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author yuwei
  */
-public class TargetDataSource {
+public class DataSourceWrapper {
     private String logicName;
     /**
      * 逻辑库后占位符长度
@@ -24,21 +24,21 @@ public class TargetDataSource {
     private List<DataSource> dataSourceList;
 
 
-    public TargetDataSource(String logicName) {
+    public DataSourceWrapper(String logicName) {
         this.logicName = logicName;
     }
 
-    public TargetDataSource setSuffixLength(int suffixLength) {
+    public DataSourceWrapper setSuffixLength(int suffixLength) {
         this.suffixLength = suffixLength;
         return this;
     }
 
-    public TargetDataSource setDataSourceList(List<DataSource> dataSourceList) {
+    public DataSourceWrapper setDataSourceList(List<DataSource> dataSourceList) {
         this.dataSourceList = dataSourceList;
         return this;
     }
 
-    public TargetDataSource addDataList(DataSource dataSource) {
+    public DataSourceWrapper addDataList(DataSource dataSource) {
         if (this.dataSourceList == null) {
             this.dataSourceList = new ArrayList<>();
         }
