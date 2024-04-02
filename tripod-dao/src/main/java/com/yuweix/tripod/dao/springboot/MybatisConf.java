@@ -4,7 +4,7 @@ package com.yuweix.tripod.dao.springboot;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
-import com.yuweix.tripod.dao.datasource.TargetDataSource;
+import com.yuweix.tripod.dao.datasource.DataSourceWrapper;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -92,7 +92,7 @@ public class MybatisConf {
 
 	@ConditionalOnMissingBean(name = "dataSources")
 	@Bean(name = "dataSources")
-	public List<TargetDataSource> dataSources() {
+	public List<DataSourceWrapper> dataSources() {
 		return new ArrayList<>();
 	}
 
@@ -107,12 +107,12 @@ public class MybatisConf {
 	@Bean(name = "dynamicDataSource")
 	public DataSource dynamicDataSource(@Autowired(required = false) @Qualifier("dataSource") DataSource defaultDataSource
 			, @Value("${tripod.datasource.default.lenient:false}") boolean lenient
-			, @Qualifier("dataSources") List<TargetDataSource> dataSources) {
+			, @Qualifier("dataSources") List<DataSourceWrapper> dataSources) {
 		if (dataSources == null) {
 			dataSources = new ArrayList<>();
 		}
 		Map<Object, Object> targetDataSourcesMap = new HashMap<>();
-		for (TargetDataSource tds: dataSources) {
+		for (DataSourceWrapper tds: dataSources) {
 			Map<Object, Object> map = tds.getTargetDataSourcesMap();
 			if (map == null || map.isEmpty()) {
 				continue;
