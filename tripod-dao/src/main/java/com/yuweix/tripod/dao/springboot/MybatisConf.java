@@ -4,7 +4,6 @@ package com.yuweix.tripod.dao.springboot;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
-import com.yuweix.tripod.dao.datasource.DataSourceWrapper;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -30,9 +29,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -92,8 +89,8 @@ public class MybatisConf {
 
 	@ConditionalOnMissingBean(name = "dataSources")
 	@Bean(name = "dataSources")
-	public List<DataSourceWrapper> dataSources() {
-		return new ArrayList<>();
+	public Map<String, DataSource> dataSources() {
+		return null;
 	}
 
 	@ConditionalOnMissingBean(DynamicDataSourceAspect.class)
@@ -107,24 +104,16 @@ public class MybatisConf {
 	@Bean(name = "dynamicDataSource")
 	public DataSource dynamicDataSource(@Autowired(required = false) @Qualifier("dataSource") DataSource defaultDataSource
 			, @Value("${tripod.datasource.default.lenient:false}") boolean lenient
-			, @Qualifier("dataSources") List<DataSourceWrapper> dataSources
+			, @Qualifier("dataSources") Map<String, DataSource> dataSources
 			, @Autowired(required = false) ShardingContext shardingContext) {
 		if (dataSources == null) {
-			dataSources = new ArrayList<>();
-		}
-		Map<Object, Object> targetDataSourcesMap = new HashMap<>();
-		for (DataSourceWrapper tds: dataSources) {
-			Map<Object, Object> map = tds.getTargetDataSourcesMap();
-			if (map == null || map.isEmpty()) {
-				continue;
-			}
-			targetDataSourcesMap.putAll(map);
+			dataSources = new HashMap<>();
 		}
 
 		DynamicDataSource dds = new DynamicDataSource();
 		dds.setLenientFallback(lenient);
 		dds.setDefaultTargetDataSource(defaultDataSource);
-		dds.setTargetDataSources(targetDataSourcesMap);
+		dds.setTargetDataSources(new HashMap<>(dataSources));
 		return dds;
 	}
 
