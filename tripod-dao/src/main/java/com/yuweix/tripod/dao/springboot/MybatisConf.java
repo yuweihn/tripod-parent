@@ -107,7 +107,8 @@ public class MybatisConf {
 	@Bean(name = "dynamicDataSource")
 	public DataSource dynamicDataSource(@Autowired(required = false) @Qualifier("dataSource") DataSource defaultDataSource
 			, @Value("${tripod.datasource.default.lenient:false}") boolean lenient
-			, @Qualifier("dataSources") List<DataSourceWrapper> dataSources) {
+			, @Qualifier("dataSources") List<DataSourceWrapper> dataSources
+			, @Autowired(required = false) ShardingContext shardingContext) {
 		if (dataSources == null) {
 			dataSources = new ArrayList<>();
 		}
