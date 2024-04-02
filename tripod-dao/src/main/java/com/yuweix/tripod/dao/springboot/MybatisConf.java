@@ -136,7 +136,6 @@ public class MybatisConf {
 	@ConditionalOnMissingBean(SqlSessionFactory.class)
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactoryBean sqlSessionFactoryBean(@Autowired DataSource dataSource
-			, @Autowired(required = false) ShardingContext shardingContext
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
 		SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource);

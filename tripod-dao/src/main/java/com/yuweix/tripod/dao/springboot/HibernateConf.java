@@ -131,7 +131,6 @@ public class HibernateConf {
 	public LocalSessionFactoryBean localSessionFactoryBean(@Autowired DataSource dataSource
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
-			, @Autowired(required = false) ShardingContext shardingContext
 			, @Value("${tripod.hibernate.dialect:}") String dialect
 			, @Value("${tripod.hibernate.current-session-context-class:}") String sessionContext
 			, @Value("${tripod.hibernate.cache.region.factory-class:}") String cacheRegionFactory
