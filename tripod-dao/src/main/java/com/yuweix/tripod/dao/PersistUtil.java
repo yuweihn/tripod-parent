@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 /**
  * @author yuwei
  */
-public abstract class PersistContext {
+public abstract class PersistUtil {
 	private static SoftReference<Map<String, String>> TABLE_NAME_REF;
 	private static final Object tableNameLock = new Object();
 
@@ -30,7 +30,7 @@ public abstract class PersistContext {
 	private static SoftReference<Map<String, String>> SELECT_SQL_WITH_TABLE_ALIAS_REF;
 	private static final Object selectSqlWithAliasLock = new Object();
 
-	private static SoftReference<Map<String, List<FieldColumn>>> PERSIST_FIELD_REF;
+	private static SoftReference<Map<String, List<FieldCol>>> PERSIST_FIELD_REF;
 	private static final Object persistFieldLock = new Object();
 
 	private static SoftReference<Map<Class<? extends Strategy>, Strategy>> SHARD_STRATEGY_REF;
@@ -76,7 +76,7 @@ public abstract class PersistContext {
 	 * @param clz
 	 * @return
 	 */
-	protected String getTableName(Class<?> clz) {
+	public static String getTableName(Class<?> clz) {
 		String className = clz.getName();
 		Map<String, String> map = getTableNameMap();
 		String tableName = map.get(className);
@@ -113,15 +113,15 @@ public abstract class PersistContext {
 	 * @param clz
 	 * @return
 	 */
-	protected String getAllColumnSql(Class<?> clz) {
+	public static String getAllColumnSql(Class<?> clz) {
 		String className = clz.getName();
 		Map<String, String> map = getSelectSqlMap();
 		String selectSql = map.get(className);
 		if (selectSql == null) {
 			StringBuilder builder = new StringBuilder("");
-			List<FieldColumn> fcList = getPersistFieldList(clz);
+			List<FieldCol> fcList = getPersistFieldList(clz);
 			for (int i = 0, size = fcList.size(); i < size; i++) {
-				FieldColumn fc = fcList.get(i);
+				FieldCol fc = fcList.get(i);
 				if (i > 0) {
 					builder.append(", ");
 				}
@@ -151,15 +151,15 @@ public abstract class PersistContext {
 	 * @param tableAlias
 	 * @return
 	 */
-	protected String getAllColumnSql(Class<?> clz, String tableAlias) {
+	public static String getAllColumnSql(Class<?> clz, String tableAlias) {
 		String key = clz.getName() + "_" + tableAlias;
 		Map<String, String> map = getSelectSqlWithTableAliasMap();
 		String selectSql = map.get(key);
 		if (selectSql == null) {
 			StringBuilder builder = new StringBuilder("");
-			List<FieldColumn> fcList = getPersistFieldList(clz);
+			List<FieldCol> fcList = getPersistFieldList(clz);
 			for (int i = 0, size = fcList.size(); i < size; i++) {
-				FieldColumn fc = fcList.get(i);
+				FieldCol fc = fcList.get(i);
 				if (i > 0) {
 					builder.append(", ");
 				}
@@ -171,8 +171,8 @@ public abstract class PersistContext {
 		return selectSql;
 	}
 
-	private static Map<String, List<FieldColumn>> getPersistFieldMap() {
-		Map<String, List<FieldColumn>> map = null;
+	private static Map<String, List<FieldCol>> getPersistFieldMap() {
+		Map<String, List<FieldCol>> map = null;
 		if (PERSIST_FIELD_REF == null || (map = PERSIST_FIELD_REF.get()) == null) {
 			synchronized (persistFieldLock) {
 				if (PERSIST_FIELD_REF == null || (map = PERSIST_FIELD_REF.get()) == null) {
@@ -188,10 +188,10 @@ public abstract class PersistContext {
 	 * @param clz
 	 * @return
 	 */
-	protected List<FieldColumn> getPersistFieldList(Class<?> clz) {
+	public static List<FieldCol> getPersistFieldList(Class<?> clz) {
 		String className = clz.getName();
-		Map<String, List<FieldColumn>> map = getPersistFieldMap();
-		List<FieldColumn> fcList = map.get(className);
+		Map<String, List<FieldCol>> map = getPersistFieldMap();
+		List<FieldCol> fcList = map.get(className);
 		if (fcList == null) {
 			fcList = getPersistFieldList0(clz);
 			map.put(className, fcList);
@@ -203,7 +203,7 @@ public abstract class PersistContext {
 	 * Gets all fields of the given class and its parents (if any).
 	 * @return
 	 */
-	private static List<FieldColumn> getPersistFieldList0(Class<?> clz) {
+	private static List<FieldCol> getPersistFieldList0(Class<?> clz) {
 		final List<Field> allFields = new ArrayList<>();
 		Class<?> currentClass = clz;
 		while (currentClass != null) {
@@ -211,7 +211,7 @@ public abstract class PersistContext {
 			currentClass = currentClass.getSuperclass();
 		}
 
-		List<FieldColumn> list = new ArrayList<>();
+		List<FieldCol> list = new ArrayList<>();
 		for (Field field: allFields) {
 			Column column = field.getAnnotation(Column.class);
 			if (column == null) {
@@ -225,16 +225,16 @@ public abstract class PersistContext {
 			if (colName == null || "".equals(colName.trim())) {
 				continue;
 			}
-			list.add(new FieldColumn(colName.trim(), field));
+			list.add(new FieldCol(colName.trim(), field));
 		}
 		return list;
 	}
 
-	public static class FieldColumn {
+	public static class FieldCol {
 		private String columnName;
 		private Field field;
 
-		public FieldColumn(String columnName, Field field) {
+		public FieldCol(String columnName, Field field) {
 			this.columnName = columnName;
 			this.field = field;
 		}
@@ -247,7 +247,7 @@ public abstract class PersistContext {
 		}
 	}
 
-	protected Object getFieldValue(Field field, Object t) {
+	public static Object getFieldValue(Field field, Object t) {
 		if (!field.canAccess(t)) {
 			field.setAccessible(true);
 		}
@@ -270,7 +270,7 @@ public abstract class PersistContext {
 		}
 		return map;
 	}
-	protected String getShardingIndex(Sharding sharding, String tableName, Object shardingVal) {
+	public static String getShardingIndex(Sharding sharding, String tableName, Object shardingVal) {
 		if (sharding == null) {
 			return null;
 		}
@@ -288,10 +288,10 @@ public abstract class PersistContext {
 		return strategy.getShardingIndex(tableName, shardingVal);
 	}
 
-	protected <T>String getPhysicalTableName(Class<T> entityClass, Object shardingVal) {
+	public static <T>String getPhysicalTableName(Class<T> entityClass, Object shardingVal) {
 		String tbName = getTableName(entityClass);
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
-		for (FieldColumn fc: fcList) {
+		List<FieldCol> fcList = getPersistFieldList(entityClass);
+		for (FieldCol fc: fcList) {
 			Field field = fc.getField();
 			Sharding sharding = field.getAnnotation(Sharding.class);
 			if (sharding != null) {
@@ -302,11 +302,11 @@ public abstract class PersistContext {
 		return tbName;
 	}
 
-	protected <T>String getPhysicalTableName(T t) {
+	public static <T>String getPhysicalTableName(T t) {
 		Class<?> entityClass = t.getClass();
 		String tbName = getTableName(entityClass);
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
-		for (FieldColumn fc: fcList) {
+		List<FieldCol> fcList = getPersistFieldList(entityClass);
+		for (FieldCol fc: fcList) {
 			Field field = fc.getField();
 			Sharding sharding = field.getAnnotation(Sharding.class);
 			if (sharding != null) {

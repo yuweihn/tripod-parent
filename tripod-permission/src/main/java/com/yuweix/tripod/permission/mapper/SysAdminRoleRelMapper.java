@@ -1,6 +1,7 @@
 package com.yuweix.tripod.permission.mapper;
 
 
+import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.mybatis.BaseMapper;
 import com.yuweix.tripod.dao.mybatis.provider.AbstractProvider;
 import com.yuweix.tripod.permission.dto.SysAdminRoleDto;
@@ -35,15 +36,15 @@ public interface SysAdminRoleRelMapper extends BaseMapper<SysAdminRoleRel, Long>
 		public String hasRole(Map<String, Object> param) {
 			StringBuilder builder = new StringBuilder("");
 			builder.append("  select count(id) > 0 ")
-					.append(" from ").append(getTableName(SysAdminRoleRel.class))
+					.append(" from ").append(PersistUtil.getTableName(SysAdminRoleRel.class))
 					.append(" where admin_id = #{adminId} and role_id = #{roleId} ");
 			return builder.toString();
 		}
 
 		public String queryByAdminIdAndRoleId(Map<String, Object> param) {
 			StringBuilder builder = new StringBuilder("");
-			builder.append("  select ").append(getAllColumnSql(SysAdminRoleRel.class))
-					.append(" from ").append(getTableName(SysAdminRoleRel.class))
+			builder.append("  select ").append(PersistUtil.getAllColumnSql(SysAdminRoleRel.class))
+					.append(" from ").append(PersistUtil.getTableName(SysAdminRoleRel.class))
 					.append(" where admin_id = #{adminId} and role_id = #{roleId} ");
 			return builder.toString();
 		}
@@ -55,9 +56,9 @@ public interface SysAdminRoleRelMapper extends BaseMapper<SysAdminRoleRel, Long>
 
 			StringBuilder builder = new StringBuilder("");
 			builder.append("  select count(a.id) as cnt ")
-					.append(" from ").append(getTableName(SysAdminRoleRel.class)).append(" a ")
-					.append(" left join ").append(getTableName(SysRole.class)).append(" b on a.role_id = b.id ")
-					.append(" left join ").append(getTableName(SysAdmin.class)).append(" c on a.admin_id = c.id ")
+					.append(" from ").append(PersistUtil.getTableName(SysAdminRoleRel.class)).append(" a ")
+					.append(" left join ").append(PersistUtil.getTableName(SysRole.class)).append(" b on a.role_id = b.id ")
+					.append(" left join ").append(PersistUtil.getTableName(SysAdmin.class)).append(" c on a.admin_id = c.id ")
 					.append(" where 1 = 1 ");
 			if (adminId != null) {
 				builder.append(" and a.admin_id = #{adminId} ");
@@ -82,9 +83,9 @@ public interface SysAdminRoleRelMapper extends BaseMapper<SysAdminRoleRel, Long>
 			StringBuilder builder = new StringBuilder("");
 			builder.append("  select a.id, a.admin_id as adminId, a.role_id as roleId, b.role_no as roleNo, b.role_name as roleName ")
 					.append("           , a.creator, a.create_time as createTime, a.modifier, a.modify_time as modifyTime ")
-					.append(" from ").append(getTableName(SysAdminRoleRel.class)).append(" a ")
-					.append(" left join ").append(getTableName(SysRole.class)).append(" b on a.role_id = b.id ")
-					.append(" left join ").append(getTableName(SysAdmin.class)).append(" c on a.admin_id = c.id ")
+					.append(" from ").append(PersistUtil.getTableName(SysAdminRoleRel.class)).append(" a ")
+					.append(" left join ").append(PersistUtil.getTableName(SysRole.class)).append(" b on a.role_id = b.id ")
+					.append(" left join ").append(PersistUtil.getTableName(SysAdmin.class)).append(" c on a.admin_id = c.id ")
 					.append(" where 1 = 1 ");
 			if (adminId != null) {
 				builder.append(" and a.admin_id = #{adminId} ");
