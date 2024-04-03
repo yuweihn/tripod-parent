@@ -77,8 +77,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 			return;
 		}
 		String srcTableName = PersistUtil.getTableName(clz);
-		String destTableName = PersistUtil.getPhysicalTableName(clz, shardingVal);
-		DynamicTableTL.set(srcTableName, destTableName);
+		String targetTableName = PersistUtil.getPhysicalTableName(clz, shardingVal);
+		DynamicTableTL.set(srcTableName, targetTableName);
 	}
 	protected void afterSharding() {
 		DynamicTableTL.remove();
