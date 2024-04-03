@@ -5,6 +5,7 @@ import com.yuweix.tripod.dao.sharding.Sharding;
 import com.yuweix.tripod.dao.sharding.Strategy;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
@@ -35,6 +36,12 @@ public abstract class PersistUtil {
 
 	private static SoftReference<Map<Class<? extends Strategy>, Strategy>> SHARD_STRATEGY_REF;
 	private static final Object shardStrategyLock = new Object();
+
+	private static SoftReference<Map<Class<?>, FieldCol>> CLASS_PK_FIELD_REF;
+	private static final Object classPkFieldLock = new Object();
+
+	private static SoftReference<Map<Class<?>, FieldCol>> CLASS_SHARDING_FIELD_REF;
+	private static final Object classShardingFieldLock = new Object();
 
 
 	/**
@@ -315,5 +322,69 @@ public abstract class PersistUtil {
 			}
 		}
 		return tbName;
+	}
+
+	private static Map<Class<?>, FieldCol> getClassPkFieldMap() {
+		Map<Class<?>, FieldCol> map = null;
+		if (CLASS_PK_FIELD_REF == null || (map = CLASS_PK_FIELD_REF.get()) == null) {
+			synchronized (classPkFieldLock) {
+				if (CLASS_PK_FIELD_REF == null || (map = CLASS_PK_FIELD_REF.get()) == null) {
+					map = new ConcurrentHashMap<>();
+					CLASS_PK_FIELD_REF = new SoftReference<>(map);
+				}
+			}
+		}
+		return map;
+	}
+	public static FieldCol getPKFieldColumn(Class<?> clz) {
+		Map<Class<?>, FieldCol> map = getClassPkFieldMap();
+		FieldCol fc = map.get(clz);
+
+		if (fc == null) {
+			Field[] fields = clz.getDeclaredFields();
+			for (Field field: fields) {
+				field.setAccessible(true);
+				Id idAnn = field.getAnnotation(Id.class);
+				if (idAnn != null) {
+					Column col = field.getAnnotation(Column.class);
+					fc = new FieldCol(col == null ? field.getName() : col.name(), field);
+					map.put(clz, fc);
+					break;
+				}
+			}
+		}
+		return fc;
+	}
+
+	private static Map<Class<?>, FieldCol> getClassShardingFieldMap() {
+		Map<Class<?>, FieldCol> map = null;
+		if (CLASS_SHARDING_FIELD_REF == null || (map = CLASS_SHARDING_FIELD_REF.get()) == null) {
+			synchronized (classShardingFieldLock) {
+				if (CLASS_SHARDING_FIELD_REF == null || (map = CLASS_SHARDING_FIELD_REF.get()) == null) {
+					map = new ConcurrentHashMap<>();
+					CLASS_SHARDING_FIELD_REF = new SoftReference<>(map);
+				}
+			}
+		}
+		return map;
+	}
+	public static FieldCol getShardingFieldColumn(Class<?> clz) {
+		Map<Class<?>, FieldCol> map = getClassShardingFieldMap();
+		FieldCol fc = map.get(clz);
+
+		if (fc == null) {
+			Field[] fields = clz.getDeclaredFields();
+			for (Field field: fields) {
+				field.setAccessible(true);
+				Sharding sAnn = field.getAnnotation(Sharding.class);
+				if (sAnn != null) {
+					Column col = field.getAnnotation(Column.class);
+					fc = new FieldCol(col == null ? field.getName() : col.name(), field);
+					map.put(clz, fc);
+					break;
+				}
+			}
+		}
+		return fc;
 	}
 }
