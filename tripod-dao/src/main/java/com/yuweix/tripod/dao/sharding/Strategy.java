@@ -7,6 +7,9 @@ package com.yuweix.tripod.dao.sharding;
  * @author yuwei
  */
 public interface Strategy {
+    default DatabaseConfig getDatabaseConfig(String dbName) {
+        return ShardingContext.getInstance().getDatabaseConf(dbName);
+    }
     default TableConfig getTableConf(String tableName) {
         return ShardingContext.getInstance().getTableConf(tableName);
     }
