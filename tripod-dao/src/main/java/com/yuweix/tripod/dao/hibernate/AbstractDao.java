@@ -2,30 +2,21 @@ package com.yuweix.tripod.dao.hibernate;
 
 
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.yuweix.tripod.dao.PersistUtil;
-import com.yuweix.tripod.dao.sharding.Sharding;
 import jakarta.annotation.Resource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 
 
 /**
  * @author yuwei
  */
 public abstract class AbstractDao<T extends Serializable, PK extends Serializable> implements Dao<T, PK> {
-	private static final Map<Class<?>, PersistUtil.FieldCol> CLASS_PK_FIELD_MAP = new ConcurrentHashMap<>();
-	private static final Map<Class<?>, PersistUtil.FieldCol> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
-
 	private Class<T> clz;
 	private SessionFactory sessionFactory;
 
@@ -64,45 +55,9 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		}
 	}
 
-	private PersistUtil.FieldCol getPKFieldColumn() {
-		PersistUtil.FieldCol fc = CLASS_PK_FIELD_MAP.get(clz);
-
-		if (fc == null) {
-			Field[] fields = clz.getDeclaredFields();
-			for (Field field: fields) {
-				field.setAccessible(true);
-				Id idAnn = field.getAnnotation(Id.class);
-				if (idAnn != null) {
-					Column col = field.getAnnotation(Column.class);
-					fc = new PersistUtil.FieldCol(col == null ? field.getName() : col.name(), field);
-					CLASS_PK_FIELD_MAP.put(clz, fc);
-					break;
-				}
-			}
-		}
-		return fc;
-	}
-	private PersistUtil.FieldCol getShardingFieldColumn() {
-		PersistUtil.FieldCol fc = CLASS_SHARDING_FIELD_MAP.get(clz);
-
-		if (fc == null) {
-			Field[] fields = clz.getDeclaredFields();
-			for (Field field: fields) {
-				field.setAccessible(true);
-				Sharding sAnn = field.getAnnotation(Sharding.class);
-				if (sAnn != null) {
-					Column col = field.getAnnotation(Column.class);
-					fc = new PersistUtil.FieldCol(col == null ? field.getName() : col.name(), field);
-					CLASS_SHARDING_FIELD_MAP.put(clz, fc);
-					break;
-				}
-			}
-		}
-		return fc;
-	}
 	private Object getShardingVal(T t) {
 		Object shardingVal = null;
-		PersistUtil.FieldCol fc = getShardingFieldColumn();
+		PersistUtil.FieldCol fc = PersistUtil.getShardingFieldColumn(clz);
 		if (fc != null) {
 			try {
 				shardingVal = fc.getField().get(t);
