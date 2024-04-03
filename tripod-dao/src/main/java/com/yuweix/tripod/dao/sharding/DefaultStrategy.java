@@ -3,10 +3,9 @@ package com.yuweix.tripod.dao.sharding;
 
 
 /**
- * 分表策略-取模
  * @author yuwei
  */
-public class ModStrategy implements Strategy {
+public class DefaultStrategy implements Strategy {
     @Override
     public <T>String getShardingIndex(String tableName, T shardingVal) {
         TableConfig conf = getTableConf(tableName);

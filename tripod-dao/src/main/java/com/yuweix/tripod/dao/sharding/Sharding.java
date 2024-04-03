@@ -18,5 +18,5 @@ public @interface Sharding {
     /**
      * 分表策略
      */
-    Class<? extends Strategy> strategy() default ModStrategy.class;
+    Class<? extends Strategy> strategy() default DefaultStrategy.class;
 }
