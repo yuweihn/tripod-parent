@@ -1,6 +1,7 @@
 package com.yuweix.tripod.permission.mapper;
 
 
+import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.permission.model.SysRolePermissionRel;
 import com.yuweix.tripod.dao.mybatis.BaseMapper;
 import com.yuweix.tripod.dao.mybatis.provider.AbstractProvider;
@@ -27,16 +28,16 @@ public interface SysRolePermissionRelMapper extends BaseMapper<SysRolePermission
 	class Provider extends AbstractProvider {
 		public String queryByRoleIdAndPermId(Map<String, Object> param) {
 			StringBuilder builder = new StringBuilder("");
-			builder.append("  select ").append(getAllColumnSql(SysRolePermissionRel.class))
-					.append(" from ").append(getTableName(SysRolePermissionRel.class))
+			builder.append("  select ").append(PersistUtil.getAllColumnSql(SysRolePermissionRel.class))
+					.append(" from ").append(PersistUtil.getTableName(SysRolePermissionRel.class))
 					.append(" where role_id = #{roleId} and perm_id = #{permId} ");
 			return builder.toString();
 		}
 
 		public String queryListByRoleId(Map<String, Object> param) {
 			StringBuilder builder = new StringBuilder("");
-			builder.append("  select ").append(getAllColumnSql(SysRolePermissionRel.class))
-					.append(" from ").append(getTableName(SysRolePermissionRel.class))
+			builder.append("  select ").append(PersistUtil.getAllColumnSql(SysRolePermissionRel.class))
+					.append(" from ").append(PersistUtil.getTableName(SysRolePermissionRel.class))
 					.append(" where role_id = #{roleId} ");
 			return builder.toString();
 		}
@@ -44,7 +45,7 @@ public interface SysRolePermissionRelMapper extends BaseMapper<SysRolePermission
 		public String queryPermIdListByRoleId(Map<String, Object> param) {
 			StringBuilder builder = new StringBuilder("");
 			builder.append("  select perm_id ")
-					.append(" from ").append(getTableName(SysRolePermissionRel.class))
+					.append(" from ").append(PersistUtil.getTableName(SysRolePermissionRel.class))
 					.append(" where role_id = #{roleId} ");
 			return builder.toString();
 		}

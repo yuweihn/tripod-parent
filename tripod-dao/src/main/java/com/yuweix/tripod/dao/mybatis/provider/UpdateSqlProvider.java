@@ -1,6 +1,7 @@
 package com.yuweix.tripod.dao.mybatis.provider;
 
 
+import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.mybatis.where.Criteria;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import org.apache.ibatis.jdbc.SQL;
@@ -35,17 +36,17 @@ public class UpdateSqlProvider extends AbstractProvider {
 
 	private <T>String toUpdateByPrimaryKeySql(T t, boolean selective, boolean excludeVersion) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
-		String tbName = getTableName(entityClass);
+		String tbName = PersistUtil.getTableName(entityClass);
 		StringBuilder tableNameBuilder = new StringBuilder(tbName);
 
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		List<PersistUtil.FieldCol> fcList = PersistUtil.getPersistFieldList(entityClass);
 		return new SQL() {{
 			boolean whereSet = false;
-			for (FieldColumn fc: fcList) {
+			for (PersistUtil.FieldCol fc: fcList) {
 				Field field = fc.getField();
 				field.setAccessible(true);
 
-				String shardingIndex = getShardingIndex(field.getAnnotation(Sharding.class), tbName, getFieldValue(field, t));
+				String shardingIndex = PersistUtil.getShardingIndex(field.getAnnotation(Sharding.class), tbName, PersistUtil.getFieldValue(field, t));
 				Id idAnn = field.getAnnotation(Id.class);
 				if (shardingIndex != null) {
 					tableNameBuilder.append("_").append(shardingIndex);
@@ -104,13 +105,13 @@ public class UpdateSqlProvider extends AbstractProvider {
 		if (criteria == null || criteria.getParams() == null || criteria.getParams().size() <= 0) {
 			throw new IllegalAccessException("'where' is required.");
 		}
-		String tbName = getTableName(entityClass);
+		String tbName = PersistUtil.getTableName(entityClass);
 		StringBuilder tableNameBuilder = new StringBuilder(tbName);
 
 		Object shardingVal = criteria.getShardingVal();
-		List<FieldColumn> fcList = getPersistFieldList(entityClass);
+		List<PersistUtil.FieldCol> fcList = PersistUtil.getPersistFieldList(entityClass);
 		return new SQL() {{
-			for (FieldColumn fc: fcList) {
+			for (PersistUtil.FieldCol fc: fcList) {
 				Field field = fc.getField();
 				field.setAccessible(true);
 
@@ -119,7 +120,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 					if (shardingVal == null) {
 						throw new IllegalAccessException("'Sharding Value' is required.");
 					}
-					String shardingIndex = getShardingIndex(sharding, tbName, shardingVal);
+					String shardingIndex = PersistUtil.getShardingIndex(sharding, tbName, shardingVal);
 					if (shardingIndex != null) {
 						tableNameBuilder.append("_").append(shardingIndex);
 						/**

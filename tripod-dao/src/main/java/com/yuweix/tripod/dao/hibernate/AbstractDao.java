@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.yuweix.tripod.dao.PersistContext;
+import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import javax.annotation.Resource;
 import org.hibernate.Session;
@@ -22,9 +22,9 @@ import javax.persistence.Id;
 /**
  * @author yuwei
  */
-public abstract class AbstractDao<T extends Serializable, PK extends Serializable> extends PersistContext implements Dao<T, PK> {
-	private static final Map<Class<?>, FieldColumn> CLASS_PK_FIELD_MAP = new ConcurrentHashMap<>();
-	private static final Map<Class<?>, FieldColumn> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
+public abstract class AbstractDao<T extends Serializable, PK extends Serializable> extends PersistUtil implements Dao<T, PK> {
+	private static final Map<Class<?>, PersistUtil.FieldCol> CLASS_PK_FIELD_MAP = new ConcurrentHashMap<>();
+	private static final Map<Class<?>, PersistUtil.FieldCol> CLASS_SHARDING_FIELD_MAP = new ConcurrentHashMap<>();
 
 	private Class<T> clz;
 	private SessionFactory sessionFactory;
@@ -64,8 +64,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		}
 	}
 
-	private FieldColumn getPKFieldColumn() {
-		FieldColumn fc = CLASS_PK_FIELD_MAP.get(clz);
+	private PersistUtil.FieldCol getPKFieldColumn() {
+		PersistUtil.FieldCol fc = CLASS_PK_FIELD_MAP.get(clz);
 
 		if (fc == null) {
 			Field[] fields = clz.getDeclaredFields();
@@ -74,7 +74,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 				Id idAnn = field.getAnnotation(Id.class);
 				if (idAnn != null) {
 					Column col = field.getAnnotation(Column.class);
-					fc = new FieldColumn(col == null ? field.getName() : col.name(), field);
+					fc = new PersistUtil.FieldCol(col == null ? field.getName() : col.name(), field);
 					CLASS_PK_FIELD_MAP.put(clz, fc);
 					break;
 				}
@@ -82,8 +82,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		}
 		return fc;
 	}
-	private FieldColumn getShardingFieldColumn() {
-		FieldColumn fc = CLASS_SHARDING_FIELD_MAP.get(clz);
+	private PersistUtil.FieldCol getShardingFieldColumn() {
+		PersistUtil.FieldCol fc = CLASS_SHARDING_FIELD_MAP.get(clz);
 
 		if (fc == null) {
 			Field[] fields = clz.getDeclaredFields();
@@ -92,7 +92,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 				Sharding sAnn = field.getAnnotation(Sharding.class);
 				if (sAnn != null) {
 					Column col = field.getAnnotation(Column.class);
-					fc = new FieldColumn(col == null ? field.getName() : col.name(), field);
+					fc = new PersistUtil.FieldCol(col == null ? field.getName() : col.name(), field);
 					CLASS_SHARDING_FIELD_MAP.put(clz, fc);
 					break;
 				}
@@ -102,7 +102,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 	private Object getShardingVal(T t) {
 		Object shardingVal = null;
-		FieldColumn fc = getShardingFieldColumn();
+		PersistUtil.FieldCol fc = getShardingFieldColumn();
 		if (fc != null) {
 			try {
 				shardingVal = fc.getField().get(t);

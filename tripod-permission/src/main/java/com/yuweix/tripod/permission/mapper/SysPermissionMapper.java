@@ -1,6 +1,7 @@
 package com.yuweix.tripod.permission.mapper;
 
 
+import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.permission.model.SysPermission;
 import com.yuweix.tripod.dao.mybatis.BaseMapper;
 import com.yuweix.tripod.dao.mybatis.provider.AbstractProvider;
@@ -41,7 +42,7 @@ public interface SysPermissionMapper extends BaseMapper<SysPermission, Long> {
 			StringBuilder builder = new StringBuilder("");
 			builder.append("<script>");
 			builder.append(" select count(id) ");
-			builder.append(" from ").append(getTableName(SysPermission.class));
+			builder.append(" from ").append(PersistUtil.getTableName(SysPermission.class));
 			builder.append(" where 1 = 1 ");
 
 			if (idList != null) {
@@ -84,8 +85,8 @@ public interface SysPermissionMapper extends BaseMapper<SysPermission, Long> {
 
 			StringBuilder builder = new StringBuilder("");
 			builder.append("<script>");
-			builder.append(" select ").append(getAllColumnSql(SysPermission.class));
-			builder.append(" from ").append(getTableName(SysPermission.class));
+			builder.append(" select ").append(PersistUtil.getAllColumnSql(SysPermission.class));
+			builder.append(" from ").append(PersistUtil.getTableName(SysPermission.class));
 			builder.append(" where 1 = 1 ");
 
 			if (idList != null) {
@@ -124,8 +125,8 @@ public interface SysPermissionMapper extends BaseMapper<SysPermission, Long> {
 			String permNo = (String) param.get("permNo");
 
 			StringBuilder builder = new StringBuilder("");
-			builder.append("  select ").append(getAllColumnSql(SysPermission.class))
-					.append(" from ").append(getTableName(SysPermission.class))
+			builder.append("  select ").append(PersistUtil.getAllColumnSql(SysPermission.class))
+					.append(" from ").append(PersistUtil.getTableName(SysPermission.class))
 					.append(" where 1 = 1 ");
 			if (permNo != null && !"".equals(permNo.trim())) {
 				param.put("permNo", permNo.trim());

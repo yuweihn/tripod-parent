@@ -1,6 +1,7 @@
 package com.yuweix.tripod.permission.mapper;
 
 
+import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.permission.model.SysRole;
 import com.yuweix.tripod.dao.mybatis.BaseMapper;
 import com.yuweix.tripod.dao.mybatis.provider.AbstractProvider;
@@ -20,8 +21,8 @@ public interface SysRoleMapper extends BaseMapper<SysRole, Long> {
 	class Provider extends AbstractProvider {
 		public String queryRoleByNo(Map<String, Object> param) {
 			StringBuilder builder = new StringBuilder("");
-			builder.append("  select ").append(getAllColumnSql(SysRole.class))
-					.append(" from ").append(getTableName(SysRole.class))
+			builder.append("  select ").append(PersistUtil.getAllColumnSql(SysRole.class))
+					.append(" from ").append(PersistUtil.getTableName(SysRole.class))
 					.append(" where role_no = #{roleNo} ");
 			return builder.toString();
 		}

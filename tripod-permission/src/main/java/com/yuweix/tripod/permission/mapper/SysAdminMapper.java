@@ -1,6 +1,7 @@
 package com.yuweix.tripod.permission.mapper;
 
 
+import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.permission.model.SysAdmin;
 import com.yuweix.tripod.permission.model.SysAdminRoleRel;
 import com.yuweix.tripod.permission.model.SysRolePermissionRel;
@@ -37,8 +38,8 @@ public interface SysAdminMapper extends BaseMapper<SysAdmin, Long> {
 	class Provider extends AbstractProvider {
 		public String findAdminByAccountNo(Map<String, Object> param) {
 			StringBuilder builder = new StringBuilder("");
-			builder.append("  select ").append(getAllColumnSql(SysAdmin.class))
-					.append(" from ").append(getTableName(SysAdmin.class))
+			builder.append("  select ").append(PersistUtil.getAllColumnSql(SysAdmin.class))
+					.append(" from ").append(PersistUtil.getTableName(SysAdmin.class))
 					.append(" where account_no = #{accountNo} ");
 			return builder.toString();
 		}
@@ -46,16 +47,16 @@ public interface SysAdminMapper extends BaseMapper<SysAdmin, Long> {
 		public String hasPermission(Map<String, Object> param) {
 			StringBuilder builder = new StringBuilder("");
 			builder.append("  select count(a.id) > 0 ")
-					.append(" from ").append(getTableName(SysAdminRoleRel.class)).append(" a ")
-					.append(" inner join ").append(getTableName(SysRolePermissionRel.class)).append(" b on a.admin_id = #{adminId} and a.role_id = b.role_id and b.perm_id = #{permissionId} ");
+					.append(" from ").append(PersistUtil.getTableName(SysAdminRoleRel.class)).append(" a ")
+					.append(" inner join ").append(PersistUtil.getTableName(SysRolePermissionRel.class)).append(" b on a.admin_id = #{adminId} and a.role_id = b.role_id and b.perm_id = #{permissionId} ");
 			return builder.toString();
 		}
 
 		public String queryPermissionIdListByAdminId(Map<String, Object> param) {
 			StringBuilder builder = new StringBuilder("");
 			builder.append("  select distinct b.perm_id ")
-					.append(" from ").append(getTableName(SysAdminRoleRel.class)).append(" a ")
-					.append(" inner join ").append(getTableName(SysRolePermissionRel.class)).append(" b on a.admin_id = #{adminId} and a.role_id = b.role_id ");
+					.append(" from ").append(PersistUtil.getTableName(SysAdminRoleRel.class)).append(" a ")
+					.append(" inner join ").append(PersistUtil.getTableName(SysRolePermissionRel.class)).append(" b on a.admin_id = #{adminId} and a.role_id = b.role_id ");
 			return builder.toString();
 		}
 
@@ -64,8 +65,8 @@ public interface SysAdminMapper extends BaseMapper<SysAdmin, Long> {
 
 			StringBuilder builder = new StringBuilder("");
 			builder.append(" select count(distinct b.id) as cnt ");
-			builder.append(" from ").append(getTableName(SysAdminRoleRel.class)).append(" a ");
-			builder.append(" inner join ").append(getTableName(SysAdmin.class)).append(" b on a.admin_id = b.id ");
+			builder.append(" from ").append(PersistUtil.getTableName(SysAdminRoleRel.class)).append(" a ");
+			builder.append(" inner join ").append(PersistUtil.getTableName(SysAdmin.class)).append(" b on a.admin_id = b.id ");
 			builder.append(" where a.role_id = #{roleId} ");
 			if (keywords != null && !"".equals(keywords.trim())) {
 				param.put("keywords", "%" + keywords.trim() + "%");
@@ -80,9 +81,9 @@ public interface SysAdminMapper extends BaseMapper<SysAdmin, Long> {
 			Integer pageSize = (Integer) param.get("pageSize");
 
 			StringBuilder builder = new StringBuilder("");
-			builder.append(" select distinct ").append(getAllColumnSql(SysAdmin.class, "b"));
-			builder.append(" from ").append(getTableName(SysAdminRoleRel.class)).append(" a ");
-			builder.append(" inner join ").append(getTableName(SysAdmin.class)).append(" b on a.admin_id = b.id ");
+			builder.append(" select distinct ").append(PersistUtil.getAllColumnSql(SysAdmin.class, "b"));
+			builder.append(" from ").append(PersistUtil.getTableName(SysAdminRoleRel.class)).append(" a ");
+			builder.append(" inner join ").append(PersistUtil.getTableName(SysAdmin.class)).append(" b on a.admin_id = b.id ");
 			builder.append(" where a.role_id = #{roleId} ");
 			if (keywords != null && !"".equals(keywords.trim())) {
 				param.put("keywords", "%" + keywords.trim() + "%");
