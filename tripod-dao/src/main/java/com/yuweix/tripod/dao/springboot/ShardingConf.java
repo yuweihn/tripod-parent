@@ -44,7 +44,7 @@ public class ShardingConf {
 
 	@Bean
 	@ConfigurationProperties(prefix = "tripod.sharding", ignoreUnknownFields = true)
-	public H shardingTableHolder() {
+	public H shardingSettingHolder() {
 		return new H() {
 			private Map<String, Setting> databaseMap = new HashMap<>();
 			private Map<String, Setting> tableMap = new HashMap<>();
