@@ -1,9 +1,8 @@
 package com.yuweix.tripod.dao.springboot;
 
 
-import com.yuweix.tripod.dao.sharding.DatabaseConfig;
+import com.yuweix.tripod.dao.sharding.ShardSetting;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
-import com.yuweix.tripod.dao.sharding.TableConfig;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -17,23 +16,45 @@ import java.util.Map;
  */
 public class ShardingConf {
 	interface H {
-		Map<String, DatabaseConfig> getDatabases();
-		Map<String, TableConfig> getTables();
+		Map<String, ? extends ShardSetting> getDatabases();
+		Map<String, ? extends ShardSetting> getTables();
+	}
+	private static class Setting implements ShardSetting {
+		private int suffixLength = 4;
+		private int shardingSize = 2;
+
+		@Override
+		public int getSuffixLength() {
+			return suffixLength;
+		}
+
+		public void setSuffixLength(int suffixLength) {
+			this.suffixLength = suffixLength;
+		}
+
+		@Override
+		public int getShardingSize() {
+			return shardingSize;
+		}
+
+		public void setShardingSize(int shardingSize) {
+			this.shardingSize = shardingSize;
+		}
 	}
 
 	@Bean
 	@ConfigurationProperties(prefix = "tripod.sharding", ignoreUnknownFields = true)
 	public H shardingTableHolder() {
 		return new H() {
-			private Map<String, DatabaseConfig> databaseMap = new HashMap<>();
-			private Map<String, TableConfig> tableMap = new HashMap<>();
+			private Map<String, Setting> databaseMap = new HashMap<>();
+			private Map<String, Setting> tableMap = new HashMap<>();
 
 			@Override
-			public Map<String, DatabaseConfig> getDatabases() {
+			public Map<String, Setting> getDatabases() {
 				return databaseMap;
 			}
 			@Override
-			public Map<String, TableConfig> getTables() {
+			public Map<String, Setting> getTables() {
 				return tableMap;
 			}
 		};
@@ -42,11 +63,11 @@ public class ShardingConf {
 	@ConditionalOnMissingBean(ShardingContext.class)
 	@Bean(name = "shardingContext")
 	public ShardingContext shardingContext(H holder) {
-		Map<String, DatabaseConfig> databases = holder.getDatabases();
-		Map<String, TableConfig> tables = holder.getTables();
+		Map<String, ? extends ShardSetting> databases = holder.getDatabases();
+		Map<String, ? extends ShardSetting> tables = holder.getTables();
 		ShardingContext shardingContext = ShardingContext.getInstance();
-		shardingContext.initDatabaseConf(databases);
-		shardingContext.initTableConf(tables);
+		shardingContext.putSetting(databases);
+		shardingContext.putSetting(tables);
 		return shardingContext;
 	}
 }
