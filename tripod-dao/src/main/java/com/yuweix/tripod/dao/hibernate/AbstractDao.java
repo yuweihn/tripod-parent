@@ -16,7 +16,7 @@ import org.hibernate.SessionFactory;
 /**
  * @author yuwei
  */
-public abstract class AbstractDao<T extends Serializable, PK extends Serializable> extends PersistUtil implements Dao<T, PK> {
+public abstract class AbstractDao<T extends Serializable, PK extends Serializable> implements Dao<T, PK> {
 	private Class<T> clz;
 	private SessionFactory sessionFactory;
 
@@ -76,8 +76,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		if (shardingVal == null) {
 			return;
 		}
-		String srcTableName = this.getTableName(clz);
-		String destTableName = this.getPhysicalTableName(clz, shardingVal);
+		String srcTableName = PersistUtil.getTableName(clz);
+		String destTableName = PersistUtil.getPhysicalTableName(clz, shardingVal);
 		DynamicTableTL.set(srcTableName, destTableName);
 	}
 	protected void afterSharding() {
