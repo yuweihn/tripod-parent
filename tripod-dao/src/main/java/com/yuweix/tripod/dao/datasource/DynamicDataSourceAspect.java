@@ -50,9 +50,9 @@ public class DynamicDataSourceAspect {
          * 检查是否有{@link Database}注解，有则分库，无则将{@link logicDatabaseName}设为当前库
          */
         String targetDatabase = logicDatabaseName;
-        Object argObj = DatabaseHelper.getDatabaseArg(point);
-        if (argObj != null) {
-            targetDatabase = determinePhysicalDatabase(logicDatabaseName, DatabaseHelper.parse(argObj), strategy);
+        Object shardingVal = DatabaseHelper.getDatabaseArgValue(point);
+        if (shardingVal != null) {
+            targetDatabase = determinePhysicalDatabase(logicDatabaseName, shardingVal, strategy);
         }
 
         try {
