@@ -1,8 +1,12 @@
 package com.yuweix.tripod.dao.mybatis;
 
 
+import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.mybatis.order.OrderBy;
 import com.yuweix.tripod.dao.mybatis.where.Criteria;
+import com.yuweix.tripod.dao.sharding.Database;
+import com.yuweix.tripod.dao.sharding.Sharding;
+import com.yuweix.tripod.dao.sharding.Strategy;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -29,12 +33,36 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	protected abstract BaseMapper<T, PK> getMapper();
 
 	@Override
+	public Strategy getShardingStrategy() {
+		PersistUtil.FieldCol fieldCol = PersistUtil.getShardingFieldColumn(clz);
+		if (fieldCol == null) {
+			return null;
+		}
+		if (!fieldCol.getField().isAnnotationPresent(Sharding.class)) {
+			return null;
+		}
+		Sharding sharding = fieldCol.getField().getAnnotation(Sharding.class);
+		if (sharding == null) {
+			return null;
+		}
+		Class<? extends Strategy> strategyClz = sharding.strategy();
+		if (strategyClz == null) {
+			return null;
+		}
+		try {
+			return strategyClz.getDeclaredConstructor().newInstance();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@Override
 	public T get(PK id) {
 		return getMapper().selectOneById(id, clz);
 	}
 
 	@Override
-	public T get(PK id, Object shardingVal) {
+	public T get(PK id, @Database Object shardingVal) {
 		return getMapper().selectOneByIdSharding(id, shardingVal, clz);
 	}
 
