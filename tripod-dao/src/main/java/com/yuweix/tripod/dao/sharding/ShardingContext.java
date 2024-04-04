@@ -10,7 +10,8 @@ import java.util.Map;
  */
 public class ShardingContext {
 	private static final ShardingContext INSTANCE = new ShardingContext();
-	private final Map<String, ShardSetting> setting = new HashMap<>();
+	private final Map<String, ShardSetting> dbSetting = new HashMap<>();
+	private final Map<String, ShardSetting> tableSetting = new HashMap<>();
 
 	private ShardingContext() {
 
@@ -19,16 +20,30 @@ public class ShardingContext {
 		return INSTANCE;
 	}
 
-	public void putSetting(Map<String, ? extends ShardSetting> map) {
-		if (map != null) {
-			setting.putAll(map);
+	public void putDatabaseSetting(Map<String, ? extends ShardSetting> map) {
+		if (map == null) {
+			return;
 		}
+		dbSetting.putAll(map);
+	}
+	public void putTableSetting(Map<String, ? extends ShardSetting> map) {
+		if (map == null) {
+			return;
+		}
+		tableSetting.putAll(map);
 	}
 
 	/**
-	 * 根据逻辑库/表名获取配置
+	 * 根据逻辑库名获取配置
 	 */
-	public ShardSetting getShardSetting(String name) {
-		return setting.get(name);
+	public ShardSetting getShardDatabaseSetting(String dbName) {
+		return dbSetting.get(dbName);
+	}
+
+	/**
+	 * 根据逻辑表名获取配置
+	 */
+	public ShardSetting getShardSetting(String tableName) {
+		return tableSetting.get(tableName);
 	}
 }

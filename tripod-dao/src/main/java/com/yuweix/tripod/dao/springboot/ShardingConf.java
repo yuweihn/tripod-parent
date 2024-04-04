@@ -66,8 +66,8 @@ public class ShardingConf {
 		Map<String, ? extends ShardSetting> databases = holder.getDatabases();
 		Map<String, ? extends ShardSetting> tables = holder.getTables();
 		ShardingContext shardingContext = ShardingContext.getInstance();
-		shardingContext.putSetting(databases);
-		shardingContext.putSetting(tables);
+		shardingContext.putDatabaseSetting(databases);
+		shardingContext.putTableSetting(tables);
 		return shardingContext;
 	}
 }

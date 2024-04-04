@@ -63,7 +63,7 @@ public class DynamicDataSourceAspect {
         if (shardingVal == null || strategy == null) {
             return logicDatabaseName;
         }
-        return logicDatabaseName + "_" + strategy.getShardingIndex(logicDatabaseName, shardingVal);
+        return logicDatabaseName + "_" + strategy.getShardingDatabaseIndex(logicDatabaseName, shardingVal);
     }
 
     /**
