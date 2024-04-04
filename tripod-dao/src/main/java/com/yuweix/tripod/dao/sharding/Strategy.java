@@ -7,13 +7,16 @@ package com.yuweix.tripod.dao.sharding;
  * @author yuwei
  */
 public interface Strategy {
-    default ShardSetting getShardSetting(String logicName) {
-        return ShardingContext.getInstance().getShardSetting(logicName);
-    }
+    /**
+     * @param logicName                  逻辑库名
+     * @param shardingVal                分库字段的值
+     * @return   返回如：0000,0001等等
+     */
+    <T>String getShardingDatabaseIndex(String logicName, T shardingVal);
 
     /**
-     * @param logicName                  逻辑库/表名
-     * @param shardingVal                分库/表字段的值
+     * @param logicName                  逻辑表名
+     * @param shardingVal                分表字段的值
      * @return   返回如：0000,0001等等
      */
     <T>String getShardingIndex(String logicName, T shardingVal);
