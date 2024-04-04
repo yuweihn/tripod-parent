@@ -45,7 +45,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 
 	@Override
 	public Strategy getShardingStrategy() {
-		PersistUtil.FieldCol fieldCol = PersistUtil.getShardingFieldColumn(clz);
+		PersistUtil.FieldCol fieldCol = PersistUtil.getShardingFieldCol(clz);
 		if (fieldCol == null) {
 			return null;
 		}
@@ -84,7 +84,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 
 	private Object getShardingVal(T t) {
 		Object shardingVal = null;
-		PersistUtil.FieldCol fc = PersistUtil.getShardingFieldColumn(clz);
+		PersistUtil.FieldCol fc = PersistUtil.getShardingFieldCol(clz);
 		if (fc != null) {
 			try {
 				shardingVal = fc.getField().get(t);

@@ -60,7 +60,10 @@ public class DynamicDataSourceAspect {
     }
 
     private String determinePhysicalDatabase(String logicDatabaseName, Object shardingVal, Strategy strategy) {
-        return logicDatabaseName;
+        if (shardingVal == null || strategy == null) {
+            return logicDatabaseName;
+        }
+        return logicDatabaseName + "_" + strategy.getShardingIndex(logicDatabaseName, shardingVal);
     }
 
     /**
