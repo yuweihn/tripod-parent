@@ -36,11 +36,6 @@ public class DynamicDataSourceAspect {
         if (!(target instanceof Shardable)) {
             return point.proceed();
         }
-        Strategy strategy = ((Shardable) target).getShardingStrategy();
-        if (strategy == null) {
-            return point.proceed();
-        }
-
         DataSource annotation = getAnnotation(point, DataSource.class);
         if (annotation == null) {
             return point.proceed();
@@ -50,9 +45,9 @@ public class DynamicDataSourceAspect {
         /**
          * 检查是否有{@link Database}注解，有则分库，无则将{@link logicDatabaseName}设为当前库
          */
+        Strategy strategy = ((Shardable) target).getShardingStrategy();
         Object shardingVal = DatabaseHelper.getDatabaseArgValue(point);
         String physicalDatabase = determinePhysicalDatabase(logicDatabaseName, shardingVal, strategy);
-
         try {
             DataSourceContextHolder.setDataSource(physicalDatabase);
             return point.proceed();
