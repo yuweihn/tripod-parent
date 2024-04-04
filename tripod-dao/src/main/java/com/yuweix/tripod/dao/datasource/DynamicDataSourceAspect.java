@@ -2,6 +2,7 @@ package com.yuweix.tripod.dao.datasource;
 
 
 import com.yuweix.tripod.dao.sharding.Database;
+import com.yuweix.tripod.dao.sharding.DatabaseHelper;
 import com.yuweix.tripod.dao.sharding.Shardable;
 import com.yuweix.tripod.dao.sharding.Strategy;
 import org.aspectj.lang.JoinPoint;
@@ -49,7 +50,8 @@ public class DynamicDataSourceAspect {
         }
 
         try {
-            String physicalDatabase = determinePhysicalDatabase(logicDatabaseName, point.getArgs()[shardingValIndex], strategy);
+            String physicalDatabase = determinePhysicalDatabase(logicDatabaseName
+                    , DatabaseHelper.parse(point.getArgs()[shardingValIndex]), strategy);
             DataSourceContextHolder.setDataSource(physicalDatabase);
             return point.proceed();
         } finally {
