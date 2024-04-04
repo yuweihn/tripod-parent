@@ -8,11 +8,11 @@ package com.yuweix.tripod.dao.sharding;
 public class DefaultStrategy implements Strategy {
     @Override
     public <T>String getShardingIndex(String logicName, T shardingVal) {
-        ShardSetting conf = getShardSetting(logicName);
-        if (conf == null) {
+        ShardSetting setting = getShardSetting(logicName);
+        if (setting == null) {
             throw new RuntimeException("[" + logicName + "]'s sharding-conf is required.");
         }
-        return String.format("%0" + conf.getSuffixLength() + "d", hash(shardingVal) % conf.getShardingSize());
+        return String.format("%0" + setting.getSuffixLength() + "d", hash(shardingVal) % setting.getShardingSize());
     }
 
     private int hash(Object str) {
