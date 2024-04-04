@@ -1,6 +1,7 @@
 package com.yuweix.tripod.dao.datasource;
 
 
+import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.sharding.Database;
 import com.yuweix.tripod.dao.sharding.DatabaseHelper;
 import com.yuweix.tripod.dao.sharding.Shardable;
@@ -49,14 +50,11 @@ public class DynamicDataSourceAspect {
         /**
          * 检查是否有{@link Database}注解，有则分库，无则将{@link logicDatabaseName}设为当前库
          */
-        String targetDatabase = logicDatabaseName;
         Object shardingVal = DatabaseHelper.getDatabaseArgValue(point);
-        if (shardingVal != null) {
-            targetDatabase = determinePhysicalDatabase(logicDatabaseName, shardingVal, strategy);
-        }
+        String physicalDatabase = determinePhysicalDatabase(logicDatabaseName, shardingVal, strategy);
 
         try {
-            DataSourceContextHolder.setDataSource(targetDatabase);
+            DataSourceContextHolder.setDataSource(physicalDatabase);
             return point.proceed();
         } finally {
             DataSourceContextHolder.removeDataSource();
@@ -64,10 +62,11 @@ public class DynamicDataSourceAspect {
     }
 
     private String determinePhysicalDatabase(String logicDatabaseName, Object shardingVal, Strategy strategy) {
-        if (shardingVal == null || strategy == null) {
+        String dbIndex = PersistUtil.getShardingDatabaseIndex(strategy, logicDatabaseName, shardingVal);
+        if (dbIndex == null) {
             return logicDatabaseName;
         }
-        return logicDatabaseName + "_" + strategy.getShardingDatabaseIndex(logicDatabaseName, shardingVal);
+        return logicDatabaseName + "_" + dbIndex;
     }
 
     /**
