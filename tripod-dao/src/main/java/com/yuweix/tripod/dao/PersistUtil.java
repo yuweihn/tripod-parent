@@ -336,7 +336,7 @@ public abstract class PersistUtil {
 		}
 		return map;
 	}
-	public static FieldCol getPKFieldColumn(Class<?> clz) {
+	public static FieldCol getPKFieldCol(Class<?> clz) {
 		Map<Class<?>, FieldCol> map = getClassPkFieldMap();
 		FieldCol fc = map.get(clz);
 
@@ -368,7 +368,7 @@ public abstract class PersistUtil {
 		}
 		return map;
 	}
-	public static FieldCol getShardingFieldColumn(Class<?> clz) {
+	public static FieldCol getShardingFieldCol(Class<?> clz) {
 		Map<Class<?>, FieldCol> map = getClassShardingFieldMap();
 		FieldCol fc = map.get(clz);
 
