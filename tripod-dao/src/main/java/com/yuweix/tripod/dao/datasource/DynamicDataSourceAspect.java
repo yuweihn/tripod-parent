@@ -1,7 +1,6 @@
 package com.yuweix.tripod.dao.datasource;
 
 
-import com.yuweix.tripod.dao.sharding.Database;
 import com.yuweix.tripod.dao.sharding.DatabaseHelper;
 import com.yuweix.tripod.dao.sharding.Shardable;
 import com.yuweix.tripod.dao.sharding.Strategy;
@@ -14,7 +13,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 
 /**
@@ -47,14 +45,14 @@ public class DynamicDataSourceAspect {
         }
         String logicDatabaseName = annotation.value();
 
-        int shardingValIndex = getShardDatabaseAnnIndex(point);
-        if (shardingValIndex < 0) {
+        Object argObj = DatabaseHelper.getDatabaseArg(point);
+        if (argObj == null) {
             return point.proceed();
         }
 
         try {
             String physicalDatabase = determinePhysicalDatabase(logicDatabaseName
-                    , DatabaseHelper.parse(point.getArgs()[shardingValIndex]), strategy);
+                    , DatabaseHelper.parse(argObj), strategy);
             DataSourceContextHolder.setDataSource(physicalDatabase);
             return point.proceed();
         } finally {
@@ -67,24 +65,6 @@ public class DynamicDataSourceAspect {
             return logicDatabaseName;
         }
         return logicDatabaseName + "_" + strategy.getShardingDatabaseIndex(logicDatabaseName, shardingVal);
-    }
-
-    /**
-     * 在当前方法的参数中，获取到分库注解
-     * @return 返回注解在参数列表中的坐标
-     */
-    private int getShardDatabaseAnnIndex(ProceedingJoinPoint point) {
-        Method method = ((MethodSignature) point.getSignature()).getMethod();
-        Parameter[] params = method.getParameters();
-        if (params == null || params.length <= 0) {
-            return -1;
-        }
-        for (int i = 0, len = params.length; i < len; i++) {
-            if (params[i].isAnnotationPresent(Database.class)) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     /**
