@@ -11,6 +11,17 @@ import java.lang.reflect.Parameter;
 
 public abstract class DatabaseHelper {
     /**
+     * 获取含有{@link Database}注解的参数值
+     */
+    public static Object getDatabaseArgValue(ProceedingJoinPoint point) {
+        Object argObj = getDatabaseArg(point);
+        if (argObj == null) {
+            return null;
+        }
+        return parse(argObj);
+    }
+
+    /**
      * 获取含有{@link Database}注解的参数对象
      */
     public static Object getDatabaseArg(ProceedingJoinPoint point) {
