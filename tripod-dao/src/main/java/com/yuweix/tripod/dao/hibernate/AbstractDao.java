@@ -113,7 +113,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public void save(final T t) {
+	public void save(@Database final T t) {
 		try {
 			beforeSharding(t);
 			getSession().save(t);
@@ -123,7 +123,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public void update(final T t) {
+	public void update(@Database final T t) {
 		try {
 			beforeSharding(t);
 			getSession().update(t);
@@ -141,7 +141,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public void deleteByKey(PK id, Object shardingVal) {
+	public void deleteByKey(PK id, @Database Object shardingVal) {
 		final T t = get(id, shardingVal);
 		if (t != null) {
 			try {
