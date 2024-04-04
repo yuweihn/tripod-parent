@@ -48,9 +48,6 @@ public class DynamicDataSourceAspect {
             return point.proceed();
         }
 
-        Method method = ((MethodSignature) point.getSignature()).getMethod();
-        Parameter[] params = method.getParameters();
-
         try {
             String physicalDatabase = determinePhysicalDatabase(logicDatabaseName, point.getArgs()[shardingValIndex], strategy);
             DataSourceContextHolder.setDataSource(physicalDatabase);
