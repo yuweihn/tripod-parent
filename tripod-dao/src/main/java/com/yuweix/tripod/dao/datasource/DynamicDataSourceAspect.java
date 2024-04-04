@@ -37,6 +37,9 @@ public class DynamicDataSourceAspect {
             return point.proceed();
         }
         Strategy strategy = ((Shardable) target).getShardingStrategy();
+        if (strategy == null) {
+            return null;
+        }
 
         DataSource annotation = getAnnotation(point, DataSource.class);
         if (annotation == null) {
