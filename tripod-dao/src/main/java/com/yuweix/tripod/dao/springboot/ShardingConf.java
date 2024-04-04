@@ -60,14 +60,14 @@ public class ShardingConf {
 		};
 	}
 
+
 	@ConditionalOnMissingBean(ShardingContext.class)
 	@Bean(name = "shardingContext")
 	public ShardingContext shardingContext(H holder) {
 		Map<String, ? extends ShardSetting> databases = holder.getDatabases();
 		Map<String, ? extends ShardSetting> tables = holder.getTables();
-		ShardingContext shardingContext = ShardingContext.getInstance();
-		shardingContext.putDatabaseSetting(databases);
-		shardingContext.putTableSetting(tables);
-		return shardingContext;
+		ShardingContext.putDatabaseSetting(databases);
+		ShardingContext.putTableSetting(tables);
+		return null;
 	}
 }
