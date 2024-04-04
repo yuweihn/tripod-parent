@@ -295,6 +295,13 @@ public abstract class PersistUtil {
 		return strategy.getShardingIndex(tableName, shardingVal);
 	}
 
+	public static String getShardingDatabaseIndex(Strategy strategy, String dbName, Object shardingVal) {
+		if (strategy == null || shardingVal == null) {
+			return null;
+		}
+		return strategy.getShardingDatabaseIndex(dbName, shardingVal);
+	}
+
 	public static <T>String getPhysicalTableName(Class<T> entityClass, Object shardingVal) {
 		String tbName = getTableName(entityClass);
 		List<FieldCol> fcList = getPersistFieldList(entityClass);
