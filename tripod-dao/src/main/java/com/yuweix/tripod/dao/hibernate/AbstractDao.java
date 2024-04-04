@@ -115,7 +115,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	public void save(@Database final T t) {
 		try {
 			beforeSharding(t);
-			getSession().save(t);
+			getSession().persist(t);
 		} finally {
 			afterSharding();
 		}
@@ -125,7 +125,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	public void update(@Database final T t) {
 		try {
 			beforeSharding(t);
-			getSession().update(t);
+			getSession().merge(t);
 		} finally {
 			afterSharding();
 		}
@@ -135,7 +135,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	public void deleteByKey(PK id) {
 		final T t = get(id);
 		if (t != null) {
-			getSession().delete(t);
+			getSession().remove(t);
 		}
 	}
 
@@ -145,7 +145,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		if (t != null) {
 			try {
 				beforeSharding(t);
-				getSession().delete(t);
+				getSession().remove(t);
 			} finally {
 				afterSharding();
 			}
@@ -329,6 +329,6 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 	
 	public void delete(final T t) {
-		getSession().delete(t);
+		getSession().remove(t);
 	}
 }
