@@ -2,6 +2,7 @@ package com.yuweix.tripod.dao.mybatis;
 
 
 import com.yuweix.tripod.dao.PersistCache;
+import com.yuweix.tripod.dao.sharding.Database;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -52,7 +53,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	@Override
-	public T get(PK id, Object shardingVal) {
+	public T get(PK id, @Database Object shardingVal) {
 		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
 		T t = cache.get(key);
 		if (t != null) {
@@ -164,7 +165,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	protected abstract void onchange(T t);
 
 	@Override
-	public int insert(T t) {
+	public int insert(@Database T t) {
 		int n = getMapper().insert(t);
 		if (t != null) {
 			handleChange(t);
@@ -173,7 +174,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	@Override
-	public int insertSelective(T t) {
+	public int insertSelective(@Database T t) {
 		int n = getMapper().insertSelective(t);
 		if (t != null) {
 			handleChange(t);
@@ -182,7 +183,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	@Override
-	public int updateByPrimaryKey(T t) {
+	public int updateByPrimaryKey(@Database T t) {
 		PK id = getId(t);
 		Object shardingVal = getShardingVal(t);
 		T t0 = null;
@@ -203,7 +204,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(T t) {
+	public int updateByPrimaryKeySelective(@Database T t) {
 		PK id = getId(t);
 		Object shardingVal = getShardingVal(t);
 		T t0 = null;
@@ -224,7 +225,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	@Override
-	public int delete(T t) {
+	public int delete(@Database T t) {
 		int n = getMapper().delete(t);
 		if (t != null) {
 			handleChange(t);
@@ -242,7 +243,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	@Override
-	public int deleteByKey(PK id, Object shardingVal) {
+	public int deleteByKey(PK id, @Database Object shardingVal) {
 		T t = get(id, shardingVal);
 		if (t == null) {
 			return 0;

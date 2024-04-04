@@ -82,37 +82,37 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public int insert(T t) {
+	public int insert(@Database T t) {
 		return getMapper().insert(t);
 	}
 
 	@Override
-	public int insertSelective(T t) {
+	public int insertSelective(@Database T t) {
 		return getMapper().insertSelective(t);
 	}
 
 	@Override
-	public int updateByPrimaryKey(T t) {
+	public int updateByPrimaryKey(@Database T t) {
 		return getMapper().updateByPrimaryKey(t);
 	}
 
 	@Override
-	public int updateByPrimaryKeyExcludeVersion(T t) {
+	public int updateByPrimaryKeyExcludeVersion(@Database T t) {
 		return getMapper().updateByPrimaryKeyExcludeVersion(t);
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(T t) {
+	public int updateByPrimaryKeySelective(@Database T t) {
 		return getMapper().updateByPrimaryKeySelective(t);
 	}
 
 	@Override
-	public int updateByPrimaryKeySelectiveExcludeVersion(T t) {
+	public int updateByPrimaryKeySelectiveExcludeVersion(@Database T t) {
 		return getMapper().updateByPrimaryKeySelectiveExcludeVersion(t);
 	}
 
 	@Override
-	public int delete(T t) {
+	public int delete(@Database T t) {
 		return getMapper().delete(t);
 	}
 
@@ -122,7 +122,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public int deleteByKey(PK id, Object shardingVal) {
+	public int deleteByKey(PK id, @Database Object shardingVal) {
 		return getMapper().deleteByKeySharding(id, shardingVal, clz);
 	}
 }
