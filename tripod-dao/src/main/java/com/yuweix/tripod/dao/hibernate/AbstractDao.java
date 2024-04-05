@@ -10,7 +10,7 @@ import java.util.Map;
 import com.yuweix.tripod.dao.PersistUtil;
 import javax.annotation.Resource;
 
-import com.yuweix.tripod.dao.sharding.Database;
+import com.yuweix.tripod.dao.sharding.Shard;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import com.yuweix.tripod.dao.sharding.Strategy;
 import org.hibernate.Session;
@@ -74,26 +74,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public T get(PK id, @Database Object shardingVal) {
-		try {
-			beforeSharding(shardingVal);
-			return getSession().get(clz, id);
-		} finally {
-			afterSharding();
-		}
-	}
-
-	private Object getShardingVal(T t) {
-		Object shardingVal = null;
-		PersistUtil.FieldCol fc = PersistUtil.getShardingFieldCol(clz);
-		if (fc != null) {
-			try {
-				shardingVal = fc.getField().get(t);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return shardingVal;
+	public T get(PK id, @Shard Object shardingVal) {
+		return getSession().get(clz, id);
 	}
 
 	@Override
@@ -111,23 +93,13 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public void save(@Database final T t) {
-		try {
-			beforeSharding(getShardingVal(t));
-			getSession().save(t);
-		} finally {
-			afterSharding();
-		}
+	public void save(@Shard final T t) {
+		getSession().save(t);
 	}
 
 	@Override
-	public void update(@Database final T t) {
-		try {
-			beforeSharding(getShardingVal(t));
-			getSession().update(t);
-		} finally {
-			afterSharding();
-		}
+	public void update(@Shard final T t) {
+		getSession().update(t);
 	}
 
 	@Override
@@ -139,15 +111,10 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public void deleteByKey(PK id, @Database Object shardingVal) {
-		final T t = get(id, shardingVal);
+	public void deleteByKey(PK id, @Shard Object shardingVal) {
+		final T t = get(id);
 		if (t != null) {
-			try {
-				beforeSharding(getShardingVal(t));
-				getSession().delete(t);
-			} finally {
-				afterSharding();
-			}
+			getSession().delete(t);
 		}
 	}
 
