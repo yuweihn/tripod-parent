@@ -25,6 +25,9 @@ public class ShardAspect {
         }
 
         Object shardingVal = ShardAopUtil.getAnnotationArgVal(point, Shard.class, Sharding.class);
+        if (shardingVal == null) {
+            return point.proceed();
+        }
         Shardable shardable = (Shardable) target;
         try {
             shardable.beforeSharding(shardingVal);
