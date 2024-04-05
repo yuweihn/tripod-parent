@@ -53,7 +53,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	@Override
-	public T get(PK id, @Shard Object shardingVal) {
+	public T get(@Shard Object shardingVal, PK id) {
 		String key = getPkCacheKeyPre() + id + ".sharding." + shardingVal;
 		T t = cache.get(key);
 		if (t != null) {
@@ -243,8 +243,8 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	}
 
 	@Override
-	public int deleteByKey(PK id, @Shard Object shardingVal) {
-		T t = get(id, shardingVal);
+	public int deleteByKey(@Shard Object shardingVal, PK id) {
+		T t = get(shardingVal, id);
 		if (t == null) {
 			return 0;
 		}

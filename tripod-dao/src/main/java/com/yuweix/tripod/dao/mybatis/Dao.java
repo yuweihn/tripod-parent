@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface Dao<T extends Serializable, PK extends Serializable> extends Shardable {
 	T get(PK id);
-	T get(PK id, Object shardingVal);
+	T get(Object shardingVal, PK id);
 	
 	int findCount(Criteria criteria);
 	List<T> findList(Criteria criteria, OrderBy orderBy);
@@ -28,5 +28,5 @@ public interface Dao<T extends Serializable, PK extends Serializable> extends Sh
 	int updateByPrimaryKeySelectiveExcludeVersion(T t);
 	int delete(T t);
 	int deleteByKey(PK id);
-	int deleteByKey(PK id, Object shardingVal);
+	int deleteByKey(Object shardingVal, PK id);
 }

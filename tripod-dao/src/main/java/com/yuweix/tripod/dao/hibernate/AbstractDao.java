@@ -74,7 +74,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public T get(PK id, @Shard Object shardingVal) {
+	public T get(@Shard Object shardingVal, PK id) {
 		return getSession().get(clz, id);
 	}
 
@@ -111,7 +111,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public void deleteByKey(PK id, @Shard Object shardingVal) {
+	public void deleteByKey(@Shard Object shardingVal, PK id) {
 		final T t = get(id);
 		if (t != null) {
 			getSession().delete(t);
