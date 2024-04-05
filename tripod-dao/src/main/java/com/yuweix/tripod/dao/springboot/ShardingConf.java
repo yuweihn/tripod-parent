@@ -2,7 +2,7 @@ package com.yuweix.tripod.dao.springboot;
 
 
 import com.yuweix.tripod.dao.sharding.ShardAspect;
-import com.yuweix.tripod.dao.sharding.ShardSetting;
+import com.yuweix.tripod.dao.sharding.TableSetting;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -17,10 +17,10 @@ import java.util.Map;
  */
 public class ShardingConf {
 	interface H {
-		Map<String, ? extends ShardSetting> getDatabases();
-		Map<String, ? extends ShardSetting> getTables();
+		Map<String, ? extends TableSetting> getDatabases();
+		Map<String, ? extends TableSetting> getTables();
 	}
-	private static class Setting implements ShardSetting {
+	private static class Setting implements TableSetting {
 		private int suffixLength = 4;
 		private int shardingSize = 2;
 
@@ -65,8 +65,8 @@ public class ShardingConf {
 	@ConditionalOnMissingBean(ShardingContext.class)
 	@Bean(name = "shardingContext")
 	public ShardingContext shardingContext(H holder) {
-		Map<String, ? extends ShardSetting> databases = holder.getDatabases();
-		Map<String, ? extends ShardSetting> tables = holder.getTables();
+		Map<String, ? extends TableSetting> databases = holder.getDatabases();
+		Map<String, ? extends TableSetting> tables = holder.getTables();
 		ShardingContext.putDatabaseSetting(databases);
 		ShardingContext.putTableSetting(tables);
 		return null;
