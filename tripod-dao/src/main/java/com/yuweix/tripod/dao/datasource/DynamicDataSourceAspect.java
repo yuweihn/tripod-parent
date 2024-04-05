@@ -40,10 +40,10 @@ public class DynamicDataSourceAspect {
         String logicDatabaseName = annotation.value();
 
         /**
-         * 检查是否有{@link Database}注解，有则分库，无则将{@link logicDatabaseName}设为当前库
+         * 检查是否有{@link Shard}注解，有则分库，无则将{@link logicDatabaseName}设为当前库
          */
         Strategy strategy = ((Shardable) target).getShardingStrategy();
-        Object shardingVal = ShardAopUtil.getAnnotationArgVal(point, Database.class, Sharding.class);
+        Object shardingVal = ShardAopUtil.getAnnotationArgVal(point, Shard.class, Sharding.class);
         String physicalDatabase = determinePhysicalDatabase(logicDatabaseName, shardingVal, strategy);
         try {
             DataSourceContextHolder.setDataSource(physicalDatabase);
