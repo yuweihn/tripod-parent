@@ -1,6 +1,7 @@
 package com.yuweix.tripod.dao.springboot;
 
 
+import com.yuweix.tripod.dao.sharding.ShardAspect;
 import com.yuweix.tripod.dao.sharding.ShardSetting;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -68,5 +69,11 @@ public class ShardingConf {
 		ShardingContext.putDatabaseSetting(databases);
 		ShardingContext.putTableSetting(tables);
 		return null;
+	}
+
+	@ConditionalOnMissingBean(ShardAspect.class)
+	@Bean(name = "shardAspect")
+	public ShardAspect hbShardAspect() {
+		return new ShardAspect();
 	}
 }

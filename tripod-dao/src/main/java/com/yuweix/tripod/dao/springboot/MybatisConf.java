@@ -104,8 +104,7 @@ public class MybatisConf {
 	@Bean(name = "dynamicDataSource")
 	public DataSource dynamicDataSource(@Autowired(required = false) @Qualifier("dataSource") DataSource defaultDataSource
 			, @Value("${tripod.datasource.default.lenient:false}") boolean lenient
-			, @Qualifier("dataSources") Map<String, DataSource> dataSources
-			, @Autowired(required = false) ShardingContext shardingContext) {
+			, @Qualifier("dataSources") Map<String, DataSource> dataSources) {
 		if (dataSources == null) {
 			dataSources = new HashMap<>();
 		}
@@ -136,6 +135,7 @@ public class MybatisConf {
 	@ConditionalOnMissingBean(SqlSessionFactory.class)
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactoryBean sqlSessionFactoryBean(@Autowired DataSource dataSource
+			, @Autowired(required = false) ShardingContext shardingContext
 			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
 		SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource);

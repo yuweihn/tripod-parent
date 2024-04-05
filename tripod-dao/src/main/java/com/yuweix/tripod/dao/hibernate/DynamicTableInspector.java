@@ -16,10 +16,10 @@ public class DynamicTableInspector implements StatementInspector {
 	@Override
 	public String inspect(String sql) {
 		final String srcName = DynamicTableTL.getSrcName();
-		final String destName = DynamicTableTL.getDestName();
-		if (srcName == null || destName == null) {
+		final String targetName = DynamicTableTL.getDestName();
+		if (srcName == null || targetName == null) {
 			return sql;
 		}
-		return sql.replaceAll(srcName, destName);
+		return sql.replaceAll(srcName, targetName);
 	}
 }
