@@ -118,6 +118,11 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		}
 	}
 
+	@Override
+	public void delete(@Shard final T t) {
+		getSession().remove(t);
+	}
+
 
 
 
@@ -292,9 +297,5 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 */
 	protected int execute(String sql) {
 		return execute(sql, (Object[]) null);
-	}
-
-	public void delete(final T t) {
-		getSession().remove(t);
 	}
 }
