@@ -62,7 +62,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public T get(PK id, @Shard Object shardingVal) {
+	public T get(@Shard Object shardingVal, PK id) {
 		return getMapper().selectOneByIdSharding(id, shardingVal, clz);
 	}
 
@@ -122,7 +122,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public int deleteByKey(PK id, @Shard Object shardingVal) {
+	public int deleteByKey(@Shard Object shardingVal, PK id) {
 		return getMapper().deleteByKeySharding(id, shardingVal, clz);
 	}
 }
