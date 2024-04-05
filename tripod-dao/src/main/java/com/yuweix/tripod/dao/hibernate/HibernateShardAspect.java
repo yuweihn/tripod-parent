@@ -1,6 +1,7 @@
 package com.yuweix.tripod.dao.hibernate;
 
 
+import com.yuweix.tripod.dao.sharding.ShardParam;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -38,9 +39,13 @@ public class HibernateShardAspect {
         }
     }
 
+    /**
+     * @param point
+     * @return
+     */
     private Object parseShardingVal(ProceedingJoinPoint point) {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
-        HibernateShard hShard = method.getAnnotation(HibernateShard.class);
+        ShardParam hShard = method.getAnnotation(ShardParam.class);
 
         int idx = -1;
         String shardParamName = hShard.value();
