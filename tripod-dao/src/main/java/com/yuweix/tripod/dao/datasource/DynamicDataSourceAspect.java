@@ -3,7 +3,7 @@ package com.yuweix.tripod.dao.datasource;
 
 import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.sharding.Database;
-import com.yuweix.tripod.dao.sharding.DatabaseHelper;
+import com.yuweix.tripod.dao.sharding.ShardUtil;
 import com.yuweix.tripod.dao.sharding.Shardable;
 import com.yuweix.tripod.dao.sharding.Strategy;
 import org.aspectj.lang.JoinPoint;
@@ -46,7 +46,7 @@ public class DynamicDataSourceAspect {
          * 检查是否有{@link Database}注解，有则分库，无则将{@link logicDatabaseName}设为当前库
          */
         Strategy strategy = ((Shardable) target).getShardingStrategy();
-        Object shardingVal = DatabaseHelper.getDatabaseArgValue(point);
+        Object shardingVal = ShardUtil.getDatabaseArgValue(point);
         String physicalDatabase = determinePhysicalDatabase(logicDatabaseName, shardingVal, strategy);
         try {
             DataSourceContextHolder.setDataSource(physicalDatabase);

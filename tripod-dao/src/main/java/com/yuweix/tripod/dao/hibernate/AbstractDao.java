@@ -95,11 +95,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		return shardingVal;
 	}
 
-	protected void beforeSharding(T t) {
-		Object shardingVal = getShardingVal(t);
-		beforeSharding(shardingVal);
-	}
-	protected void beforeSharding(Object shardingVal) {
+	@Override
+	public void beforeSharding(Object shardingVal) {
 		if (shardingVal == null) {
 			return;
 		}
@@ -107,14 +104,15 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		String targetTableName = PersistUtil.getPhysicalTableName(clz, shardingVal);
 		DynamicTableTL.set(srcTableName, targetTableName);
 	}
-	protected void afterSharding() {
+	@Override
+	public void afterSharding() {
 		DynamicTableTL.remove();
 	}
 
 	@Override
 	public void save(@Database final T t) {
 		try {
-			beforeSharding(t);
+			beforeSharding(getShardingVal(t));
 			getSession().persist(t);
 		} finally {
 			afterSharding();
@@ -124,7 +122,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	@Override
 	public void update(@Database final T t) {
 		try {
-			beforeSharding(t);
+			beforeSharding(getShardingVal(t));
 			getSession().merge(t);
 		} finally {
 			afterSharding();
@@ -144,7 +142,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		final T t = get(id, shardingVal);
 		if (t != null) {
 			try {
-				beforeSharding(t);
+				beforeSharding(getShardingVal(t));
 				getSession().remove(t);
 			} finally {
 				afterSharding();

@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 
-public abstract class DatabaseHelper {
+public abstract class ShardUtil {
     /**
      * 获取含有{@link Database}注解的参数值
      */

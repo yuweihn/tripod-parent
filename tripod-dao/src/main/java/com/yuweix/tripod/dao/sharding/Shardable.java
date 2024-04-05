@@ -7,4 +7,10 @@ package com.yuweix.tripod.dao.sharding;
  */
 public interface Shardable {
     Strategy getShardingStrategy();
+    default void beforeSharding(Object shardingVal) {
+
+    }
+    default void afterSharding() {
+
+    }
 }
