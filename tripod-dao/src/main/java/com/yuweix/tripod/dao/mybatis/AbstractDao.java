@@ -4,7 +4,7 @@ package com.yuweix.tripod.dao.mybatis;
 import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.mybatis.order.OrderBy;
 import com.yuweix.tripod.dao.mybatis.where.Criteria;
-import com.yuweix.tripod.dao.sharding.Database;
+import com.yuweix.tripod.dao.sharding.Shard;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import com.yuweix.tripod.dao.sharding.Strategy;
 
@@ -62,7 +62,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public T get(PK id, @Database Object shardingVal) {
+	public T get(PK id, @Shard Object shardingVal) {
 		return getMapper().selectOneByIdSharding(id, shardingVal, clz);
 	}
 
@@ -82,37 +82,37 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public int insert(@Database T t) {
+	public int insert(@Shard T t) {
 		return getMapper().insert(t);
 	}
 
 	@Override
-	public int insertSelective(@Database T t) {
+	public int insertSelective(@Shard T t) {
 		return getMapper().insertSelective(t);
 	}
 
 	@Override
-	public int updateByPrimaryKey(@Database T t) {
+	public int updateByPrimaryKey(@Shard T t) {
 		return getMapper().updateByPrimaryKey(t);
 	}
 
 	@Override
-	public int updateByPrimaryKeyExcludeVersion(@Database T t) {
+	public int updateByPrimaryKeyExcludeVersion(@Shard T t) {
 		return getMapper().updateByPrimaryKeyExcludeVersion(t);
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(@Database T t) {
+	public int updateByPrimaryKeySelective(@Shard T t) {
 		return getMapper().updateByPrimaryKeySelective(t);
 	}
 
 	@Override
-	public int updateByPrimaryKeySelectiveExcludeVersion(@Database T t) {
+	public int updateByPrimaryKeySelectiveExcludeVersion(@Shard T t) {
 		return getMapper().updateByPrimaryKeySelectiveExcludeVersion(t);
 	}
 
 	@Override
-	public int delete(@Database T t) {
+	public int delete(@Shard T t) {
 		return getMapper().delete(t);
 	}
 
@@ -122,7 +122,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public int deleteByKey(PK id, @Database Object shardingVal) {
+	public int deleteByKey(PK id, @Shard Object shardingVal) {
 		return getMapper().deleteByKeySharding(id, shardingVal, clz);
 	}
 }
