@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.yuweix.tripod.dao.PersistUtil;
-import com.yuweix.tripod.dao.sharding.Database;
+import javax.annotation.Resource;
+
+import com.yuweix.tripod.dao.sharding.Shard;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import com.yuweix.tripod.dao.sharding.Strategy;
-import jakarta.annotation.Resource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -73,26 +74,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public T get(PK id, @Database Object shardingVal) {
-		try {
-			beforeSharding(shardingVal);
-			return getSession().get(clz, id);
-		} finally {
-			afterSharding();
-		}
-	}
-
-	private Object getShardingVal(T t) {
-		Object shardingVal = null;
-		PersistUtil.FieldCol fc = PersistUtil.getShardingFieldCol(clz);
-		if (fc != null) {
-			try {
-				shardingVal = fc.getField().get(t);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return shardingVal;
+	public T get(PK id, @Shard Object shardingVal) {
+		return getSession().get(clz, id);
 	}
 
 	@Override
@@ -110,23 +93,13 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public void save(@Database final T t) {
-		try {
-			beforeSharding(getShardingVal(t));
-			getSession().persist(t);
-		} finally {
-			afterSharding();
-		}
+	public void save(@Shard final T t) {
+		getSession().persist(t);
 	}
 
 	@Override
-	public void update(@Database final T t) {
-		try {
-			beforeSharding(getShardingVal(t));
-			getSession().merge(t);
-		} finally {
-			afterSharding();
-		}
+	public void update(@Shard final T t) {
+		getSession().merge(t);
 	}
 
 	@Override
@@ -138,15 +111,10 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public void deleteByKey(PK id, @Database Object shardingVal) {
-		final T t = get(id, shardingVal);
+	public void deleteByKey(PK id, @Shard Object shardingVal) {
+		final T t = get(id);
 		if (t != null) {
-			try {
-				beforeSharding(getShardingVal(t));
-				getSession().remove(t);
-			} finally {
-				afterSharding();
-			}
+			getSession().remove(t);
 		}
 	}
 
@@ -325,7 +293,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	protected int execute(String sql) {
 		return execute(sql, (Object[]) null);
 	}
-	
+
 	public void delete(final T t) {
 		getSession().remove(t);
 	}
