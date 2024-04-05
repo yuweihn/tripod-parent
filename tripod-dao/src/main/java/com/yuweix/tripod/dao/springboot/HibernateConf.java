@@ -5,7 +5,6 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
 import com.yuweix.tripod.dao.hibernate.DynamicTableInspector;
-import com.yuweix.tripod.dao.hibernate.HibernateShardAspect;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,8 +96,7 @@ public class HibernateConf {
 	@Bean(name = "dynamicDataSource")
 	public DataSource dynamicDataSource(@Autowired(required = false) @Qualifier("dataSource") DataSource defaultDataSource
 			, @Value("${tripod.datasource.default.lenient:false}") boolean lenient
-			, @Qualifier("dataSources") Map<String, DataSource> dataSources
-			, @Autowired(required = false) ShardingContext shardingContext) {
+			, @Qualifier("dataSources") Map<String, DataSource> dataSources) {
 		if (dataSources == null) {
 			dataSources = new HashMap<>();
 		}
@@ -131,6 +129,7 @@ public class HibernateConf {
 	public LocalSessionFactoryBean localSessionFactoryBean(@Autowired DataSource dataSource
 			, @Qualifier("mappingLocations") Resource[] mappingLocations
 			, @Qualifier("packagesToScan") String[] packagesToScan
+			, @Autowired(required = false) ShardingContext shardingContext
 			, @Value("${tripod.hibernate.dialect:}") String dialect
 			, @Value("${tripod.hibernate.current-session-context-class:}") String sessionContext
 			, @Value("${tripod.hibernate.cache.region.factory-class:}") String cacheRegionFactory
@@ -187,11 +186,5 @@ public class HibernateConf {
 		HibernateTransactionManager transactionManager = new HibernateTransactionManager();
 		transactionManager.setSessionFactory(sessionFactory);
 		return transactionManager;
-	}
-
-	@ConditionalOnMissingBean(HibernateShardAspect.class)
-	@Bean(name = "hbShardAspect")
-	public HibernateShardAspect hbShardAspect() {
-		return new HibernateShardAspect();
 	}
 }

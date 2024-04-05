@@ -4,27 +4,26 @@ package com.yuweix.tripod.dao.sharding;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 
-public abstract class ShardUtil {
-    /**
-     * 获取含有{@link Database}注解的参数值
-     */
-    public static Object getDatabaseArgValue(ProceedingJoinPoint point) {
-        Object argObj = getDatabaseArg(point);
+public abstract class ShardAopUtil {
+    public static Object getAnnotationArgVal(ProceedingJoinPoint point
+            , Class<? extends Annotation> paramAnnClz, Class<? extends Annotation> fieldAnnClz) {
+        Object argObj = getAnnotationArg(point, paramAnnClz);
         if (argObj == null) {
             return null;
         }
-        return parse(argObj);
+        return parseAnnotationVal(argObj, fieldAnnClz);
     }
 
     /**
-     * 获取含有{@link Database}注解的参数对象
+     * 获取含有指定注解的参数对象
      */
-    public static Object getDatabaseArg(ProceedingJoinPoint point) {
+    public static Object getAnnotationArg(ProceedingJoinPoint point, Class<? extends Annotation> clz) {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         Parameter[] params = method.getParameters();
         if (params == null || params.length <= 0) {
@@ -32,7 +31,7 @@ public abstract class ShardUtil {
         }
         int idx = -1;
         for (int i = 0, len = params.length; i < len; i++) {
-            if (params[i].isAnnotationPresent(Database.class)) {
+            if (params[i].isAnnotationPresent(clz)) {
                 idx = i;
                 break;
             }
@@ -44,11 +43,9 @@ public abstract class ShardUtil {
     }
 
     /**
-     * 检查入参，如果包含某个属性，该属性有{@link Sharding}注解，则返回该属性的值
-     * @param obj
-     * @return
+     * 检查入参对象所属类型中含有指定注解的属性的值，如果没有符合条件的数据，返回入参本身。
      */
-    public static Object parse(Object obj) {
+    public static Object parseAnnotationVal(Object obj, Class<? extends Annotation> clz) {
         if (obj == null) {
             return null;
         }
@@ -57,7 +54,7 @@ public abstract class ShardUtil {
             return obj;
         }
         for (Field field: fields) {
-            if (field.isAnnotationPresent(Sharding.class)) {
+            if (field.isAnnotationPresent(clz)) {
                 try {
                     field.setAccessible(true);
                     return field.get(obj);
