@@ -95,14 +95,14 @@ public class MybatisConf {
 		return null;
 	}
 
-	@ConditionalOnMissingBean(DynamicDataSourceAspect.class)
+	@ConditionalOnMissingBean(name = "dynamicDataSourceAspect")
 	@Bean(name = "dynamicDataSourceAspect")
 	public DynamicDataSourceAspect dynamicDataSourceAspect() {
 		return new DynamicDataSourceAspect();
 	}
 
 	@Primary
-	@ConditionalOnMissingBean(DynamicDataSource.class)
+	@ConditionalOnMissingBean(name = "dynamicDataSource")
 	@Bean(name = "dynamicDataSource")
 	public DataSource dynamicDataSource(@Autowired(required = false) @Qualifier("dataSource") DataSource defaultDataSource
 			, @Value("${tripod.datasource.default.lenient:false}") boolean lenient

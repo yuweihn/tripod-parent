@@ -90,7 +90,7 @@ public class ShardingConf {
 		};
 	}
 
-	@ConditionalOnMissingBean(ShardingContext.class)
+	@ConditionalOnMissingBean(name = "shardingContext")
 	@Bean(name = "shardingContext")
 	public ShardingContext shardingContext(H holder) {
 		Map<String, ? extends DatabaseSetting> databases = holder.getDatabases();
@@ -100,7 +100,7 @@ public class ShardingConf {
 		return null;
 	}
 
-	@ConditionalOnMissingBean(DynamicTableAspect.class)
+	@ConditionalOnMissingBean(name = "dynamicTableAspect")
 	@Bean(name = "dynamicTableAspect")
 	public DynamicTableAspect dynamicTableAspect() {
 		return new DynamicTableAspect();
