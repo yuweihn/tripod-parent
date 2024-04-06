@@ -11,7 +11,7 @@ import org.aspectj.lang.annotation.Pointcut;
  * @author yuwei
  */
 @Aspect
-public class ShardAspect {
+public class DynamicTableAspect {
     @Pointcut("execution(public * com.yuweix.tripod.dao.sharding.Shardable+.*(..))")
     public void pointcut() {
 

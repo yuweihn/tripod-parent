@@ -4,7 +4,6 @@ package com.yuweix.tripod.dao.mybatis;
 import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.mybatis.order.OrderBy;
 import com.yuweix.tripod.dao.mybatis.where.Criteria;
-import com.yuweix.tripod.dao.sharding.DynamicTableTL;
 import com.yuweix.tripod.dao.sharding.Shard;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import com.yuweix.tripod.dao.sharding.Strategy;
@@ -34,8 +33,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	protected abstract BaseMapper<T, PK> getMapper();
 
 	@Override
-	public String getLogicTableName() {
-		return PersistUtil.getTableName(clz);
+	public Class<?> getPersistClz() {
+		return clz;
 	}
 
 	@Override
@@ -60,20 +59,6 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Override
-	public void beforeSharding(Object shardingVal) {
-		if (shardingVal == null) {
-			return;
-		}
-		String srcTableName = PersistUtil.getTableName(clz);
-		String targetTableName = PersistUtil.getPhysicalTableName(clz, shardingVal);
-		DynamicTableTL.set(srcTableName, targetTableName);
-	}
-	@Override
-	public void afterSharding() {
-		DynamicTableTL.remove();
 	}
 
 	@Override
