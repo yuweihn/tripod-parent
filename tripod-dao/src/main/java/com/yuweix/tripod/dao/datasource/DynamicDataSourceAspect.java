@@ -2,7 +2,6 @@ package com.yuweix.tripod.dao.datasource;
 
 
 import com.yuweix.tripod.dao.PersistUtil;
-import com.yuweix.tripod.dao.mybatis.SQLInterceptor;
 import com.yuweix.tripod.dao.sharding.*;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -22,7 +21,7 @@ import java.lang.reflect.Method;
  */
 @Aspect
 public class DynamicDataSourceAspect {
-    private static final Logger log = LoggerFactory.getLogger(SQLInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(DynamicDataSourceAspect.class);
 
     /**
      * 切点表达式
