@@ -1,8 +1,7 @@
 package com.yuweix.tripod.dao;
 
 
-import com.yuweix.tripod.dao.sharding.Sharding;
-import com.yuweix.tripod.dao.sharding.Strategy;
+import com.yuweix.tripod.dao.sharding.*;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -292,14 +291,19 @@ public abstract class PersistUtil {
 			}
 			map.put(strategyClz, strategy);
 		}
-		return strategy.getShardingIndex(tableName, shardingVal);
+		return getShardingIndex(strategy, tableName, shardingVal);
 	}
-
-	public static String getShardingDatabaseIndex(Strategy strategy, String dbName, Object shardingVal) {
+	public static String getShardingIndex(Strategy strategy, String tableName, Object shardingVal) {
 		if (strategy == null || shardingVal == null) {
 			return null;
 		}
-		return strategy.getShardingDatabaseIndex(dbName, shardingVal);
+		return strategy.getShardingIndex(tableName, shardingVal);
+	}
+	public static String getShardingDatabaseIndex(Strategy strategy, String databaseName, String tableName, Object shardingVal) {
+		if (strategy == null || shardingVal == null) {
+			return null;
+		}
+		return strategy.getShardingDatabaseIndex(databaseName, tableName, shardingVal);
 	}
 
 	public static <T>String getPhysicalTableName(Class<T> entityClass, Object shardingVal) {
