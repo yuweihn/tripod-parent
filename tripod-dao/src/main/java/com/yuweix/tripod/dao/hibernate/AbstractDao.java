@@ -10,7 +10,6 @@ import java.util.Map;
 import com.yuweix.tripod.dao.PersistUtil;
 import javax.annotation.Resource;
 
-import com.yuweix.tripod.dao.sharding.DynamicTableTL;
 import com.yuweix.tripod.dao.sharding.Shard;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import com.yuweix.tripod.dao.sharding.Strategy;
@@ -46,8 +45,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public String getLogicTableName() {
-		return PersistUtil.getTableName(clz);
+	public Class<?> getPersistClz() {
+		return clz;
 	}
 
 	@Override
@@ -82,20 +81,6 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	@Override
 	public T get(@Shard Object shardingVal, PK id) {
 		return getSession().get(clz, id);
-	}
-
-	@Override
-	public void beforeSharding(Object shardingVal) {
-		if (shardingVal == null) {
-			return;
-		}
-		String srcTableName = PersistUtil.getTableName(clz);
-		String targetTableName = PersistUtil.getPhysicalTableName(clz, shardingVal);
-		DynamicTableTL.set(srcTableName, targetTableName);
-	}
-	@Override
-	public void afterSharding() {
-		DynamicTableTL.remove();
 	}
 
 	@Override

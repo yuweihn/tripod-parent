@@ -2,7 +2,7 @@ package com.yuweix.tripod.dao.springboot;
 
 
 import com.yuweix.tripod.dao.sharding.DatabaseSetting;
-import com.yuweix.tripod.dao.sharding.ShardAspect;
+import com.yuweix.tripod.dao.sharding.DynamicTableAspect;
 import com.yuweix.tripod.dao.sharding.TableSetting;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -95,9 +95,9 @@ public class ShardingConf {
 		return null;
 	}
 
-	@ConditionalOnMissingBean(ShardAspect.class)
-	@Bean(name = "shardAspect")
-	public ShardAspect hbShardAspect() {
-		return new ShardAspect();
+	@ConditionalOnMissingBean(DynamicTableAspect.class)
+	@Bean(name = "dynamicTableAspect")
+	public DynamicTableAspect dynamicTableAspect() {
+		return new DynamicTableAspect();
 	}
 }
