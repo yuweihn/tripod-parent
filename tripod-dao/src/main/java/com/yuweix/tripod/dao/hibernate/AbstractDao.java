@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.yuweix.tripod.dao.PersistUtil;
-import javax.annotation.Resource;
 
 import com.yuweix.tripod.dao.sharding.Shard;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import com.yuweix.tripod.dao.sharding.Strategy;
+import jakarta.annotation.Resource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
