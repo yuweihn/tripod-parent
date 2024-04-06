@@ -7,7 +7,6 @@ package com.yuweix.tripod.dao.sharding;
  * @author yuwei
  */
 public interface Strategy {
-
     /**
      * @param databaseName               逻辑库名
      * @param tableName                  逻辑表名
