@@ -48,12 +48,17 @@ public class ShardingConf {
 		}
 
 		/**
-		 * 如：2,4表示2库4表
+		 * 如：2表示1库2表；2,4表示2库4表
 		 */
 		public void setShardingSize(String shardingSize) {
 			String[] arr = shardingSize.split(",");
-			this.databaseSize = Integer.parseInt(arr[0].trim());
-			this.tableSize = Integer.parseInt(arr[1].trim());
+			if (arr.length == 1) {
+				this.databaseSize = 1;
+				this.tableSize = Integer.parseInt(arr[0].trim());
+			} else {
+				this.databaseSize = Integer.parseInt(arr[0].trim());
+				this.tableSize = Integer.parseInt(arr[1].trim());
+			}
 		}
 
 		@Override
