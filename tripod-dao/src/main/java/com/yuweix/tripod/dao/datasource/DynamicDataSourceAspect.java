@@ -2,6 +2,7 @@ package com.yuweix.tripod.dao.datasource;
 
 
 import com.yuweix.tripod.dao.PersistUtil;
+import com.yuweix.tripod.dao.mybatis.SQLInterceptor;
 import com.yuweix.tripod.dao.sharding.*;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -9,6 +10,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -19,6 +22,8 @@ import java.lang.reflect.Method;
  */
 @Aspect
 public class DynamicDataSourceAspect {
+    private static final Logger log = LoggerFactory.getLogger(SQLInterceptor.class);
+
     /**
      * 切点表达式
      */
@@ -47,6 +52,7 @@ public class DynamicDataSourceAspect {
         String physicalDatabase = determinePhysicalDatabase(logicDatabaseName
                 , PersistUtil.getTableName(shardable.getPersistClz()), shardingVal, shardable.getShardingStrategy());
         try {
+            log.info("Database Name: {}", physicalDatabase);
             DataSourceContextHolder.setDataSource(physicalDatabase);
             return point.proceed();
         } finally {
