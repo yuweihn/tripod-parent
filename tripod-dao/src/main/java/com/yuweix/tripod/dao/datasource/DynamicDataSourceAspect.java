@@ -42,9 +42,9 @@ public class DynamicDataSourceAspect {
         /**
          * 检查是否有{@link Shard}注解，有则分库，无则将{@link logicDatabaseName}设为当前库
          */
-        Strategy strategy = ((Shardable) target).getShardingStrategy();
+        Shardable shardable = ((Shardable) target);
         Object shardingVal = ShardAopUtil.getAnnotationArgVal(point, Shard.class, Sharding.class);
-        String physicalDatabase = determinePhysicalDatabase(logicDatabaseName, shardingVal, strategy);
+        String physicalDatabase = determinePhysicalDatabase(logicDatabaseName, shardable.getLogicTableName(), shardingVal, shardable.getShardingStrategy());
         try {
             DataSourceContextHolder.setDataSource(physicalDatabase);
             return point.proceed();
@@ -53,8 +53,8 @@ public class DynamicDataSourceAspect {
         }
     }
 
-    private String determinePhysicalDatabase(String logicDatabaseName, Object shardingVal, Strategy strategy) {
-        String dbIndex = PersistUtil.getShardingDatabaseIndex(strategy, logicDatabaseName, shardingVal);
+    private String determinePhysicalDatabase(String logicDatabaseName, String logicTableName, Object shardingVal, Strategy strategy) {
+        String dbIndex = PersistUtil.getShardingDatabaseIndex(strategy, logicDatabaseName, logicTableName, shardingVal);
         if (dbIndex == null) {
             return logicDatabaseName;
         }

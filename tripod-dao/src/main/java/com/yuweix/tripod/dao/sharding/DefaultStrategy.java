@@ -7,21 +7,25 @@ package com.yuweix.tripod.dao.sharding;
  */
 public class DefaultStrategy implements Strategy {
     @Override
-    public <T> String getShardingDatabaseIndex(String logicName, T shardingVal) {
-        TableSetting setting = ShardingContext.getShardDatabaseSetting(logicName);
-        if (setting == null) {
-            throw new RuntimeException("[" + logicName + "]'s sharding-conf is required.");
+    public <T>String getShardingDatabaseIndex(String databaseName, String tableName, T shardingVal) {
+        DatabaseSetting dsetting = ShardingContext.getShardDatabaseSetting(databaseName);
+        if (dsetting == null) {
+            throw new RuntimeException("[" + databaseName + "]'s sharding-conf is required.");
         }
-        return String.format("%0" + setting.getSuffixLength() + "d", hash(shardingVal) % setting.getShardingSize());
+        TableSetting tsetting = ShardingContext.getShardSetting(tableName);
+        if (tsetting == null) {
+            throw new RuntimeException("[" + tableName + "]'s sharding-conf is required.");
+        }
+        return String.format("%0" + dsetting.getSuffixLength() + "d", hash(shardingVal) % tsetting.getDatabaseSize());
     }
 
     @Override
-    public <T>String getShardingIndex(String logicName, T shardingVal) {
-        TableSetting setting = ShardingContext.getShardSetting(logicName);
+    public <T>String getShardingIndex(String tableName, T shardingVal) {
+        TableSetting setting = ShardingContext.getShardSetting(tableName);
         if (setting == null) {
-            throw new RuntimeException("[" + logicName + "]'s sharding-conf is required.");
+            throw new RuntimeException("[" + tableName + "]'s sharding-conf is required.");
         }
-        return String.format("%0" + setting.getSuffixLength() + "d", hash(shardingVal) % setting.getShardingSize());
+        return String.format("%0" + setting.getSuffixLength() + "d", hash(shardingVal) % setting.getTableSize());
     }
 
     private int hash(Object str) {

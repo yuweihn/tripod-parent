@@ -45,6 +45,11 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
+	public String getLogicTableName() {
+		return PersistUtil.getTableName(clz);
+	}
+
+	@Override
 	public Strategy getShardingStrategy() {
 		PersistUtil.FieldCol fieldCol = PersistUtil.getShardingFieldCol(clz);
 		if (fieldCol == null) {

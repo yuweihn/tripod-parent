@@ -1,6 +1,7 @@
 package com.yuweix.tripod.dao.springboot;
 
 
+import com.yuweix.tripod.dao.sharding.DatabaseSetting;
 import com.yuweix.tripod.dao.sharding.ShardAspect;
 import com.yuweix.tripod.dao.sharding.TableSetting;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
@@ -17,12 +18,25 @@ import java.util.Map;
  */
 public class ShardingConf {
 	interface H {
-		Map<String, ? extends TableSetting> getDatabases();
+		Map<String, ? extends DatabaseSetting> getDatabases();
 		Map<String, ? extends TableSetting> getTables();
 	}
-	private static class Setting implements TableSetting {
+	private static class DSetting implements DatabaseSetting {
 		private int suffixLength = 4;
-		private int shardingSize = 2;
+
+		@Override
+		public int getSuffixLength() {
+			return suffixLength;
+		}
+
+		public void setSuffixLength(int suffixLength) {
+			this.suffixLength = suffixLength;
+		}
+	}
+	private static class TSetting implements TableSetting {
+		private int suffixLength = 4;
+		private int databaseSize = 2;
+		private int tableSize = 4;
 
 		@Override
 		public int getSuffixLength() {
@@ -33,13 +47,23 @@ public class ShardingConf {
 			this.suffixLength = suffixLength;
 		}
 
-		@Override
-		public int getShardingSize() {
-			return shardingSize;
+		/**
+		 * 如：2,4表示2库4表
+		 */
+		public void setShardingSize(String shardingSize) {
+			String[] arr = shardingSize.split(",");
+			this.databaseSize = Integer.parseInt(arr[0].trim());
+			this.tableSize = Integer.parseInt(arr[1].trim());
 		}
 
-		public void setShardingSize(int shardingSize) {
-			this.shardingSize = shardingSize;
+		@Override
+		public int getDatabaseSize() {
+			return databaseSize;
+		}
+
+		@Override
+		public int getTableSize() {
+			return tableSize;
 		}
 	}
 
@@ -47,15 +71,15 @@ public class ShardingConf {
 	@ConfigurationProperties(prefix = "tripod.sharding", ignoreUnknownFields = true)
 	public H shardingSettingHolder() {
 		return new H() {
-			private Map<String, Setting> databaseMap = new HashMap<>();
-			private Map<String, Setting> tableMap = new HashMap<>();
+			private Map<String, DSetting> databaseMap = new HashMap<>();
+			private Map<String, TSetting> tableMap = new HashMap<>();
 
 			@Override
-			public Map<String, Setting> getDatabases() {
+			public Map<String, DSetting> getDatabases() {
 				return databaseMap;
 			}
 			@Override
-			public Map<String, Setting> getTables() {
+			public Map<String, TSetting> getTables() {
 				return tableMap;
 			}
 		};
@@ -64,7 +88,7 @@ public class ShardingConf {
 	@ConditionalOnMissingBean(ShardingContext.class)
 	@Bean(name = "shardingContext")
 	public ShardingContext shardingContext(H holder) {
-		Map<String, ? extends TableSetting> databases = holder.getDatabases();
+		Map<String, ? extends DatabaseSetting> databases = holder.getDatabases();
 		Map<String, ? extends TableSetting> tables = holder.getTables();
 		ShardingContext.putDatabaseSetting(databases);
 		ShardingContext.putTableSetting(tables);
