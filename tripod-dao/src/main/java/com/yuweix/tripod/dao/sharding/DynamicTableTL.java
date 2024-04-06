@@ -1,4 +1,4 @@
-package com.yuweix.tripod.dao.hibernate;
+package com.yuweix.tripod.dao.sharding;
 
 
 
@@ -8,8 +8,8 @@ package com.yuweix.tripod.dao.hibernate;
 public class DynamicTableTL {
 	private static final ThreadLocal<TB> THREAD_LOCAL = new ThreadLocal<>();
 
-	public static void set(String srcName, String destName) {
-		THREAD_LOCAL.set(new TB(srcName, destName));
+	public static void set(String srcName, String targetName) {
+		THREAD_LOCAL.set(new TB(srcName, targetName));
 	}
 
 	public static void remove() {
@@ -21,18 +21,18 @@ public class DynamicTableTL {
 		return tb == null ? null : tb.srcName;
 	}
 
-	public static String getDestName() {
+	public static String getTargetName() {
 		final TB tb = THREAD_LOCAL.get();
-		return tb == null ? null : tb.destName;
+		return tb == null ? null : tb.targetName;
 	}
 
 	private static class TB {
 		private String srcName;
-		private String destName;
+		private String targetName;
 
-		public TB(String srcName, String destName) {
+		public TB(String srcName, String targetName) {
 			this.srcName = srcName;
-			this.destName = destName;
+			this.targetName = targetName;
 		}
 	}
 }
