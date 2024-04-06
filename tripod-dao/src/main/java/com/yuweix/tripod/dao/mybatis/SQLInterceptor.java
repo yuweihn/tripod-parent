@@ -43,7 +43,7 @@ public class SQLInterceptor implements Interceptor {
 		if (srcName != null && targetName != null) {
 			actualSql = originalSql.replaceAll(srcName, targetName);
 		}
-		log.info("Actual SQL: {}", originalSql);
+		log.info("Actual SQL: {}", actualSql);
 		return actualSql;
 	}
 }
