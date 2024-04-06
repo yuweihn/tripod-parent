@@ -3,7 +3,6 @@ package com.yuweix.tripod.dao.mybatis.provider;
 
 import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.mybatis.where.Criteria;
-import com.yuweix.tripod.dao.sharding.Sharding;
 import org.apache.ibatis.jdbc.SQL;
 
 import jakarta.persistence.Id;
@@ -37,7 +36,6 @@ public class UpdateSqlProvider extends AbstractProvider {
 	private <T>String toUpdateByPrimaryKeySql(T t, boolean selective, boolean excludeVersion) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
 		String tbName = PersistUtil.getTableName(entityClass);
-		StringBuilder tableNameBuilder = new StringBuilder(tbName);
 
 		List<PersistUtil.FieldCol> fcList = PersistUtil.getPersistFieldList(entityClass);
 		return new SQL() {{
@@ -46,20 +44,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 				Field field = fc.getField();
 				field.setAccessible(true);
 
-				String shardingIndex = PersistUtil.getShardingIndex(field.getAnnotation(Sharding.class), tbName, PersistUtil.getFieldValue(field, t));
 				Id idAnn = field.getAnnotation(Id.class);
-				if (shardingIndex != null) {
-					tableNameBuilder.append("_").append(shardingIndex);
-					/**
-					 * 分片字段，必须放在where子句中，且一定不能修改
-					 */
-					WHERE("`" + fc.getColumnName() + "` = #{" + field.getName() + "}");
-					if (idAnn != null) {
-						whereSet = true;
-					}
-					continue;
-				}
-
 				if (selective) {
 					Object o = field.get(t);
 					if (o == null) {
@@ -84,7 +69,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 			if (!whereSet) {
 				throw new IllegalAccessException("'where' is required.");
 			}
-			UPDATE(tableNameBuilder.toString());
+			UPDATE(tbName);
 		}}.toString();
 	}
 
@@ -106,30 +91,12 @@ public class UpdateSqlProvider extends AbstractProvider {
 			throw new IllegalAccessException("'where' is required.");
 		}
 		String tbName = PersistUtil.getTableName(entityClass);
-		StringBuilder tableNameBuilder = new StringBuilder(tbName);
 
-		Object shardingVal = criteria.getShardingVal();
 		List<PersistUtil.FieldCol> fcList = PersistUtil.getPersistFieldList(entityClass);
 		return new SQL() {{
 			for (PersistUtil.FieldCol fc: fcList) {
 				Field field = fc.getField();
 				field.setAccessible(true);
-
-				Sharding sharding = field.getAnnotation(Sharding.class);
-				if (sharding != null) {
-					if (shardingVal == null) {
-						throw new IllegalAccessException("'Sharding Value' is required.");
-					}
-					String shardingIndex = PersistUtil.getShardingIndex(sharding, tbName, shardingVal);
-					if (shardingIndex != null) {
-						tableNameBuilder.append("_").append(shardingIndex);
-						/**
-						 * 分片字段，必须放在where子句中
-						 */
-						WHERE("`" + fc.getColumnName() + "` = #{criteria.shardingVal} ");
-					}
-					continue;
-				}
 
 				if (excludeFields != null && excludeFields.contains(field.getName())) {
 					continue;
@@ -152,7 +119,7 @@ public class UpdateSqlProvider extends AbstractProvider {
 				}
 			}
 			WHERE(criteria.toSql());
-			UPDATE(tableNameBuilder.toString());
+			UPDATE(tbName);
 		}}.toString();
 	}
 }

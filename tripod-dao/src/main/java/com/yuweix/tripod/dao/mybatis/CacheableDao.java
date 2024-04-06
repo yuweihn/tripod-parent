@@ -60,7 +60,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 			return t;
 		}
 
-		t = getMapper().selectOneByIdSharding(shardingVal, id, clz);
+		t = getMapper().selectOneById(id, clz);
 		if (t != null) {
 			cache.put(key, t, DEFAULT_CACHE_TIMEOUT);
 			return t;
@@ -186,12 +186,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	public int updateByPrimaryKey(@Shard T t) {
 		PK id = getId(t);
 		Object shardingVal = getShardingVal(t);
-		T t0 = null;
-		if (shardingVal == null) {
-			t0 = getMapper().selectOneById(id, clz);
-		} else {
-			t0 = getMapper().selectOneByIdSharding(shardingVal, id, clz);
-		}
+		T t0 = getMapper().selectOneById(id, clz);
 
 		int n = getMapper().updateByPrimaryKey(t);
 		if (t != null) {
@@ -207,12 +202,7 @@ public abstract class CacheableDao<T extends Serializable, PK extends Serializab
 	public int updateByPrimaryKeySelective(@Shard T t) {
 		PK id = getId(t);
 		Object shardingVal = getShardingVal(t);
-		T t0 = null;
-		if (shardingVal == null) {
-			t0 = getMapper().selectOneById(id, clz);
-		} else {
-			t0 = getMapper().selectOneByIdSharding(shardingVal, id, clz);
-		}
+		T t0 = getMapper().selectOneById(id, clz);
 
 		int n = getMapper().updateByPrimaryKeySelective(t);
 		if (t != null) {
