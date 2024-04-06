@@ -4,7 +4,9 @@ package com.yuweix.tripod.dao.springboot;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
+import com.yuweix.tripod.dao.mybatis.SQLInterceptor;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
+import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -132,13 +134,27 @@ public class MybatisConf {
 		return env.getProperty("tripod.mybatis.base-package");
 	}
 
+	@ConditionalOnMissingBean(name = "sqlInterceptor")
+	@Bean(name = "sqlInterceptor")
+	public Interceptor sqlInterceptor() {
+		return new SQLInterceptor();
+	}
+
+	@ConditionalOnMissingBean(name = "pluginInterceptors")
+	@Bean(name = "pluginInterceptors")
+	public Interceptor[] pluginInterceptors(@Qualifier("sqlInterceptor") Interceptor sqlInterceptor) {
+		return new Interceptor[]{sqlInterceptor};
+	}
+
 	@ConditionalOnMissingBean(SqlSessionFactory.class)
 	@Bean(name = "sqlSessionFactory")
 	public SqlSessionFactoryBean sqlSessionFactoryBean(@Autowired DataSource dataSource
 			, @Autowired(required = false) ShardingContext shardingContext
-			, @Qualifier("mapperLocations") Resource[] mapperLocations) {
+			, @Qualifier("mapperLocations") Resource[] mapperLocations
+			, @Qualifier("pluginInterceptors") Interceptor[] pluginInterceptors) {
 		SqlSessionFactoryBean sessionFactoryBean = new SqlSessionFactoryBean();
 		sessionFactoryBean.setDataSource(dataSource);
+		sessionFactoryBean.setPlugins(pluginInterceptors);
 		if (mapperLocations != null && mapperLocations.length > 0) {
 			sessionFactoryBean.setMapperLocations(mapperLocations);
 		}
