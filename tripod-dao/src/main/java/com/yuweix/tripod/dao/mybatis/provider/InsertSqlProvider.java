@@ -2,7 +2,6 @@ package com.yuweix.tripod.dao.mybatis.provider;
 
 
 import com.yuweix.tripod.dao.PersistUtil;
-import com.yuweix.tripod.dao.sharding.Sharding;
 import org.apache.ibatis.jdbc.SQL;
 
 import javax.persistence.Id;
@@ -27,18 +26,12 @@ public class InsertSqlProvider extends AbstractProvider {
 	private <T>String toInsertSql(T t, boolean selective) throws IllegalAccessException {
 		Class<?> entityClass = t.getClass();
 		String tbName = PersistUtil.getTableName(entityClass);
-		StringBuilder tableNameBuilder = new StringBuilder(tbName);
 
 		List<PersistUtil.FieldCol> fcList = PersistUtil.getPersistFieldList(entityClass);
 		return new SQL() {{
 			for (PersistUtil.FieldCol fc: fcList) {
 				Field field = fc.getField();
 				field.setAccessible(true);
-
-				String shardingIndex = PersistUtil.getShardingIndex(field.getAnnotation(Sharding.class), tbName, PersistUtil.getFieldValue(field, t));
-				if (shardingIndex != null) {
-					tableNameBuilder.append("_").append(shardingIndex);
-				}
 
 				if (selective) {
 					Object o = field.get(t);
@@ -58,7 +51,7 @@ public class InsertSqlProvider extends AbstractProvider {
 
 				VALUES("`" + fc.getColumnName() + "`", "#{" + field.getName() + "}");
 			}
-			INSERT_INTO(tableNameBuilder.toString());
+			INSERT_INTO(tbName);
 		}}.toString();
 	}
 }
