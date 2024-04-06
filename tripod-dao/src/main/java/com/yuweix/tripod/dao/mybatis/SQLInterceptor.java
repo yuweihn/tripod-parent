@@ -1,12 +1,15 @@
 package com.yuweix.tripod.dao.mybatis;
 
 
+import com.yuweix.tripod.dao.sharding.DynamicTableTL;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Signature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -19,18 +22,28 @@ import java.sql.Connection;
 		@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})
 })
 public class SQLInterceptor implements Interceptor {
+	private static final Logger log = LoggerFactory.getLogger(SQLInterceptor.class);
+
 	@Override
 	public Object intercept(Invocation invocation) throws Throwable {
 		StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
-		String sql = statementHandler.getBoundSql().getSql();
-		String modifiedSql = modifySql(sql);
+		BoundSql boundSql = statementHandler.getBoundSql();
+		String modifiedSql = modifySql(boundSql.getSql());
 		Field sqlField = BoundSql.class.getDeclaredField("sql");
 		sqlField.setAccessible(true);
-		sqlField.set(statementHandler.getBoundSql(), modifiedSql);
+		sqlField.set(boundSql, modifiedSql);
 		return invocation.proceed();
 	}
 
 	private String modifySql(String originalSql) {
-		return originalSql;
+		log.info("Original SQL: {}", originalSql);
+		final String srcName = DynamicTableTL.getSrcName();
+		final String targetName = DynamicTableTL.getTargetName();
+		String actualSql = originalSql;
+		if (srcName != null && targetName != null) {
+			actualSql = originalSql.replaceAll(srcName, targetName);
+		}
+		log.info("Actual SQL: {}", originalSql);
+		return actualSql;
 	}
 }

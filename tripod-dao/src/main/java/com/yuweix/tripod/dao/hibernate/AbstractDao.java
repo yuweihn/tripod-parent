@@ -10,6 +10,7 @@ import java.util.Map;
 import com.yuweix.tripod.dao.PersistUtil;
 import javax.annotation.Resource;
 
+import com.yuweix.tripod.dao.sharding.DynamicTableTL;
 import com.yuweix.tripod.dao.sharding.Shard;
 import com.yuweix.tripod.dao.sharding.Sharding;
 import com.yuweix.tripod.dao.sharding.Strategy;

@@ -1,6 +1,7 @@
 package com.yuweix.tripod.dao.hibernate;
 
 
+import com.yuweix.tripod.dao.sharding.DynamicTableTL;
 import org.hibernate.resource.jdbc.spi.StatementInspector;
 
 
@@ -16,7 +17,7 @@ public class DynamicTableInspector implements StatementInspector {
 	@Override
 	public String inspect(String sql) {
 		final String srcName = DynamicTableTL.getSrcName();
-		final String targetName = DynamicTableTL.getDestName();
+		final String targetName = DynamicTableTL.getTargetName();
 		if (srcName == null || targetName == null) {
 			return sql;
 		}
