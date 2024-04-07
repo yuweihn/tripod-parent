@@ -9,6 +9,8 @@ import org.aspectj.lang.annotation.Pointcut;
 
 
 /**
+ * 逻辑表替换为物理表的切面。
+ * 针对{@link Shardable}子类中的public方法，凡是参数中带有{@link Shard}注解的都会被执行。
  * @author yuwei
  */
 @Aspect
