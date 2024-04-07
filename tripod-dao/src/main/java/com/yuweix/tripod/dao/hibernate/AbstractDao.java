@@ -7,12 +7,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import com.yuweix.tripod.dao.PersistUtil;
 import javax.annotation.Resource;
 
 import com.yuweix.tripod.dao.sharding.Shard;
-import com.yuweix.tripod.dao.sharding.Sharding;
-import com.yuweix.tripod.dao.sharding.Strategy;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -47,30 +44,6 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	@Override
 	public Class<?> getPersistClz() {
 		return clz;
-	}
-
-	@Override
-	public Strategy getShardingStrategy() {
-		PersistUtil.FieldCol fieldCol = PersistUtil.getShardingFieldCol(clz);
-		if (fieldCol == null) {
-			return null;
-		}
-		if (!fieldCol.getField().isAnnotationPresent(Sharding.class)) {
-			return null;
-		}
-		Sharding sharding = fieldCol.getField().getAnnotation(Sharding.class);
-		if (sharding == null) {
-			return null;
-		}
-		Class<? extends Strategy> strategyClz = sharding.strategy();
-		if (strategyClz == null) {
-			return null;
-		}
-		try {
-			return strategyClz.getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override

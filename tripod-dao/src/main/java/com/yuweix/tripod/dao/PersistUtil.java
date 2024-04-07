@@ -306,6 +306,35 @@ public abstract class PersistUtil {
 		return strategy.getShardingDatabaseIndex(databaseName, tableName, shardingVal);
 	}
 
+	/**
+	 * 获取指定持久化类的分库分表策略对象。
+	 */
+	public static Strategy getShardingStrategy(Class<?> clz) {
+		FieldCol fieldCol = getShardingFieldCol(clz);
+		if (fieldCol == null) {
+			return null;
+		}
+		if (!fieldCol.getField().isAnnotationPresent(Sharding.class)) {
+			return null;
+		}
+		Sharding sharding = fieldCol.getField().getAnnotation(Sharding.class);
+		if (sharding == null) {
+			return null;
+		}
+		Class<? extends Strategy> strategyClz = sharding.strategy();
+		Map<Class<? extends Strategy>, Strategy> map = getShardStrategyMap();
+		Strategy strategy = map.get(strategyClz);
+		if (strategy == null) {
+			try {
+				strategy = strategyClz.getDeclaredConstructor().newInstance();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			map.put(strategyClz, strategy);
+		}
+		return strategy;
+	}
+
 	public static <T>String getPhysicalTableName(Class<T> entityClass, Object shardingVal) {
 		String tbName = getTableName(entityClass);
 		List<FieldCol> fcList = getPersistFieldList(entityClass);

@@ -1,6 +1,7 @@
 package com.yuweix.tripod.dao.sharding;
 
 
+import com.yuweix.tripod.dao.PersistUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,10 +31,24 @@ public class DynamicTableAspect {
         }
         Shardable shardable = (Shardable) target;
         try {
-            shardable.beforeSharding(shardingVal);
+            this.beforeSharding(shardable, shardingVal);
             return point.proceed();
         } finally {
-            shardable.afterSharding();
+            this.afterSharding();
         }
+    }
+
+    private void beforeSharding(Shardable shardable, Object shardingVal) {
+        if (shardingVal == null) {
+            return;
+        }
+        Class<?> clz = shardable.getPersistClz();
+        String srcTableName = PersistUtil.getTableName(clz);
+        String targetTableName = PersistUtil.getPhysicalTableName(clz, shardingVal);
+        DynamicTableTL.set(srcTableName, targetTableName);
+    }
+
+    private void afterSharding() {
+        DynamicTableTL.remove();
     }
 }
