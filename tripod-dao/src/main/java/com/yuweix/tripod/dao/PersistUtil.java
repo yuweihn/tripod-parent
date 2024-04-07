@@ -237,8 +237,8 @@ public abstract class PersistUtil {
 	}
 
 	public static class FieldCol {
-		private String columnName;
-		private Field field;
+		private final String columnName;
+		private final Field field;
 
 		public FieldCol(String columnName, Field field) {
 			this.columnName = columnName;
