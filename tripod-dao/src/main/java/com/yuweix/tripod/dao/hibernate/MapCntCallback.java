@@ -1,17 +1,17 @@
 package com.yuweix.tripod.dao.hibernate;
 
 
-import java.util.Map;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
+
+import java.util.Map;
 
 
 /**
  * @author yuwei
  */
-public class MapCntCallback extends MapParamCallback {
+public class MapCntCallback extends AbstractCntCallback {
 	protected String sql;
 	protected Map<String, Object> params;
 
@@ -20,10 +20,9 @@ public class MapCntCallback extends MapParamCallback {
 		this.params = params;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Object doInHibernate(Session session) throws HibernateException {
-		NativeQuery<Object> query = session.createNativeQuery(sql);
+	public Integer doInHibernate(Session session) throws HibernateException {
+		NativeQuery<Integer> query = session.createNativeQuery(sql, Integer.class);
 		assembleParams(query, params);
 		return Integer.parseInt(query.uniqueResult().toString());
 	}
