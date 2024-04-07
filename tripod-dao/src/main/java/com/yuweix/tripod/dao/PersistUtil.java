@@ -349,21 +349,6 @@ public abstract class PersistUtil {
 		return tbName;
 	}
 
-	public static <T>String getPhysicalTableName(T t) {
-		Class<?> entityClass = t.getClass();
-		String tbName = getTableName(entityClass);
-		List<FieldCol> fcList = getPersistFieldList(entityClass);
-		for (FieldCol fc: fcList) {
-			Field field = fc.getField();
-			Sharding sharding = field.getAnnotation(Sharding.class);
-			if (sharding != null) {
-				String shardingIndex = getShardingIndex(sharding, tbName, getFieldValue(field, t));
-				return tbName + "_" + shardingIndex;
-			}
-		}
-		return tbName;
-	}
-
 	private static Map<Class<?>, FieldCol> getClassPkFieldMap() {
 		Map<Class<?>, FieldCol> map = null;
 		if (CLASS_PK_FIELD_REF == null || (map = CLASS_PK_FIELD_REF.get()) == null) {
@@ -394,6 +379,10 @@ public abstract class PersistUtil {
 			}
 		}
 		return fc;
+	}
+	public static Field getPKField(Class<?> clz) {
+		FieldCol fc = getPKFieldCol(clz);
+		return fc == null ? null : fc.field;
 	}
 
 	private static Map<Class<?>, FieldCol> getClassShardingFieldMap() {
@@ -426,5 +415,9 @@ public abstract class PersistUtil {
 			}
 		}
 		return fc;
+	}
+	public static Field getShardingField(Class<?> clz) {
+		FieldCol fc = getShardingFieldCol(clz);
+		return fc == null ? null : fc.field;
 	}
 }
