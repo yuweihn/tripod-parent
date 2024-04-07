@@ -1,12 +1,9 @@
 package com.yuweix.tripod.dao.mybatis;
 
 
-import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.mybatis.order.OrderBy;
 import com.yuweix.tripod.dao.mybatis.where.Criteria;
 import com.yuweix.tripod.dao.sharding.Shard;
-import com.yuweix.tripod.dao.sharding.Sharding;
-import com.yuweix.tripod.dao.sharding.Strategy;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -35,30 +32,6 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	@Override
 	public Class<?> getPersistClz() {
 		return clz;
-	}
-
-	@Override
-	public Strategy getShardingStrategy() {
-		PersistUtil.FieldCol fieldCol = PersistUtil.getShardingFieldCol(clz);
-		if (fieldCol == null) {
-			return null;
-		}
-		if (!fieldCol.getField().isAnnotationPresent(Sharding.class)) {
-			return null;
-		}
-		Sharding sharding = fieldCol.getField().getAnnotation(Sharding.class);
-		if (sharding == null) {
-			return null;
-		}
-		Class<? extends Strategy> strategyClz = sharding.strategy();
-		if (strategyClz == null) {
-			return null;
-		}
-		try {
-			return strategyClz.getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override

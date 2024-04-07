@@ -49,7 +49,7 @@ public class DynamicDataSourceAspect {
         Shardable shardable = ((Shardable) target);
         Object shardingVal = ShardAopUtil.getAnnotationArgVal(point, Shard.class, Sharding.class);
         String physicalDatabase = determinePhysicalDatabase(logicDatabaseName
-                , PersistUtil.getTableName(shardable.getPersistClz()), shardingVal, shardable.getShardingStrategy());
+                , PersistUtil.getTableName(shardable.getPersistClz()), shardingVal, PersistUtil.getShardingStrategy(shardable.getPersistClz()));
         try {
             log.info("Database Name: {}", physicalDatabase);
             DataSourceContextHolder.setDataSource(physicalDatabase);
