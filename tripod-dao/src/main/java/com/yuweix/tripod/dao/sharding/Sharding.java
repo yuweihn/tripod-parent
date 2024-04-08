@@ -14,8 +14,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({FIELD})
 @Retention(RUNTIME)
 public @interface Sharding {
-    /**
-     * 分片策略
-     */
     Class<? extends Strategy> strategy() default DefaultStrategy.class;
 }
