@@ -24,15 +24,25 @@ public class DynamicDataSourceAspect {
     private static final Logger log = LoggerFactory.getLogger(DynamicDataSourceAspect.class);
 
     /**
-     * 切点表达式
+     * 需要分库的切入点。
+     * {@link Shardable}的子类，且当前切入点、当前切入点所在类或目标类，三者任一处有{@link DataSource}注解。
      */
     @Pointcut("execution(public * com.yuweix.tripod.dao.sharding.Shardable+.*(..))")
-    public void pointcut() {
+    public void shard() {
 
     }
 
-    @Around("pointcut()")
-    public Object around(ProceedingJoinPoint point) throws Throwable {
+    /**
+     * 不需要分库，只是单纯的切换数据库的切入点。
+     * 非{@link Shardable}的子类，且当前切入点或当前切入点所在类有{@link DataSource}注解。
+     */
+    @Pointcut("(!execution(public * com.yuweix.tripod.dao.sharding.Shardable+.*(..))) && (@within(com.yuweix.tripod.dao.datasource.DataSource) || @annotation(com.yuweix.tripod.dao.datasource.DataSource))")
+    public void change() {
+
+    }
+
+    @Around("shard()")
+    public Object onShard(ProceedingJoinPoint point) throws Throwable {
         Object target = point.getTarget();
         if (!(target instanceof Shardable)) {
             return point.proceed();
@@ -53,6 +63,26 @@ public class DynamicDataSourceAspect {
         try {
             log.info("Database Name: {}", physicalDatabase);
             DataSourceContextHolder.setDataSource(physicalDatabase);
+            return point.proceed();
+        } finally {
+            DataSourceContextHolder.removeDataSource();
+        }
+    }
+
+    @Around("change()")
+    public Object onChange(ProceedingJoinPoint point) throws Throwable {
+        Object target = point.getTarget();
+        if (target instanceof Shardable) {
+            return point.proceed();
+        }
+        DataSource annotation = getAnnotation(point, DataSource.class);
+        if (annotation == null) {
+            return point.proceed();
+        }
+        String databaseName = annotation.value();
+        try {
+            log.info("Database Name: {}", databaseName);
+            DataSourceContextHolder.setDataSource(databaseName);
             return point.proceed();
         } finally {
             DataSourceContextHolder.removeDataSource();
