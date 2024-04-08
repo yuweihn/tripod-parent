@@ -36,7 +36,7 @@ public class DynamicDataSourceAspect {
      * 不需要分库，只是单纯的切换数据库的切入点。
      * 非{@link Shardable}的子类，且当前切入点或当前切入点所在类有{@link DataSource}注解。
      */
-    @Pointcut("(!execution(public * com.yuweix.tripod.dao.sharding.Shardable+.*(..))) && (@within(com.yuweix.tripod.dao.datasource.DataSource) || @annotation(com.yuweix.tripod.dao.datasource.DataSource))")
+    @Pointcut("(!execution(* com.yuweix.tripod.dao.sharding.Shardable+.*(..))) && (@within(com.yuweix.tripod.dao.datasource.DataSource) || @annotation(com.yuweix.tripod.dao.datasource.DataSource))")
     public void change() {
 
     }
