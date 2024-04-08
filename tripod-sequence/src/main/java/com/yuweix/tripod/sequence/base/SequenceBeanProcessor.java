@@ -49,8 +49,8 @@ public class SequenceBeanProcessor implements BeanDefinitionRegistryPostProcesso
 		this(sequenceClz.getName(), constructArgList);
 	}
 	/**
-	 * @param sequenceClzName                         准备实例化的Sequence实现类
-	 * @param constructArgList                        Sequence实现类的构造函数参数序列
+	 * @param sequenceClzName                         准备实例化的{@link Sequence}实现类
+	 * @param constructArgList                        {@link Sequence}实现类的构造函数参数序列
 	 */
 	public SequenceBeanProcessor(String sequenceClzName, List<Property> constructArgList) {
 		this.sequenceClz = forName(sequenceClzName);
@@ -107,7 +107,7 @@ public class SequenceBeanProcessor implements BeanDefinitionRegistryPostProcesso
 
 
 	/**
-	 * 注册一系列[Sequence Bean]
+	 * 注册一系列{@link Sequence}
 	 */
 	private void registerBeans(Class<? extends AbstractSequence> defaultClz, Map<String, String> beans) {
 		if (beans == null || beans.isEmpty()) {
