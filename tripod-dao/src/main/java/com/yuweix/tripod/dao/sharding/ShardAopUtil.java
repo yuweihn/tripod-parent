@@ -17,7 +17,7 @@ public abstract class ShardAopUtil {
         if (argObj == null) {
             return null;
         }
-        return parseAnnotationVal(argObj, fieldAnnClz);
+        return getAnnotationArgVal(argObj, fieldAnnClz);
     }
 
     /**
@@ -45,7 +45,7 @@ public abstract class ShardAopUtil {
     /**
      * 检查入参对象所属类型中含有指定注解的属性的值，如果没有符合条件的数据，返回入参本身。
      */
-    public static Object parseAnnotationVal(Object obj, Class<? extends Annotation> clz) {
+    public static Object getAnnotationArgVal(Object obj, Class<? extends Annotation> clz) {
         if (obj == null) {
             return null;
         }
