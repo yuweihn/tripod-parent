@@ -11,11 +11,11 @@ import org.hibernate.query.NativeQuery;
 /**
  * @author yuwei
  */
-public class MapCntCallback extends AbstractCntCallback {
+public class MapCountCallback extends AbstractIntegerCallback {
 	protected String sql;
 	protected Map<String, Object> params;
 
-	public MapCntCallback(String sql, Map<String, Object> params) {
+	public MapCountCallback(String sql, Map<String, Object> params) {
 		this.sql = sql;
 		this.params = params;
 	}

@@ -157,7 +157,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @return
 	 */
 	protected int queryCount(String sql, Map<String, Object> params) {
-		Integer cnt = new MapCntCallback(sql, params).doInHibernate(getSession());
+		Integer cnt = new MapCountCallback(sql, params).doInHibernate(getSession());
 		return cnt == null ? 0 : cnt;
 	}
 	/**
@@ -175,7 +175,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @return
 	 */
 	protected int queryCount(String sql, Object[] params) {
-		Integer cnt = new IndexCntCallback(sql, params).doInHibernate(getSession());
+		Integer cnt = new IndexCountCallback(sql, params).doInHibernate(getSession());
 		return cnt == null ? 0 : cnt;
 	}
 
