@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author yuwei
  */
-public class MapModifyCallback extends AbstractCntCallback {
+public class MapModifyCallback extends AbstractIntegerCallback {
 	protected String sql;
 	protected Map<String, Object> params;
 

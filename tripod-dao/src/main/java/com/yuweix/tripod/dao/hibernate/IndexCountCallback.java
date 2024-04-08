@@ -9,11 +9,11 @@ import org.hibernate.query.NativeQuery;
 /**
  * @author yuwei
  */
-public class IndexCntCallback extends AbstractCntCallback {
+public class IndexCountCallback extends AbstractIntegerCallback {
 	protected String sql;
 	protected Object[] params;
 
-	public IndexCntCallback(String sql, Object[] params) {
+	public IndexCountCallback(String sql, Object[] params) {
 		this.sql = sql;
 		this.params = params;
 	}

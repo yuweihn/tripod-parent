@@ -9,7 +9,7 @@ import org.hibernate.query.NativeQuery;
 /**
  * @author yuwei
  */
-public class IndexModifyCallback extends AbstractCntCallback {
+public class IndexModifyCallback extends AbstractIntegerCallback {
 	protected String sql;
 	protected Object[] params;
 
