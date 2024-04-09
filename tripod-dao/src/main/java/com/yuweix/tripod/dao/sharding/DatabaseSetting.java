@@ -12,4 +12,9 @@ public interface DatabaseSetting {
 	 * @return   逻辑库后占位符长度
 	 */
 	int getSuffixLength();
+
+	/**
+	 * 逻辑库名与分片索引之间的分隔符
+	 */
+	String getSplit();
 }

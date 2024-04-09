@@ -14,6 +14,11 @@ public interface TableSetting {
 	int getSuffixLength();
 
 	/**
+	 * 逻辑表名与分片索引之间的分隔符
+	 */
+	String getSplit();
+
+	/**
 	 * 分库数量
 	 */
 	int getDatabaseSize();

@@ -23,28 +23,42 @@ public class ShardingConf {
 	}
 	private static class DSetting implements DatabaseSetting {
 		private int suffixLength = 4;
+		private String split = "_";
 
 		@Override
 		public int getSuffixLength() {
 			return suffixLength;
 		}
-
 		public void setSuffixLength(int suffixLength) {
 			this.suffixLength = suffixLength;
+		}
+		@Override
+		public String getSplit() {
+			return split;
+		}
+		public void setSplit(String split) {
+			this.split = split;
 		}
 	}
 	private static class TSetting implements TableSetting {
 		private int suffixLength = 4;
-		private int databaseSize = 2;
-		private int tableSize = 4;
+		private String split = "_";
+		private int databaseSize = 1;
+		private int tableSize = 2;
 
 		@Override
 		public int getSuffixLength() {
 			return suffixLength;
 		}
-
 		public void setSuffixLength(int suffixLength) {
 			this.suffixLength = suffixLength;
+		}
+		@Override
+		public String getSplit() {
+			return split;
+		}
+		public void setSplit(String split) {
+			this.split = split;
 		}
 
 		/**
@@ -65,7 +79,6 @@ public class ShardingConf {
 		public int getDatabaseSize() {
 			return databaseSize;
 		}
-
 		@Override
 		public int getTableSize() {
 			return tableSize;
