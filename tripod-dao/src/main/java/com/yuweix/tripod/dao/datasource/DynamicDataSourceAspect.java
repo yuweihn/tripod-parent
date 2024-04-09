@@ -47,7 +47,7 @@ public class DynamicDataSourceAspect {
         if (!(target instanceof Shardable)) {
             return point.proceed();
         }
-        DataSource annotation = getAnnotation(point, DataSource.class);
+        DataSource annotation = getAnnotationFromPoint(point, DataSource.class);
         if (annotation == null) {
             return point.proceed();
         }
@@ -75,7 +75,7 @@ public class DynamicDataSourceAspect {
         if (target instanceof Shardable) {
             return point.proceed();
         }
-        DataSource annotation = getAnnotation(point, DataSource.class);
+        DataSource annotation = getAnnotationFromPoint(point, DataSource.class);
         if (annotation == null) {
             return point.proceed();
         }
@@ -100,7 +100,7 @@ public class DynamicDataSourceAspect {
     /**
      * 在当前方法、当前方法所在类或目标类，三者任一处获取到指定注解即可
      */
-    private <T extends Annotation>T getAnnotation(JoinPoint point, Class<T> clz) {
+    private <T extends Annotation>T getAnnotationFromPoint(JoinPoint point, Class<T> clz) {
         Class<?> targetClz = point.getTarget().getClass();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         if (method == null) {
