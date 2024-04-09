@@ -26,7 +26,7 @@ public class DynamicTableAspect {
             return point.proceed();
         }
 
-        Object shardingVal = ShardAopUtil.getAnnotationArgVal(point, Shard.class, Sharding.class);
+        Object shardingVal = ShardAopUtil.getAnnotationArgShardVal(point);
         if (shardingVal == null) {
             return point.proceed();
         }
