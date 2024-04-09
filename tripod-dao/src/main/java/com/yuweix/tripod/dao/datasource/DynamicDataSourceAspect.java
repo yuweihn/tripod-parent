@@ -1,7 +1,6 @@
 package com.yuweix.tripod.dao.datasource;
 
 
-import com.yuweix.tripod.dao.PersistUtil;
 import com.yuweix.tripod.dao.sharding.*;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -59,7 +58,7 @@ public class DynamicDataSourceAspect {
         Shardable shardable = ((Shardable) target);
         Object shardingVal = ShardAopUtil.getAnnotationArgVal(point, Shard.class, Sharding.class);
         String physicalDatabase = determinePhysicalDatabase(logicDatabaseName
-                , PersistUtil.getTableName(shardable.getPersistClz()), shardingVal, PersistUtil.getShardingStrategy(shardable.getPersistClz()));
+                , ShardingUtil.getTableName(shardable.getPersistClz()), shardingVal, ShardingUtil.getShardingStrategy(shardable.getPersistClz()));
         try {
             log.info("Database Name: {}", physicalDatabase);
             DataSourceContextHolder.setDataSource(physicalDatabase);
