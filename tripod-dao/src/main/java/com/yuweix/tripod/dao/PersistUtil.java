@@ -299,12 +299,6 @@ public abstract class PersistUtil {
 		}
 		return strategy.getShardingIndex(tableName, shardingVal);
 	}
-	public static String getShardingDatabaseIndex(Strategy strategy, String databaseName, String tableName, Object shardingVal) {
-		if (strategy == null || shardingVal == null) {
-			return null;
-		}
-		return strategy.getShardingDatabaseIndex(databaseName, tableName, shardingVal);
-	}
 
 	/**
 	 * 获取指定持久化类的分库分表策略对象。
