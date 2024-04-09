@@ -69,6 +69,13 @@ public class DynamicDataSourceAspect {
         }
     }
 
+    private String determinePhysicalDatabase(String logicDatabaseName, String logicTableName, Object shardingVal, Strategy strategy) {
+        if (strategy == null || shardingVal == null) {
+            return logicDatabaseName;
+        }
+        return strategy.getPhysicalDatabaseName(logicDatabaseName, logicTableName, shardingVal);
+    }
+
     @Around("change()")
     public Object onChange(ProceedingJoinPoint point) throws Throwable {
         Object target = point.getTarget();
@@ -87,14 +94,6 @@ public class DynamicDataSourceAspect {
         } finally {
             DataSourceContextHolder.removeDataSource();
         }
-    }
-
-    private String determinePhysicalDatabase(String logicDatabaseName, String logicTableName, Object shardingVal, Strategy strategy) {
-        String dbIndex = PersistUtil.getShardingDatabaseIndex(strategy, logicDatabaseName, logicTableName, shardingVal);
-        if (dbIndex == null) {
-            return logicDatabaseName;
-        }
-        return logicDatabaseName + "_" + dbIndex;
     }
 
     /**

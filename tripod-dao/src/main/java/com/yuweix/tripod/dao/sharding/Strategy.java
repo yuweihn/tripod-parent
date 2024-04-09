@@ -8,12 +8,12 @@ package com.yuweix.tripod.dao.sharding;
  */
 public interface Strategy {
     /**
-     * @param databaseName               逻辑库名
+     * @param dbName                     逻辑库名
      * @param tableName                  逻辑表名
      * @param shardingVal                分库字段的值
-     * @return   返回如：0000,0001等等
+     * @return   返回如：gateway_0000,gateway_0001等等
      */
-    <T>String getShardingDatabaseIndex(String databaseName, String tableName, T shardingVal);
+    <T>String getPhysicalDatabaseName(String dbName, String tableName, T shardingVal);
 
     /**
      * @param tableName                  逻辑表名

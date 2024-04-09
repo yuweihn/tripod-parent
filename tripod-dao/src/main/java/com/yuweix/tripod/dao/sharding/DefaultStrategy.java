@@ -7,16 +7,16 @@ package com.yuweix.tripod.dao.sharding;
  */
 public class DefaultStrategy implements Strategy {
     @Override
-    public <T>String getShardingDatabaseIndex(String databaseName, String tableName, T shardingVal) {
-        DatabaseSetting dsetting = ShardingContext.getShardDatabaseSetting(databaseName);
+    public <T>String getPhysicalDatabaseName(String dbName, String tableName, T shardingVal) {
+        DatabaseSetting dsetting = ShardingContext.getShardDatabaseSetting(dbName);
         if (dsetting == null) {
-            throw new RuntimeException("[" + databaseName + "]'s sharding-conf is required.");
+            throw new RuntimeException("[" + dbName + "]'s sharding-conf is required.");
         }
         TableSetting tsetting = ShardingContext.getShardSetting(tableName);
         if (tsetting == null) {
             throw new RuntimeException("[" + tableName + "]'s sharding-conf is required.");
         }
-        return String.format("%0" + dsetting.getSuffixLength() + "d", hash(shardingVal) % tsetting.getDatabaseSize());
+        return dbName + dsetting.getSplit() + String.format("%0" + dsetting.getSuffixLength() + "d", hash(shardingVal) % tsetting.getDatabaseSize());
     }
 
     @Override
