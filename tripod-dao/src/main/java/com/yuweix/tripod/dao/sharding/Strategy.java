@@ -11,14 +11,14 @@ public interface Strategy {
      * @param dbName                     逻辑库名
      * @param tableName                  逻辑表名
      * @param shardingVal                分库字段的值
-     * @return   返回如：gateway_0000,gateway_0001等等
+     * @return   返回如：gateway_0000,gateway_0001
      */
     <T>String getPhysicalDatabaseName(String dbName, String tableName, T shardingVal);
 
     /**
      * @param tableName                  逻辑表名
      * @param shardingVal                分表字段的值
-     * @return   返回如：0000,0001等等
+     * @return   返回如：user_0000,user_0001
      */
-    <T>String getShardingIndex(String tableName, T shardingVal);
+    <T>String getPhysicalTableName(String tableName, T shardingVal);
 }

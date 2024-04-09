@@ -20,12 +20,12 @@ public class DefaultStrategy implements Strategy {
     }
 
     @Override
-    public <T>String getShardingIndex(String tableName, T shardingVal) {
+    public <T>String getPhysicalTableName(String tableName, T shardingVal) {
         TableSetting setting = ShardingContext.getShardSetting(tableName);
         if (setting == null) {
             throw new RuntimeException("[" + tableName + "]'s sharding-conf is required.");
         }
-        return String.format("%0" + setting.getSuffixLength() + "d", hash(shardingVal) % setting.getTableSize());
+        return tableName + setting.getSplit() + String.format("%0" + setting.getSuffixLength() + "d", hash(shardingVal) % setting.getTableSize());
     }
 
     private int hash(Object str) {
