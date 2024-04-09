@@ -1,11 +1,10 @@
-package com.yuweix.tripod.dao;
+package com.yuweix.tripod.dao.sharding;
 
-
-import com.yuweix.tripod.dao.sharding.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.regex.Pattern;
 /**
  * @author yuwei
  */
-public abstract class PersistUtil {
+public abstract class ShardingUtil {
 	private static SoftReference<Map<String, String>> TABLE_NAME_REF;
 	private static final Object tableNameLock = new Object();
 
