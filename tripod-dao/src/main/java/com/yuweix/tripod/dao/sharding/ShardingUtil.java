@@ -4,6 +4,7 @@ package com.yuweix.tripod.dao.sharding;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -97,6 +98,23 @@ public abstract class ShardingUtil {
 			map.put(className, tableName);
 		}
 		return tableName;
+	}
+
+	public static class FieldCol {
+		private final String columnName;
+		private final Field field;
+
+		public FieldCol(String columnName, Field field) {
+			this.columnName = columnName;
+			this.field = field;
+		}
+
+		public String getColumnName() {
+			return columnName;
+		}
+		public Field getField() {
+			return field;
+		}
 	}
 
 	private static Map<String, String> getSelectSqlMap() {
@@ -234,24 +252,7 @@ public abstract class ShardingUtil {
 		return list;
 	}
 
-	public static class FieldCol {
-		private final String columnName;
-		private final Field field;
-
-		public FieldCol(String columnName, Field field) {
-			this.columnName = columnName;
-			this.field = field;
-		}
-
-		public String getColumnName() {
-			return columnName;
-		}
-		public Field getField() {
-			return field;
-		}
-	}
-
-	public static Object getFieldValue(Field field, Object t) {
+	public static Object getFieldVal(Field field, Object t) {
 		if (!field.isAccessible()) {
 			field.setAccessible(true);
 		}
@@ -367,7 +368,7 @@ public abstract class ShardingUtil {
 	}
 	public static Field getPKField(Class<?> clz) {
 		FieldCol fc = getPKFieldCol(clz);
-		return fc == null ? null : fc.field;
+		return fc == null ? null : fc.getField();
 	}
 
 	private static Map<Class<?>, FieldCol> getClassShardingFieldMap() {
@@ -403,6 +404,6 @@ public abstract class ShardingUtil {
 	}
 	public static Field getShardingField(Class<?> clz) {
 		FieldCol fc = getShardingFieldCol(clz);
-		return fc == null ? null : fc.field;
+		return fc == null ? null : fc.getField();
 	}
 }
