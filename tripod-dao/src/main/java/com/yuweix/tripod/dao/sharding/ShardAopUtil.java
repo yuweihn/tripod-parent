@@ -12,12 +12,12 @@ import java.lang.reflect.Parameter;
 
 public abstract class ShardAopUtil {
     public static Object getAnnotationArgVal(ProceedingJoinPoint point
-            , Class<? extends Annotation> paramAnnClz, Class<? extends Annotation> fieldAnnClz) {
-        Object argObj = getAnnotationArg(point, paramAnnClz);
+            , Class<? extends Annotation> paramClz, Class<? extends Annotation> fieldClz) {
+        Object argObj = getAnnotationArg(point, paramClz);
         if (argObj == null) {
             return null;
         }
-        return getAnnotationArgVal(argObj, fieldAnnClz);
+        return getAnnotationArgVal(argObj, fieldClz);
     }
 
     /**
@@ -43,7 +43,7 @@ public abstract class ShardAopUtil {
     }
 
     /**
-     * 检查入参对象所属类型中含有指定注解的属性的值，如果没有符合条件的数据，返回入参本身。
+     * 检查入参对象所属类型中含有指定注解的属性，有则返回该属性的值，如果没有则返回入参本身的值。
      */
     public static Object getAnnotationArgVal(Object obj, Class<? extends Annotation> clz) {
         if (obj == null) {
