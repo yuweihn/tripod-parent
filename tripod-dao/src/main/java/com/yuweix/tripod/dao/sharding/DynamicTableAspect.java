@@ -16,12 +16,12 @@ import org.aspectj.lang.annotation.Pointcut;
 @Aspect
 public class DynamicTableAspect {
     @Pointcut("execution(public * com.yuweix.tripod.dao.sharding.Shardable+.*(..))")
-    public void pointcut() {
+    public void shard() {
 
     }
 
-    @Around("pointcut()")
-    public Object around(ProceedingJoinPoint point) throws Throwable {
+    @Around("shard()")
+    public Object onShard(ProceedingJoinPoint point) throws Throwable {
         Object target = point.getTarget();
         if (!(target instanceof Shardable)) {
             return point.proceed();
