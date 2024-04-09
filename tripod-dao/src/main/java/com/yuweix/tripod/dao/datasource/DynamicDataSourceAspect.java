@@ -54,7 +54,7 @@ public class DynamicDataSourceAspect {
 
         String physicalDatabase = ShardAopUtil.determinePhysicalDatabase(point, logicDatabaseName);
         try {
-            log.info("Database Name: {}", physicalDatabase);
+            log.info("Physical Database Name: {}", physicalDatabase);
             DataSourceContextHolder.setDataSource(physicalDatabase);
             return point.proceed();
         } finally {
