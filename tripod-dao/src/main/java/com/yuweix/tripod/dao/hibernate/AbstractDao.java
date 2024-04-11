@@ -23,6 +23,15 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	protected ThreadLocal<Session> sessionTL = new ThreadLocal<>();
 
 
+	@SuppressWarnings("unchecked")
+	public AbstractDao() {
+		this.clz = null;
+		Type t = getClass().getGenericSuperclass();
+		if (t instanceof ParameterizedType) {
+			this.clz = (Class<T>) ((ParameterizedType) t).getActualTypeArguments()[0];
+		}
+	}
+
 	@Resource
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
@@ -37,14 +46,11 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		return create ? sessionFactory.openSession() : sessionFactory.getCurrentSession();
 	}
 
-
-	@SuppressWarnings("unchecked")
-	public AbstractDao() {
-		this.clz = null;
-		Type t = getClass().getGenericSuperclass();
-		if (t instanceof ParameterizedType) {
-			this.clz = (Class<T>) ((ParameterizedType) t).getActualTypeArguments()[0];
-		}
+	public void setSession(Session session) {
+		sessionTL.set(session);
+	}
+	public void removeSession() {
+		sessionTL.remove();
 	}
 
 	@Override
