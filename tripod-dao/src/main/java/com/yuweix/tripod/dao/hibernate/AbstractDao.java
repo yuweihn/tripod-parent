@@ -66,6 +66,10 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 	@Override
 	public void onComplete() {
+		Session session = sessionTL.get();
+		if (session != null && session.isOpen()) {
+			session.close();
+		}
 		sessionTL.remove();
 	}
 
