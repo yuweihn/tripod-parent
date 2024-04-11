@@ -18,8 +18,9 @@ import org.hibernate.SessionFactory;
  * @author yuwei
  */
 public abstract class AbstractDao<T extends Serializable, PK extends Serializable> implements Dao<T, PK> {
-	private Class<T> clz;
-	private SessionFactory sessionFactory;
+	protected Class<T> clz;
+	protected SessionFactory sessionFactory;
+	protected ThreadLocal<Session> sessionTL = new ThreadLocal<>();
 
 
 	@Resource
@@ -28,7 +29,8 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	protected Session getSession() {
-		return getSession(false);
+		Session sess = sessionTL.get();
+		return sess != null ? sess : getSession(false);
 	}
 
 	protected Session getSession(boolean create) {
