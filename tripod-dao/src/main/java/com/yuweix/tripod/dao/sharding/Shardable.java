@@ -8,10 +8,10 @@ package com.yuweix.tripod.dao.sharding;
  */
 public interface Shardable {
     Class<?> getPersistClz();
-    default void before() {
-
+    default Object before() {
+        return null;
     }
-    default void after() {
-
+    default Object after() {
+        return null;
     }
 }
