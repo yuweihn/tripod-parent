@@ -28,7 +28,11 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	protected Session getSession() {
-		return this.sessionFactory.getCurrentSession();
+		return getSession(false);
+	}
+
+	protected Session getSession(boolean create) {
+		return create ? sessionFactory.openSession() : sessionFactory.getCurrentSession();
 	}
 
 
