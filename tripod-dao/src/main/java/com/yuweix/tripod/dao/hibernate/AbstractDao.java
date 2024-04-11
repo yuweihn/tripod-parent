@@ -42,15 +42,30 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public Object before() {
+	public void onStart() {
 		Session session = sessionFactory.openSession();
+		session.beginTransaction();
 		sessionTL.set(session);
-		return session;
 	}
 	@Override
-	public Object after() {
+	public void onSuccess() {
+		Session session = sessionTL.get();
+		if (session == null) {
+			return;
+		}
+		session.getTransaction().commit();
+	}
+	@Override
+	public void onFailure() {
+		Session session = sessionTL.get();
+		if (session == null) {
+			return;
+		}
+		session.getTransaction().rollback();
+	}
+	@Override
+	public void onComplete() {
 		sessionTL.remove();
-		return null;
 	}
 
 	@Override
