@@ -46,10 +46,14 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		return create ? sessionFactory.openSession() : sessionFactory.getCurrentSession();
 	}
 
-	public void setSession(Session session) {
-		sessionTL.set(session);
+	@Override
+	public void before(Object obj) {
+		if (obj instanceof Session) {
+			sessionTL.set((Session) obj);
+		}
 	}
-	public void removeSession() {
+	@Override
+	public void after() {
 		sessionTL.remove();
 	}
 
