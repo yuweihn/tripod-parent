@@ -65,7 +65,9 @@ public class DynamicDataSourceAspect {
             shardable.onFailure();
             throw e;
         } finally {
-            shardable.onComplete();
+            try {
+                shardable.onComplete();
+            } catch (Exception ignored) {}
             DataSourceContextHolder.removeDataSource();
         }
     }
