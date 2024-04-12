@@ -46,6 +46,7 @@ public class DynamicDataSourceAspect {
         if (!(target instanceof Shardable)) {
             return point.proceed();
         }
+        Shardable shardable = (Shardable) target;
         DataSource annotation = getAnnotationFromPoint(point, DataSource.class);
         if (annotation == null) {
             return point.proceed();
@@ -56,8 +57,15 @@ public class DynamicDataSourceAspect {
         try {
             log.info("Physical Database Name: {}", physicalDatabase);
             DataSourceContextHolder.setDataSource(physicalDatabase);
-            return point.proceed();
+            shardable.onStart();
+            Object proceed = point.proceed();
+            shardable.onSuccess();
+            return proceed;
+        } catch (Exception e) {
+            shardable.onFailure();
+            throw e;
         } finally {
+            shardable.onComplete();
             DataSourceContextHolder.removeDataSource();
         }
     }
