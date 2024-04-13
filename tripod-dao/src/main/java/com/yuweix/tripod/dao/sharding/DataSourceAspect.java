@@ -90,13 +90,13 @@ public abstract class DataSourceAspect {
         }
     }
 
-    protected abstract void setDataSource(String dbName);
+    protected abstract void setDataSource(String dsName);
     protected abstract void removeDataSource();
 
     /**
      * 在当前方法、当前方法所在类或目标类，三者任一处获取到指定注解即可
      */
-    private <T extends Annotation>T getAnnotationFromPoint(JoinPoint point, Class<T> clz) {
+    protected <T extends Annotation>T getAnnotationFromPoint(JoinPoint point, Class<T> clz) {
         Class<?> targetClz = point.getTarget().getClass();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         if (method == null) {
