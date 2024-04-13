@@ -2,6 +2,7 @@ package com.yuweix.tripod.dao.springboot;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
+import com.yuweix.tripod.dao.sharding.DataSourceAspect;
 import com.yuweix.tripod.dao.datasource.DynamicDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
 import com.yuweix.tripod.dao.mybatis.SQLInterceptor;
@@ -95,7 +96,7 @@ public class MybatisConf {
 		return null;
 	}
 
-	@ConditionalOnMissingBean(name = "dynamicDataSourceAspect")
+	@ConditionalOnMissingBean(DataSourceAspect.class)
 	@Bean(name = "dynamicDataSourceAspect")
 	public DynamicDataSourceAspect dynamicDataSourceAspect() {
 		return new DynamicDataSourceAspect();
