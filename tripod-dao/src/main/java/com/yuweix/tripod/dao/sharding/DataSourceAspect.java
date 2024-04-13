@@ -1,7 +1,6 @@
 package com.yuweix.tripod.dao.sharding;
 
 
-import com.yuweix.tripod.dao.datasource.DataSource;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -9,6 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -22,19 +22,10 @@ public abstract class DataSourceAspect {
 
     /**
      * 需要分库的切入点。
-     * {@link Shardable}的子类，且当前切入点、当前切入点所在类或目标类，三者任一处有{@link DataSource}注解。
+     * {@link Shardable}的子类，且当前切入点、当前切入点所在类或目标类，三者任一处有{@link ShardingDataSource}注解。
      */
     @Pointcut("execution(public * com.yuweix.tripod.dao.sharding.Shardable+.*(..))")
     public void shard() {
-
-    }
-
-    /**
-     * 不需要分库，只是单纯的切换数据库的切入点。
-     * 非{@link Shardable}的子类，且当前切入点或当前切入点所在类有{@link DataSource}注解。
-     */
-    @Pointcut("(!execution(* com.yuweix.tripod.dao.sharding.Shardable+.*(..))) && (@within(com.yuweix.tripod.dao.datasource.DataSource) || @annotation(com.yuweix.tripod.dao.datasource.DataSource))")
-    public void change() {
 
     }
 
@@ -45,7 +36,7 @@ public abstract class DataSourceAspect {
             return point.proceed();
         }
         Shardable shardable = (Shardable) target;
-        DataSource annotation = getAnnotationFromPoint(point, DataSource.class);
+        ShardingDataSource annotation = getMergedAnnotation(point, ShardingDataSource.class);
         if (annotation == null) {
             return point.proceed();
         }
@@ -70,33 +61,33 @@ public abstract class DataSourceAspect {
         }
     }
 
-    @Around("change()")
-    public Object onChange(ProceedingJoinPoint point) throws Throwable {
-        Object target = point.getTarget();
-        if (target instanceof Shardable) {
-            return point.proceed();
-        }
-        DataSource annotation = getAnnotationFromPoint(point, DataSource.class);
-        if (annotation == null) {
-            return point.proceed();
-        }
-        String databaseName = annotation.value();
-        try {
-            log.info("Database Name: {}", databaseName);
-            setDataSource(databaseName);
-            return point.proceed();
-        } finally {
-            removeDataSource();
-        }
-    }
-
     protected abstract void setDataSource(String dsName);
     protected abstract void removeDataSource();
 
     /**
+     * 在当前方法、当前方法所在类或目标类，三者任一处获取到指定的组合注解即可
+     */
+    protected <T extends Annotation>T getMergedAnnotation(JoinPoint point, Class<T> clz) {
+        Class<?> targetClz = point.getTarget().getClass();
+        Method method = ((MethodSignature) point.getSignature()).getMethod();
+        if (method == null) {
+            return null;
+        }
+        T ann = AnnotatedElementUtils.getMergedAnnotation(method, clz);
+        if (ann != null) {
+            return ann;
+        }
+        ann = AnnotatedElementUtils.getMergedAnnotation(method.getDeclaringClass(), clz);
+        if (ann != null) {
+            return ann;
+        }
+        ann = AnnotatedElementUtils.getMergedAnnotation(targetClz, clz);
+        return ann;
+    }
+    /**
      * 在当前方法、当前方法所在类或目标类，三者任一处获取到指定注解即可
      */
-    protected <T extends Annotation>T getAnnotationFromPoint(JoinPoint point, Class<T> clz) {
+    protected <T extends Annotation>T getAnnotation(JoinPoint point, Class<T> clz) {
         Class<?> targetClz = point.getTarget().getClass();
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         if (method == null) {
