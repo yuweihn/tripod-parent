@@ -5,6 +5,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
 import com.yuweix.tripod.dao.mybatis.SQLInterceptor;
+import com.yuweix.tripod.dao.sharding.DataSourceAspect;
 import com.yuweix.tripod.dao.sharding.ShardingContext;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -95,7 +96,7 @@ public class MybatisConf {
 		return null;
 	}
 
-	@ConditionalOnMissingBean(name = "dynamicDataSourceAspect")
+	@ConditionalOnMissingBean(DataSourceAspect.class)
 	@Bean(name = "dynamicDataSourceAspect")
 	public DynamicDataSourceAspect dynamicDataSourceAspect() {
 		return new DynamicDataSourceAspect();
