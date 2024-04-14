@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "tripod.boot.hibernate.enabled")
+@ConditionalOnProperty(name = "tripod.boot.dao.hibernate.enabled")
 @Import({ShardingConf.class, HibernateConf.class, SequenceConf.class})
 public class HibernateAutoConfiguration {
 
