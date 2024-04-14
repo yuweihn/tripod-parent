@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import com.yuweix.tripod.dao.sharding.Shard;
+import com.yuweix.tripod.sharding.annotation.Shard;
 import jakarta.annotation.Resource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

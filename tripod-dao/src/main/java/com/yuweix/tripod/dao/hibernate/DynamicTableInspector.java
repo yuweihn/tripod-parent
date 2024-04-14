@@ -1,7 +1,7 @@
 package com.yuweix.tripod.dao.hibernate;
 
 
-import com.yuweix.tripod.dao.sharding.DynamicTableTL;
+import com.yuweix.tripod.sharding.aspect.DynamicTableTL;
 import org.hibernate.resource.jdbc.spi.StatementInspector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

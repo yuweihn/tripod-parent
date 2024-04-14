@@ -3,7 +3,7 @@ package com.yuweix.tripod.dao.mybatis;
 
 import com.yuweix.tripod.dao.PersistCache;
 import com.yuweix.tripod.dao.PersistUtil;
-import com.yuweix.tripod.dao.sharding.Shard;
+import com.yuweix.tripod.sharding.annotation.Shard;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;

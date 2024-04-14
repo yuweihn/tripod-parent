@@ -1,7 +1,7 @@
 package com.yuweix.tripod.dao;
 
 
-import com.yuweix.tripod.dao.sharding.ShardingUtil;
+import com.yuweix.tripod.sharding.utils.ShardingUtil;
 
 
 /**

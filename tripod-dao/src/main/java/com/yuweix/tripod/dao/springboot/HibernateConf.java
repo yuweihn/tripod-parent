@@ -2,11 +2,11 @@ package com.yuweix.tripod.dao.springboot;
 
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.yuweix.tripod.dao.sharding.DataSourceAspect;
 import com.yuweix.tripod.dao.datasource.DynamicDataSource;
 import com.yuweix.tripod.dao.datasource.DynamicDataSourceAspect;
 import com.yuweix.tripod.dao.hibernate.DynamicTableInspector;
-import com.yuweix.tripod.dao.sharding.ShardingContext;
+import com.yuweix.tripod.sharding.aspect.DataSourceAspect;
+import com.yuweix.tripod.sharding.context.ShardingContext;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

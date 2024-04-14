@@ -1,7 +1,7 @@
 package com.yuweix.tripod.dao.datasource;
 
 
-import com.yuweix.tripod.dao.sharding.ShardingDataSource;
+import com.yuweix.tripod.sharding.annotation.ShardingDataSource;
 import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.*;
 
