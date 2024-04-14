@@ -13,6 +13,6 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.yuweix.tripod.boot.web.I18nAutoConfiguration,\
   com.yuweix.tripod.boot.web.FreeMarkerAutoConfiguration,\
   com.yuweix.tripod.boot.exception.ExceptionAutoConfiguration,\
-  com.yuweix.tripod.boot.dao.ShardingAutoConfiguration,\
+  com.yuweix.tripod.boot.sharding.ShardingAutoConfiguration,\
   com.yuweix.tripod.boot.schedule.ScheduleAutoConfiguration,\
   com.yuweix.tripod.boot.permission.PermissionAutoConfiguration

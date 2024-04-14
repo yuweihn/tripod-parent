@@ -1,4 +1,4 @@
-package com.yuweix.tripod.boot.dao;
+package com.yuweix.tripod.boot.sharding;
 
 
 import com.yuweix.tripod.sharding.springboot.ShardingConf;
