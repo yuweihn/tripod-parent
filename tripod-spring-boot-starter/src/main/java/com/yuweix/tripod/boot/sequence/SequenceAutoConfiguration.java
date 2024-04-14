@@ -1,4 +1,4 @@
-package com.yuweix.tripod.boot.datasource;
+package com.yuweix.tripod.boot.sequence;
 
 
 import com.yuweix.tripod.sequence.springboot.SequenceConf;
