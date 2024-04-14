@@ -64,7 +64,7 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.yuweix</groupId>
+			<groupId> com.yuweix</groupId>
 			<artifactId>tripod-sharding</artifactId>
 			<version>${project.version}</version>
 		</dependency>

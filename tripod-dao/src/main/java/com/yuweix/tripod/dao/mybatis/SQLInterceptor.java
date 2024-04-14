@@ -1,7 +1,7 @@
 package com.yuweix.tripod.dao.mybatis;
 
 
-import com.yuweix.tripod.dao.sharding.DynamicTableTL;
+import com.yuweix.tripod.sharding.aspect.DynamicTableTL;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.Interceptor;

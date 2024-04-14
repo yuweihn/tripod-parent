@@ -3,7 +3,7 @@ package com.yuweix.tripod.dao.mybatis;
 
 import com.yuweix.tripod.dao.mybatis.order.OrderBy;
 import com.yuweix.tripod.dao.mybatis.where.Criteria;
-import com.yuweix.tripod.dao.sharding.Shard;
+import com.yuweix.tripod.sharding.annotation.Shard;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;

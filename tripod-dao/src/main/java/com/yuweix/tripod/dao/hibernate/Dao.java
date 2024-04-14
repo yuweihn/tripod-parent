@@ -1,7 +1,7 @@
 package com.yuweix.tripod.dao.hibernate;
 
 
-import com.yuweix.tripod.dao.sharding.Shardable;
+import com.yuweix.tripod.sharding.Shardable;
 import java.io.Serializable;
 
 

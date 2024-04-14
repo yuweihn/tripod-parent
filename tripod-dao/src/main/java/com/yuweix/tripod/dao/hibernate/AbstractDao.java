@@ -9,7 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import com.yuweix.tripod.dao.sharding.Shard;
+import com.yuweix.tripod.sharding.annotation.Shard;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
