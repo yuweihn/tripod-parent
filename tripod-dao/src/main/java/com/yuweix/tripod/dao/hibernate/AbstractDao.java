@@ -241,6 +241,23 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 		return queryForObject(sql, (Object[]) null);
 	}
 
+	protected List<Map<String, Object>> queryForMapList(String sql, Map<String, Object> params, int pageNo, int pageSize) {
+		return new MapCallback(sql, Map.class, pageNo, pageSize, params).doInHibernate(getSession());
+	}
+	protected List<Map<String, Object>> queryForMapList(String sql, Map<String, Object> params) {
+		return new MapCallback(sql, Map.class, params).doInHibernate(getSession());
+	}
+
+	protected List<Map<String, Object>> queryForMapList(String sql, int pageNo, int pageSize) {
+		return queryForMapList(sql, (Object[]) null, pageNo, pageSize);
+	}
+	protected List<Map<String, Object>> queryForMapList(String sql, Object[] params, int pageNo, int pageSize) {
+		return new IndexCallback(sql, Map.class, pageNo, pageSize, params).doInHibernate(getSession());
+	}
+	protected List<Map<String, Object>> queryForMapList(String sql, Object[] params) {
+		return new IndexCallback(sql, Map.class, params).doInHibernate(getSession());
+	}
+
 	/**
 	 * 执行增删改操作
 	 * @param sql
