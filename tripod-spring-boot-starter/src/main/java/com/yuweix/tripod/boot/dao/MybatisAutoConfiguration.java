@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Import;
  * @author yuwei
  */
 @Configuration
-@ConditionalOnProperty(name = "tripod.boot.mybatis.enabled")
+@ConditionalOnProperty(name = "tripod.boot.dao.mybatis.enabled")
 @Import({ShardingConf.class, MybatisConf.class, SequenceConf.class})
 public class MybatisAutoConfiguration {
 	@ConditionalOnMissingBean(PersistCache.class)
