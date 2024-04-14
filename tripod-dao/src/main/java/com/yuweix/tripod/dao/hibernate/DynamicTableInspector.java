@@ -1,7 +1,7 @@
 package com.yuweix.tripod.dao.hibernate;
 
 
-import com.yuweix.tripod.sharding.aspect.DynamicTableTL;
+import com.yuweix.tripod.sharding.context.TableHolder;
 import org.hibernate.resource.jdbc.spi.StatementInspector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +21,8 @@ public class DynamicTableInspector implements StatementInspector {
 	@Override
 	public String inspect(String sql) {
 		log.info("Original SQL: {}", sql);
-		final String srcName = DynamicTableTL.getSrcName();
-		final String targetName = DynamicTableTL.getTargetName();
+		final String srcName = TableHolder.getSrcName();
+		final String targetName = TableHolder.getTargetName();
 		String actualSql = sql;
 		if (srcName != null && targetName != null) {
 			actualSql = sql.replaceAll(srcName, targetName);
