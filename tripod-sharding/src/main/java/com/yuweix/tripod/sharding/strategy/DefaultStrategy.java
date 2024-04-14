@@ -29,7 +29,7 @@ public class DefaultStrategy implements Strategy {
         if (setting == null) {
             throw new RuntimeException("[" + tableName + "]'s sharding-conf is required.");
         }
-        return tableName + setting.getSplit() + String.format("%0" + setting.getSuffixLength() + "d", hash(shardingVal) % (setting.getDatabaseSize() * setting.getTableSize()));
+        return tableName + setting.getSplit() + String.format("%0" + setting.getSuffixLength() + "d", (hash(shardingVal) / setting.getDatabaseSize()) % setting.getTableSize());
     }
 
     private int hash(Object str) {
