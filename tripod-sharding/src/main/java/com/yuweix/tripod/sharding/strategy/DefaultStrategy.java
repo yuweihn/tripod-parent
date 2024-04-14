@@ -5,6 +5,7 @@ import com.yuweix.tripod.sharding.context.DatabaseSetting;
 import com.yuweix.tripod.sharding.context.ShardingContext;
 import com.yuweix.tripod.sharding.context.TableSetting;
 
+
 /**
  * @author yuwei
  */

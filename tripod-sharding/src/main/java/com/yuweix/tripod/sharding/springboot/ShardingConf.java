@@ -1,7 +1,6 @@
 package com.yuweix.tripod.sharding.springboot;
 
 
-import com.yuweix.tripod.dao.sharding.*;
 import com.yuweix.tripod.sharding.aspect.DynamicTableAspect;
 import com.yuweix.tripod.sharding.aspect.TableAspect;
 import com.yuweix.tripod.sharding.context.DatabaseSetting;

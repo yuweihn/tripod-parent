@@ -1,8 +1,8 @@
 package com.yuweix.tripod.sharding.utils;
 
 
+import com.yuweix.tripod.sharding.Shardable;
 import com.yuweix.tripod.sharding.annotation.Shard;
-import com.yuweix.tripod.dao.sharding.Shardable;
 import com.yuweix.tripod.sharding.annotation.Sharding;
 import com.yuweix.tripod.sharding.strategy.Strategy;
 import org.aspectj.lang.ProceedingJoinPoint;
