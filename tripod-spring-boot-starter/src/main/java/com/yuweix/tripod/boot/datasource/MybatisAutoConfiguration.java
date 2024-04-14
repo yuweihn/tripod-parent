@@ -5,6 +5,7 @@ import com.yuweix.tripod.dao.PersistCache;
 import com.yuweix.tripod.data.cache.Cache;
 import com.yuweix.tripod.dao.springboot.MybatisConf;
 import com.yuweix.tripod.sequence.springboot.SequenceConf;
+import com.yuweix.tripod.sharding.springboot.ShardingConf;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +18,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @ConditionalOnProperty(name = "tripod.boot.mybatis.enabled")
-@Import({MybatisConf.class, SequenceConf.class})
+@Import({ShardingConf.class, MybatisConf.class, SequenceConf.class})
 public class MybatisAutoConfiguration {
 	@ConditionalOnMissingBean(PersistCache.class)
 	@Bean(name = "persistCache")
