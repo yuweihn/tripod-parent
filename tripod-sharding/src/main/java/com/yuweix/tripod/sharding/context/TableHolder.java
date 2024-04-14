@@ -1,11 +1,11 @@
-package com.yuweix.tripod.sharding.aspect;
+package com.yuweix.tripod.sharding.context;
 
 
 
 /**
  * @author yuwei
  */
-public class DynamicTableTL {
+public class TableHolder {
 	private static final ThreadLocal<TB> THREAD_LOCAL = new ThreadLocal<>();
 
 	public static void set(String srcName, String targetName) {

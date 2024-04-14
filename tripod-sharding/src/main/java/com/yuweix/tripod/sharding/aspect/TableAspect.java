@@ -3,6 +3,7 @@ package com.yuweix.tripod.sharding.aspect;
 
 import com.yuweix.tripod.sharding.Shardable;
 import com.yuweix.tripod.sharding.annotation.Shard;
+import com.yuweix.tripod.sharding.context.TableHolder;
 import com.yuweix.tripod.sharding.utils.ShardAopUtil;
 import com.yuweix.tripod.sharding.utils.ShardingUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -48,10 +49,10 @@ public abstract class TableAspect {
         Class<?> clz = shardable.getPersistClz();
         String srcTableName = ShardingUtil.getTableName(clz);
         String targetTableName = ShardingUtil.getPhysicalTableName(clz, shardingVal);
-        DynamicTableTL.set(srcTableName, targetTableName);
+        TableHolder.set(srcTableName, targetTableName);
     }
 
     protected void afterSharding() {
-        DynamicTableTL.remove();
+        TableHolder.remove();
     }
 }

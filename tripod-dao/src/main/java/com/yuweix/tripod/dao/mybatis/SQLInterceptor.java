@@ -1,7 +1,7 @@
 package com.yuweix.tripod.dao.mybatis;
 
 
-import com.yuweix.tripod.sharding.aspect.DynamicTableTL;
+import com.yuweix.tripod.sharding.context.TableHolder;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.plugin.Interceptor;
@@ -37,8 +37,8 @@ public class SQLInterceptor implements Interceptor {
 
 	private String modifySql(String originalSql) {
 		log.info("Original SQL: {}", originalSql);
-		final String srcName = DynamicTableTL.getSrcName();
-		final String targetName = DynamicTableTL.getTargetName();
+		final String srcName = TableHolder.getSrcName();
+		final String targetName = TableHolder.getTargetName();
 		String actualSql = originalSql;
 		if (srcName != null && targetName != null) {
 			actualSql = originalSql.replaceAll(srcName, targetName);
