@@ -1,4 +1,4 @@
-package com.yuweix.tripod.boot.datasource;
+package com.yuweix.tripod.boot.dao;
 
 
 import com.yuweix.tripod.dao.springboot.HibernateConf;

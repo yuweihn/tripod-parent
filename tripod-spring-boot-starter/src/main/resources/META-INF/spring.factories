@@ -1,9 +1,9 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.yuweix.tripod.boot.DefaultAutoConfiguration,\
   com.yuweix.tripod.boot.core.JsonAutoConfiguration,\
-  com.yuweix.tripod.boot.datasource.SequenceAutoConfiguration,\
-  com.yuweix.tripod.boot.datasource.HibernateAutoConfiguration,\
-  com.yuweix.tripod.boot.datasource.MybatisAutoConfiguration,\
+  com.yuweix.tripod.boot.sequence.SequenceAutoConfiguration,\
+  com.yuweix.tripod.boot.dao.HibernateAutoConfiguration,\
+  com.yuweix.tripod.boot.dao.MybatisAutoConfiguration,\
   com.yuweix.tripod.boot.redis.JedisAutoConfiguration,\
   com.yuweix.tripod.boot.redis.JedisMsAutoConfiguration,\
   com.yuweix.tripod.boot.redis.JedisClusterAutoConfiguration,\
