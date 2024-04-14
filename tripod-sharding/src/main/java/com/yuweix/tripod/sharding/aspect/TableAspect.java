@@ -16,7 +16,7 @@ import org.aspectj.lang.annotation.Pointcut;
  * @author yuwei
  */
 public abstract class TableAspect {
-    @Pointcut("execution(public * com.yuweix.tripod.dao.sharding.Shardable+.*(..))")
+    @Pointcut("execution(public * com.yuweix.tripod.sharding.Shardable+.*(..))")
     public void shard() {
 
     }
