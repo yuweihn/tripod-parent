@@ -151,12 +151,12 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	/**
 	 * 查询某个表的所有字段。分页查询
 	 * @param sql
+	 * @param params
 	 * @param pageNo
 	 * @param pageSize
-	 * @param params
 	 * @return
 	 */
-	protected List<T> query(String sql, int pageNo, int pageSize, Map<String, Object> params) {
+	protected List<T> query(String sql, Map<String, Object> params, int pageNo, int pageSize) {
 		return new MapCallback<>(sql, clz, pageNo, pageSize, params).doInHibernate(getSession());
 	}
 	/**
@@ -167,17 +167,17 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	 * @return
 	 */
 	protected List<T> query(String sql, int pageNo, int pageSize) {
-		return query(sql, pageNo, pageSize, (Object[]) null);
+		return query(sql, (Object[]) null, pageNo, pageSize);
 	}
 	/**
 	 * 查询某个表的所有字段。分页查询
 	 * @param sql
+	 * @param params
 	 * @param pageNo
 	 * @param pageSize
-	 * @param params
 	 * @return
 	 */
-	protected List<T> query(String sql, int pageNo, int pageSize, Object[] params) {
+	protected List<T> query(String sql, Object[] params, int pageNo, int pageSize) {
 		return new IndexCallback<>(sql, clz, pageNo, pageSize, params).doInHibernate(getSession());
 	}
 
