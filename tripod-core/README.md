@@ -1,0 +1,2 @@
+# tripod-core
+
