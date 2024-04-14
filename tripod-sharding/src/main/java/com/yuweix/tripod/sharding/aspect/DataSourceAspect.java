@@ -27,7 +27,7 @@ public abstract class DataSourceAspect {
      * 需要分库的切入点。
      * {@link Shardable}的子类，且当前切入点、当前切入点所在类或目标类，三者任一处有{@link ShardingDataSource}注解。
      */
-    @Pointcut("execution(public * com.yuweix.tripod.dao.sharding.Shardable+.*(..))")
+    @Pointcut("execution(public * com.yuweix.tripod.sharding.Shardable+.*(..))")
     public void shard() {
 
     }
