@@ -1,7 +1,7 @@
 package com.yuweix.tripod.sharding.aspect;
 
 
-import com.yuweix.tripod.dao.sharding.Shardable;
+import com.yuweix.tripod.sharding.Shardable;
 import com.yuweix.tripod.sharding.annotation.ShardingDataSource;
 import com.yuweix.tripod.sharding.utils.ShardAopUtil;
 import org.aspectj.lang.JoinPoint;

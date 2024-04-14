@@ -1,4 +1,4 @@
-package com.yuweix.tripod.dao.sharding;
+package com.yuweix.tripod.sharding;
 
 
 

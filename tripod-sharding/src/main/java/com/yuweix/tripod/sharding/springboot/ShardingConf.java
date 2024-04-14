@@ -1,7 +1,11 @@
 package com.yuweix.tripod.sharding.springboot;
 
 
-import com.yuweix.tripod.dao.sharding.*;
+import com.yuweix.tripod.sharding.aspect.DynamicTableAspect;
+import com.yuweix.tripod.sharding.aspect.TableAspect;
+import com.yuweix.tripod.sharding.context.DatabaseSetting;
+import com.yuweix.tripod.sharding.context.ShardingContext;
+import com.yuweix.tripod.sharding.context.TableSetting;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;

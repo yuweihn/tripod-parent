@@ -4,7 +4,6 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<properties>
-		<persistence.version>3.1.0</persistence.version>
 	</properties>
 
 	<parent>
@@ -55,6 +54,10 @@
 			<artifactId>jakarta.annotation-api</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
 		</dependency>
@@ -81,13 +84,6 @@
 			<groupId>com.yuweix</groupId>
 			<artifactId>tripod-sequence</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>jakarta.persistence</groupId>
-			<artifactId>jakarta.persistence-api</artifactId>
-			<version>${persistence.version}</version>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
