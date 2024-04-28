@@ -78,7 +78,7 @@ public abstract class AbstractDao<T extends Serializable, PK extends Serializabl
 	}
 
 	@Override
-	public T get(final PK id) {
+	public T get(PK id) {
 		return getSession().get(clz, id);
 	}
 
