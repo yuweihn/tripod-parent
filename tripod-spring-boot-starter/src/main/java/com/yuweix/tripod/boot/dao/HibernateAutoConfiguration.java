@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @ConditionalOnProperty(name = "tripod.boot.dao.hibernate.enabled")
-@Import({ShardingConf.class, HibernateConf.class, SequenceConf.class})
+@Import({HibernateConf.class, SequenceConf.class, ShardingConf.class})
 public class HibernateAutoConfiguration {
     @ConditionalOnMissingBean(PersistCache.class)
     @Bean(name = "persistCache")
