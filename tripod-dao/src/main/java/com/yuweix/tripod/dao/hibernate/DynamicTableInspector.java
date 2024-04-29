@@ -20,13 +20,13 @@ public class DynamicTableInspector implements StatementInspector {
 
 	@Override
 	public String inspect(String sql) {
-		log.info("Original SQL: {}", sql);
 		final String srcName = TableHolder.getSrcName();
 		final String targetName = TableHolder.getTargetName();
-		String actualSql = sql;
-		if (srcName != null && targetName != null) {
-			actualSql = sql.replaceAll(srcName, targetName);
+		if (srcName == null || targetName == null) {
+			return sql;
 		}
+		log.info("Original SQL: {}", sql);
+		String actualSql = sql.replaceAll(srcName, targetName);
 		log.info("Actual SQL: {}", actualSql);
 		return actualSql;
 	}
