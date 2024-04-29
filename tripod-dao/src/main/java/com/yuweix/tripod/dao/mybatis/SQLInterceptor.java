@@ -36,13 +36,13 @@ public class SQLInterceptor implements Interceptor {
 	}
 
 	private String modifySql(String originalSql) {
-		log.info("Original SQL: {}", originalSql);
 		final String srcName = TableHolder.getSrcName();
 		final String targetName = TableHolder.getTargetName();
-		String actualSql = originalSql;
-		if (srcName != null && targetName != null) {
-			actualSql = originalSql.replaceAll(srcName, targetName);
+		if (srcName == null || targetName == null) {
+			return originalSql;
 		}
+		log.info("Original SQL: {}", originalSql);
+		String actualSql = originalSql.replaceAll(srcName, targetName);
 		log.info("Actual SQL: {}", actualSql);
 		return actualSql;
 	}
