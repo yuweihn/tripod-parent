@@ -22,7 +22,7 @@ public class DynamicTableInspector implements StatementInspector {
 	public String inspect(String sql) {
 		final String srcName = TableHolder.getSrcName();
 		final String targetName = TableHolder.getTargetName();
-		if (srcName == null || targetName == null) {
+		if (srcName == null || targetName == null || srcName.equals(targetName)) {
 			return sql;
 		}
 		log.info("Original SQL: {}", sql);

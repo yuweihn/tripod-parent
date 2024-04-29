@@ -38,7 +38,7 @@ public class SQLInterceptor implements Interceptor {
 	private String modifySql(String originalSql) {
 		final String srcName = TableHolder.getSrcName();
 		final String targetName = TableHolder.getTargetName();
-		if (srcName == null || targetName == null) {
+		if (srcName == null || targetName == null || srcName.equals(targetName)) {
 			return originalSql;
 		}
 		log.info("Original SQL: {}", originalSql);
