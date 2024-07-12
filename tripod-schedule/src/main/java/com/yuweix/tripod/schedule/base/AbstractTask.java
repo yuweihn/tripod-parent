@@ -102,6 +102,10 @@ public abstract class AbstractTask {
 	protected String getLockName() {
 		return this.getClass().getName();
 	}
+
+	/**
+	 * 是否释放Leader选择器
+	 */
 	protected boolean getRelease() {
 		return true;
 	}
