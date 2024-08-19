@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
@@ -25,8 +26,12 @@ public class SpringContext implements ApplicationContextAware {
 	private SpringContext() {
 
 	}
-	
-	
+
+
+	public static void registerSingleton(String beanName, Object obj) {
+		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
+		beanFactory.registerSingleton(beanName, obj);
+	}
 	public static<T> void registerBean(String beanName, Class<T> clz) {
 		registerBean(beanName, clz, null);
 	}
