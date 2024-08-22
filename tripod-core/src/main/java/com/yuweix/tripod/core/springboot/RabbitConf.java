@@ -9,6 +9,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
@@ -62,24 +63,25 @@ public class RabbitConf {
     }
 
     @Bean
-    public RetryTemplate retryTemplate() {
+    public RetryTemplate retryTemplate(@Value("${tripod.rabbit.retry.maxAttempts:3}") int maxAttempts
+            , @Value("${tripod.rabbit.retry.backOffPeriod:2000}") long backOffPeriod) {
         RetryTemplate retryTemplate = new RetryTemplate();
         // 设置重试策略：重试3次
         SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
-        retryPolicy.setMaxAttempts(3);
+        retryPolicy.setMaxAttempts(maxAttempts);
         retryTemplate.setRetryPolicy(retryPolicy);
         // 设置退避策略：每次重试间隔2秒
         FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
-        backOffPolicy.setBackOffPeriod(2000);
+        backOffPolicy.setBackOffPeriod(backOffPeriod);
         retryTemplate.setBackOffPolicy(backOffPolicy);
         return retryTemplate;
     }
 
     @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, RetryTemplate retryTemplate) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(jsonMessageConverter());
-        template.setRetryTemplate(retryTemplate());
+        template.setRetryTemplate(retryTemplate);
         template.setConfirmCallback((correlationData, ack, cause) -> {
             if (!ack) {
                 //TODO
