@@ -41,9 +41,10 @@ public class RabbitConf {
     @ConditionalOnMissingBean(name = "rabbitBinding")
     @Bean("rabbitBinding")
     public Object rabbitBinding(SpringContext springContext, BindingSetting data) {
+        Object obj = new Object();
         List<BindingSetting.Item> bindings = data.getBindings();
         if (bindings == null || bindings.isEmpty()) {
-            return null;
+            return obj;
         }
         for (int i = 0, sz = bindings.size(); i < sz; i++) {
             BindingSetting.Item item = bindings.get(i);
@@ -56,7 +57,7 @@ public class RabbitConf {
             Binding bd = BindingBuilder.bind(queue).to(exchange).with(item.getRouteKey()).noargs();
             SpringContext.register("rabbitBinding" + i, bd);
         }
-        return new Object();
+        return obj;
     }
 
     @Bean
