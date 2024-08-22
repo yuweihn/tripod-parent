@@ -1,7 +1,6 @@
 package com.yuweix.tripod.core.mq.rabbit;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
@@ -15,8 +14,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
  */
 public class RabbitSender {
     private static final Logger log = LoggerFactory.getLogger(RabbitSender.class);
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private RabbitTemplate rabbitTemplate;
 
