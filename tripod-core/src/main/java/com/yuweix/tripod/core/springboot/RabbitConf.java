@@ -3,6 +3,7 @@ package com.yuweix.tripod.core.springboot;
 
 import com.yuweix.tripod.core.SpringContext;
 import com.yuweix.tripod.core.mq.rabbit.BindingSetting;
+import com.yuweix.tripod.core.mq.rabbit.DefaultRabbitSender;
 import com.yuweix.tripod.core.mq.rabbit.RabbitCallback;
 import com.yuweix.tripod.core.mq.rabbit.RabbitSender;
 import org.springframework.amqp.core.*;
@@ -113,6 +114,6 @@ public class RabbitConf {
     @ConditionalOnMissingBean(RabbitSender.class)
     @Bean
     public RabbitSender rabbitSender(RabbitTemplate rabbitTemplate) {
-        return new RabbitSender(rabbitTemplate);
+        return new DefaultRabbitSender(rabbitTemplate);
     }
 }
