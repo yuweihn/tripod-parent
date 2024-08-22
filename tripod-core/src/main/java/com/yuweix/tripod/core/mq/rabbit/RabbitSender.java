@@ -16,14 +16,14 @@ import java.nio.charset.StandardCharsets;
  * @author yuwei
  * @date 2024-08-17 13:36:40
  */
-public class MessageSender {
-    private static final Logger log = LoggerFactory.getLogger(MessageSender.class);
+public class RabbitSender {
+    private static final Logger log = LoggerFactory.getLogger(RabbitSender.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private RabbitTemplate rabbitTemplate;
 
-    public MessageSender(RabbitTemplate rabbitTemplate) {
+    public RabbitSender(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
