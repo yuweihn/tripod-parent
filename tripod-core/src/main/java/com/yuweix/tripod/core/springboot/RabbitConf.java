@@ -3,12 +3,13 @@ package com.yuweix.tripod.core.springboot;
 
 import com.yuweix.tripod.core.SpringContext;
 import com.yuweix.tripod.core.mq.rabbit.BindingSetting;
-import com.yuweix.tripod.core.mq.rabbit.MessageSender;
+import com.yuweix.tripod.core.mq.rabbit.RabbitSender;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -25,6 +26,7 @@ import java.util.List;
  * @author yuwei
  */
 public class RabbitConf {
+    @ConditionalOnMissingBean(BindingSetting.class)
     @Bean
     @ConfigurationProperties(prefix = "tripod.rabbit.setting", ignoreUnknownFields = true)
     public BindingSetting bindingSetting() {
@@ -60,13 +62,15 @@ public class RabbitConf {
         return obj;
     }
 
-    @Bean
-    public MessageConverter jsonMessageConverter() {
+    @ConditionalOnMissingBean(name = "rabbitJsonMessageConverter")
+    @Bean("rabbitJsonMessageConverter")
+    public MessageConverter rabbitJsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    @Bean
-    public RetryTemplate retryTemplate(@Value("${tripod.rabbit.retry.maxAttempts:3}") int maxAttempts
+    @ConditionalOnMissingBean(name = "rabbitRetryTemplate")
+    @Bean("rabbitRetryTemplate")
+    public RetryTemplate rabbitRetryTemplate(@Value("${tripod.rabbit.retry.maxAttempts:3}") int maxAttempts
             , @Value("${tripod.rabbit.retry.backOffPeriod:2000}") long backOffPeriod) {
         RetryTemplate retryTemplate = new RetryTemplate();
         // 设置重试策略：重试3次
@@ -80,10 +84,13 @@ public class RabbitConf {
         return retryTemplate;
     }
 
+    @ConditionalOnMissingBean(RabbitTemplate.class)
     @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory, RetryTemplate retryTemplate) {
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory
+            , @Qualifier("rabbitRetryTemplate") RetryTemplate retryTemplate
+            , @Qualifier("rabbitJsonMessageConverter") MessageConverter rabbitJsonMessageConverter) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
-        template.setMessageConverter(jsonMessageConverter());
+        template.setMessageConverter(rabbitJsonMessageConverter);
         template.setRetryTemplate(retryTemplate);
         template.setConfirmCallback((correlationData, ack, cause) -> {
             if (!ack) {
@@ -93,8 +100,9 @@ public class RabbitConf {
         return template;
     }
 
+    @ConditionalOnMissingBean(RabbitSender.class)
     @Bean
-    public MessageSender messageSender(RabbitTemplate rabbitTemplate) {
-        return new MessageSender(rabbitTemplate);
+    public RabbitSender rabbitSender(RabbitTemplate rabbitTemplate) {
+        return new RabbitSender(rabbitTemplate);
     }
 }
