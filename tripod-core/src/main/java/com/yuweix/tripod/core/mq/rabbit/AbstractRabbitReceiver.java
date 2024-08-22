@@ -17,13 +17,13 @@ import java.util.UUID;
  * @author yuwei
  * @date 2024-08-17 13:35:35
  */
-public abstract class AbstractMessageReceiver<T> {
-    private static final Logger log = LoggerFactory.getLogger(AbstractMessageReceiver.class);
+public abstract class AbstractRabbitReceiver<T> {
+    private static final Logger log = LoggerFactory.getLogger(AbstractRabbitReceiver.class);
 
     protected Class<T> clz;
 
     @SuppressWarnings("unchecked")
-    public AbstractMessageReceiver() {
+    public AbstractRabbitReceiver() {
         this.clz = null;
         Type t = getClass().getGenericSuperclass();
         if (t instanceof ParameterizedType) {
