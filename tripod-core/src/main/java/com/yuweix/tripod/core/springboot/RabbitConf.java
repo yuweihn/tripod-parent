@@ -10,6 +10,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
@@ -37,8 +38,9 @@ public class RabbitConf {
         };
     }
 
-    @Bean
-    public Object binding(SpringContext springContext, BindingSetting data) {
+    @ConditionalOnMissingBean(name = "rabbitBinding")
+    @Bean("rabbitBinding")
+    public Object rabbitBinding(SpringContext springContext, BindingSetting data) {
         List<BindingSetting.Item> bindings = data.getBindings();
         if (bindings == null || bindings.isEmpty()) {
             return null;
@@ -52,9 +54,9 @@ public class RabbitConf {
             SpringContext.register(exchange.getName(), exchange);
 
             Binding bd = BindingBuilder.bind(queue).to(exchange).with(item.getRouteKey()).noargs();
-            SpringContext.register("binding" + i, bd);
+            SpringContext.register("rabbitBinding" + i, bd);
         }
-        return null;
+        return new Object();
     }
 
     @Bean
