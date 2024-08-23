@@ -7,6 +7,6 @@ import org.springframework.amqp.rabbit.connection.CorrelationData;
 /**
  * @author yuwei
  **/
-public interface RabbitCallback {
+public interface CfmCallback {
     void call(CorrelationData correlationData, boolean ack, String cause);
 }
