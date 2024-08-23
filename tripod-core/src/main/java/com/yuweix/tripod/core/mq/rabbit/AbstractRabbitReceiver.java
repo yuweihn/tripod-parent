@@ -10,7 +10,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.UUID;
 
 
 /**
@@ -33,8 +32,7 @@ public abstract class AbstractRabbitReceiver<T> {
 
     @RabbitHandler(isDefault = true)
     public void onMessage(Message message, Channel channel) {
-        String spanId = UUID.randomUUID().toString().replace("-", "");
-        log.info("SpanId: {}, 接收消息: {}", spanId, JsonUtil.toJSONString(message));
+        log.info("接收消息: {}", JsonUtil.toJSONString(message));
         String body = null;
         try {
             byte[] bytes = message.getBody();
@@ -47,13 +45,13 @@ public abstract class AbstractRabbitReceiver<T> {
                 channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
                 return;
             }
-            log.info("SpanId: {}, body: {}", spanId, body);
+            log.info("body: {}", body);
             T t = JsonUtil.parseObject(body, clz);
             process(t);
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-            log.info("SpanId: {}, 消费完成", spanId);
+            log.info("消费完成");
         } catch (Exception e) {
-            log.error("SpanId: {}, 消费异常message: {}, Error: {}", spanId, body, e.getMessage());
+            log.error("消费异常message: {}, Error: {}", body, e.getMessage());
             throw new RuntimeException(e);
         }
     }
