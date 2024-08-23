@@ -4,7 +4,7 @@ package com.yuweix.tripod.core.springboot;
 import com.yuweix.tripod.core.SpringContext;
 import com.yuweix.tripod.core.mq.rabbit.BindingSetting;
 import com.yuweix.tripod.core.mq.rabbit.DefaultRabbitSender;
-import com.yuweix.tripod.core.mq.rabbit.RabbitCallback;
+import com.yuweix.tripod.core.mq.rabbit.CfmCallback;
 import com.yuweix.tripod.core.mq.rabbit.RabbitSender;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -87,10 +87,10 @@ public class RabbitConf {
         return retryTemplate;
     }
 
-    @ConditionalOnMissingBean(RabbitCallback.class)
+    @ConditionalOnMissingBean(CfmCallback.class)
     @Bean
-    public RabbitCallback rabbitCallback() {
-        return new RabbitCallback() {
+    public CfmCallback cfmCallback() {
+        return new CfmCallback() {
             @Override
             public void call(CorrelationData correlationData, boolean ack, String cause) {
                 //TODO
@@ -103,11 +103,11 @@ public class RabbitConf {
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory
             , @Qualifier("rabbitRetryTemplate") RetryTemplate retryTemplate
             , @Qualifier("rabbitJsonMessageConverter") MessageConverter rabbitJsonMessageConverter
-            , RabbitCallback rabbitCallback) {
+            , CfmCallback cfmCallback) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(rabbitJsonMessageConverter);
         template.setRetryTemplate(retryTemplate);
-        template.setConfirmCallback(rabbitCallback::call);
+        template.setConfirmCallback(cfmCallback::call);
         return template;
     }
 
