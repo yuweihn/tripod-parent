@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
  * @author yuwei
  * @date 2024-08-17 13:36:40
  */
-public class DefaultRabbitSender implements RabbitSender {
+public class DefaultRabbitSender extends RetrableRabbitSender implements RabbitSender {
     private static final Logger log = LoggerFactory.getLogger(DefaultRabbitSender.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -24,6 +24,7 @@ public class DefaultRabbitSender implements RabbitSender {
     private RabbitTemplate rabbitTemplate;
 
     public DefaultRabbitSender(RabbitTemplate rabbitTemplate) {
+        super(rabbitTemplate);
         this.rabbitTemplate = rabbitTemplate;
     }
 
@@ -33,7 +34,7 @@ public class DefaultRabbitSender implements RabbitSender {
             MessageProperties properties = new MessageProperties();
             Message msg = MessageBuilder.withBody(objectMapper.writeValueAsString(message).getBytes(StandardCharsets.UTF_8))
                     .andProperties(properties).build();
-            rabbitTemplate.convertAndSend(exchange, routeKey, msg);
+            rabbitTemplate.convertAndSend(exchange, routeKey, msg, new RetryData(exchange, routeKey, msg, this));
         } catch (Exception e) {
             log.error("发送消息异常", e);
             throw new RuntimeException("发送消息异常");

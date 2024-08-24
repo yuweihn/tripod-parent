@@ -2,10 +2,7 @@ package com.yuweix.tripod.core.springboot;
 
 
 import com.yuweix.tripod.core.SpringContext;
-import com.yuweix.tripod.core.mq.rabbit.BindingSetting;
-import com.yuweix.tripod.core.mq.rabbit.DefaultRabbitSender;
-import com.yuweix.tripod.core.mq.rabbit.CfmCallback;
-import com.yuweix.tripod.core.mq.rabbit.RabbitSender;
+import com.yuweix.tripod.core.mq.rabbit.*;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -93,7 +90,18 @@ public class RabbitConf {
         return new CfmCallback() {
             @Override
             public void call(CorrelationData correlationData, boolean ack, String cause) {
-                //TODO
+                if (ack) {
+                    return;
+                }
+                if (!(correlationData instanceof RetryData)) {
+                    return;
+                }
+                RetryData retryData = (RetryData) correlationData;
+                RabbitSender sender = retryData.getRabbitSender();
+                if (sender == null || !(sender instanceof RetrableRabbitSender)) {
+                    return;
+                }
+                ((RetrableRabbitSender) sender).retrySendMessage(retryData);
             }
         };
     }
