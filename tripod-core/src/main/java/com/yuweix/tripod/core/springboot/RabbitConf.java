@@ -101,7 +101,7 @@ public class RabbitConf {
                 if (sender == null || !(sender instanceof RetrableRabbitSender)) {
                     return;
                 }
-                ((RetrableRabbitSender) sender).retrySendMessage(retryData);
+                ((RetrableRabbitSender) sender).resend(retryData);
             }
         };
     }
@@ -121,7 +121,9 @@ public class RabbitConf {
 
     @ConditionalOnMissingBean(RabbitSender.class)
     @Bean
-    public RabbitSender rabbitSender(RabbitTemplate rabbitTemplate) {
-        return new DefaultRabbitSender(rabbitTemplate);
+    public RabbitSender rabbitSender(RabbitTemplate rabbitTemplate, @Value("${tripod.rabbit.consumer.retry.maxAttempts:3}") int maxAttempts) {
+        DefaultRabbitSender sender = new DefaultRabbitSender(rabbitTemplate);
+        sender.setMaxRetryTimes(maxAttempts);
+        return sender;
     }
 }
