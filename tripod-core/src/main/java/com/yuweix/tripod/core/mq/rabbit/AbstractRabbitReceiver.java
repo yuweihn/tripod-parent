@@ -47,6 +47,7 @@ public abstract class AbstractRabbitReceiver<T> {
                 return;
             }
             log.info("body: {}", body);
+            beforeProcess(message, channel);
             T t = JsonUtil.parseObject(body, clz);
             process(t);
             channel.basicAck(deliveryTag, false);
@@ -58,4 +59,8 @@ public abstract class AbstractRabbitReceiver<T> {
     }
 
     protected abstract void process(T t);
+
+    protected void beforeProcess(Message message, Channel channel) {
+
+    }
 }
