@@ -28,9 +28,10 @@ public abstract class RetrableRabbitSender implements RabbitSender {
     public void resend(RetryData retryData) {
         int times = retryData.getRetryTimes() + 1;
         if (times > maxRetryTimes) {
-            log.warn("超过最大可重试次数！");
+            log.error("超过最大可重试次数！");
             return;
         }
+        log.info("重试第{}次", times);
         retryData.setRetryTimes(times);
         rabbitTemplate.convertAndSend(retryData.getExchange(), retryData.getRouteKey(), retryData.getMessage(), retryData);
     }
