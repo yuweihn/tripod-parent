@@ -98,10 +98,10 @@ public class RabbitConf {
                 }
                 RetryData retryData = (RetryData) correlationData;
                 RabbitSender sender = retryData.getRabbitSender();
-                if (sender == null || !(sender instanceof RetrableRabbitSender)) {
+                if (sender == null || !(sender instanceof Confirmable)) {
                     return;
                 }
-                ((RetrableRabbitSender) sender).resend(retryData);
+                ((Confirmable) sender).resend(retryData);
             }
         };
     }
@@ -121,7 +121,7 @@ public class RabbitConf {
 
     @ConditionalOnMissingBean(RabbitSender.class)
     @Bean
-    public RabbitSender rabbitSender(RabbitTemplate rabbitTemplate, @Value("${tripod.rabbit.consumer.retry.maxAttempts:3}") int maxAttempts) {
+    public RabbitSender rabbitSender(RabbitTemplate rabbitTemplate, @Value("${tripod.rabbit.confirm.retry.maxAttempts:3}") int maxAttempts) {
         DefaultRabbitSender sender = new DefaultRabbitSender(rabbitTemplate);
         sender.setMaxRetryTimes(maxAttempts);
         return sender;

@@ -16,15 +16,18 @@ import java.nio.charset.StandardCharsets;
  * @author yuwei
  * @date 2024-08-17 13:36:40
  */
-public class DefaultRabbitSender extends RetrableRabbitSender implements RabbitSender {
+public class DefaultRabbitSender implements RabbitSender, Confirmable {
     private static final Logger log = LoggerFactory.getLogger(DefaultRabbitSender.class);
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private RabbitTemplate rabbitTemplate;
+    /**
+     * 从生产者发往交换机的最大可重试次数
+     */
+    private int maxRetryTimes = 3;
 
     public DefaultRabbitSender(RabbitTemplate rabbitTemplate) {
-        super(rabbitTemplate);
         this.rabbitTemplate = rabbitTemplate;
     }
 
@@ -39,5 +42,21 @@ public class DefaultRabbitSender extends RetrableRabbitSender implements RabbitS
             log.error("发送消息异常", e);
             throw new RuntimeException("发送消息异常");
         }
+    }
+
+    @Override
+    public void resend(RetryData retryData) {
+        int times = retryData.getRetryTimes() + 1;
+        if (times > maxRetryTimes) {
+            log.error("超过最大可重试次数！");
+            return;
+        }
+        log.info("重试第{}次", times);
+        retryData.setRetryTimes(times);
+        rabbitTemplate.convertAndSend(retryData.getExchange(), retryData.getRouteKey(), retryData.getMessage(), retryData);
+    }
+
+    public void setMaxRetryTimes(int maxRetryTimes) {
+        this.maxRetryTimes = maxRetryTimes;
     }
 }

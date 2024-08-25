@@ -5,6 +5,7 @@ import org.springframework.amqp.rabbit.connection.CorrelationData;
 
 
 /**
+ * 生产者到交换机的消息确认
  * @author yuwei
  **/
 public interface CfmCallback {
