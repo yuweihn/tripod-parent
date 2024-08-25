@@ -35,20 +35,21 @@ public abstract class AbstractRabbitReceiver<T> {
         log.info("接收消息: {}", JsonUtil.toJSONString(message));
         String body = null;
         try {
+            long deliveryTag = message.getMessageProperties().getDeliveryTag();
             byte[] bytes = message.getBody();
             if (bytes == null || bytes.length <= 0) {
-                channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+                channel.basicAck(deliveryTag, false);
                 return;
             }
             body = new String(bytes);
             if (body.isEmpty()) {
-                channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+                channel.basicAck(deliveryTag, false);
                 return;
             }
             log.info("body: {}", body);
             T t = JsonUtil.parseObject(body, clz);
             process(t);
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+            channel.basicAck(deliveryTag, false);
             log.info("消费完成");
         } catch (Exception e) {
             log.error("消费异常message: {}, Error: {}", body, e.getMessage());
