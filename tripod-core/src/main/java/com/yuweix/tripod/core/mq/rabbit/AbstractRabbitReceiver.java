@@ -52,6 +52,7 @@ public abstract class AbstractRabbitReceiver<T> {
             process(t);
             channel.basicAck(deliveryTag, false);
             log.info("消费完成");
+            afterProcess(message, channel);
         } catch (Exception e) {
             log.error("消费异常message: {}, Error: {}", body, e.getMessage());
             throw new RuntimeException(e);
@@ -61,6 +62,10 @@ public abstract class AbstractRabbitReceiver<T> {
     protected abstract void process(T t);
 
     protected void beforeProcess(Message message, Channel channel) {
+
+    }
+
+    protected void afterProcess(Message message, Channel channel) {
 
     }
 }
