@@ -10,6 +10,7 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 
 /**
@@ -35,6 +36,7 @@ public class DefaultRabbitSender implements RabbitSender, Confirmable {
     public void sendMessage(String exchange, String routeKey, Object message) {
         try {
             MessageProperties properties = new MessageProperties();
+            properties.setMessageId(UUID.randomUUID().toString().replace("-", ""));
             Message msg = MessageBuilder.withBody(objectMapper.writeValueAsString(message).getBytes(StandardCharsets.UTF_8))
                     .andProperties(properties).build();
             rabbitTemplate.convertAndSend(exchange, routeKey, msg, new RetryData(exchange, routeKey, msg, this));
