@@ -97,7 +97,7 @@ public class RabbitConf {
                 if (ack) {
                     return;
                 }
-                log.error("MessageId: {}, Cause: {}", correlationData.getId(), cause);
+                log.error("CorrelationDataId: {}, Cause: {}", correlationData.getId(), cause);
                 if (!(correlationData instanceof RetryData)) {
                     return;
                 }
