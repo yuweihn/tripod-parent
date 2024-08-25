@@ -3,6 +3,8 @@ package com.yuweix.tripod.core.springboot;
 
 import com.yuweix.tripod.core.SpringContext;
 import com.yuweix.tripod.core.mq.rabbit.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -26,6 +28,8 @@ import java.util.List;
  * @author yuwei
  */
 public class RabbitConf {
+    private static final Logger log = LoggerFactory.getLogger(RabbitConf.class);
+
     @ConditionalOnMissingBean(BindingSetting.class)
     @Bean
     @ConfigurationProperties(prefix = "tripod.rabbit.setting", ignoreUnknownFields = true)
@@ -93,6 +97,7 @@ public class RabbitConf {
                 if (ack) {
                     return;
                 }
+                log.error("MessageId: {}, Cause: {}", correlationData.getId(), cause);
                 if (!(correlationData instanceof RetryData)) {
                     return;
                 }
