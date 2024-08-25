@@ -34,8 +34,8 @@ public abstract class AbstractRabbitReceiver<T> {
     public void onMessage(Message message, Channel channel) {
         log.info("接收消息: {}", JsonUtil.toJSONString(message));
         String body = null;
+        long deliveryTag = message.getMessageProperties().getDeliveryTag();
         try {
-            long deliveryTag = message.getMessageProperties().getDeliveryTag();
             byte[] bytes = message.getBody();
             if (bytes == null || bytes.length <= 0) {
                 channel.basicAck(deliveryTag, false);
