@@ -102,11 +102,11 @@ public class RabbitConf {
                     return;
                 }
                 ConfirmData confirmData = (ConfirmData) correlationData;
-                RabbitSender sender = confirmData.getRabbitSender();
-                if (sender == null || !(sender instanceof Confirmable)) {
+                Confirmable confirmable = confirmData.getConfirmable();
+                if (confirmable == null) {
                     return;
                 }
-                ((Confirmable) sender).resend(confirmData);
+                confirmable.resend(confirmData);
             }
         };
     }

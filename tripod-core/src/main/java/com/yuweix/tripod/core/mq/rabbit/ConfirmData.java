@@ -14,7 +14,7 @@ public class ConfirmData extends CorrelationData {
     private String routeKey;
     private Message message;
 
-    private RabbitSender rabbitSender;
+    private Confirmable confirmable;
 
     /**
      * 当前重试次数
@@ -25,12 +25,12 @@ public class ConfirmData extends CorrelationData {
     public ConfirmData() {
         super();
     }
-    public ConfirmData(String exchange, String routeKey, Message message, RabbitSender rabbitSender) {
+    public ConfirmData(String exchange, String routeKey, Message message, Confirmable confirmable) {
         super();
         this.exchange = exchange;
         this.routeKey = routeKey;
         this.message = message;
-        this.rabbitSender = rabbitSender;
+        this.confirmable = confirmable;
     }
 
 
@@ -66,11 +66,11 @@ public class ConfirmData extends CorrelationData {
         this.retryTimes = retryTimes;
     }
 
-    public RabbitSender getRabbitSender() {
-        return rabbitSender;
+    public Confirmable getConfirmable() {
+        return confirmable;
     }
 
-    public void setRabbitSender(RabbitSender rabbitSender) {
-        this.rabbitSender = rabbitSender;
+    public void setConfirmable(Confirmable confirmable) {
+        this.confirmable = confirmable;
     }
 }
