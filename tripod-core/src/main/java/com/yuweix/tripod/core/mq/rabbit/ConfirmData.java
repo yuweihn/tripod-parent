@@ -9,7 +9,7 @@ import org.springframework.amqp.rabbit.connection.CorrelationData;
  * @author yuwei
  * @date 2024-08-24 12:27:09
  */
-public class RetryData extends CorrelationData {
+public class ConfirmData extends CorrelationData {
     private String exchange;
     private String routeKey;
     private Message message;
@@ -22,10 +22,10 @@ public class RetryData extends CorrelationData {
     private int retryTimes = 0;
 
 
-    public RetryData() {
+    public ConfirmData() {
         super();
     }
-    public RetryData(String exchange, String routeKey, Message message, RabbitSender rabbitSender) {
+    public ConfirmData(String exchange, String routeKey, Message message, RabbitSender rabbitSender) {
         super();
         this.exchange = exchange;
         this.routeKey = routeKey;

@@ -98,15 +98,15 @@ public class RabbitConf {
                     return;
                 }
                 log.error("CorrelationDataId: {}, Cause: {}", correlationData.getId(), cause);
-                if (!(correlationData instanceof RetryData)) {
+                if (!(correlationData instanceof ConfirmData)) {
                     return;
                 }
-                RetryData retryData = (RetryData) correlationData;
-                RabbitSender sender = retryData.getRabbitSender();
+                ConfirmData confirmData = (ConfirmData) correlationData;
+                RabbitSender sender = confirmData.getRabbitSender();
                 if (sender == null || !(sender instanceof Confirmable)) {
                     return;
                 }
-                ((Confirmable) sender).resend(retryData);
+                ((Confirmable) sender).resend(confirmData);
             }
         };
     }
