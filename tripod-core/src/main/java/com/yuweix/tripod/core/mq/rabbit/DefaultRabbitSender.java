@@ -39,7 +39,7 @@ public class DefaultRabbitSender implements RabbitSender, Confirmable {
             properties.setMessageId(UUID.randomUUID().toString().replace("-", ""));
             Message msg = MessageBuilder.withBody(objectMapper.writeValueAsString(message).getBytes(StandardCharsets.UTF_8))
                     .andProperties(properties).build();
-            rabbitTemplate.convertAndSend(exchange, routeKey, msg, new RetryData(exchange, routeKey, msg, this));
+            rabbitTemplate.convertAndSend(exchange, routeKey, msg, new ConfirmData(exchange, routeKey, msg, this));
         } catch (Exception e) {
             log.error("发送消息异常", e);
             throw new RuntimeException("发送消息异常");
@@ -47,15 +47,15 @@ public class DefaultRabbitSender implements RabbitSender, Confirmable {
     }
 
     @Override
-    public void resend(RetryData retryData) {
-        int times = retryData.getRetryTimes() + 1;
+    public void resend(ConfirmData confirmData) {
+        int times = confirmData.getRetryTimes() + 1;
         if (times > maxRetryTimes) {
             log.error("超过最大可重试次数！");
             return;
         }
         log.info("重试第{}次", times);
-        retryData.setRetryTimes(times);
-        rabbitTemplate.convertAndSend(retryData.getExchange(), retryData.getRouteKey(), retryData.getMessage(), retryData);
+        confirmData.setRetryTimes(times);
+        rabbitTemplate.convertAndSend(confirmData.getExchange(), confirmData.getRouteKey(), confirmData.getMessage(), confirmData);
     }
 
     public void setMaxRetryTimes(int maxRetryTimes) {

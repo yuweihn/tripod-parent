@@ -9,5 +9,5 @@ public interface Confirmable {
     /**
      * 生产者重发消息给交换机
      */
-    void resend(RetryData retryData);
+    void resend(ConfirmData confirmData);
 }
