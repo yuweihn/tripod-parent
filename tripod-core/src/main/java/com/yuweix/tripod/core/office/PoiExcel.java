@@ -1,17 +1,6 @@
 package com.yuweix.tripod.core.office;
 
 
-import java.beans.PropertyDescriptor;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
 import com.yuweix.tripod.core.json.JsonUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
@@ -21,6 +10,13 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.beans.PropertyDescriptor;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -32,23 +28,33 @@ public abstract class PoiExcel {
 	private static final int DEFAULT_FONT_HEIGHT = 20;
 
 
+	public static List<Map<String, Object>> read(Sheet sheet) {
+		/**
+		 * 读取头部，第一行
+		 **/
+		List<String> headList = getInputHeadList(sheet.getRow(0));
+		/**
+		 * 读取数据部分，从第二行开始
+		 **/
+		return getInputDataList(sheet, headList);
+	}
 	/**
-	 * 读入excel工作簿文件，只读取第一个sheet
+	 * 读取excel，遍历所有sheet
 	 */
-	public static List<Map<String, Object>> read(byte[] fileData) {
+	public static List<Map<String, Object>> read(byte[] bytes) {
 		InputStream is = null;
 		try {
-			is = new ByteArrayInputStream(fileData);
+			List<Map<String, Object>> mapList = new ArrayList<>();
+			is = new ByteArrayInputStream(bytes);
 			Workbook wb = WorkbookFactory.create(is);
-			Sheet sheet = wb.getSheetAt(0);
-			/**
-			 * 读取头部，第一行
-			 **/
-			List<String> headList = getInputHeadList(sheet.getRow(0));
-			/**
-			 * 读取数据部分，从第二行开始
-			 **/
-			return getInputDataList(sheet, headList);
+			int sheetCount = wb.getNumberOfSheets();
+			for (int i = 0; i < sheetCount; i++) {
+				List<Map<String, Object>> list = read(wb.getSheetAt(i));
+				if (list != null && list.size() > 0) {
+					mapList.addAll(list);
+				}
+			}
+			return mapList;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -62,7 +68,7 @@ public abstract class PoiExcel {
 		}
 	}
 
-	public static<T> List<T> read(byte[] fileData, Class<T> clz) {
+	public static<T> List<T> read(byte[] bytes, Class<T> clz) {
 		List<T> list = new ArrayList<>();
 
 		Field[] fields = clz.getDeclaredFields();
@@ -70,7 +76,7 @@ public abstract class PoiExcel {
 			return list;
 		}
 
-		List<Map<String, Object>> mapList = read(fileData);
+		List<Map<String, Object>> mapList = read(bytes);
 		if (mapList == null || mapList.size() <= 0) {
 			return list;
 		}
