@@ -3,12 +3,7 @@ package com.yuweix.tripod.core.office;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFTable;
-import org.apache.poi.xwpf.usermodel.XWPFTableCell;
-import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.apache.poi.xwpf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -31,12 +26,12 @@ public abstract class PoiWord {
 	private static final String TYPE_DOCX = "docx";
 
 
-	private static byte[] replaceInDoc(byte[] fileData, Map<String, String> map) {
+	private static byte[] replaceInDoc(byte[] bytes, Map<String, String> map) {
 		InputStream inputStream = null;
 		ByteArrayOutputStream outputStream = null;
 		HWPFDocument document = null;
 		try {
-			inputStream = new ByteArrayInputStream(fileData);
+			inputStream = new ByteArrayInputStream(bytes);
 			document = new HWPFDocument(inputStream);
 			Range range = document.getRange();
 			for (Map.Entry<String, String> entry: map.entrySet()) {
@@ -66,12 +61,12 @@ public abstract class PoiWord {
 		}
 	}
 
-	private static byte[] replaceInDocx(byte[] fileData, Map<String, String> map) {
+	private static byte[] replaceInDocx(byte[] bytes, Map<String, String> map) {
 		InputStream inputStream = null;
 		ByteArrayOutputStream outputStream = null;
 		XWPFDocument document = null;
 		try {
-			inputStream = new ByteArrayInputStream(fileData);
+			inputStream = new ByteArrayInputStream(bytes);
 			document = new XWPFDocument(inputStream);
 			// 替换段落中的指定文字
 			Iterator<XWPFParagraph> itPara = document.getParagraphsIterator();
@@ -152,16 +147,16 @@ public abstract class PoiWord {
 	 * 替换word中需要替换的特殊字符
 	 * fileType取值：doc或docx
 	 */
-	public static byte[] replace(byte[] fileData, String fileType, Map<String, String> map) {
-		if (fileData == null || fileData.length <= 0) {
-			throw new IllegalArgumentException("[fileData] is required.");
+	public static byte[] replace(byte[] bytes, String fileType, Map<String, String> map) {
+		if (bytes == null || bytes.length <= 0) {
+			throw new IllegalArgumentException("[bytes] is required.");
 		}
 		Assert.notEmpty(map, "[map] is required.");
 
 		if (TYPE_DOCX.equals(fileType)) {
-			return replaceInDocx(fileData, map);
+			return replaceInDocx(bytes, map);
 		} else if (TYPE_DOC.equals(fileType)) {
-			return replaceInDoc(fileData, map);
+			return replaceInDoc(bytes, map);
 		}
 
 		throw new IllegalArgumentException("[fileType] must be doc or docx.");
