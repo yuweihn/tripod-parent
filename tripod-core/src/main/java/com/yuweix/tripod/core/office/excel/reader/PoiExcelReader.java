@@ -24,46 +24,6 @@ public abstract class PoiExcelReader {
 	private static final Logger log = LoggerFactory.getLogger(PoiExcelReader.class);
 
 
-	private static List<Map<String, Object>> read(Sheet sheet) {
-		/**
-		 * 读取头部，第一行
-		 **/
-		List<String> headList = getInputHeadList(sheet.getRow(0));
-		/**
-		 * 读取数据部分，从第二行开始
-		 **/
-		return getInputDataList(sheet, headList);
-	}
-	/**
-	 * 读取excel，遍历所有sheet
-	 */
-	public static List<Map<String, Object>> read(byte[] bytes) {
-		InputStream is = null;
-		try {
-			List<Map<String, Object>> mapList = new ArrayList<>();
-			is = new ByteArrayInputStream(bytes);
-			Workbook wb = WorkbookFactory.create(is);
-			int sheetCount = wb.getNumberOfSheets();
-			for (int i = 0; i < sheetCount; i++) {
-				List<Map<String, Object>> list = read(wb.getSheetAt(i));
-				if (list != null && list.size() > 0) {
-					mapList.addAll(list);
-				}
-			}
-			return mapList;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (is != null) {
-				try {
-					is.close();
-				} catch (IOException e) {
-					log.error("", e);
-				}
-			}
-		}
-	}
-
 	public static<T> List<T> read(byte[] bytes, Class<T> clz) {
 		List<T> list = new ArrayList<>();
 
@@ -95,6 +55,47 @@ public abstract class PoiExcelReader {
 			list.add(t);
 		}
 		return list;
+	}
+
+	/**
+	 * 读取excel，遍历所有sheet
+	 */
+	public static List<Map<String, Object>> read(byte[] bytes) {
+		InputStream is = null;
+		try {
+			List<Map<String, Object>> mapList = new ArrayList<>();
+			is = new ByteArrayInputStream(bytes);
+			Workbook wb = WorkbookFactory.create(is);
+			int sheetCount = wb.getNumberOfSheets();
+			for (int i = 0; i < sheetCount; i++) {
+				List<Map<String, Object>> list = read(wb.getSheetAt(i));
+				if (list != null && list.size() > 0) {
+					mapList.addAll(list);
+				}
+			}
+			return mapList;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					log.error("", e);
+				}
+			}
+		}
+	}
+
+	private static List<Map<String, Object>> read(Sheet sheet) {
+		/**
+		 * 读取头部，第一行
+		 **/
+		List<String> headList = getInputHeadList(sheet.getRow(0));
+		/**
+		 * 读取数据部分，从第二行开始
+		 **/
+		return getInputDataList(sheet, headList);
 	}
 
 	private static List<String> getInputHeadList(Row row) {
