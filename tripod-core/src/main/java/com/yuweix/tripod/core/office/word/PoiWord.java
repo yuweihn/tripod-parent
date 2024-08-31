@@ -1,4 +1,4 @@
-package com.yuweix.tripod.core.office;
+package com.yuweix.tripod.core.office.word;
 
 
 import org.apache.poi.hwpf.HWPFDocument;
