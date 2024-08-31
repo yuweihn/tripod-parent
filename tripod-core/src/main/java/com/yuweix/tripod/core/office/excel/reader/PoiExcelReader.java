@@ -3,6 +3,7 @@ package com.yuweix.tripod.core.office.excel.reader;
 
 import com.yuweix.tripod.core.json.JsonUtil;
 import com.yuweix.tripod.core.office.excel.annotation.ExcelKey;
+import com.yuweix.tripod.core.office.excel.model.PoiSheet;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,23 +58,22 @@ public abstract class PoiExcelReader {
 		return list;
 	}
 
-	/**
-	 * 读取excel，遍历所有sheet
-	 */
-	public static List<Map<String, Object>> read(byte[] bytes) {
+	public static List<PoiSheet<Map<String, Object>>> read(byte[] bytes) {
 		InputStream is = null;
 		try {
-			List<Map<String, Object>> mapList = new ArrayList<>();
+			List<PoiSheet<Map<String, Object>>> sheetList = new ArrayList<>();
 			is = new ByteArrayInputStream(bytes);
 			Workbook wb = WorkbookFactory.create(is);
 			int sheetCount = wb.getNumberOfSheets();
 			for (int i = 0; i < sheetCount; i++) {
-				List<Map<String, Object>> list = read(wb.getSheetAt(i));
-				if (list != null && list.size() > 0) {
-					mapList.addAll(list);
-				}
+				Sheet sheet = wb.getSheetAt(i);
+				List<Map<String, Object>> sheetDataList = read(sheet);
+				PoiSheet<Map<String, Object>> poiSheet = new PoiSheet<>();
+				poiSheet.setSheetName(sheet.getSheetName());
+				poiSheet.setList(sheetDataList);
+				sheetList.add(poiSheet);
 			}
-			return mapList;
+			return sheetList;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
@@ -110,8 +110,8 @@ public abstract class PoiExcelReader {
 		return list;
 	}
 
-	private static List<Map<String, Object>> getInputDataList(Sheet sheet, List<String> keyList) {
-		List<Map<String, Object>> list = new ArrayList<>();
+	private static<T> List<T> getInputDataList(Sheet sheet, List<String> keyList) {
+		List<T> list = new ArrayList<>();
 		for (Row row: sheet) {
 			if (row.getRowNum() <= 0) {
 				continue;
