@@ -1,4 +1,4 @@
-package com.yuweix.tripod.core.office.excel.annotation;
+package com.yuweix.tripod.core.office.excel;
 
 
 import java.lang.annotation.Documented;
