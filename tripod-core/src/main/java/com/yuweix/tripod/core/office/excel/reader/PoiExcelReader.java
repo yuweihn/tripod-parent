@@ -26,39 +26,62 @@ public abstract class PoiExcelReader {
 
 
 	public static<T> List<T> read(byte[] bytes, Class<T> clz) {
-		List<T> list = new ArrayList<>();
+		List<T> allList = new ArrayList<>();
+		List<PoiSheet<T>> list = readSheet(bytes, clz);
+		if (list == null || list.size() <= 0) {
+			return allList;
+		}
+		for (PoiSheet<T> poiSheet: list) {
+			List<T> subList = poiSheet.getList();
+			if (subList == null || subList.size() <= 0) {
+				continue;
+			}
+			allList.addAll(subList);
+		}
+		return allList;
+	}
+
+	public static<T> List<PoiSheet<T>> readSheet(byte[] bytes, Class<T> clz) {
+		List<PoiSheet<T>> sheetList = new ArrayList<>();
 
 		Field[] fields = clz.getDeclaredFields();
 		if (fields == null || fields.length <= 0) {
-			return list;
+			return sheetList;
 		}
 
-		List<Map<String, Object>> mapList = read(bytes);
-		if (mapList == null || mapList.size() <= 0) {
-			return list;
+		List<PoiSheet<Map<String, Object>>> sheetMapList = read(bytes);
+		if (sheetMapList == null || sheetMapList.size() <= 0) {
+			return sheetList;
 		}
-		for (Map<String, Object> map: mapList) {
-			Map<String, Object> fieldValueMap = new HashMap<>();
-			for (Field field: fields) {
-				ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
-				if (excelKeyAno == null) {
-					continue;
-				}
+		for (PoiSheet<Map<String, Object>> sheetMap: sheetMapList) {
+			List<T> tList = new ArrayList<>();
+			for (Map<String, Object> map : sheetMap.getList()) {
+				Map<String, Object> fieldValueMap = new HashMap<>();
+				for (Field field : fields) {
+					ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
+					if (excelKeyAno == null) {
+						continue;
+					}
 
-				String key = excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim();
-				Object v = map.get(key);
-				if (v == null) {
-					continue;
+					String key = excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim();
+					Object v = map.get(key);
+					if (v == null) {
+						continue;
+					}
+					fieldValueMap.put(field.getName(), v);
 				}
-				fieldValueMap.put(field.getName(), v);
+				T t = JsonUtil.parseObject(JsonUtil.toJSONString(fieldValueMap), clz);
+				tList.add(t);
 			}
-			T t = JsonUtil.parseObject(JsonUtil.toJSONString(fieldValueMap), clz);
-			list.add(t);
+			PoiSheet<T> poiSheet = new PoiSheet<>();
+			poiSheet.setSheetName(sheetMap.getSheetName());
+			poiSheet.setList(tList);
+			sheetList.add(poiSheet);
 		}
-		return list;
+		return sheetList;
 	}
 
-	public static List<PoiSheet<Map<String, Object>>> read(byte[] bytes) {
+	private static List<PoiSheet<Map<String, Object>>> read(byte[] bytes) {
 		InputStream is = null;
 		try {
 			List<PoiSheet<Map<String, Object>>> sheetList = new ArrayList<>();
@@ -81,7 +104,7 @@ public abstract class PoiExcelReader {
 				try {
 					is.close();
 				} catch (IOException e) {
-					log.error("", e);
+					log.error("Error: {}", new Object[] {e});
 				}
 			}
 		}
@@ -110,8 +133,8 @@ public abstract class PoiExcelReader {
 		return list;
 	}
 
-	private static<T> List<T> getInputDataList(Sheet sheet, List<String> keyList) {
-		List<T> list = new ArrayList<>();
+	private static List<Map<String, Object>> getInputDataList(Sheet sheet, List<String> keyList) {
+		List<Map<String, Object>> list = new ArrayList<>();
 		for (Row row: sheet) {
 			if (row.getRowNum() <= 0) {
 				continue;
