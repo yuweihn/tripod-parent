@@ -1,7 +1,7 @@
-package com.yuweix.tripod.core.office.excel.writer;
+package com.yuweix.tripod.core.office.excel;
 
 
-import com.yuweix.tripod.core.office.excel.annotation.ExcelKey;
+import com.yuweix.tripod.core.json.JsonUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFCell;
@@ -12,9 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.PropertyDescriptor;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
@@ -24,10 +22,177 @@ import java.util.*;
 /**
  * @author yuwei
  */
-public abstract class PoiExcelWriter {
-	private static final Logger log = LoggerFactory.getLogger(PoiExcelWriter.class);
+public abstract class PoiExcel {
+	private static final Logger log = LoggerFactory.getLogger(PoiExcel.class);
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 	private static final int DEFAULT_FONT_HEIGHT = 20;
+
+
+	public static<T> List<T> read(byte[] bytes, Class<T> clz) {
+		List<T> allList = new ArrayList<>();
+		List<PoiSheet<T>> list = readSheet(bytes, clz);
+		if (list == null || list.size() <= 0) {
+			return allList;
+		}
+		for (PoiSheet<T> poiSheet: list) {
+			List<T> subList = poiSheet.getList();
+			if (subList == null || subList.size() <= 0) {
+				continue;
+			}
+			allList.addAll(subList);
+		}
+		return allList;
+	}
+
+	public static<T> List<PoiSheet<T>> readSheet(byte[] bytes, Class<T> clz) {
+		List<PoiSheet<T>> sheetList = new ArrayList<>();
+
+		Field[] fields = clz.getDeclaredFields();
+		if (fields == null || fields.length <= 0) {
+			return sheetList;
+		}
+
+		List<PoiSheet<Map<String, Object>>> sheetMapList = read(bytes);
+		if (sheetMapList == null || sheetMapList.size() <= 0) {
+			return sheetList;
+		}
+		for (PoiSheet<Map<String, Object>> sheetMap: sheetMapList) {
+			List<T> tList = new ArrayList<>();
+			for (Map<String, Object> map : sheetMap.getList()) {
+				Map<String, Object> fieldValueMap = new HashMap<>();
+				for (Field field : fields) {
+					ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
+					if (excelKeyAno == null) {
+						continue;
+					}
+
+					String key = excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim();
+					Object v = map.get(key);
+					if (v == null) {
+						continue;
+					}
+					fieldValueMap.put(field.getName(), v);
+				}
+				T t = JsonUtil.parseObject(JsonUtil.toJSONString(fieldValueMap), clz);
+				tList.add(t);
+			}
+			PoiSheet<T> poiSheet = new PoiSheet<>();
+			poiSheet.setSheetName(sheetMap.getSheetName());
+			poiSheet.setList(tList);
+			sheetList.add(poiSheet);
+		}
+		return sheetList;
+	}
+
+	private static List<PoiSheet<Map<String, Object>>> read(byte[] bytes) {
+		InputStream is = null;
+		try {
+			List<PoiSheet<Map<String, Object>>> sheetList = new ArrayList<>();
+			is = new ByteArrayInputStream(bytes);
+			Workbook wb = WorkbookFactory.create(is);
+			int sheetCount = wb.getNumberOfSheets();
+			for (int i = 0; i < sheetCount; i++) {
+				Sheet sheet = wb.getSheetAt(i);
+				List<Map<String, Object>> sheetDataList = read(sheet);
+				PoiSheet<Map<String, Object>> poiSheet = new PoiSheet<>();
+				poiSheet.setSheetName(sheet.getSheetName());
+				poiSheet.setList(sheetDataList);
+				sheetList.add(poiSheet);
+			}
+			return sheetList;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					log.error("Error: {}", new Object[] {e});
+				}
+			}
+		}
+	}
+
+	private static List<Map<String, Object>> read(Sheet sheet) {
+		/**
+		 * 读取头部，第一行
+		 **/
+		List<String> headList = getInputHeadList(sheet.getRow(0));
+		/**
+		 * 读取数据部分，从第二行开始
+		 **/
+		return getInputDataList(sheet, headList);
+	}
+
+	private static List<String> getInputHeadList(Row row) {
+		List<String> list = new ArrayList<>();
+		for (Cell cell: row) {
+			String head = cell.toString();
+			if (head == null || "".equals(head.trim())) {
+				continue;
+			}
+			list.add(head.trim());
+		}
+		return list;
+	}
+
+	private static List<Map<String, Object>> getInputDataList(Sheet sheet, List<String> keyList) {
+		List<Map<String, Object>> list = new ArrayList<>();
+		for (Row row: sheet) {
+			if (row.getRowNum() <= 0) {
+				continue;
+			}
+
+			Map<String, Object> map = new HashMap<>();
+			int keySize = keyList.size();
+			for (Cell cell: row) {
+				int idx = cell.getColumnIndex();
+				if (idx < 0 || idx >= keySize) {
+					continue;
+				}
+				map.put(keyList.get(idx), getCellValue(cell));
+			}
+			list.add(map);
+		}
+		return list;
+	}
+
+	private static Object getCellValue(Cell cell) {
+		CellType ct = cell.getCellType();
+		if (CellType.NUMERIC == ct) {
+			if (DateUtil.isCellDateFormatted(cell)) {
+				return cell.getDateCellValue();
+			}
+
+			double d = cell.getNumericCellValue();
+			int i = (int) d;
+			if (d == i) {
+				return i;
+			} else {
+				return d;
+			}
+//			return NumberToTextConverter.toText(cell.getNumericCellValue());
+		}
+		if (CellType.STRING == ct) {
+			return cell.getRichStringCellValue().getString();
+		}
+		if (CellType.FORMULA == ct) {
+			Workbook wb = cell.getSheet().getWorkbook();
+			CreationHelper crateHelper = wb.getCreationHelper();
+			FormulaEvaluator evaluator = crateHelper.createFormulaEvaluator();
+			return getCellValue(evaluator.evaluateInCell(cell));
+		}
+		if (CellType.BLANK == ct) {
+			return null;
+		}
+		if (CellType.BOOLEAN == ct) {
+			return cell.getBooleanCellValue();
+		}
+		if (CellType.ERROR == ct) {
+			return null;
+		}
+		return null;
+	}
 
 
 	/**

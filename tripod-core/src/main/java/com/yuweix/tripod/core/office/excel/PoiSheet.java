@@ -1,4 +1,4 @@
-package com.yuweix.tripod.core.office.excel.model;
+package com.yuweix.tripod.core.office.excel;
 
 
 import java.util.List;
