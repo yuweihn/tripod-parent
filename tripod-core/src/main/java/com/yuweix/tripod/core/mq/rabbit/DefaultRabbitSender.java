@@ -23,10 +23,6 @@ public class DefaultRabbitSender implements RabbitSender, Confirmable {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private RabbitTemplate rabbitTemplate;
-    /**
-     * 从生产者发往交换机的最大可重试次数
-     */
-    private int maxRetryTimes = 3;
 
     public DefaultRabbitSender(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
@@ -48,17 +44,6 @@ public class DefaultRabbitSender implements RabbitSender, Confirmable {
 
     @Override
     public void resend(ConfirmData confirmData) {
-        int times = confirmData.getRetryTimes() + 1;
-        if (times > maxRetryTimes) {
-            log.error("超过最大可重试次数！");
-            return;
-        }
-        log.info("重试第{}次", times);
-        confirmData.setRetryTimes(times);
         rabbitTemplate.convertAndSend(confirmData.getExchange(), confirmData.getRouteKey(), confirmData.getMessage(), confirmData);
-    }
-
-    public void setMaxRetryTimes(int maxRetryTimes) {
-        this.maxRetryTimes = maxRetryTimes;
     }
 }

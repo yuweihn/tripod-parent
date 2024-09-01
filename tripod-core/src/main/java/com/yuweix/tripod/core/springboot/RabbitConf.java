@@ -90,7 +90,7 @@ public class RabbitConf {
 
     @ConditionalOnMissingBean(RabbitTemplate.ConfirmCallback.class)
     @Bean
-    public RabbitTemplate.ConfirmCallback confirmCallback() {
+    public RabbitTemplate.ConfirmCallback confirmCallback(@Value("${tripod.rabbit.confirm.retry.maxAttempts:3}") int maxAttempts) {
         return new RabbitTemplate.ConfirmCallback() {
             @Override
             public void confirm(CorrelationData correlationData, boolean ack, String cause) {
@@ -106,6 +106,14 @@ public class RabbitConf {
                 if (confirmable == null) {
                     return;
                 }
+
+                int times = confirmData.getRetryTimes() + 1;
+                if (times > maxAttempts) {
+                    log.error("超过最大可重试次数！");
+                    return;
+                }
+                log.info("重试第{}次", times);
+                confirmData.setRetryTimes(times);
                 confirmable.resend(confirmData);
             }
         };
@@ -126,9 +134,8 @@ public class RabbitConf {
 
     @ConditionalOnMissingBean(RabbitSender.class)
     @Bean
-    public RabbitSender rabbitSender(RabbitTemplate rabbitTemplate, @Value("${tripod.rabbit.confirm.retry.maxAttempts:3}") int maxAttempts) {
+    public RabbitSender rabbitSender(RabbitTemplate rabbitTemplate) {
         DefaultRabbitSender sender = new DefaultRabbitSender(rabbitTemplate);
-        sender.setMaxRetryTimes(maxAttempts);
         return sender;
     }
 }
