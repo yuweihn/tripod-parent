@@ -88,12 +88,12 @@ public class RabbitConf {
         return retryTemplate;
     }
 
-    @ConditionalOnMissingBean(CfmCallback.class)
+    @ConditionalOnMissingBean(RabbitTemplate.ConfirmCallback.class)
     @Bean
-    public CfmCallback cfmCallback() {
-        return new CfmCallback() {
+    public RabbitTemplate.ConfirmCallback confirmCallback() {
+        return new RabbitTemplate.ConfirmCallback() {
             @Override
-            public void call(CorrelationData correlationData, boolean ack, String cause) {
+            public void confirm(CorrelationData correlationData, boolean ack, String cause) {
                 if (ack) {
                     return;
                 }
@@ -116,11 +116,11 @@ public class RabbitConf {
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory
             , @Qualifier("rabbitRetryTemplate") RetryTemplate retryTemplate
             , @Qualifier("rabbitJsonMessageConverter") MessageConverter rabbitJsonMessageConverter
-            , CfmCallback cfmCallback) {
+            , RabbitTemplate.ConfirmCallback confirmCallback) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(rabbitJsonMessageConverter);
         template.setRetryTemplate(retryTemplate);
-        template.setConfirmCallback(cfmCallback::call);
+        template.setConfirmCallback(confirmCallback);
         return template;
     }
 
