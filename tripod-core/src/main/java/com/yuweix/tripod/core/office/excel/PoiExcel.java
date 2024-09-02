@@ -47,54 +47,19 @@ public abstract class PoiExcel {
 	public static<T> List<PoiSheet<T>> readSheet(byte[] bytes, Class<T> clz) {
 		List<PoiSheet<T>> sheetList = new ArrayList<>();
 
-		Field[] fields = clz.getDeclaredFields();
-		if (fields == null || fields.length <= 0) {
+		Map<String, String> fieldMap = getTitleFieldMap(clz);
+		if (fieldMap == null || fieldMap.size() <= 0) {
 			return sheetList;
 		}
-
-		List<PoiSheet<Map<String, Object>>> sheetMapList = read(bytes);
-		if (sheetMapList == null || sheetMapList.size() <= 0) {
-			return sheetList;
-		}
-		for (PoiSheet<Map<String, Object>> sheetMap: sheetMapList) {
-			List<T> tList = new ArrayList<>();
-			for (Map<String, Object> map : sheetMap.getList()) {
-				Map<String, Object> fieldValueMap = new HashMap<>();
-				for (Field field : fields) {
-					ExcelKey excelKeyAno = field.getAnnotation(ExcelKey.class);
-					if (excelKeyAno == null) {
-						continue;
-					}
-
-					String key = excelKeyAno.title() == null || "".equals(excelKeyAno.title().trim()) ? field.getName() : excelKeyAno.title().trim();
-					Object v = map.get(key);
-					if (v == null) {
-						continue;
-					}
-					fieldValueMap.put(field.getName(), v);
-				}
-				T t = JsonUtil.parseObject(JsonUtil.toJSONString(fieldValueMap), clz);
-				tList.add(t);
-			}
-			PoiSheet<T> poiSheet = new PoiSheet<>();
-			poiSheet.setSheetName(sheetMap.getSheetName());
-			poiSheet.setList(tList);
-			sheetList.add(poiSheet);
-		}
-		return sheetList;
-	}
-
-	private static List<PoiSheet<Map<String, Object>>> read(byte[] bytes) {
 		InputStream is = null;
 		try {
-			List<PoiSheet<Map<String, Object>>> sheetList = new ArrayList<>();
 			is = new ByteArrayInputStream(bytes);
 			Workbook wb = WorkbookFactory.create(is);
 			int sheetCount = wb.getNumberOfSheets();
 			for (int i = 0; i < sheetCount; i++) {
 				Sheet sheet = wb.getSheetAt(i);
-				List<Map<String, Object>> sheetDataList = read(sheet);
-				PoiSheet<Map<String, Object>> poiSheet = new PoiSheet<>();
+				List<T> sheetDataList = read(sheet, clz, fieldMap);
+				PoiSheet<T> poiSheet = new PoiSheet<>();
 				poiSheet.setSheetName(sheet.getSheetName());
 				poiSheet.setList(sheetDataList);
 				sheetList.add(poiSheet);
@@ -113,7 +78,69 @@ public abstract class PoiExcel {
 		}
 	}
 
-	private static List<Map<String, Object>> read(Sheet sheet) {
+	public static List<String> getSheetNameList(byte[] bytes) {
+		List<String> list = new ArrayList<>();
+		InputStream is = null;
+		try {
+			is = new ByteArrayInputStream(bytes);
+			Workbook wb = WorkbookFactory.create(is);
+			int sheetCount = wb.getNumberOfSheets();
+			for (int i = 0; i < sheetCount; i++) {
+				Sheet sheet = wb.getSheetAt(i);
+				list.add(sheet.getSheetName().trim());
+			}
+			return list;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					log.error("Error: {}", new Object[] {e});
+				}
+			}
+		}
+	}
+
+	public static<T> List<T> readSheet(byte[] bytes, Class<T> clz, String sheetName) {
+		List<T> sheetList = new ArrayList<>();
+
+		if (sheetName == null || "".equals(sheetName)) {
+			return sheetList;
+		}
+
+		Map<String, String> fieldMap = getTitleFieldMap(clz);
+		if (fieldMap == null || fieldMap.size() <= 0) {
+			return sheetList;
+		}
+		InputStream is = null;
+		try {
+			is = new ByteArrayInputStream(bytes);
+			Workbook wb = WorkbookFactory.create(is);
+			int sheetCount = wb.getNumberOfSheets();
+			for (int i = 0; i < sheetCount; i++) {
+				Sheet sheet = wb.getSheetAt(i);
+				if (!sheetName.trim().equals(sheet.getSheetName().trim())) {
+					continue;
+				}
+				return read(sheet, clz, fieldMap);
+			}
+			return sheetList;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					log.error("Error: {}", new Object[] {e});
+				}
+			}
+		}
+	}
+
+	private static<T> List<T> read(Sheet sheet, Class<T> clz, Map<String, String> fieldMap) {
 		/**
 		 * 读取头部，第一行
 		 **/
@@ -121,7 +148,7 @@ public abstract class PoiExcel {
 		/**
 		 * 读取数据部分，从第二行开始
 		 **/
-		return getInputDataList(sheet, headList);
+		return getInputDataList(sheet, headList, clz, fieldMap);
 	}
 
 	private static List<String> getInputHeadList(Row row) {
@@ -136,8 +163,8 @@ public abstract class PoiExcel {
 		return list;
 	}
 
-	private static List<Map<String, Object>> getInputDataList(Sheet sheet, List<String> keyList) {
-		List<Map<String, Object>> list = new ArrayList<>();
+	private static<T> List<T> getInputDataList(Sheet sheet, List<String> keyList, Class<T> clz, Map<String, String> fieldMap) {
+		List<T> list = new ArrayList<>();
 		for (Row row: sheet) {
 			if (row.getRowNum() <= 0) {
 				continue;
@@ -150,11 +177,32 @@ public abstract class PoiExcel {
 				if (idx < 0 || idx >= keySize) {
 					continue;
 				}
-				map.put(keyList.get(idx), getCellValue(cell));
+				String key = fieldMap == null ? null : fieldMap.get(keyList.get(idx));
+				map.put(key, getCellValue(cell));
 			}
-			list.add(map);
+			list.add(JsonUtil.parseObject(JsonUtil.toJSONString(map), clz));
 		}
 		return list;
+	}
+
+	/**
+	 * 获取{@param clz}中{@link ExcelKey}注解的title与fieldName组成的键值对
+	 */
+	private static<T> Map<String, String> getTitleFieldMap(Class<T> clz) {
+		Map<String, String> result = new HashMap<>();
+		Field[] fields = clz.getDeclaredFields();
+		if (fields == null || fields.length <= 0) {
+			return result;
+		}
+		for (Field field : fields) {
+			ExcelKey excelKeyAnn = field.getAnnotation(ExcelKey.class);
+			if (excelKeyAnn == null) {
+				continue;
+			}
+			String key = excelKeyAnn.title() == null || "".equals(excelKeyAnn.title().trim()) ? field.getName() : excelKeyAnn.title().trim();
+			result.put(key, field.getName());
+		}
+		return result;
 	}
 
 	private static Object getCellValue(Cell cell) {
