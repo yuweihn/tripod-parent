@@ -8,6 +8,7 @@ import com.yuweix.tripod.sharding.utils.ShardAopUtil;
 import com.yuweix.tripod.sharding.utils.ShardingUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
 
@@ -16,7 +17,8 @@ import org.aspectj.lang.annotation.Pointcut;
  * 针对{@link Shardable}子类中的public方法，凡是参数中带有{@link Shard}注解的都会被执行。
  * @author yuwei
  */
-public abstract class TableAspect {
+@Aspect
+public class TableAspect {
     @Pointcut("execution(public * com.yuweix.tripod.sharding.Shardable+.*(..))")
     public void shard() {
 
