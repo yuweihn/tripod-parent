@@ -140,6 +140,31 @@ public abstract class PoiExcel {
 		}
 	}
 
+	public static<T> List<T> readSheet(byte[] bytes, Class<T> clz, int sheetIdx) {
+		List<T> sheetList = new ArrayList<>();
+
+		Map<String, String> fieldMap = getTitleFieldMap(clz);
+		if (fieldMap == null || fieldMap.size() <= 0) {
+			return sheetList;
+		}
+		InputStream is = null;
+		try {
+			is = new ByteArrayInputStream(bytes);
+			Workbook wb = WorkbookFactory.create(is);
+			return read(wb.getSheetAt(0), clz, fieldMap);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					log.error("Error: {}", new Object[] {e});
+				}
+			}
+		}
+	}
+
 	private static<T> List<T> read(Sheet sheet, Class<T> clz, Map<String, String> fieldMap) {
 		/**
 		 * 读取头部，第一行
