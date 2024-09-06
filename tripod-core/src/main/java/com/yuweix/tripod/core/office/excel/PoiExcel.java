@@ -151,6 +151,39 @@ public abstract class PoiExcel {
 		return getInputDataList(sheet, headList, clz, fieldMap);
 	}
 
+	public static List<String> getInputHeadList(byte[] bytes) {
+		return getInputHeadList(bytes, null);
+	}
+	public static List<String> getInputHeadList(byte[] bytes, String sheetName) {
+		InputStream is = null;
+		try {
+			is = new ByteArrayInputStream(bytes);
+			Workbook wb = WorkbookFactory.create(is);
+			if (sheetName == null || "".equals(sheetName.trim())) {
+				return getInputHeadList(wb.getSheetAt(0).getRow(0));
+			}
+			int sheetCount = wb.getNumberOfSheets();
+			for (int i = 0; i < sheetCount; i++) {
+				Sheet sheet = wb.getSheetAt(i);
+				if (!sheetName.trim().equals(sheet.getSheetName().trim())) {
+					continue;
+				}
+				return getInputHeadList(sheet.getRow(0));
+			}
+			return new ArrayList<>();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+					log.error("Error: {}", new Object[] {e});
+				}
+			}
+		}
+	}
+
 	private static List<String> getInputHeadList(Row row) {
 		List<String> list = new ArrayList<>();
 		for (Cell cell: row) {
