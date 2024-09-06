@@ -144,23 +144,23 @@ public abstract class PoiExcel {
 		/**
 		 * 读取头部，第一行
 		 **/
-		List<String> headList = getInputHeadList(sheet.getRow(0));
+		List<String> headList = getImportHeadList(sheet.getRow(0));
 		/**
 		 * 读取数据部分，从第二行开始
 		 **/
-		return getInputDataList(sheet, headList, clz, fieldMap);
+		return getImportDataList(sheet, headList, clz, fieldMap);
 	}
 
-	public static List<String> getInputHeadList(byte[] bytes) {
-		return getInputHeadList(bytes, null);
+	public static List<String> getImportHeadList(byte[] bytes) {
+		return getImportHeadList(bytes, null);
 	}
-	public static List<String> getInputHeadList(byte[] bytes, String sheetName) {
+	public static List<String> getImportHeadList(byte[] bytes, String sheetName) {
 		InputStream is = null;
 		try {
 			is = new ByteArrayInputStream(bytes);
 			Workbook wb = WorkbookFactory.create(is);
 			if (sheetName == null || "".equals(sheetName.trim())) {
-				return getInputHeadList(wb.getSheetAt(0).getRow(0));
+				return getImportHeadList(wb.getSheetAt(0).getRow(0));
 			}
 			int sheetCount = wb.getNumberOfSheets();
 			for (int i = 0; i < sheetCount; i++) {
@@ -168,7 +168,7 @@ public abstract class PoiExcel {
 				if (!sheetName.trim().equals(sheet.getSheetName().trim())) {
 					continue;
 				}
-				return getInputHeadList(sheet.getRow(0));
+				return getImportHeadList(sheet.getRow(0));
 			}
 			return new ArrayList<>();
 		} catch (Exception e) {
@@ -184,7 +184,7 @@ public abstract class PoiExcel {
 		}
 	}
 
-	private static List<String> getInputHeadList(Row row) {
+	private static List<String> getImportHeadList(Row row) {
 		List<String> list = new ArrayList<>();
 		for (Cell cell: row) {
 			String head = cell.toString();
@@ -196,7 +196,7 @@ public abstract class PoiExcel {
 		return list;
 	}
 
-	private static<T> List<T> getInputDataList(Sheet sheet, List<String> keyList, Class<T> clz, Map<String, String> fieldMap) {
+	private static<T> List<T> getImportDataList(Sheet sheet, List<String> keyList, Class<T> clz, Map<String, String> fieldMap) {
 		List<T> list = new ArrayList<>();
 		for (Row row: sheet) {
 			if (row.getRowNum() <= 0) {
@@ -335,8 +335,8 @@ public abstract class PoiExcel {
 			 * 输出头部
 			 **/
 			List<String> headList = dataList != null && !dataList.isEmpty()
-					? getOutputHeadList(dataList.get(0))
-					: getOutputHeadList(clz);
+					? getExportHeadList(dataList.get(0))
+					: getExportHeadList(clz);
 			SXSSFRow headRow = sheet.createRow(0);
 			for (int i = 0; i < headList.size(); i++) {
 				String head = headList.get(i);
@@ -347,14 +347,14 @@ public abstract class PoiExcel {
 			}
 
 			if (dataList != null && !dataList.isEmpty()) {
-				List<String> keyList = getOutputKeyList(dataList.get(0));
+				List<String> keyList = getExportKeyList(dataList.get(0));
 				/**
 				 * 输出数据部分
 				 **/
 				for (int i = 0; i < dataList.size(); i++) {
 					T t = dataList.get(i);
 					SXSSFRow dataRow = sheet.createRow(i + 1);
-					List<Object> dList = getOutputDataList(keyList, t);
+					List<Object> dList = getExportDataList(keyList, t);
 					for (int j = 0; j < dList.size(); j++) {
 						SXSSFCell cell = dataRow.createCell(j);
 						setCellValue(cell, dList.get(j));
@@ -377,7 +377,7 @@ public abstract class PoiExcel {
 		}
 	}
 
-	private static<T> List<String> getOutputHeadList(T t) {
+	private static<T> List<String> getExportHeadList(T t) {
 		List<String> list = new ArrayList<>();
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
@@ -386,18 +386,18 @@ public abstract class PoiExcel {
 			}
 			return list;
 		} else {
-			return getOrderedOutputHeadList(t.getClass().getDeclaredFields());
+			return getOrderedExportHeadList(t.getClass().getDeclaredFields());
 		}
 	}
 
-	private static<T> List<String> getOutputHeadList(Class<T> clz) {
+	private static<T> List<String> getExportHeadList(Class<T> clz) {
 		if (clz == null) {
 			return new ArrayList<>();
 		}
-		return getOrderedOutputHeadList(clz.getDeclaredFields());
+		return getOrderedExportHeadList(clz.getDeclaredFields());
 	}
 
-	private static List<String> getOrderedOutputHeadList(Field[] fields) {
+	private static List<String> getOrderedExportHeadList(Field[] fields) {
 		List<String> list = new ArrayList<>();
 		if (fields == null || fields.length <= 0) {
 			return list;
@@ -426,7 +426,7 @@ public abstract class PoiExcel {
 		return list;
 	}
 
-	private static<T> List<String> getOutputKeyList(T t) {
+	private static<T> List<String> getExportKeyList(T t) {
 		List<String> list = new ArrayList<>();
 		if (Map.class.isAssignableFrom(t.getClass())) {
 			Map<?, ?> map = (Map<?, ?>) t;
@@ -448,7 +448,7 @@ public abstract class PoiExcel {
 		return list;
 	}
 
-	private static<T> List<Object> getOutputDataList(List<String> keyList, T t) {
+	private static<T> List<Object> getExportDataList(List<String> keyList, T t) {
 		List<Object> list = new ArrayList<>();
 		if (keyList == null || keyList.size() <= 0) {
 			return list;
