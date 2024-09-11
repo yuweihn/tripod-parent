@@ -81,7 +81,7 @@
 
 	<distributionManagement>
 		<snapshotRepository>
-			<id>oss_sonatype_snapshot</id>
+			<id>oss_sonatype</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 		<repository>
